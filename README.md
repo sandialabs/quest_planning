@@ -4,7 +4,7 @@
     <img src="images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
 </div>
 
-# **QuESt Planning**: A Long-term Power System Expansion Planning Tool Focused on Energy Storage Systems
+# **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
 
 Current release version: 1.0.0
 
