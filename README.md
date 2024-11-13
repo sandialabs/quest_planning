@@ -663,6 +663,6 @@ This material is based upon work supported by the **U.S. Department of Energy, O
 [Back to Top](#top)
 ## License
 
-Please see the [LICENSE](<(<https://github.com/codynewlun/quest_planning/blob/main/LICENSE/>) file. 
+Please see the [LICENSE](<https://github.com/sandialabs/quest_planning/blob/main/LICENSE>) file. 
 
 [Back to Top](#top)
