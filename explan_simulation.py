@@ -156,7 +156,7 @@ if __name__ == '__main__':
     exp.run_optimizer()
     exp.view_results()
     
-    # to write the model.lp files...
+    # Optional: write the model.lp files
     #exp.optimizer._model.write('model.lp', io_options={'symbolic_solver_labels': True})
     
     
