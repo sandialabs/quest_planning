@@ -1,0 +1,16 @@
+Scalar,Value,Unit
+System,RTS_GMLC_Nodal,
+Tx_model,Transportation,
+Discount Rate,6,%
+VOLL,1000,$M/MW
+SOC_up_limit,80,%
+SOC_down_limit,20,%
+cha_efficiency,100,%
+dis_efficiency,85,%
+rt_efficiency,100,%
+PRM,15,%
+Reg_Res_Req,1,%
+Spin_Res_Req,3,%
+Flex_Res_W_Req,10,%
+Flex_Res_S_Req,4,%
+end_effects,10,

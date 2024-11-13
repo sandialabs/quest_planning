@@ -1,0 +1,16 @@
+__pycache__/
+*/__pycache__/
+*_Results/
+.DS_Store
+input.txt
+Archive
+Results
+run_ui_2_py.py
+Data/Archive/
+Data/conversion/
+data/Archive/
+data/conversion/
+config/Archive/
+gui/*/ui/Archive
+gui/wind_solar_page
+Results
