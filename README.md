@@ -40,7 +40,7 @@ Key features of the QuESt Planning tool include:
 
 - **Optimization for Grid Decarbonization:** Leverages a Pyomo-based optimization model to find the optimal mix of generation, transmission, and storage to meet long-term grid decarbonization goals or similar policies.
 
-- **Energy Storage System Evaluation:** Designed to evaluate a broad range of energy storage technologies and their role in the optimal mix of generation required to meet the decarbonization goals. Users are able to define energy storage tehnologies based on power and energy capacity cost, asset lifetime, round-trip efficiency, and other operational characteristics. 
+- **Energy Storage System Evaluation:** Designed to evaluate a broad range of energy storage technologies and their role in the optimal mix of generation required to meet the decarbonization goals. Users are able to define energy storage technologies based on power and energy capacity cost, asset lifetime, round-trip efficiency, and other operational characteristics. 
 
 - **Model Flexibility:** Supports various scenarios and sensitivity analyses to explore different investment portfolios and pathways.
 
@@ -48,7 +48,7 @@ Key features of the QuESt Planning tool include:
 
 - **User-Friendly Interface:** Simplifies the process of input data upload, planning model setup, scenario construction, model execution, and results interpretation.
 
-- **Enhanced Visualizations:** The QuESt Planning tool provides several vizualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps. 
+- **Enhanced Visualizations:** The QuESt Planning tool provides several visualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps. 
 
 [Back to Top](#top)
 ## Getting started
@@ -446,7 +446,7 @@ Select a `Renewable Portfolio Standard` or create a new policy.
 
 <img src = "images/readme/scenario_builder_1.png" width="500" height="450" alt="Scenario Builder" />
 
-To select the candidate technologoies click the `Candidate Technologies` buttons. The below window will appear. 
+To select the candidate technologies click the `Candidate Technologies` buttons. The below window will appear. 
 
 <img src = "images/readme/candidate_technologies.png" width="350" height="350" alt="Scenario Builder" />
 
@@ -483,11 +483,11 @@ Once, the model has solved. The user will be notified and prompted to go to the 
 
 #### 6. Results Viewer
 
-The `Results Viewer` page is designed to provide high-level results including a breakdown of total costs, optimal installed resource capapcities, and energy storage power and energy capacities throughout the plannig horizon.
+The `Results Viewer` page is designed to provide high-level results including a breakdown of total costs, optimal installed resource capacities, and energy storage power and energy capacities throughout the planning horizon.
 
-To begin, click `Collect Results`. This will poplate the cost results in a table and save all plots to the desired results file. 
+To begin, click `Collect Results`. This will populate the cost results in a table and save all plots to the desired results file. 
 
-Click `Generate Plots` to display the stacked bar charts for the optimal installed resource capapcities and energy storage power and energy capacities throughout the plannig horizon. 
+Click `Generate Plots` to display the stacked bar charts for the optimal installed resource capacities and energy storage power and energy capacities throughout the planning horizon. 
 
 Click `Open Results Folder` to open the results folder in File Explorer. 
 
@@ -595,7 +595,7 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 
 - [pvlib](<https://github.com/pvlib/pvlib-python>): python-based package that includes a set of functions and classes used for simulating the performance of PV systems (developed by Sandia National Laboratories)
 
-- [**Wind Integration National Dataset (WIND) Toolkit**](<https://www.nrel.gov/grid/wind-toolkit.html>): provides computer model-based meteorological conditions and calculated turboine power for the continental U.S. (developed by the National Renewable Energy Laboratory)
+- [**Wind Integration National Dataset (WIND) Toolkit**](<https://www.nrel.gov/grid/wind-toolkit.html>): provides computer model-based meteorological conditions and calculated turbine power for the continental U.S. (developed by the National Renewable Energy Laboratory)
 
 #### Generator Performance Data
 
@@ -614,7 +614,7 @@ Additional test cases are under further development and will be included in futu
 [Back to Top](#top)
 ## Tips for Running the QuESt Planning Tool<a id="tips"></a>
 
-The advanced simulations could be exceptionally difficult to solve based on the cofiguration of the model. There are several tips to consider when facing difficulties with solving:
+The advanced simulations could be exceptionally difficult to solve based on the configuration of the model. There are several tips to consider when facing difficulties with solving:
 
 - ***Simplify the Model:*** Too increase tractability and decrease complexity, try limiting the number of variables or constraints. Examples include reducing the number of candidate technologies, reducing simulation years, altering the transmission model constraints, or selecting a less-complex temporal resolution. 
 
@@ -666,12 +666,3 @@ This material is based upon work supported by the **U.S. Department of Energy, O
 Please see the [LICENSE](<(<https://github.com/codynewlun/quest_planning/blob/main/LICENSE/>) file. 
 
 [Back to Top](#top)
-
-<!-- Archive method for images
-![Start](images/readme/start_page.png)
-![Power System Data](images/readme/power_system_data.png)
-![Planning Model Setup](images/readme/planning_model_setup.png)
-![Scenario Builder](images/readme/scenario_builder.png)
-![Execute Model](images/readme/execute_model.png)
-![Results Viewer](images/readme/results_viewer.png)
--->
