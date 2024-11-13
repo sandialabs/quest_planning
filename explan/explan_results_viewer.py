@@ -18,7 +18,7 @@ class ExplanResultsViewer():
     def __init__(self, data_handler):
         self.data_handler = data_handler
         #TODO: Fix this
-        self.system = None#self.data_handler.system#'PNM'#self.data_handler.scalars.loc['System']['Value']#TODO: change this
+        self.system = None
         self.rd = None
         
         # Plotting options - FALSE by default
@@ -1447,7 +1447,7 @@ class ExplanResultsViewer():
         bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
         
         #TODO: Custom scaling options for viz purposes only
-        if self.system == 'PNM':
+        if self.system == 'Other':
             rad_div = 10
             line_div = 100
         elif self.system == 'RTS_GMLC_Nodal':
@@ -1571,7 +1571,7 @@ class ExplanResultsViewer():
         line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
         bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
 
-        if self.system == 'PNM':
+        if self.system == 'Other':
             rad_div = 10
         elif self.system == 'RTS_GMLC_Nodal':
             rad_div = 16

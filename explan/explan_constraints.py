@@ -810,33 +810,14 @@ class ExplanConstraints:
         '''
         Transmission forward flow constraint with pipe and bubble OR DC-power flow
         '''
-        if self.data_handler.tx_model == 'Transportation':
-            if self.system == 'PNM':#specialty constraints
-                if l != 2:
-                    return model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-    
-                else:
-                   return model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-            else:
-                return model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-        elif self.data_handler.tx_model == 'dc':
-            return  model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
+        
+        return  model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
     def cTxFlwBw(self, model, l, y, s, i):
         '''
         Backwards flow constraint
         '''
-        if self.data_handler.tx_model == 'Transportation':
-            if self.system == 'PNM':#specialty constraints
-                if l != 2:
-                    return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
-                if l == 5 and y > 2033:
-                    return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y]-1000)
-                else:                    
-                    return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
-            else:
-                return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
-        elif self.data_handler.tx_model == 'dc':
-            return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
+        
+        return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
         
     def cDCPF(self, model,l,y,s,i):
         '''
