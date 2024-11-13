@@ -1,0 +1,121 @@
+NOTICE
+
+This project includes third-party software components. The following is a list of those components, along with their respective licenses and any additional notices required by the licenses.
+
+-----------------------------------------------------------------------------
+
+**The MIT License (MIT) applies to:**
+- branca, Copyright 2017-2023, Martin Journo
+- charset-normalizer, Copyright 2021, Ahmed TAHRI
+- contourpy, Copyright 2022, The contourpy developers
+- cycler, Copyright 2010-2023, Michael Droettboom and others
+- fonttools, Copyright 1999-2023, Just van Rossum, Erik van Blokland, and others
+- gurobipy, Copyright 2023, Gurobi Optimization, LLC
+- Jinja2, Copyright 2007-2023, Armin Ronacher and others
+- kiwisolver, Copyright 2015-2023, Michael Droettboom and others
+- MarkupSafe, Copyright 2007-2023, Armin Ronacher and others
+- numpy, Copyright 2005-2023, NumPy Developers
+- openpyxl, Copyright 2010-2023, See AUTHORS file
+- packaging, Copyright 2013-2023, The Python Packaging Authority
+- pandas, Copyright 2008-2023, The pandas development team
+- pillow, Copyright 1995-2023, Alex Clark and contributors
+- ply, Copyright 2001-2023, David Beazley
+- pyparsing, Copyright 2003-2023, Paul McGuire
+- python-dateutil, Copyright 2003-2023, Gustavo Niemeyer and others
+- pytz, Copyright 2004-2023, Stuart Bishop
+- requests, Copyright 2011-2023, Kenneth Reitz and others
+- six, Copyright 2010-2023, Benjamin Peterson
+- urllib3, Copyright 2008-2023, Andrey Petrov and others
+- xyzservices, Copyright 2021-2023, Martin Journo
+- configparser, Copyright 2013-2023, See AUTHORS file
+- contextlib2, Copyright 2015-2023, See AUTHORS file
+- filelock, Copyright 2014-2023, See AUTHORS file
+- ipython, Copyright 2001-2023, IPython Development Team
+- ipywidgets, Copyright 2014-2023, Jupyter Development Team
+- markdown, Copyright 2007-2023, Manfred Stienstra and others
+- mock, Copyright 2007-2023, Michael Foord
+- networkx, Copyright 2004-2023, NetworkX Developers
+- protobuf, Copyright 2008-2023, Google Inc.
+- pyopenssl, Copyright 2001-2023, The OpenSSL Project
+- pyutilib, Copyright 2008-2023, Sandia National Laboratories
+- redis, Copyright 2009-2023, Redis Labs
+- sphinx, Copyright 2007-2023, Georg Brandl and others
+- tornado, Copyright 2005-2023, Facebook
+- trove_classifiers, Copyright 2017-2023, See AUTHORS file
+- urllib3_secure_extra, Copyright 2008-2023, Andrey Petrov
+- win-inet, Copyright 2017-2023, See AUTHORS file
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------------------------------------------------------------------------
+
+**The BSD License applies to:**
+- certifi, Copyright 2014-2023, Kenneth Reitz and others
+- folium, Copyright 2013-2023, Rob Story and others
+- idna, Copyright 2014-2023, Kim Davies
+- Pyomo, Copyright 2008-2023, Sandia National Laboratories
+- PyUtilib, Copyright 2008-2023, Sandia National Laboratories
+- tzdata, Copyright 2021-2023, Paul Ganssle
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------------------------------------------------------------------------
+
+**The Apache License 2.0 applies to:**
+- et-xmlfile, Copyright 2013-2023, See AUTHORS file
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+-----------------------------------------------------------------------------
+
+**The Mozilla Public License 2.0 (MPL) applies to:**
+- matplotlib
+
+This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, you can obtain one at https://mozilla.org/MPL/2.0.
+
+-----------------------------------------------------------------------------
+
+**The Matplotlib Development Team (MDT) License applies to:**
+- matplotlib
+
+Copyright (c) 2012- Matplotlib Development Team; All Rights Reserved
+
+-----------------------------------------------------------------------------
+
+**The Python Software Foundation (PSF) License applies to:**
+- Python
+
+Copyright (c) 2001-2024 Python Software Foundation; All Rights Reserved
+
+-----------------------------------------------------------------------------
+
+IMPORTANT NOTICE: At installation, QuESt Planning accesses and installs certain open-source packages that are not part of the QuESt Planning package as distributed. “Nose” is governed by the GNU Lesser General Public License (LGPL) and “PySide6” and “Shiboken” are governed by the GNU General Public License (GPL). By installing QuESt Planning, you are accepting these licenses for these packages. We strongly advise consulting with a legal expert or attorney prior to any redistribution or modification of the QuESt Planning software to ensure compliance with the applicable licensing terms.

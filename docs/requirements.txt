@@ -1,0 +1,6 @@
+sphinx
+numpydoc
+folium
+networkx
+pyutilib
+
