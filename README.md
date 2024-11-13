@@ -625,7 +625,7 @@ The advanced simulations could be exceptionally difficult to solve based on the 
 [Back to Top](#top)
 ## Feedback
 <a id="feedback"></a>
-Please submit feedback, issues, and suggestions, through the [Issues](<https://github.com/codynewlun/quest_planning/issues>) page.
+Please submit feedback, issues, and suggestions, through the [Issues](<https://github.com/codynewlun/quest_planning/issues>) page. For more information, please reach out to the project developer [Cody Newlun](cjnewlu@sandia.gov).
 
 [Back to Top](#top)
 ## Development Status & Future Updates
@@ -647,7 +647,7 @@ Future updates to QuESt Planning that are being considered include:
 The QuESt Planning tool is developed and maintained by the [Energy Storage Analytics Group](<https://energy.sandia.gov/programs/energy-storage/analytics/>) at [Sandia National Laboratories](<https://www.sandia.gov/>).
 
 Project team:
-- Cody Newlun
+- [Cody Newlun](cjnewlu@sandia.gov)
 - Atri Bera
 - Walker Olis
 - Andres Lopez Ramirez
