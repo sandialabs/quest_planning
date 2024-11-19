@@ -25,7 +25,7 @@ Current release version: 1.0.0
 ## Introduction 
 <a id="intro"></a>
 
-QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments to meet grid decarbonization targets. This tool is part of [QuESt 2.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
+QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of [QuESt 2.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
 <div style="text-align: center;">
 <img src = "images/readme/qp_overview.png" width="650" height="300" alt="overview" />
 </div>
@@ -38,9 +38,9 @@ Long-term capacity expansion planning models are complex optimization models tha
 <a id="Key-features"></a>
 Key features of the QuESt Planning tool include:
 
-- **Optimization for Grid Decarbonization:** Leverages a Pyomo-based optimization model to find the optimal mix of generation, transmission, and storage to meet long-term grid decarbonization goals or similar policies.
+- **Optimization of Grid Investments:** Leverages a Pyomo-based optimization model to find the cost-optimal mix of generation, transmission, and storage.
 
-- **Energy Storage System Evaluation:** Designed to evaluate a broad range of energy storage technologies and their role in the optimal mix of generation required to meet the decarbonization goals. Users are able to define energy storage technologies based on power and energy capacity cost, asset lifetime, round-trip efficiency, and other operational characteristics. 
+- **Energy Storage System Evaluation:** Designed to evaluate a broad range of energy storage technologies and their role in the optimal mix of generation required to support system operations. Users are able to define energy storage technologies based on power and energy capacity cost, asset lifetime, round-trip efficiency, and other operational characteristics. 
 
 - **Model Flexibility:** Supports various scenarios and sensitivity analyses to explore different investment portfolios and pathways.
 
