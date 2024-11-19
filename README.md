@@ -635,6 +635,7 @@ The QuESt Planning tool is under active development and more features will be in
 
 Future updates to QuESt Planning that are being considered include:
 
+- *Improved reliability and resilience constraints*
 - *Technology-specific energy storage models*
 - *Enhanced temporal resolution*
 - *Improved transmission models & investment options*
