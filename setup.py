@@ -55,6 +55,7 @@ setup(
         "python-dateutil==2.9.0.post0",
         "pytz==2024.1",
         "PyUtilib==6.0.0",
+        "pyYAML==6.0.1",
         "requests==2.31.0",
         "shiboken6==6.5.2",
         "six==1.16.0",
