@@ -1,7 +1,7 @@
 <a id="top"></a>
 
 <div style="text-align: center;">
-    <img src="images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
+    <img src="quest_planning/images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
 </div>
 
 # **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
@@ -27,7 +27,7 @@ Current release version: 1.0.0
 
 QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of [QuESt 2.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
 <div style="text-align: center;">
-<img src = "images/readme/qp_overview.png" width="650" height="300" alt="overview" />
+<img src = "quest_planning/images/readme/qp_overview.png" width="650" height="300" alt="overview" />
 </div>
 Long-term capacity expansion planning models are complex optimization models that require careful consideration of modeling assumptions and input data. Model build and solve times can vary significantly, from minutes to days, based on assumptions made while configuring the model inputs and the selection of solver. For more guidance, please refer to the Tips section.
 
@@ -102,10 +102,10 @@ Ensure an optimization solver is installed on your machine. For best performance
 
 3. Install Dependencies:
     ```bash
-    python -m pip install -r requirements.txt
+    python -m pip install -e .
     ```
 ### Run the QuESt Planning Tool
-1. Once the dependencies are installed, ensure you have navigated to the **parent** directory where QuESt Planning is installed and the virtual environment is activated. You can run tool using the following command:
+1. Once the dependencies are installed the QuESt Planning package is installed in the virtual environment is activated. You can run tool using the following command from any directory:
 
     ```bash
     python -m quest_planning
@@ -122,7 +122,7 @@ The figure below provides the basic structure of the QuESt Planning tool. The in
 - Option B: [Advanced Simulations](#advanced): This command-line script is designed for larger problems and enables the use of remote computing for advanced simulations.
 
 <div style="text-align: center;">
-   <img src = "images/readme/qp_code_structure.png" width="750" height="450" alt="code" />
+   <img src = "quest_planning/images/readme/qp_code_structure.png" width="750" height="450" alt="code" />
 </div>
 
 
@@ -401,26 +401,26 @@ The following section provides details on the workflow of the QuESt Planning use
 #### 1. Start
 Upon executing the `quest_planning` package, a landing page will appear. The `Documentation` button will provide access to this `README.md` file in a separate dialog window. To start using the tool press the `Start` button.
 
-<img src = "images/readme/start_page_1.png" width="500" height="450" alt="Start" />
+<img src = "quest_planning/images/readme/start_page_1.png" width="500" height="450" alt="Start" />
 
 #### 2. Power System Data 
 In the `Power System Data` page, the corresponding CSV data will be uploaded and processed via the data handler in the backend of the tool. To begin, the user must navigate to the correct directory where all CSV files are located. Use the `Browse` button to open File Explorer. The user should also fill in the `System Name` text box with the desired name. The `System name` will be used to name saved files, plots, and scenarios.
 
-<img src = "images/readme/power_system_data_1.png" width="500" height="450" alt="Power System Data" />
+<img src = "quest_planning/images/readme/power_system_data_1.png" width="500" height="450" alt="Power System Data" />
 
 Once the correct directory is selected, click `Open`. Upon clicking a breakdown of the system information will appear as follows:
 
-<img src = "images/readme/power_system_data_upload_1.png" width="500" height="450" alt="Power System Data" />
+<img src = "quest_planning/images/readme/power_system_data_upload_1.png" width="500" height="450" alt="Power System Data" />
 
 Once the data is collected, click `Next`.
 #### 3. Planning Model Setup 
 In the `Planning Model Setup` page, the user can define the modeling assumptions to be fed to the optimizer. Select the `Begin Year` and the `End Year` for the simulation. Then click the `Select Simulation Years` button and a separate dialog button will open.
 
-<img src = "images/readme/planning_model_setup_1.png" width="500" height="450" alt="Planning Model Setup" />
+<img src = "quest_planning/images/readme/planning_model_setup_1.png" width="500" height="450" alt="Planning Model Setup" />
 
 Select the years desired for the planning model simulation or select `All Years`. Click `OK` to save the years. 
 
-<img src = "images/readme/years_dialog.png" width="350" height="300" alt="Planning Model Setup" />
+<img src = "quest_planning/images/readme/years_dialog.png" width="350" height="300" alt="Planning Model Setup" />
 
 Select the desired `Transmission Model`. Currently the tool supports the transportation ("pipes & bubbles") modeling of transmission systems. Future releases will support copper sheet and DC power flow capabilities. 
 
@@ -430,7 +430,7 @@ Select a desired `Annual Discount Rate`, which will be used for the net-present 
 
 Once complete, the planning model setup will be populated in tab window as follows:
 
-<img src = "images/readme/planning_model_setup_complete_1.png" width="500" height="450" alt="Planning Model Setup" />
+<img src = "quest_planning/images/readme/planning_model_setup_complete_1.png" width="500" height="450" alt="Planning Model Setup" />
 
 When the planning model is setup, click `Next`.
 #### 4. Scenario Builder
@@ -444,25 +444,25 @@ Select a `Renewable Portfolio Standard` or create a new policy.
 
 `Transmission Expansion` will allow for the co-optimization of the generation and transmission expansion. This feature is in testing will be released in a later version.
 
-<img src = "images/readme/scenario_builder_1.png" width="500" height="450" alt="Scenario Builder" />
+<img src = "quest_planning/images/readme/scenario_builder_1.png" width="500" height="450" alt="Scenario Builder" />
 
 To select the candidate technologies click the `Candidate Technologies` buttons. The below window will appear. 
 
-<img src = "images/readme/candidate_technologies.png" width="350" height="350" alt="Scenario Builder" />
+<img src = "quest_planning/images/readme/candidate_technologies.png" width="350" height="350" alt="Scenario Builder" />
 
 Select the `default` technologies, combination of the candidate technologies, or a `Custom` technology. If a `Custom` technology is selected, the following window will appear:
 
-<img src = "images/readme/custom_candidate_technologies.png" width="450" height="350" alt="Scenario Builder" />
+<img src = "quest_planning/images/readme/custom_candidate_technologies.png" width="450" height="350" alt="Scenario Builder" />
 
 When completed selecting candidate technologies, press `OK`.
 
 Once the scenario is built the window should look like the below:
 
-<img src = "images/readme/scenario_builder_complete_1.png" width="500" height="450" alt="Scenario Builder" />
+<img src = "quest_planning/images/readme/scenario_builder_complete_1.png" width="500" height="450" alt="Scenario Builder" />
 
 If desired, click `View Scenario`. This will generate a planning model and scenario information breakdown page. Click 'Save Scenario` to save this page to a text file. This is useful to keep track of the scenarios if evaluating several scenarios. 
 
-<img src = "images/readme/save_scenario.png" width="350" height="300" alt="Scenario Builder" />
+<img src = "quest_planning/images/readme/save_scenario.png" width="350" height="300" alt="Scenario Builder" />
 
 When completed building the scenario, click `Next`. 
 
@@ -473,11 +473,11 @@ Specify the solver to be used for the optimization. For best performance, select
 
 Click 'Build' to build the optimization model.
 
-<img src = "images/readme/execute_model_1.png" width="500" height="450" alt="Execute Model" />
+<img src = "quest_planning/images/readme/execute_model_1.png" width="500" height="450" alt="Execute Model" />
 
 Progress will appear in the window as shown below. Once the Pyomo model has been built, click `Solve`.
 
-<img src = "images/readme/execute_model_running_1.png" width="500" height="450" alt="Execute Model" />
+<img src = "quest_planning/images/readme/execute_model_running_1.png" width="500" height="450" alt="Execute Model" />
 
 Once, the model has solved. The user will be notified and prompted to go to the `Results Viewer` page by clicking `Next`.
 
@@ -495,7 +495,7 @@ Click `Open Maps` to open the subfolder containing several maps with generation 
 
 Click `Save Results` to save the raw results of the optimization model to an Excel file. Further analysis of results can be performed with the results via the Excel files.
 
-<img src = "images/readme/results_page_1.png" width="500" height="450" alt="Results Viewer" />
+<img src = "quest_planning/images/readme/results_page_1.png" width="500" height="450" alt="Results Viewer" />
 
 [Back to Top](#top)
 
@@ -542,7 +542,7 @@ To initiate an advanced simulation, users can execute the `explan_simulation.py`
 
 2. Install Dependencies:
     ```bash
-    pip install -r requirements.txt
+    pip install -e .
     ```
 
 ##### 3. Configure the Input File: 
@@ -569,11 +569,11 @@ Once the model has solved, navigate to the `Results` directory to access results
 
 A test case is included with the initial release of QuESt Planning. The test case includes the [**IEEE RTS-GMLC synthetic grid**](<https://github.com/GridMod/RTS-GMLC>) which is a publicly available test system that is derived from IEEE RTS-96 test system. Figure 1 displays the nodal model of the RTS-GMLC test case that can be used for advanced simulations. Figure 2 provides a highly aggregated zonal RTS GMLC system that can be used for simple and quick simulations. 
 
-<img src = "images/readme/rts_gmlc.png" width="600" height="450" alt="RTS-GMLC" />
+<img src = "quest_planning/images/readme/rts_gmlc.png" width="600" height="450" alt="RTS-GMLC" />
 
 **Figure 1:** IEEE RTS-GMLC Test Case nodal model
 
-<img src = "images/readme/RTS_map.png" width="600" height="450" alt="RTS-GMLC-zonal" />
+<img src = "quest_planning/images/readme/RTS_map.png" width="600" height="450" alt="RTS-GMLC-zonal" />
 
 **Figure 2:** IEEE RTS-GMLC Test Case zonal model
 
@@ -657,7 +657,7 @@ Project team:
 
 This material is based upon work supported by the **U.S. Department of Energy, Office of Electricity (OE), Energy Storage Division**.
 
-<img src = "images/logo/SNL_Stacked_Black_Blue.jpg" width="275" height="100" alt="DOE" />
+<img src = "quest_planning/images/logo/SNL_Stacked_Black_Blue.jpg" width="275" height="100" alt="DOE" />
 
 <!--<img src = "images/logo/DOE_Logo_Color.png" alt="DOE" />-->
 
