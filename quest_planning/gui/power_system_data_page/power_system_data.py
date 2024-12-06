@@ -178,8 +178,9 @@ class PowerSystemDataPage(QWidget, Ui_power_system_data):
             self.network_map_widget.error_label.setText(display_message)
             print(error_message)  # Optionally print the error to the console for debugging
         else:
-            # Refresh the canvas only if no error occurred
-            self.network_map_widget.canvas.draw()
+            pass
+            # Refresh the canvas
+            #self.network_map_widget.canvas.draw()
 
         '''
         self.data_handler.create_network_diagram(fig,ax,use_map=False)

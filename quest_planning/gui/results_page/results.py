@@ -89,7 +89,8 @@ class ResultsPage(QWidget, Ui_results):
         self.results_viewer.stacked_resource_bar(fig,ax,figsize = None)
         
         # Refresh the canvas
-        self.installed_capacity.canvas.draw()
+        #self.installed_capacity.canvas.draw()
+
     def plot_es_installed_capacity(self):
         '''Function to show installed energy storage capacity'''
         
@@ -102,7 +103,7 @@ class ResultsPage(QWidget, Ui_results):
          
         self.results_viewer.plot_es_system(fig,ax,figsize = None)
         # Refresh the canvas
-        self.installed_capacity.canvas.draw()
+        #self.installed_capacity.canvas.draw()
         
     def gen_plots_button_clicked(self):
         """

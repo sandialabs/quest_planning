@@ -162,9 +162,9 @@ class Optimizer(with_metaclass(ABCMeta)):
                     results.solver.termination_condition
                 )
             )
-            #self.log_pyomo_infeasible_constraints(self.model)
+            self.log_pyomo_infeasible_constraints(self.model)
             
-            #log_infeasible_constraints(self.model, log_expression=True, log_variables=True)
+            log_infeasible_constraints(self.model, log_expression=True, log_variables=True)
             self.log_infeasible_constraints()
             write_iis(self.model, iis_file_name="IIS_Analysis", solver='gurobi')
 
