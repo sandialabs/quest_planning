@@ -1,44 +1,77 @@
 .. QuESt Planning documentation master file, created by
-   sphinx-quickstart on Sun Feb 18 16:32:27 2024.
+   sphinx-quickstart on Wed Jul 17 13:44:28 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to QuESt Planning's documentation!
-==========================================
+===============
+QuESt Planning
+===============
+
+Welcome to the QuESt Planning documentation!
+
+-----------------
+Introduction
+-----------------
+
+Please take a look at the readme for detailed information about this project.
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+   :maxdepth: 2
+   :caption: README
 
-.. rubric:: Modules
+   README.md
 
-.. autosummary::
-   :toctree: generated
-   
-.. automodule:: optimizer
- 
-.. autoclass:: Optimizer
-   :members:
+-----------------
+Documentation
+-----------------
 
-.. automodule:: explan
- 
-.. autoclass:: Explan
-   :members:
-   
-.. automodule:: explan_data_handler
- 
-.. autoclass:: ExplanDataHandler
-   :members:
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents
 
-.. automodule:: explan_constraints
- 
-.. autoclass:: ExplanConstraints
-   :members:
+   modules
+   advanced_simulations
 
-.. automodule:: explan_results_viewer
- 
-.. autoclass:: ExplanResultsViewer
-   :members:
+
+-----------------
+Project Overview
+-----------------
+
+QuESt Planning is a framework for energy system planning and optimization. It includes modules for data handling, optimization, and results visualization.
+
+-----------------
+Modules
+-----------------
+
+The following are the main modules available in the QuESt Planning framework:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Modules
+
+   modules/explan
+   modules/optimizer
+
+-----------------
+Submodules
+-----------------
+
+The following submodules provide additional functionality within the `explan` module:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Submodules
+
+   modules/explan_submodules/explan_constraints
+   modules/explan_submodules/explan_data_handler
+   modules/explan_submodules/explan_results_viewer
+   modules/explan_submodules/explan_optimizer
+
+-----------------
+Acknowledgments
+-----------------
+
+QuESt Planning is developed by Sandia National Laboratories with contributions from several researchers and developers.
 
 Indices and tables
 ==================

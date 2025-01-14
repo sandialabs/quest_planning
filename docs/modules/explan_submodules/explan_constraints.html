@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ExplanConstraints Class &#8212; QuESt Planning 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ExplanDataHandler Class" href="explan_data_handler.html" />
+    <link rel="prev" title="Optimizer Class" href="../optimizer.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="explanconstraints-class">
+<h1>ExplanConstraints Class<a class="headerlink" href="#explanconstraints-class" title="Link to this heading">¶</a></h1>
+<p>The <cite>ExplanConstraints</cite> class defines constraints to be considered in the QuESt Planning optimization model. It contains methods for various constraints, including energy storage, thermal and renewable generation, policy constraints, transmission constraints, power balance, and investment constraints.</p>
+<p><strong>Authors:</strong> C. Newlun and W. Olis</p>
+<section id="class-initialization">
+<h2>Class Initialization<a class="headerlink" href="#class-initialization" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ExplanConstraints">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExplanConstraints</span></span><a class="headerlink" href="#ExplanConstraints" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the <cite>ExplanConstraints</cite> class.</p>
+<dl class="simple">
+<dt><strong>Parameters:</strong></dt><dd><ul class="simple">
+<li><p><cite>data_handler</cite>: An instance of the <cite>ExplanDataHandler</cite> class to provide data and configurations for the constraints.</p></li>
+</ul>
+</dd>
+<dt><strong>Attributes:</strong></dt><dd><ul class="simple">
+<li><p><cite>_scenario</cite>: The scenario defined in the <cite>data_handler</cite>.</p></li>
+<li><p><cite>data_handler</cite>: Reference to the data handler instance.</p></li>
+<li><p><cite>index</cite>: Index of the data loaded by the data handler.</p></li>
+<li><p><cite>start_hr</cite>, <cite>end_hr</cite>: Start and end hours for constraints.</p></li>
+<li><p><cite>ini_level</cite>: Initial energy storage state of charge.</p></li>
+<li><p><cite>year_gap</cite>, <cite>year_gap_array</cite>: Defines year gaps for weighting.</p></li>
+<li><p><cite>tax_credit_end_year</cite>, <cite>total_itc</cite>, <cite>total_ptc</cite>: Tax credit details.</p></li>
+<li><p><cite>system</cite>: System name from the data handler.</p></li>
+<li><p>Tuples for various generator types (e.g., <cite>storage_tuple</cite>, <cite>thermal_tuple</cite>, etc.).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="public-methods">
+<h2>Public Methods<a class="headerlink" href="#public-methods" title="Link to this heading">¶</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="set_expressions">
+<span class="sig-name descname"><span class="pre">set_expressions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#set_expressions" title="Link to this definition">¶</a></dt>
+<dd><p>Sets expressions for the optimization model, grouping constraints by category.</p>
+<dl>
+<dt><strong>Parameters:</strong></dt><dd><ul class="simple">
+<li><p><cite>model</cite>: Pyomo optimization model instance.</p></li>
+</ul>
+</dd>
+<dt><strong>Example Usage:</strong></dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">constraints</span><span class="o">.</span><span class="n">set_expressions</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="energy_storage_constraints">
+<span class="sig-name descname"><span class="pre">energy_storage_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#energy_storage_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines energy storage-related constraints for the optimization model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="thermal_generator_constraints">
+<span class="sig-name descname"><span class="pre">thermal_generator_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#thermal_generator_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines thermal generation-related constraints for the optimization model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="renewable_generator_constraints">
+<span class="sig-name descname"><span class="pre">renewable_generator_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#renewable_generator_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines renewable generation-related constraints for the optimization model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="policy_constraints">
+<span class="sig-name descname"><span class="pre">policy_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#policy_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines policy-related constraints such as CO2 emissions and renewable portfolio standards.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="transmission_constraints">
+<span class="sig-name descname"><span class="pre">transmission_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#transmission_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines transmission-related constraints for the optimization model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="power_balance_constraints">
+<span class="sig-name descname"><span class="pre">power_balance_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#power_balance_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Ensures power balance across the system in the optimization model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="investment_constraints">
+<span class="sig-name descname"><span class="pre">investment_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#investment_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Enforces constraints on investments in generation and transmission capacity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="reliability_and_resilience_constraints">
+<span class="sig-name descname"><span class="pre">reliability_and_resilience_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#reliability_and_resilience_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines reliability and resilience-related constraints.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dr_and_ee_constraints">
+<span class="sig-name descname"><span class="pre">dr_and_ee_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#dr_and_ee_constraints" title="Link to this definition">¶</a></dt>
+<dd><p>Defines demand response and energy efficiency constraints.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obj_and_cost_breakdown">
+<span class="sig-name descname"><span class="pre">obj_and_cost_breakdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#obj_and_cost_breakdown" title="Link to this definition">¶</a></dt>
+<dd><p>Defines the objective function and cost breakdown for the optimization model.</p>
+</dd></dl>
+
+</section>
+<section id="constraint-rules">
+<h2>Constraint Rules<a class="headerlink" href="#constraint-rules" title="Link to this heading">¶</a></h2>
+<p>The <cite>ExplanConstraints</cite> class includes numerous constraint rules, such as:</p>
+<ul class="simple">
+<li><p><strong>Energy Storage:</strong> <cite>cSOC_old</cite>, <cite>cChDsch</cite>, <cite>cSOCmax</cite>, <cite>cSOCmin</cite>, <cite>cStoremax</cite>, <cite>cStoremin</cite>, etc.</p></li>
+<li><p><strong>Thermal Generators:</strong> <cite>cThermMax</cite>, <cite>cThermMin</cite>, <cite>cThermRup</cite>, <cite>cThermRdwn</cite>, etc.</p></li>
+<li><p><strong>Renewables:</strong> <cite>cPVExist</cite>, <cite>cPVCand</cite>, <cite>cWindExist</cite>, <cite>cWindCan</cite>, <cite>cCurtMax</cite>, etc.</p></li>
+<li><p><strong>Policy Constraints:</strong> <cite>cRPS</cite>, <cite>cCO2emm</cite>, <cite>cCO2emmLimit</cite>, etc.</p></li>
+<li><p><strong>Transmission:</strong> <cite>cTxFlwFw</cite>, <cite>cTxFlwBw</cite>, <cite>cDCPF</cite>, etc.</p></li>
+<li><p><strong>Power Balance:</strong> <cite>cPwrBal</cite>, <cite>cPwrBal_CopperSheet</cite>, etc.</p></li>
+<li><p><strong>Investment:</strong> <cite>cPCapTotal</cite>, <cite>cStoreCapTotal</cite>, <cite>cRetirements</cite>, etc.</p></li>
+<li><p><strong>Objective Function:</strong> <cite>cOBJ</cite>.</p></li>
+</ul>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
+<p>For a detailed reference of all methods, attributes, and inherited properties, refer to the autodoc-generated content below.</p>
+<p>QuESt Planning - explan constraints to be considered in the model
+Authors: C. Newlun and W. Olis</p>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quest_planning.explan.explan_constraints.</span></span><span class="sig-name descname"><span class="pre">ExplanConstraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_handler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cBusInvMaxAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cBusInvMaxAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Planning horizon investment constraints</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cBusInvMaxTotal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cBusInvMaxTotal"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Maximum invested cumulative capacities of candidate technologies by bus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cCO2emm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cCO2emm"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>CO2 emission constraint - carbon intensity calculations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cCO2emmLimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cCO2emmLimit"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>CO2 emission-free generation (% of generation)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cCO2int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cCO2int"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>CO2 emission constraint - carbon intensity calculations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cCO2intLimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cCO2intLimit"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>CO2 emission constraint - carbon intensity calculations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cChDsch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cChDsch"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>This enforces that the sum of the charge/discharge power and reserves does not exceed the cumulative invested power size of the ES</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cCurtMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cCurtMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Limit curtailment to only renewable generators</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDCPF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDCPF"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>DC Power Flow Constraint
+<strong>Under construction; add self.mva_base</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDRMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDRMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Demand response limits</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDRSystMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDRSystMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Demand response limits
+TODO: fix constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDRgenMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDRgenMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Demand response limits
+TODO: fix constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDRnoAnc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDRnoAnc"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Demand response limits
+TODO: fix constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDRnoInv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDRnoInv"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Demand response limits
+TODO: fix constraint and remove hard code</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cDRopMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cDRopMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Demand response limits
+TODO: fix constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cESReplaceCost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cESReplaceCost"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Energy storage lifetime extension costs for each storage device</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cESReplaceCostSum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cESReplaceCostSum"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Total energy storage lifetime costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cFOMCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cFOMCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define annual fixed operating &amp; maintenance costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cFuelCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cFuelCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define annual fuel costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cGenInvCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cGenInvCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define annual generation investment costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cITCAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cITCAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define investment tax credit incentives</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cLNSCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cLNSCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define load shed penalty cost</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cLNSMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cLNSMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ensure load shed does not exceed the demand for that time step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cNGH2Costconv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cNGH2Costconv"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define hydrogen conversion costs
+<strong>Optional cost</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cNonES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cNonES"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ensures ES has no P_gen and no gen has Pcha and Pdis
+<strong>Optional constraint</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cOBJ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cOBJ"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define objective function to mimimize</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPCapTotal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPCapTotal"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Cumulative  generation capacity
+TODO: address with lead times for technologies</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPFlexMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPFlexMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraints - Flexibility – Upper Bound</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPFlexMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPFlexMin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraints - Flexibility – Lower Bound</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPRM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPRM"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Planning reserve margin constraint
+TODO: Add piecewise ELCC or dynamic elcc curves for PRM calculations OR Seasonal ELCC</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPRegMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPRegMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraints - Regulation - 5min – Upper Bound</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPRegMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPRegMin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraints - Regulation - 5min – Lower Bound</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPSpinMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPSpinMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraints - Spinning - 10min – Upper Bound</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPSpinMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPSpinMin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraints - Spinning - 10min – Lower Bound</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPTCAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPTCAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define production tax credit incentives</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPVCand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPVCand"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Candidate PV generator dispatch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPVExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPVExist"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Existing PV generator dispatch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPwrBal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPwrBal"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Power Balance constraint
+TODO: remove for and if statements as they are expensive in pyomo</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cPwrBal_CopperSheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cPwrBal_CopperSheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Power Balance constraint - copper sheet</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cRPS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cRPS"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Renewable portfolio standard constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cRenAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cRenAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Annual renewable generation calculation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cResourceByBus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cResourceByBus"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Custom constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cRetirements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cRetirements"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>P_cap_total calculations &amp; generation retirements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSOC_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSOC_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Energy Storage SOC calculation</p>
+<p>TODO: add regulating reserves into this calculation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSOCmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSOCmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>SOC has to be less than or equal to the battery’s upper limit- KEEP CJN</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSOCmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSOCmin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>SOC has to be greater than or equal to the battery’s lower limit</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSlackBus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSlackBus"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define slack bus
+<strong>TODO: define in data_handler</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cStoreCapTotal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cStoreCapTotal"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Cumulative ES energy capacity
+TODO: address with lead times for technologies</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cStoremax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cStoremax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define Max energy storage capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cStoremin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cStoremin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define minimum energy storage capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSystGasMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSystGasMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Maximum system gas capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSystPVMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSystPVMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Maximum system solar capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cSystWindMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cSystWindMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Maximum system wind capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTechAvail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTechAvail"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ensure technology is not invested before its availability year</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cThermMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cThermMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Thermal generation limit - upper bound
+<strong>thermal_tuple is optional</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cThermMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cThermMin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enforce thermal generation minimum stable level</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cThermRdwn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cThermRdwn"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraint for each generator - ensures adequate ramp down - only valid for hourly simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cThermRup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cThermRup"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Ramping constraint for each generator - ensures adequate ramp up - only valid for hourly simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cThetaDiffMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cThetaDiffMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bounds on phase angle difference when running DC power flow</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cThetaDiffMin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cThetaDiffMin"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bounds on phase angle difference when running DC power flow</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTotalCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTotalCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define total annual costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxCapInvMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxCapInvMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enforce candidate line investment capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxCapSystMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxCapSystMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enforce system-wide transmission investment capacity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxCapTotalnoDelay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxCapTotalnoDelay"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Transmission total invested capacity calculation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxCapTotalwDelay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxCapTotalwDelay"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>TODO: Optional constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxFlwBw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxFlwBw"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Backwards flow constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxFlwFw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxFlwFw"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Transmission forward flow constraint with pipe and bubble OR DC-power flow</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cTxInvCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cTxInvCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define annual transmission investment costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cVOMCostAnnual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cVOMCostAnnual"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define annual variable operating &amp; maintenance costs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cWindCan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cWindCan"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Candidate Wind generator dispatch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cWindExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.cWindExist"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Existing Wind generator dispatch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">constraint1_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.constraint1_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define model.Store – the energy capacity
+<strong>Optional constraint</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">dr_and_ee_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.dr_and_ee_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the demand response and energy efficiency constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">energy_storage_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.energy_storage_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the energy storage constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">investment_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.investment_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the investement constraints for generation and transmission of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">obj_and_cost_breakdown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.obj_and_cost_breakdown"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the objective and cost breakdown constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">policy_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.policy_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the policy constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">power_balance_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.power_balance_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the power balance constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">reliability_and_resilience_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.reliability_and_resilience_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the reliability and resilience constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">renewable_generator_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.renewable_generator_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the renewable generation constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scenario</span></span></dt>
+<dd><p>Define scenario - check if we need</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">set_expressions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.set_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Set expressions for optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">thermal_generator_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.thermal_generator_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the thermal generation constraints of the optimization model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">transmission_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/quest_planning/explan/explan_constraints.html#ExplanConstraints.transmission_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Define the transmission constraints of the optimization model</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">QuESt Planning</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">README</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html"><strong>QuESt Planning</strong>: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_simulations.html">Advanced Simulations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explan.html">Explan Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optimizer.html">Optimizer Class</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Submodules</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ExplanConstraints Class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#class-initialization">Class Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#public-methods">Public Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#constraint-rules">Constraint Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="explan_data_handler.html">ExplanDataHandler Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explan_results_viewer.html">ExplanResultsViewer Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explan_optimizer.html">ExplanOptimizer</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../optimizer.html" title="previous chapter">Optimizer Class</a></li>
+      <li>Next: <a href="explan_data_handler.html" title="next chapter">ExplanDataHandler Class</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/modules/explan_submodules/explan_constraints.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

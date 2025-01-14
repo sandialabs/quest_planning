@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>QuESt Planning: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems &#8212; QuESt Planning 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modules Overview" href="modules.html" />
+    <link rel="prev" title="QuESt Planning" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p><a id="top"></a></p>
+<div style="text-align: center;">
+    <img src="images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
+</div>
+<section id="quest-planning-a-long-term-power-system-capacity-expansion-planning-tool-focused-on-energy-storage-systems">
+<h1><strong>QuESt Planning</strong>: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems<a class="headerlink" href="#quest-planning-a-long-term-power-system-capacity-expansion-planning-tool-focused-on-energy-storage-systems" title="Link to this heading">¶</a></h1>
+<p>Current release version: 1.0.0</p>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#intro"><span class="xref myst">Introduction</span></a></p></li>
+<li><p><a class="reference internal" href="#key-features"><span class="xref myst">Key Features of QuESt Planning</span></a></p></li>
+<li><p><a class="reference internal" href="#getting-started"><span class="xref myst">Getting Started</span></a></p></li>
+<li><p><a class="reference internal" href="#workflow"><span class="xref myst">Workflow of QuESt Planning Tool</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#data_prep"><span class="xref myst">Data Preparation</span></a></p></li>
+<li><p><a class="reference internal" href="#gui_workflow"><span class="xref myst">Graphical User Interface</span></a></p></li>
+<li><p><a class="reference internal" href="#advanced"><span class="xref myst">Advanced Simulations</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#examples"><span class="xref myst">Examples</span></a></p></li>
+<li><p><a class="reference internal" href="#tips"><span class="xref myst">Tips for Running the QuESt Planning Tool</span></a></p></li>
+<li><p><a class="reference internal" href="#feedback"><span class="xref myst">Feedback</span></a></p></li>
+<li><p><a class="reference internal" href="#development-status"><span class="xref myst">Development Status</span></a></p></li>
+<li><p><a class="reference internal" href="#acknowledgement"><span class="xref myst">Acknowledgements</span></a></p></li>
+</ul>
+</section>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p><a id="intro"></a></p>
+<p>QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of <a class="reference external" href="https://github.com/sandialabs/snl-quest">QuESt 2.0</a>: Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.</p>
+<div style="text-align: center;">
+<img src = "images/readme/qp_overview.png" width="650" height="300" alt="overview" />
+</div>
+Long-term capacity expansion planning models are complex optimization models that require careful consideration of modeling assumptions and input data. Model build and solve times can vary significantly, from minutes to days, based on assumptions made while configuring the model inputs and the selection of solver. For more guidance, please refer to the Tips section.
+<!--QuESt Planning documentation is under development and will be available [here](https://github.com/sandialabs/snl-quest).-->
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+<section id="key-features-of-quest-planning">
+<h2>Key Features of QuESt Planning<a class="headerlink" href="#key-features-of-quest-planning" title="Link to this heading">¶</a></h2>
+<p><a id="Key-features"></a>
+Key features of the QuESt Planning tool include:</p>
+<ul class="simple">
+<li><p><strong>Optimization of Grid Investments:</strong> Leverages a Pyomo-based optimization model to find the cost-optimal mix of generation, transmission, and storage.</p></li>
+<li><p><strong>Energy Storage System Evaluation:</strong> Designed to evaluate a broad range of energy storage technologies and their role in the optimal mix of generation required to support system operations. Users are able to define energy storage technologies based on power and energy capacity cost, asset lifetime, round-trip efficiency, and other operational characteristics.</p></li>
+<li><p><strong>Model Flexibility:</strong> Supports various scenarios and sensitivity analyses to explore different investment portfolios and pathways.</p></li>
+<li><p><strong>Scenario-based Planning:</strong> Allows users to develop multiple scenarios to evaluate planning sensitivities and scenarios.</p></li>
+<li><p><strong>User-Friendly Interface:</strong> Simplifies the process of input data upload, planning model setup, scenario construction, model execution, and results interpretation.</p></li>
+<li><p><strong>Enhanced Visualizations:</strong> The QuESt Planning tool provides several visualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps.</p></li>
+</ul>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p><a id="getting-started"></a></p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Python 3.11</p></li>
+</ul>
+</section>
+<section id="solver-installation">
+<h3>Solver Installation<a class="headerlink" href="#solver-installation" title="Link to this heading">¶</a></h3>
+<p>Ensure an optimization solver is installed on your machine. For best performance, use a commercial solver such as Gurobi and Cplex. Solvers to consider include:</p>
+<p><strong>Commercial Solvers</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.gurobi.com/">Gurobi</a></p></li>
+<li><p><a class="reference external" href="https://www.ibm.com/products/ilog-cplex-optimization-studio">Cplex</a></p></li>
+</ul>
+<p><strong>Open-source Solvers</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.gnu.org/software/glpk/">GLPK</a></p></li>
+<li><p><a class="reference external" href="https://github.com/coin-or/Clp">Clp</a></p></li>
+<li><p><a class="reference external" href="https://highs.dev/#top">HiGHs</a></p></li>
+</ul>
+</section>
+<section id="setting-up-a-virtual-environment">
+<h3>Setting Up a Virtual Environment<a class="headerlink" href="#setting-up-a-virtual-environment" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> (if not already installed):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
+</pre></div>
+</div>
+</li>
+<li><p>Create a virtual environment (named <code class="docutils literal notranslate"><span class="pre">venv</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>virtualenv<span class="w"> </span>venv
+</pre></div>
+</div>
+</li>
+<li><p>Activate the virtual environment:</p>
+<ul>
+<li><p>On Windows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.<span class="se">\v</span>env<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="cloning-the-repository-and-installing-dependencies">
+<h3>Cloning the Repository and Installing Dependencies<a class="headerlink" href="#cloning-the-repository-and-installing-dependencies" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p>Clone the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>&lt;repository_url&gt;
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">&lt;repository_url&gt;</span></code> with the URL of the QuESt Planning repository.</p>
+</li>
+<li><p>Navigate to the QuESt Planning Directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>path/to/quest_planning
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">path/to/quest_planning</span></code> with the name of the directory where QuESt Planning was cloned.</p>
+</li>
+<li><p>Install Dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="run-the-quest-planning-tool">
+<h3>Run the QuESt Planning Tool<a class="headerlink" href="#run-the-quest-planning-tool" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p>Once the dependencies are installed the QuESt Planning package is installed in the virtual environment is activated. You can run tool using the following command from any directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>quest_planning
+</pre></div>
+</div>
+</li>
+</ol>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+</section>
+<section id="workflow-of-quest-planning-tool">
+<h2>Workflow of QuESt Planning Tool<a id="workflow"></a><a class="headerlink" href="#workflow-of-quest-planning-tool" title="Link to this heading">¶</a></h2>
+<p>The figure below provides the basic structure of the QuESt Planning tool. The input data are in the form of CSV files and more information can be found in the <a class="reference internal" href="#data_prep"><span class="xref myst">Data Preparation</span></a> Section. There are two options for running the QuESt Planning tool:</p>
+<ul class="simple">
+<li><p>Option A: <a class="reference internal" href="#gui_workflow"><span class="xref myst">Graphical User Interface</span></a>: This application is designed for smaller problems and allows for enhanced visualizations.</p></li>
+<li><p>Option B: <a class="reference internal" href="#advanced"><span class="xref myst">Advanced Simulations</span></a>: This command-line script is designed for larger problems and enables the use of remote computing for advanced simulations.</p></li>
+</ul>
+<div style="text-align: center;">
+   <img src = "images/readme/qp_code_structure.png" width="750" height="450" alt="code" />
+</div>
+<section id="data-preparation">
+<h3>Data Preparation<a id="data_prep"></a><a class="headerlink" href="#data-preparation" title="Link to this heading">¶</a></h3>
+<p>The input data is constructed via several CSV files. The QuESt Planning tool require the following CSV files with correct format in the <code class="docutils literal notranslate"><span class="pre">data_explan</span></code> folder within the <code class="docutils literal notranslate"><span class="pre">quest_planning</span></code> directory:</p>
+<section id="power-system-data">
+<h4>Power System Data<a class="headerlink" href="#power-system-data" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference internal" href="#bus"><span class="xref myst"><strong>bus.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#branch"><span class="xref myst"><strong>branch.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#gen"><span class="xref myst"><strong>gen.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#gen_viz"><span class="xref myst"><strong>gen_viz.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#tech"><span class="xref myst"><strong>tech.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#storage"><span class="xref myst"><strong>storage.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#load"><span class="xref myst"><strong>load.csv</strong></span></a></p></li>
+</ul>
+</section>
+<section id="economic-data">
+<h4>Economic Data<a class="headerlink" href="#economic-data" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference internal" href="#capex"><span class="xref myst"><strong>capex_tech.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#capex_es"><span class="xref myst"><strong>capex_es.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#fuel"><span class="xref myst"><strong>fuel.csv</strong></span></a></p></li>
+</ul>
+</section>
+<section id="renewable-profile-data">
+<h4>Renewable Profile Data<a class="headerlink" href="#renewable-profile-data" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference internal" href="#solar"><span class="xref myst"><strong>solar.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#solar_cand"><span class="xref myst"><strong>solar_cand.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#wind"><span class="xref myst"><strong>wind.csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#wind_cand"><span class="xref myst"><strong>wind_cand.csv</strong></span></a></p></li>
+</ul>
+</section>
+<section id="other-files">
+<h4>Other Files<a class="headerlink" href="#other-files" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference internal" href="#policy"><span class="xref myst"><strong>policy,csv</strong></span></a></p></li>
+<li><p><a class="reference internal" href="#scalars"><span class="xref myst"><strong>scalars.csv</strong></span></a></p></li>
+</ul>
+<p>The CSV files and the associated data are structured as follows:</p>
+<p><a id="bus"></a></p>
+</section>
+</section>
+<section id="bus-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">bus.csv</span></code><a class="headerlink" href="#bus-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Number</p></td>
+<td><p>Bus number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bus_name</p></td>
+<td><p>Bus name</p></td>
+</tr>
+<tr class="row-even"><td><p>Bus_number</p></td>
+<td><p>Bus number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Load_share</p></td>
+<td><p>Share of system peak load (%)</p></td>
+</tr>
+<tr class="row-even"><td><p>LAT</p></td>
+<td><p>Latitude</p></td>
+</tr>
+<tr class="row-odd"><td><p>LON</p></td>
+<td><p>Longitude</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="branch"></a></p>
+</section>
+<section id="branch-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">branch.csv</span></code><a class="headerlink" href="#branch-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Line_Number</p></td>
+<td><p>Unique branch ID</p></td>
+</tr>
+<tr class="row-odd"><td><p>From_Bus</p></td>
+<td><p>From Bus Number</p></td>
+</tr>
+<tr class="row-even"><td><p>From_Bus_Name</p></td>
+<td><p>From Bus Name</p></td>
+</tr>
+<tr class="row-odd"><td><p>To_Bus</p></td>
+<td><p>To Bus Number</p></td>
+</tr>
+<tr class="row-even"><td><p>To_Bus_Name</p></td>
+<td><p>To Bus Name</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rating_F</p></td>
+<td><p>Forward Rating (MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>Rating_B</p></td>
+<td><p>Backward Rating (MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>R</p></td>
+<td><p>Branch resistance p.u.</p></td>
+</tr>
+<tr class="row-even"><td><p>X</p></td>
+<td><p>Branch reactance p.u.</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>Branch charging susceptance p.u.</p></td>
+</tr>
+<tr class="row-even"><td><p>Length</p></td>
+<td><p>Line length (miles)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx_Cost</p></td>
+<td><p>Transmission Cost</p></td>
+</tr>
+<tr class="row-even"><td><p>Tx_limit</p></td>
+<td><p>Transmission investment limit (MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Lead_Time</p></td>
+<td><p>Transmission investment lead time (years)</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="gen"></a></p>
+</section>
+<section id="gen-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">gen.csv</span></code><a class="headerlink" href="#gen-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gen_num</p></td>
+<td><p>Generator number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gen_name</p></td>
+<td><p>Generator name</p></td>
+</tr>
+<tr class="row-even"><td><p>Bus_num</p></td>
+<td><p>Bus number where generator is located</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bus</p></td>
+<td><p>Bus name where generator is located</p></td>
+</tr>
+<tr class="row-even"><td><p>Tech</p></td>
+<td><p>Generator technology name</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech_Num</p></td>
+<td><p>Generator technology number</p></td>
+</tr>
+<tr class="row-even"><td><p>Cap</p></td>
+<td><p>Generator installed capacity (MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>MinCap</p></td>
+<td><p>Generator minimum stable level (MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>CandCap</p></td>
+<td><p>Generator maximum annual investible capacity (MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>SystCap</p></td>
+<td><p>Generator maximum total investible capacity (MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>PlannedYr</p></td>
+<td><p>Planned year for operation</p></td>
+</tr>
+<tr class="row-odd"><td><p>RetCap</p></td>
+<td><p>Generator planned retirement capacity (MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>RetYr</p></td>
+<td><p>Generator planned retirement year</p></td>
+</tr>
+<tr class="row-odd"><td><p>CapCred</p></td>
+<td><p>Capacity credit (%)</p></td>
+</tr>
+<tr class="row-even"><td><p>LeadTime</p></td>
+<td><p>Lead time required from investment to operation (not used)</p></td>
+</tr>
+<tr class="row-odd"><td><p>YearAvail</p></td>
+<td><p>Eligible year for investment</p></td>
+</tr>
+<tr class="row-even"><td><p>HR</p></td>
+<td><p>Generator heat rate at maximum output (MMBTU/MWhr)</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOM</p></td>
+<td><p>Fixed Operating &amp; Maintenance Cost ($/MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>VOM</p></td>
+<td><p>Variable Operating &amp; Maintenance Cost ($/MWh)</p></td>
+</tr>
+<tr class="row-odd"><td><p>PTC</p></td>
+<td><p>Production tax credit ($/MWh)</p></td>
+</tr>
+<tr class="row-even"><td><p>ITC</p></td>
+<td><p>Investment tax credit ($/MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Lifetime</p></td>
+<td><p>Generator lifetime (years)</p></td>
+</tr>
+<tr class="row-even"><td><p>Ramp</p></td>
+<td><p>Generator ramp rate (%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOR</p></td>
+<td><p>Forced Outage Rate (%)</p></td>
+</tr>
+<tr class="row-even"><td><p>CO2</p></td>
+<td><p>CO2 emission rate (MMTons/MWhr))</p></td>
+</tr>
+<tr class="row-odd"><td><p>SO2</p></td>
+<td><p>SO2 emission rate (MMTons/MWhr))</p></td>
+</tr>
+<tr class="row-even"><td><p>NO2</p></td>
+<td><p>NCO2 emission rate (MMTons/MWhr))</p></td>
+</tr>
+<tr class="row-odd"><td><p>TransAdder</p></td>
+<td><p>Transmission cost adder($/MW))</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="gen_viz"></a></p>
+</section>
+<section id="gen-viz-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">gen_viz.csv</span></code><a class="headerlink" href="#gen-viz-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gen_num</p></td>
+<td><p>Generator number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gen_name</p></td>
+<td><p>Generator name</p></td>
+</tr>
+<tr class="row-even"><td><p>Bus_num</p></td>
+<td><p>Bus number where generator is located</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bus</p></td>
+<td><p>Bus name where generator is located</p></td>
+</tr>
+<tr class="row-even"><td><p>Tech</p></td>
+<td><p>Generator technology name</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech_Num</p></td>
+<td><p>Generator technology number</p></td>
+</tr>
+<tr class="row-even"><td><p>LAT</p></td>
+<td><p>Latitude</p></td>
+</tr>
+<tr class="row-odd"><td><p>LON</p></td>
+<td><p>Longitude</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="tech"></a></p>
+</section>
+<section id="tech-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">tech.csv</span></code><a class="headerlink" href="#tech-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Num</p></td>
+<td><p>Technology number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech</p></td>
+<td><p>Name of the technology (e.g., solar, wind)</p></td>
+</tr>
+<tr class="row-even"><td><p>Tech_Name</p></td>
+<td><p>Technology name</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech ID</p></td>
+<td><p>Unique technology ID</p></td>
+</tr>
+<tr class="row-even"><td><p>Tech_Num</p></td>
+<td><p>Technology number</p></td>
+</tr>
+<tr class="row-odd"><td><p>LeadTime</p></td>
+<td><p>Lead time required from investment to operation (not used)</p></td>
+</tr>
+<tr class="row-even"><td><p>CandCap</p></td>
+<td><p>Generator maximum annual investible capacity (MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>SystCap</p></td>
+<td><p>Generator maximum total investible capacity (MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>RampRate</p></td>
+<td><p>Generator ramp rate (%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOM</p></td>
+<td><p>Fixed Operating &amp; Maintenance Cost ($/MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>VOM</p></td>
+<td><p>Variable Operating &amp; Maintenance Cost ($/MWh)</p></td>
+</tr>
+<tr class="row-odd"><td><p>PTC</p></td>
+<td><p>Production tax credit ($/MWh)</p></td>
+</tr>
+<tr class="row-even"><td><p>ITC</p></td>
+<td><p>Investment tax credit ($/MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>CapCred</p></td>
+<td><p>Capacity credit (%)</p></td>
+</tr>
+<tr class="row-even"><td><p>Lifetime</p></td>
+<td><p>Generator lifetime (years)</p></td>
+</tr>
+<tr class="row-odd"><td><p>YearAvail</p></td>
+<td><p>Eligible year for investment</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="storage"></a></p>
+</section>
+<section id="storage-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">storage.csv</span></code><a class="headerlink" href="#storage-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gen_num</p></td>
+<td><p>Generator number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gen_name</p></td>
+<td><p>Generator name</p></td>
+</tr>
+<tr class="row-even"><td><p>Tech</p></td>
+<td><p>Generator technology name</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech_Num</p></td>
+<td><p>Generator technology number</p></td>
+</tr>
+<tr class="row-even"><td><p>RTE</p></td>
+<td><p>Round-trip efficiency (%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Min_Duration</p></td>
+<td><p>Minimum duration (hours)</p></td>
+</tr>
+<tr class="row-even"><td><p>Max_Duration</p></td>
+<td><p>Maximum duration (hours)</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="load"></a></p>
+</section>
+<section id="load-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">load.csv</span></code><a class="headerlink" href="#load-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>mm/dd/yy hh:mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>year</p></td>
+<td><p>yy</p></td>
+</tr>
+<tr class="row-even"><td><p>day</p></td>
+<td><p>mm/dd/yy</p></td>
+</tr>
+<tr class="row-odd"><td><p>hour</p></td>
+<td><p>hh</p></td>
+</tr>
+<tr class="row-even"><td><p>load_forecast #1</p></td>
+<td><p>Load forecast #1</p></td>
+</tr>
+<tr class="row-odd"><td><p>load_forecast #2</p></td>
+<td><p>Load forecast #2</p></td>
+</tr>
+<tr class="row-even"><td><p>…</p></td>
+<td><p>Add additional load forecasts as desired</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="capex"></a></p>
+</section>
+<section id="capex-tech-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">capex_tech.csv</span></code><a class="headerlink" href="#capex-tech-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Tech_Num</p></td>
+<td><p>Generator technology number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech_Name</p></td>
+<td><p>Generator technology name</p></td>
+</tr>
+<tr class="row-even"><td><p>Year 1</p></td>
+<td><p>Year 1 capital costs ($/MW)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Year 2</p></td>
+<td><p>Year 2 capital costs ($/MW)</p></td>
+</tr>
+<tr class="row-even"><td><p>…</p></td>
+<td><p>Add up to year N capital costs ($/MW)</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="capex_es"></a></p>
+</section>
+<section id="capex-es-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">capex_es.csv</span></code><a class="headerlink" href="#capex-es-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Tech_Num</p></td>
+<td><p>Generator technology number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech_Name</p></td>
+<td><p>Generator technology name</p></td>
+</tr>
+<tr class="row-even"><td><p>Cost</p></td>
+<td><p>Cost type (i.e. power or energy)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Year 1</p></td>
+<td><p>Year 1 capital costs ($/MW or $/MWh)</p></td>
+</tr>
+<tr class="row-even"><td><p>Year 2</p></td>
+<td><p>Year 2 capital costs ($/MW or $/MWh)</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>Add up to year N capital costs ($/MW or $/MWh)</p></td>
+</tr>
+</tbody>
+</table>
+<p>High and low ES cost trajectories can be created from <code class="docutils literal notranslate"><span class="pre">capex_es.csv</span></code> and name <code class="docutils literal notranslate"><span class="pre">capex_h_es.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">capex_l_es.csv</span></code>, respectively.</p>
+<p><a id="fuel"></a></p>
+</section>
+<section id="fuel-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">fuel.csv</span></code><a class="headerlink" href="#fuel-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Gen_Num</p></td>
+<td><p>Generator number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gen_Name</p></td>
+<td><p>Generator name</p></td>
+</tr>
+<tr class="row-even"><td><p>Bus</p></td>
+<td><p>Bus where generator is located</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tech</p></td>
+<td><p>Generator technology name</p></td>
+</tr>
+<tr class="row-even"><td><p>Year 1</p></td>
+<td><p>Year 1 fuel costs ($/MMBTU)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Year 2</p></td>
+<td><p>Year 2 fuel costs ($/MMBTU)</p></td>
+</tr>
+<tr class="row-even"><td><p>…</p></td>
+<td><p>Add up to year N fuel costs ($/MMBTU)</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="solar"></a></p>
+</section>
+<section id="solar-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">solar.csv</span></code><a class="headerlink" href="#solar-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>mm/dd/yy hh:mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>year</p></td>
+<td><p>yy</p></td>
+</tr>
+<tr class="row-even"><td><p>day</p></td>
+<td><p>mm/dd/yy</p></td>
+</tr>
+<tr class="row-odd"><td><p>solar gen #1</p></td>
+<td><p>Solar plant #1</p></td>
+</tr>
+<tr class="row-even"><td><p>solar gen #2</p></td>
+<td><p>Solar plant #2</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>Add additional solar profiles to match solar generators</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="solar_cand"></a></p>
+</section>
+<section id="solar-cand-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">solar_cand.csv</span></code><a class="headerlink" href="#solar-cand-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>mm/dd/yy hh:mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>year</p></td>
+<td><p>yy</p></td>
+</tr>
+<tr class="row-even"><td><p>day</p></td>
+<td><p>mm/dd/yy</p></td>
+</tr>
+<tr class="row-odd"><td><p>solar gen #1</p></td>
+<td><p>Candidate solar plant #1</p></td>
+</tr>
+<tr class="row-even"><td><p>solar gen #2</p></td>
+<td><p>Candidate solar plant #2</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>Add additional candidate solar profiles to match solar generators</p></td>
+</tr>
+<tr class="row-even"><td><p><a id="wind"></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="wind-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">wind.csv</span></code><a class="headerlink" href="#wind-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>mm/dd/yy hh:mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>year</p></td>
+<td><p>yy</p></td>
+</tr>
+<tr class="row-even"><td><p>day</p></td>
+<td><p>mm/dd/yy</p></td>
+</tr>
+<tr class="row-odd"><td><p>wind gen #1</p></td>
+<td><p>wind plant #1</p></td>
+</tr>
+<tr class="row-even"><td><p>wind gen #2</p></td>
+<td><p>wind plant #2</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>Add additional wind profiles to match solar generators</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="wind_cand"></a></p>
+</section>
+<section id="wind-cand-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">wind_cand.csv</span></code><a class="headerlink" href="#wind-cand-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>mm/dd/yy hh:mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>year</p></td>
+<td><p>yy</p></td>
+</tr>
+<tr class="row-even"><td><p>day</p></td>
+<td><p>mm/dd/yy</p></td>
+</tr>
+<tr class="row-odd"><td><p>wind gen #1</p></td>
+<td><p>Candidate wind plant #1</p></td>
+</tr>
+<tr class="row-even"><td><p>wind gen #2</p></td>
+<td><p>Candidate wind plant #2</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>Add additional candidate wind profiles to match solar generators</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="policy"></a></p>
+</section>
+<section id="policy-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">policy.csv</span></code><a class="headerlink" href="#policy-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Policy ID</p></td>
+<td><p>Unique policy ID</p></td>
+</tr>
+<tr class="row-odd"><td><p>Name</p></td>
+<td><p>Name of the policy</p></td>
+</tr>
+<tr class="row-even"><td><p>Type</p></td>
+<td><p>Type of policy (e.g., subsidy, tax)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Impact</p></td>
+<td><p>Expected impact on the energy system</p></td>
+</tr>
+</tbody>
+</table>
+<p><a id="scalars"></a></p>
+</section>
+<section id="scalars-csv">
+<h3><code class="docutils literal notranslate"><span class="pre">scalars.csv</span></code><a class="headerlink" href="#scalars-csv" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Scalar</p></td>
+<td><p>Scalar name</p></td>
+</tr>
+<tr class="row-odd"><td><p>Value</p></td>
+<td><p>Scalar value</p></td>
+</tr>
+<tr class="row-even"><td><p>Unit</p></td>
+<td><p>Unit</p></td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="#workflow"><span class="xref myst">Back to Workflow Options</span></a></p>
+</section>
+<section id="user-interface-workflow">
+<h3>User-Interface Workflow<a id="gui_workflow"></a><a class="headerlink" href="#user-interface-workflow" title="Link to this heading">¶</a></h3>
+<p>The following section provides details on the workflow of the QuESt Planning user interface.</p>
+<!--<img src = "images/readme/qp_workflow.png" width="750" height="500" alt="workflow" />-->
+<section id="start">
+<h4>1. Start<a class="headerlink" href="#start" title="Link to this heading">¶</a></h4>
+<p>Upon executing the <code class="docutils literal notranslate"><span class="pre">quest_planning</span></code> package, a landing page will appear. The <code class="docutils literal notranslate"><span class="pre">Documentation</span></code> button will provide access to this <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file in a separate dialog window. To start using the tool press the <code class="docutils literal notranslate"><span class="pre">Start</span></code> button.</p>
+<a class="reference internal image-reference" href="_images/start_page_1.png"><img alt="Start" src="_images/start_page_1.png" style="width: 500px; height: 450px;" />
+</a>
+</section>
+<section id="id1">
+<h4>2. Power System Data<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<p>In the <code class="docutils literal notranslate"><span class="pre">Power</span> <span class="pre">System</span> <span class="pre">Data</span></code> page, the corresponding CSV data will be uploaded and processed via the data handler in the backend of the tool. To begin, the user must navigate to the correct directory where all CSV files are located. Use the <code class="docutils literal notranslate"><span class="pre">Browse</span></code> button to open File Explorer. The user should also fill in the <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Name</span></code> text box with the desired name. The <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">name</span></code> will be used to name saved files, plots, and scenarios.</p>
+<a class="reference internal image-reference" href="_images/power_system_data_1.png"><img alt="Power System Data" src="_images/power_system_data_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>Once the correct directory is selected, click <code class="docutils literal notranslate"><span class="pre">Open</span></code>. Upon clicking a breakdown of the system information will appear as follows:</p>
+<a class="reference internal image-reference" href="_images/power_system_data_upload_1.png"><img alt="Power System Data" src="_images/power_system_data_upload_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>Once the data is collected, click <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
+</section>
+<section id="planning-model-setup">
+<h4>3. Planning Model Setup<a class="headerlink" href="#planning-model-setup" title="Link to this heading">¶</a></h4>
+<p>In the <code class="docutils literal notranslate"><span class="pre">Planning</span> <span class="pre">Model</span> <span class="pre">Setup</span></code> page, the user can define the modeling assumptions to be fed to the optimizer. Select the <code class="docutils literal notranslate"><span class="pre">Begin</span> <span class="pre">Year</span></code> and the <code class="docutils literal notranslate"><span class="pre">End</span> <span class="pre">Year</span></code> for the simulation. Then click the <code class="docutils literal notranslate"><span class="pre">Select</span> <span class="pre">Simulation</span> <span class="pre">Years</span></code> button and a separate dialog button will open.</p>
+<a class="reference internal image-reference" href="_images/planning_model_setup_1.png"><img alt="Planning Model Setup" src="_images/planning_model_setup_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>Select the years desired for the planning model simulation or select <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">Years</span></code>. Click <code class="docutils literal notranslate"><span class="pre">OK</span></code> to save the years.</p>
+<a class="reference internal image-reference" href="_images/years_dialog.png"><img alt="Planning Model Setup" src="_images/years_dialog.png" style="width: 350px; height: 300px;" />
+</a>
+<p>Select the desired <code class="docutils literal notranslate"><span class="pre">Transmission</span> <span class="pre">Model</span></code>. Currently the tool supports the transportation (“pipes &amp; bubbles”) modeling of transmission systems. Future releases will support copper sheet and DC power flow capabilities.</p>
+<p>Select the desired <code class="docutils literal notranslate"><span class="pre">Temporal</span> <span class="pre">Resolution</span></code>. For quicker simulations, select <code class="docutils literal notranslate"><span class="pre">Seasonal</span> <span class="pre">Blocks</span></code>. More advanced features include <code class="docutils literal notranslate"><span class="pre">Representative</span> <span class="pre">Weeks</span></code> and <code class="docutils literal notranslate"><span class="pre">8760</span> <span class="pre">Analysis</span></code>, which will be upcoming in a future release.</p>
+<p>Select a desired <code class="docutils literal notranslate"><span class="pre">Annual</span> <span class="pre">Discount</span> <span class="pre">Rate</span></code>, which will be used for the net-present value calculations, and the <code class="docutils literal notranslate"><span class="pre">Base</span> <span class="pre">Currency</span> <span class="pre">Year</span></code>, which is used to scale costs based on the input data provided in the CSV files.</p>
+<p>Once complete, the planning model setup will be populated in tab window as follows:</p>
+<a class="reference internal image-reference" href="_images/planning_model_setup_complete_1.png"><img alt="Planning Model Setup" src="_images/planning_model_setup_complete_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>When the planning model is setup, click <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
+</section>
+<section id="scenario-builder">
+<h4>4. Scenario Builder<a class="headerlink" href="#scenario-builder" title="Link to this heading">¶</a></h4>
+<p>In the <code class="docutils literal notranslate"><span class="pre">Scenario</span> <span class="pre">Builder</span></code> page, users are able to design and modify scenarios based on several planning uncertainties. To begin, specify a <code class="docutils literal notranslate"><span class="pre">Scenario</span> <span class="pre">Name</span></code> which will be used for file identification when printing the results.</p>
+<p>Select a <code class="docutils literal notranslate"><span class="pre">capital</span> <span class="pre">cost</span> <span class="pre">trend</span> <span class="pre">used</span></code> for the energy storage capital costs. These capital cost trends are specified in the input CSV files.</p>
+<p>Select a <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">Forecast</span></code>.</p>
+<p>Select a <code class="docutils literal notranslate"><span class="pre">Renewable</span> <span class="pre">Portfolio</span> <span class="pre">Standard</span></code> or create a new policy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Transmission</span> <span class="pre">Expansion</span></code> will allow for the co-optimization of the generation and transmission expansion. This feature is in testing will be released in a later version.</p>
+<a class="reference internal image-reference" href="_images/scenario_builder_1.png"><img alt="Scenario Builder" src="_images/scenario_builder_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>To select the candidate technologies click the <code class="docutils literal notranslate"><span class="pre">Candidate</span> <span class="pre">Technologies</span></code> buttons. The below window will appear.</p>
+<a class="reference internal image-reference" href="_images/candidate_technologies.png"><img alt="Scenario Builder" src="_images/candidate_technologies.png" style="width: 350px; height: 350px;" />
+</a>
+<p>Select the <code class="docutils literal notranslate"><span class="pre">default</span></code> technologies, combination of the candidate technologies, or a <code class="docutils literal notranslate"><span class="pre">Custom</span></code> technology. If a <code class="docutils literal notranslate"><span class="pre">Custom</span></code> technology is selected, the following window will appear:</p>
+<a class="reference internal image-reference" href="_images/custom_candidate_technologies.png"><img alt="Scenario Builder" src="_images/custom_candidate_technologies.png" style="width: 450px; height: 350px;" />
+</a>
+<p>When completed selecting candidate technologies, press <code class="docutils literal notranslate"><span class="pre">OK</span></code>.</p>
+<p>Once the scenario is built the window should look like the below:</p>
+<a class="reference internal image-reference" href="_images/scenario_builder_complete_1.png"><img alt="Scenario Builder" src="_images/scenario_builder_complete_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>If desired, click <code class="docutils literal notranslate"><span class="pre">View</span> <span class="pre">Scenario</span></code>. This will generate a planning model and scenario information breakdown page. Click ‘Save Scenario` to save this page to a text file. This is useful to keep track of the scenarios if evaluating several scenarios.</p>
+<a class="reference internal image-reference" href="_images/save_scenario.png"><img alt="Scenario Builder" src="_images/save_scenario.png" style="width: 350px; height: 300px;" />
+</a>
+<p>When completed building the scenario, click <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
+</section>
+<section id="execute-model">
+<h4>5. Execute Model<a class="headerlink" href="#execute-model" title="Link to this heading">¶</a></h4>
+<p>In the <code class="docutils literal notranslate"><span class="pre">Execute</span> <span class="pre">Model</span></code> page, the optimization model will be built and solved. First, select a location to save the results. If a results folder is not selected, a folder in the main directory will be created.</p>
+<p>Specify the solver to be used for the optimization. For best performance, select <code class="docutils literal notranslate"><span class="pre">Gurobi</span></code>. Ensure that you have the solver installed correctly.</p>
+<p>Click ‘Build’ to build the optimization model.</p>
+<a class="reference internal image-reference" href="_images/execute_model_1.png"><img alt="Execute Model" src="_images/execute_model_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>Progress will appear in the window as shown below. Once the Pyomo model has been built, click <code class="docutils literal notranslate"><span class="pre">Solve</span></code>.</p>
+<a class="reference internal image-reference" href="_images/execute_model_running_1.png"><img alt="Execute Model" src="_images/execute_model_running_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p>Once, the model has solved. The user will be notified and prompted to go to the <code class="docutils literal notranslate"><span class="pre">Results</span> <span class="pre">Viewer</span></code> page by clicking <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
+</section>
+<section id="results-viewer">
+<h4>6. Results Viewer<a class="headerlink" href="#results-viewer" title="Link to this heading">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">Results</span> <span class="pre">Viewer</span></code> page is designed to provide high-level results including a breakdown of total costs, optimal installed resource capacities, and energy storage power and energy capacities throughout the planning horizon.</p>
+<p>To begin, click <code class="docutils literal notranslate"><span class="pre">Collect</span> <span class="pre">Results</span></code>. This will populate the cost results in a table and save all plots to the desired results file.</p>
+<p>Click <code class="docutils literal notranslate"><span class="pre">Generate</span> <span class="pre">Plots</span></code> to display the stacked bar charts for the optimal installed resource capacities and energy storage power and energy capacities throughout the planning horizon.</p>
+<p>Click <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Results</span> <span class="pre">Folder</span></code> to open the results folder in File Explorer.</p>
+<p>Click <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Maps</span></code> to open the subfolder containing several maps with generation and energy storage siting visualizations.</p>
+<p>Click <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">Results</span></code> to save the raw results of the optimization model to an Excel file. Further analysis of results can be performed with the results via the Excel files.</p>
+<a class="reference internal image-reference" href="_images/results_page_1.png"><img alt="Results Viewer" src="_images/results_page_1.png" style="width: 500px; height: 450px;" />
+</a>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+<p><a class="reference internal" href="#workflow"><span class="xref myst">Back to Workflow Options</span></a></p>
+</section>
+</section>
+<section id="advanced-simulations">
+<h3>Advanced Simulations<a id="advanced"></a><a class="headerlink" href="#advanced-simulations" title="Link to this heading">¶</a></h3>
+<p>For users seeking to analyze more complex scenarios or larger power systems, QuESt Planning offers the capability to run simulations through script-based execution without the use of the GUI. This approach is particularly beneficial for users leveraging the computational power of remote servers or High-Performance Computing (HPC) systems, which provide significantly more memory and processing capabilities than typical desktop environments.</p>
+<section id="id2">
+<h4>Prerequisites<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<p>Ensure you have SSH access to the remote server if you wish to execute the script in and that Python is installed on the system.</p>
+</section>
+<section id="running-command-line-advanced-simulations">
+<h4>Running Command-line Advanced Simulations<a class="headerlink" href="#running-command-line-advanced-simulations" title="Link to this heading">¶</a></h4>
+<p>To initiate an advanced simulation, users can execute the <code class="docutils literal notranslate"><span class="pre">explan_simulation.py</span></code> script from the command line. This script is designed to process large datasets and complex simulation parameters efficiently.</p>
+<section id="create-and-activate-a-virtual-environment">
+<h5>1. Create and Activate a Virtual Environment:<a class="headerlink" href="#create-and-activate-a-virtual-environment" title="Link to this heading">¶</a></h5>
+<ol class="arabic">
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> (if not already installed):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
+</pre></div>
+</div>
+</li>
+<li><p>Create a virtual environment (named <code class="docutils literal notranslate"><span class="pre">venv</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv<span class="w"> </span>venv
+</pre></div>
+</div>
+</li>
+<li><p>Activate the virtual environment:</p>
+<ul>
+<li><p>On Windows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.<span class="se">\v</span>env<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="navigate-to-the-quest-planning-directory">
+<h5>2. Navigate to the QuESt Planning Directory:<a class="headerlink" href="#navigate-to-the-quest-planning-directory" title="Link to this heading">¶</a></h5>
+<ol class="arabic">
+<li><p>Navigate to the QuESt Planning Directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>path/to/quest_planning
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">path/to/quest_planning</span></code> with the name of the directory where QuESt Planning was cloned.</p>
+<p>Ensure the <code class="docutils literal notranslate"><span class="pre">explan_simulation.py</span></code> script is located in the same home directory.</p>
+</li>
+<li><p>Install Dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="configure-the-input-file">
+<h5>3. Configure the Input File:<a class="headerlink" href="#configure-the-input-file" title="Link to this heading">¶</a></h5>
+<p>Before running the simulation, configure an <code class="docutils literal notranslate"><span class="pre">input.yaml</span></code> file with the specific simulation parameters. Open the file in a text editor and adjust the settings according to your scenario and planning model requirements. The required parameters are detailed in the test case provided. The configuration files are located in the <code class="docutils literal notranslate"><span class="pre">config</span></code> folder.</p>
+</section>
+<section id="run-the-simulation">
+<h5>4. Run the simulation:<a class="headerlink" href="#run-the-simulation" title="Link to this heading">¶</a></h5>
+<p>Once the configuration file is complete, run the <code class="docutils literal notranslate"><span class="pre">explan_simulation.py</span></code> file to initiate the simulation.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>quest_planning.explan_simulation<span class="w"> </span>/path/to/input.yaml
+</pre></div>
+</div>
+<p>Ensure that the <code class="docutils literal notranslate"><span class="pre">/path/to/input.yaml</span></code> is the correct location of the configuration file.</p>
+</section>
+<section id="monitor-the-simulation">
+<h5>5. Monitor the simulation:<a class="headerlink" href="#monitor-the-simulation" title="Link to this heading">¶</a></h5>
+<p>The progress of the model build and the optimization solve will be provided in the command terminal. It is suggested to periodically monitor the progress throughout the simulation.</p>
+</section>
+<section id="access-results">
+<h5>6. Access Results:<a class="headerlink" href="#access-results" title="Link to this heading">¶</a></h5>
+<p>Once the model has solved, navigate to the <code class="docutils literal notranslate"><span class="pre">Results</span></code> directory to access results and visualizations.</p>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+</section>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a id="examples"></a><a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<p>A test case is included with the initial release of QuESt Planning. The test case includes the <a class="reference external" href="https://github.com/GridMod/RTS-GMLC"><strong>IEEE RTS-GMLC synthetic grid</strong></a> which is a publicly available test system that is derived from IEEE RTS-96 test system. Figure 1 displays the nodal model of the RTS-GMLC test case that can be used for advanced simulations. Figure 2 provides a highly aggregated zonal RTS GMLC system that can be used for simple and quick simulations.</p>
+<a class="reference internal image-reference" href="_images/rts_gmlc.png"><img alt="RTS-GMLC" src="_images/rts_gmlc.png" style="width: 600px; height: 450px;" />
+</a>
+<p><strong>Figure 1:</strong> IEEE RTS-GMLC Test Case nodal model</p>
+<a class="reference internal image-reference" href="_images/RTS_map.png"><img alt="RTS-GMLC-zonal" src="_images/RTS_map.png" style="width: 600px; height: 450px;" />
+</a>
+<p><strong>Figure 2:</strong> IEEE RTS-GMLC Test Case zonal model</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">data_explan</span></code> folder contains the RTS-GMLC test cases in the required format to run the QuESt Planning simulations. The nodal system is in the <code class="docutils literal notranslate"><span class="pre">rts_csv_data</span></code> folder and the zonal model is in the <code class="docutils literal notranslate"><span class="pre">rts_csv_data_zonal</span></code>. For Option A, which deploys the graphical user interface, follow the instructions detailed in the <a class="reference internal" href="#gui_workflow"><span class="xref myst"><strong>User-Interface Workflow</strong></span></a> section. For Option B, the advanced simulation option, follow the instructions detailed in the <a class="reference internal" href="#advanced"><span class="xref myst"><strong>Advanced Simulations</strong></span></a> section. The configuration files for a base case simulation of the nodal and zonal models are called <code class="docutils literal notranslate"><span class="pre">input_rts_nodal_base.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">input_rts_zonal_base.yaml</span></code>, respectively. These files are located in the <code class="docutils literal notranslate"><span class="pre">config</span></code> folder.</p>
+<section id="data-sources-data-preparation-tools">
+<h3>Data Sources &amp; Data Preparation Tools<a class="headerlink" href="#data-sources-data-preparation-tools" title="Link to this heading">¶</a></h3>
+<p>The QuESt Planning tool requires several data to run simulations. Listed below are common data sources that can be used to develop test cases for QuESt Planning:</p>
+<section id="id3">
+<h4>Economic Data<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://atb.nrel.gov/"><strong>Annual Technology Baseline</strong></a>: provides cost and performance data for new and existing resources (developed by the National Renewable Energy Laboratory)</p></li>
+<li><p><a class="reference external" href="https://www.pnnl.gov/ESGC-cost-performance"><strong>Energy Storage Cost and Performance Database</strong></a>: provides cost and performance data for a variety of energy storage technologies (developed by Pacific Northwest National Laboratory)</p></li>
+<li><p><a class="reference external" href="https://www.osti.gov/biblio/1866526"><strong>Energy Storage Pricing Survey</strong></a>: provides a standardized reference system prices various energy storage technologies with different power and energy ratings. (Sandia National Laboratories)</p></li>
+<li><p><a class="reference external" href="https://www.eia.gov/outlooks/aeo/data/browser/"><strong>Annual Energy Outlook</strong></a>: provides regional projections of energy supply, demand, and fuel prices out to 2050 (developed by the Energy Information Administration)</p></li>
+</ul>
+</section>
+<section id="renewable-data">
+<h4>Renewable Data<a class="headerlink" href="#renewable-data" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://nsrdb.nrel.gov/"><strong>National Solar Radiation Database</strong></a>: hourly and half-hourly timeseries of solar irradiance in the U.S. and select countries (developed by the National Renewable Energy Laboratory)</p></li>
+<li><p><a class="reference external" href="https://github.com/pvlib/pvlib-python">pvlib</a>: python-based package that includes a set of functions and classes used for simulating the performance of PV systems (developed by Sandia National Laboratories)</p></li>
+<li><p><a class="reference external" href="https://www.nrel.gov/grid/wind-toolkit.html"><strong>Wind Integration National Dataset (WIND) Toolkit</strong></a>: provides computer model-based meteorological conditions and calculated turbine power for the continental U.S. (developed by the National Renewable Energy Laboratory)</p></li>
+</ul>
+</section>
+<section id="generator-performance-data">
+<h4>Generator Performance Data<a class="headerlink" href="#generator-performance-data" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.eia.gov/electricity/data/eia860/"><strong>Form EIA-860</strong></a>: provides generator-level specific information about existing and planned generators (1 MW or greater)(developed by the Energy Information Administration)</p></li>
+</ul>
+</section>
+<section id="demand-data">
+<h4>Demand Data<a class="headerlink" href="#demand-data" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual-electric/data"><strong>Form No. 714</strong></a>: provides balancing authority and planning area generation, actual and scheduled power transfers, and load. (Provided by the Federal Energy Regulatory Commission)</p></li>
+</ul>
+</section>
+<section id="renewable-energy-storage-policies">
+<h4>Renewable &amp; Energy Storage Policies<a class="headerlink" href="#renewable-energy-storage-policies" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.dsireusa.org/"><strong>Database of State Incentives for Renewables &amp; Efficiency</strong></a>: comprehensive set of renewable policies and incentives in the United States (developed by North Carolina State University)</p></li>
+</ul>
+<p>Additional test cases are under further development and will be included in future releases.</p>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+</section>
+</section>
+<section id="tips-for-running-the-quest-planning-tool">
+<h2>Tips for Running the QuESt Planning Tool<a id="tips"></a><a class="headerlink" href="#tips-for-running-the-quest-planning-tool" title="Link to this heading">¶</a></h2>
+<p>The advanced simulations could be exceptionally difficult to solve based on the configuration of the model. There are several tips to consider when facing difficulties with solving:</p>
+<ul class="simple">
+<li><p><em><strong>Simplify the Model:</strong></em> Too increase tractability and decrease complexity, try limiting the number of variables or constraints. Examples include reducing the number of candidate technologies, reducing simulation years, altering the transmission model constraints, or selecting a less-complex temporal resolution.</p></li>
+<li><p><em><strong>Adjust Solver Settings:</strong></em> Adjust the solver parameters to explore different methods to improve the solver’s performance. Alternatively, explore different solvers with varying capabilities based on the model formulation. Please refer to the corresponding solver documentation for more information and guidance.</p></li>
+<li><p><em><strong>Review Model Formulation:</strong></em> Carefully review the model formulation to identify logical errors or constraints that are too restrictive.</p></li>
+</ul>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+<section id="feedback">
+<h2>Feedback<a class="headerlink" href="#feedback" title="Link to this heading">¶</a></h2>
+<p><a id="feedback"></a>
+Please submit feedback, issues, and suggestions, through the <a class="reference external" href="https://github.com/codynewlun/quest_planning/issues">Issues</a> page. For more information, please reach out to the project developer Cody Newlun (<a class="reference external" href="mailto:cjnewlu&#37;&#52;&#48;sandia&#46;gov">cjnewlu<span>&#64;</span>sandia<span>&#46;</span>gov</a>).</p>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+<section id="development-status-future-updates">
+<h2>Development Status &amp; Future Updates<a class="headerlink" href="#development-status-future-updates" title="Link to this heading">¶</a></h2>
+<p><a id="development-status"></a></p>
+<p>The QuESt Planning tool is under active development and more features will be included in future releases. the QuESt Planning tool will be integrated into the <a class="reference external" href="https://github.com/sandialabs/snl-quest">QuESt 2.0</a>, an open-source platform for energy storage analytics, where it will be available to be installed and integrated with other tools available in the QuESt platform.</p>
+<p>Future updates to QuESt Planning that are being considered include:</p>
+<ul class="simple">
+<li><p><em>Improved reliability and resilience constraints</em></p></li>
+<li><p><em>Technology-specific energy storage models</em></p></li>
+<li><p><em>Enhanced temporal resolution</em></p></li>
+<li><p><em>Improved transmission models &amp; investment options</em></p></li>
+<li><p><em>Improved renewable energy resource modeling</em></p></li>
+<li><p><em>Improved GUI &amp; scenario viewer</em></p></li>
+</ul>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+<section id="acknowledgment">
+<h2>Acknowledgment<a class="headerlink" href="#acknowledgment" title="Link to this heading">¶</a></h2>
+<p><a id="acknowledgement"></a>
+The QuESt Planning tool is developed and maintained by the <a class="reference external" href="https://energy.sandia.gov/programs/energy-storage/analytics/">Energy Storage Analytics Group</a> at <a class="reference external" href="https://www.sandia.gov/">Sandia National Laboratories</a>.</p>
+<p>Project team:</p>
+<ul class="simple">
+<li><p>Cody Newlun (<a class="reference external" href="mailto:cjnewlu&#37;&#52;&#48;sandia&#46;gov">cjnewlu<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p></li>
+<li><p>Atri Bera</p></li>
+<li><p>Walker Olis</p></li>
+<li><p>Andres Lopez Ramirez</p></li>
+<li><p>Yung-Jai Pomeroy</p></li>
+<li><p>Tu Nguyen</p></li>
+</ul>
+<p>This material is based upon work supported by the <strong>U.S. Department of Energy, Office of Electricity (OE), Energy Storage Division</strong>.</p>
+<a class="reference internal image-reference" href="_images/SNL_Stacked_Black_Blue.jpg"><img alt="DOE" src="_images/SNL_Stacked_Black_Blue.jpg" style="width: 275px; height: 100px;" />
+</a>
+<!--<img src = "images/logo/DOE_Logo_Color.png" alt="DOE" />-->
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>Please see the <a class="reference external" href="https://github.com/sandialabs/quest_planning/blob/main/LICENSE">LICENSE</a> file.</p>
+<p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">QuESt Planning</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">README</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>QuESt Planning</strong>: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-features-of-quest-planning">Key Features of QuESt Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-of-quest-planning-tool">Workflow of QuESt Planning Tool<a id="workflow"></a></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples<a id="examples"></a></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tips-for-running-the-quest-planning-tool">Tips for Running the QuESt Planning Tool<a id="tips"></a></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feedback">Feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-status-future-updates">Development Status &amp; Future Updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgment">Acknowledgment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_simulations.html">Advanced Simulations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/explan.html">Explan Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/optimizer.html">Optimizer Class</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Submodules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/explan_submodules/explan_constraints.html">ExplanConstraints Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/explan_submodules/explan_data_handler.html">ExplanDataHandler Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/explan_submodules/explan_results_viewer.html">ExplanResultsViewer Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/explan_submodules/explan_optimizer.html">ExplanOptimizer</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">QuESt Planning</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">Modules Overview</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

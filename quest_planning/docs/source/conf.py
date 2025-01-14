@@ -3,12 +3,13 @@ import sys
 
 # Debug print to verify paths
 print("sys.path before insertion:", sys.path)
-sys.path.insert(0, os.path.abspath('C:\\Users\\aslopez\\Python-Projects'))
+# Add the `quest_planning` root directory to the path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 print("sys.path after insertion:", sys.path)
 
 project = 'QuESt Planning'
 author = 'Cody Newlun'
-release = '0.1.0'
+release = '1.0.0'
 
 extensions = [
 
@@ -16,11 +17,15 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
+    'myst_parser',
     ]
+
+myst_enable_extensions = ["linkify", "html_admonition", "html_image"]
 
 
 templates_path = ['_templates']
 exclude_patterns = []
 
 html_theme = 'alabaster'
-html_static_path = ['_static']
+html_static_path = ['images']
+html_extra_path = ['images']

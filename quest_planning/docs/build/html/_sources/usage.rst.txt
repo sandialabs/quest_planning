@@ -1,4 +1,0 @@
-.. automodule:: explan.py
-
- .. autoclass:: Explan
-   :members:
