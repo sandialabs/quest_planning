@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>885</width>
-    <height>492</height>
+    <width>931</width>
+    <height>517</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -120,6 +120,18 @@ background-color: rgb(40, 84, 113);
 </string>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
@@ -129,12 +141,24 @@ background-color: rgb(40, 84, 113);
        </sizepolicy>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame_5">
          <property name="sizePolicy">
@@ -143,16 +167,34 @@ background-color: rgb(40, 84, 113);
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="styleSheet">
           <string notr="true">border-radius: 15px;</string>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QPushButton" name="home_button">
             <property name="sizePolicy">
@@ -463,36 +505,46 @@ QPushButton:pressed {
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">QTabBar::tab {
-    background-color: white; 
-    color: black; 
-	 border: 1px solid blue;
-	 /*border-color: rgb(59, 107, 249);*/
-	
-	/*border-color: rgb(158, 158, 158);*/
-	
-	border-color: rgb(255, 255, 255);
-	background-color: rgb(158, 158, 158);
-    padding: 5px;
-	border-radius: 5px; 
-}
-QTabBar::tab:selected {
-	background-color: rgb(40, 84, 113);
-	color: white;
-    font-weight: bold;
-	border: 3px solid gray;
-	border-color: rgb(129, 194, 65);
-    padding: 5px;
-	border-radius: 5px; 
+          <string notr="true">QTabWidget::pane {
+    border: 0px;
 }
 
+QTabBar::tab {
+    background: transparent;
+    padding: 5px 15px;
+    border: 1px solid transparent;
+    color: rgb(40, 84, 113); /* Updated to the specified blue */
+    border-bottom: 2px solid transparent;
+}
+
+QTabBar::tab:selected {
+    color: rgb(40, 84, 113); /* Updated to the specified blue */
+    border-bottom: 2px solid rgb(40, 84, 113); /* Updated to the specified blue */
+}
+
+QTabBar::tab:hover {
+    background: rgba(40, 84, 113, 0.1); /* Lighter version of the specified blue */
+    color: rgb(40, 84, 113); /* Updated to the specified blue */
+}
+
+QFrame {
+    background-color: transparent;
+    border: none;
+}
+
+QTextBrowser {
+    border: 1px solid rgb(40, 84, 113); /* Updated to the specified blue */
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgb(233, 233, 233);
+}
 </string>
          </property>
          <property name="tabShape">
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="iconSize">
           <size>

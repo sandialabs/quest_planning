@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>607</height>
+    <width>1071</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -19,367 +19,787 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="8">
-       <widget class="QFrame" name="results_frame">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QFrame" name="frame_3">
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(226, 226, 226);
-border-radius:20</string>
+         <string notr="true">QFrame {
+	border: 2px solid #8f8f8f;
+	border-radius: 5px;
+	background-color: rgba(140, 140, 140, .5);
+
+}
+QPushButton {
+	background-color: transparent;
+}
+    QPushButton:hover {
+        background-color: rgb(240, 240, 240);
+		border-radius:5px;
+    }
+    QPushButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }
+    QPushButton:checked {
+        background-color: rgb(230, 230, 230);		
+		 border-radius:5px;
+    }</string>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Plain</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>15</number>
+         </property>
          <property name="leftMargin">
-          <number>5</number>
+          <number>0</number>
          </property>
          <property name="topMargin">
-          <number>5</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>5</number>
+          <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>5</number>
+          <number>0</number>
          </property>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="quest_planning_label">
-           <property name="styleSheet">
-            <string notr="true">image: url(:/pics/images/pics/custom_QP_logo.png);
-</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" rowspan="3">
-          <widget class="QFrame" name="table_frame">
+         <item alignment="Qt::AlignLeft">
+          <widget class="QPushButton" name="open_results_folder_button">
            <property name="maximumSize">
             <size>
-             <width>250</width>
+             <width>200</width>
              <height>16777215</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="results_table_layout">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <spacer name="horizontalSpacer_8">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_9">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="2" rowspan="5">
-          <widget class="QFrame" name="frame_2">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="1" column="1">
-             <widget class="MatplotlibWidget" name="es_capacity">
-              <property name="minimumSize">
-               <size>
-                <width>350</width>
-                <height>200</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>650</width>
-                <height>600</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="MatplotlibWidget" name="installed_capacity">
-              <property name="minimumSize">
-               <size>
-                <width>350</width>
-                <height>200</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>650</width>
-                <height>500</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QLabel" name="system_name_label">
            <property name="font">
             <font>
-             <family>Segoe UI</family>
-             <pointsize>14</pointsize>
-             <italic>false</italic>
+             <pointsize>12</pointsize>
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Open Results Folder&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="styleSheet">
-            <string notr="true">font: 700 14pt &quot;Segoe UI&quot;;</string>
+            <string notr="true"/>
            </property>
            <property name="text">
             <string/>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/results_icons/images/results_icons/stacks_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/results_icons/images/results_icons/stacks_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QPushButton" name="open_maps_button">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Under Construction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/results_icons/images/results_icons/open_run_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/results_icons/images/results_icons/open_run_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="scenario_view_button">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Under Construction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/results_icons/images/results_icons/data_check_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/results_icons/images/results_icons/data_check_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QPushButton" name="save_results_button">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save Results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/results_icons/images/results_icons/save_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/results_icons/images/results_icons/save_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QToolButton" name="results_help_button">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Help&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {
+	background-color: transparent;
+}
+    QToolButton:hover {
+        background-color: rgb(230, 230, 230);
+		border-radius:5px;
+    }
+    QToolButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
       </item>
+      <item>
+       <widget class="QStackedWidget" name="stackedWidget">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="results1_page">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="results_frame">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="1" rowspan="7">
+              <widget class="QFrame" name="frame_2">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(208, 208, 208);
+border-radius: 25px;
+
+color: black;</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_3">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item row="0" column="1">
+                 <widget class="MatplotlibWidget" name="installed_capacity">
+                  <property name="minimumSize">
+                   <size>
+                    <width>350</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>650</width>
+                    <height>500</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: rgb(255, 255, 255);</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="MatplotlibWidget" name="es_capacity">
+                  <property name="minimumSize">
+                   <size>
+                    <width>350</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>650</width>
+                    <height>600</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: rgb(255, 255, 255);</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="collect_results_button">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Segoe UI</family>
+                 <pointsize>10</pointsize>
+                 <italic>false</italic>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+               </property>
+               <property name="text">
+                <string>Collect Results</string>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="gen_plots_button">
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Segoe UI</family>
+                 <pointsize>10</pointsize>
+                 <italic>false</italic>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+               </property>
+               <property name="text">
+                <string>Generate Plots</string>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" rowspan="5">
+              <widget class="QFrame" name="table_frame">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>250</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(208, 208, 208);
+border-radius: 25px;
+
+color: black;</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="results_table_layout">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="png_viewer_page">
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,1">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="frame_5">
+            <property name="minimumSize">
+             <size>
+              <width>230</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(208, 208, 208);
+border-radius: 25px;
+
+color: black;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item alignment="Qt::AlignTop">
+              <widget class="QPushButton" name="png_browser">
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+               </property>
+               <property name="text">
+                <string>Open Folder..</string>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+           <widget class="QPushButton" name="png_toggler">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+	background-color: transparent;
+}
+    QPushButton:hover {
+        background-color: rgb(230, 230, 230);
+		border-radius:5px;
+    }
+    QPushButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }
+    QPushButton:checked {
+        background-color: rgb(160, 160, 160);		
+		 border-radius:5px;
+    }</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../../resources.qrc">
+              <normaloff>:/results_icons/images/results_icons/more_vert_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/results_icons/images/results_icons/more_vert_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_17"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="html_viewer_page">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,1">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="frame_7">
+            <property name="minimumSize">
+             <size>
+              <width>230</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(208, 208, 208);
+border-radius: 25px;
+
+color: black;</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item alignment="Qt::AlignTop">
+              <widget class="QPushButton" name="html_browser">
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+               </property>
+               <property name="text">
+                <string>Open Folder..</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="html_toggler">
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+	background-color: transparent;
+}
+    QPushButton:hover {
+        background-color: rgb(230, 230, 230);
+		border-radius:5px;
+    }
+    QPushButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }
+    QPushButton:checked {
+        background-color: rgb(160, 160, 160);		
+		 border-radius:5px;
+    }</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../../resources.qrc">
+              <normaloff>:/results_icons/images/results_icons/more_vert_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/results_icons/images/results_icons/more_vert_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="scenario_viewer_page">
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_5"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame_5">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="4">
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="gen_plots_button">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>12</pointsize>
-          <italic>false</italic>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(0, 85, 255);
-font: 700 12pt &quot;Segoe UI&quot;;
-color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string>Generate Plots</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="6">
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="collect_results_button">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);
-background-color: rgb(129, 194, 65);</string>
-        </property>
-        <property name="text">
-         <string>Collect Results</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="7">
-       <widget class="QPushButton" name="open_maps_button">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(55, 165, 81);
-color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string>Open Maps</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="5">
-       <widget class="QPushButton" name="open_results_folder_button">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);
-background-color: rgb(209, 139, 0);</string>
-        </property>
-        <property name="text">
-         <string>Open Results Folder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QToolButton" name="results_help_button">
-        <property name="styleSheet">
-         <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-}</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
     </widget>
    </item>
    <item>
@@ -397,7 +817,19 @@ image: url(:/icon/images/icons/info_help1.png);
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="1" alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_2">
         <property name="minimumSize">
          <size>
@@ -413,53 +845,39 @@ image: url(:/icon/images/icons/info_help1.png);
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="save_results_button">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(129, 194, 65);
-color: rgb(255, 255, 255);
-font: 700 12pt &quot;Segoe UI&quot;;</string>
-        </property>
-        <property name="text">
-         <string>Save Results</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0">
+      <item row="0" column="0" alignment="Qt::AlignLeft">
        <widget class="QPushButton" name="previous_button">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(208, 69, 0);
-color: rgb(255, 255, 255);
-font: 700 12pt &quot;Segoe UI&quot;;</string>
+         <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
         </property>
         <property name="text">
          <string>Previous</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" alignment="Qt::AlignRight">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>

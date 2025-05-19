@@ -60,7 +60,7 @@ class PowerSystemDataPage(QWidget, Ui_power_system_data):
         
         # Initially hide the power_system_data frames
         self.power_system_data_frame.hide()
-        self.divider_line.hide()
+        #self.divider_line.hide()
         self.bus_label.hide()
         self.line_label.hide()
         self.gen_label.hide()
@@ -150,7 +150,7 @@ class PowerSystemDataPage(QWidget, Ui_power_system_data):
         self.gen_label.setText('Generators: {}'.format(len(self.data_handler.tech_nums['exist'])))#self.data_handler.load_data[self.data_handler.data_ls.index('gen')])))
         self.sys_label.setText('System Name: {}'.format(self.system_name_input.text()))#self.data_handler.scalars.loc['System']['Value']))
         
-        self.divider_line.show()
+        #self.divider_line.show()
         self.bus_label.show()
         self.line_label.show()
         self.gen_label.show()
