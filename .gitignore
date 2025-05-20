@@ -13,5 +13,9 @@ data/conversion/
 config/Archive/
 gui/*/ui/Archive
 gui/wind_solar_page
+Results
+example.log
+*.egg-info/
 images/readme/old
+images/readme/archive/
 images/pics/old

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'maingEARIH.ui'
+## Form generated from reading UI file 'mainOXMQyg.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(885, 492)
+        MainWindow.resize(931, 517)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -119,14 +119,16 @@ class Ui_MainWindow(object):
 "")
         self.horizontalLayout_3 = QHBoxLayout(self.centralwidget)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.frame = QFrame(self.centralwidget)
         self.frame.setObjectName(u"frame")
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
-        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShape(QFrame.NoFrame)
         self.frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout = QVBoxLayout(self.frame)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.frame_5 = QFrame(self.frame)
         self.frame_5.setObjectName(u"frame_5")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -134,11 +136,13 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.frame_5.sizePolicy().hasHeightForWidth())
         self.frame_5.setSizePolicy(sizePolicy1)
+        self.frame_5.setMaximumSize(QSize(16777215, 0))
         self.frame_5.setStyleSheet(u"border-radius: 15px;")
-        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShape(QFrame.NoFrame)
         self.frame_5.setFrameShadow(QFrame.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame_5)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.home_button = QPushButton(self.frame_5)
         self.home_button.setObjectName(u"home_button")
         sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -287,29 +291,39 @@ class Ui_MainWindow(object):
         font.setFamilies([u"Tahoma"])
         font.setPointSize(12)
         self.tabWidget.setFont(font)
-        self.tabWidget.setStyleSheet(u"QTabBar::tab {\n"
-"    background-color: white; \n"
-"    color: black; \n"
-"	 border: 1px solid blue;\n"
-"	 /*border-color: rgb(59, 107, 249);*/\n"
-"	\n"
-"	/*border-color: rgb(158, 158, 158);*/\n"
-"	\n"
-"	border-color: rgb(255, 255, 255);\n"
-"	background-color: rgb(158, 158, 158);\n"
-"    padding: 5px;\n"
-"	border-radius: 5px; \n"
-"}\n"
-"QTabBar::tab:selected {\n"
-"	background-color: rgb(40, 84, 113);\n"
-"	color: white;\n"
-"    font-weight: bold;\n"
-"	border: 3px solid gray;\n"
-"	border-color: rgb(129, 194, 65);\n"
-"    padding: 5px;\n"
-"	border-radius: 5px; \n"
+        self.tabWidget.setStyleSheet(u"QTabWidget::pane {\n"
+"    border: 0px;\n"
 "}\n"
 "\n"
+"QTabBar::tab {\n"
+"    background: transparent;\n"
+"    padding: 5px 15px;\n"
+"    border: 1px solid transparent;\n"
+"    color: rgb(40, 84, 113); /* Updated to the specified blue */\n"
+"    border-bottom: 2px solid transparent;\n"
+"}\n"
+"\n"
+"QTabBar::tab:selected {\n"
+"    color: rgb(40, 84, 113); /* Updated to the specified blue */\n"
+"    border-bottom: 2px solid rgb(40, 84, 113); /* Updated to the specified blue */\n"
+"}\n"
+"\n"
+"QTabBar::tab:hover {\n"
+"    background: rgba(40, 84, 113, 0.1); /* Lighter version of the specified blue */\n"
+"    color: rgb(40, 84, 113); /* Updated to the specified blue */\n"
+"}\n"
+"\n"
+"QFrame {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QTextBrowser {\n"
+"    border: 1px solid rgb(40, 84, 113); /* Updated to the specified blue */\n"
+"    border-radius: 5px;\n"
+"    padding: 5px;\n"
+"    background-color: rgb(233, 233, 233);\n"
+"}\n"
 "")
         self.tabWidget.setTabShape(QTabWidget.Rounded)
         self.tabWidget.setIconSize(QSize(16, 16))
@@ -401,7 +415,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

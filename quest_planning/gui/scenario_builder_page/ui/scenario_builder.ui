@@ -6,58 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
-    <height>605</height>
+    <width>1094</width>
+    <height>841</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QLabel" name="label_8">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>293</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-       <italic>true</italic>
-       <bold>true</bold>
-       <underline>true</underline>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 0, 0);</string>
-     </property>
-     <property name="text">
-      <string>Build Planning Scenario</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignHCenter|Qt::AlignTop</set>
-     </property>
-    </widget>
-   </item>
-   <item alignment="Qt::AlignTop">
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-}
-QFrame{background-color: rgb(40, 84, 113);border-radius: 20px;}
-
-
-</string>
+      <string notr="true">
+    QToolButton:hover {
+        background-color: rgb(230, 230, 230);
+		border-radius:5px;
+    }
+    QToolButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }
+QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -66,25 +60,35 @@ QFrame{background-color: rgb(40, 84, 113);border-radius: 20px;}
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item alignment="Qt::AlignLeft">
        <widget class="QFrame" name="frame_5">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="styleSheet">
-         <string notr="true">QLabel{
-color: rgb(255, 255, 255)}
-QFrame{
-	
-	background-color: rgb(96, 191, 0);
-	background-color: rgb(193, 129, 0);
-}
-QCombBox{
-	background-color: rgb(255, 255, 255);
-}</string>
+         <string notr="true">
+	background-color: rgb(208, 208, 208);
+	border-radius: 25px;
+
+	color: black;
+
+
+</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
@@ -93,24 +97,97 @@ QCombBox{
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item row="10" column="2">
           <widget class="QToolButton" name="load_profile_help_button">
+           <property name="styleSheet">
+            <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+           </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
          <item row="5" column="2">
           <widget class="QToolButton" name="capital_cost_trajectory_help_button">
+           <property name="styleSheet">
+            <string notr="true">
+    QToolButton:hover {
+        background-color: rgb(230, 230, 230);
+		border-radius:5px;
+    }
+    QToolButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }</string>
+           </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
           <widget class="QToolButton" name="scenario_name_help_button">
+           <property name="styleSheet">
+            <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+           </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -220,7 +297,7 @@ QCombBox{
            </property>
            <item>
             <property name="text">
-             <string>Default RPS Policy</string>
+             <string>Default</string>
             </property>
            </item>
            <item>
@@ -249,8 +326,28 @@ QCombBox{
          </item>
          <item row="15" column="2">
           <widget class="QToolButton" name="trans_expansion_help_button">
+           <property name="styleSheet">
+            <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+           </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -336,7 +433,7 @@ QCombBox{
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Renewable Portfolio Standard:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Future Generation Mix:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -345,8 +442,28 @@ QCombBox{
          </item>
          <item row="14" column="2">
           <widget class="QToolButton" name="rps_help_button">
+           <property name="styleSheet">
+            <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+           </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -368,6 +485,12 @@ QCombBox{
          </item>
          <item row="11" column="1">
           <widget class="QLineEdit" name="annual_load_growth_box">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -381,10 +504,30 @@ QCombBox{
            </property>
           </widget>
          </item>
-         <item row="11" column="2">
+         <item row="11" column="2" alignment="Qt::AlignLeft">
           <widget class="QToolButton" name="load_growth_help_button">
+           <property name="styleSheet">
+            <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+           </property>
            <property name="text">
-            <string>...</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resources.qrc">
+             <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -392,29 +535,18 @@ QCombBox{
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QFrame" name="frame_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="styleSheet">
-         <string notr="true">QFrame{background-color: rgb(93, 186, 0);}
+         <string notr="true">background-color: rgb(208, 208, 208);
+border-radius: 25px;
 
-QLabel{color:rgb(255,255,255)}
-QCheckBox{
-background-color: rgb(93, 186, 0);
-color:rgb(255,255,255)
-}
-QRadioButton{
-background-color: rgb(93, 186, 0);
-color:rgb(255,255,255)
-}
+color: black;
 </string>
         </property>
         <property name="frameShape">
@@ -424,13 +556,41 @@ color:rgb(255,255,255)
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QFrame" name="frame_6">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
@@ -439,10 +599,96 @@ color:rgb(255,255,255)
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <item row="4" column="0" colspan="4">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_13">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Select candidate technologies</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="cand_tech_button">
+              <property name="font">
+               <font>
+                <family>Segoe UI</family>
+                <pointsize>10</pointsize>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>Candidate Technologies</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QToolButton" name="cand_technologies_help_button">
+              <property name="styleSheet">
+               <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../../../resources.qrc">
+                <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0" colspan="5">
              <widget class="QFrame" name="frame_2">
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
@@ -469,7 +715,7 @@ color:rgb(255,255,255)
                   </size>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">background-color: rgb(93, 186, 0);</string>
+                  <string notr="true"/>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_9">
                   <property name="leftMargin">
@@ -538,52 +784,6 @@ color:rgb(255,255,255)
               </layout>
              </widget>
             </item>
-            <item row="1" column="0">
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_13">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Select candidate technologies</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="cand_tech_button">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(0, 85, 255);
-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="text">
-               <string>Candidate Technologies</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="3">
              <spacer name="horizontalSpacer_4">
               <property name="orientation">
@@ -597,37 +797,112 @@ color: rgb(255, 255, 255);</string>
               </property>
              </spacer>
             </item>
-            <item row="1" column="2">
-             <widget class="QToolButton" name="cand_technologies_help_button">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
          </item>
          <item>
           <widget class="QFrame" name="frame_7">
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
             <property name="topMargin">
              <number>0</number>
             </property>
-            <item row="3" column="0">
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="1" column="0" alignment="Qt::AlignTop">
+             <widget class="QLabel" name="label_7">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Select generation retirements schedule</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignHCenter|Qt::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" alignment="Qt::AlignHCenter">
+             <widget class="QPushButton" name="view_scenario_button">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+              </property>
+              <property name="text">
+               <string>View Scenario</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
              <widget class="QFrame" name="frame_8">
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+              </property>
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item row="3" column="1">
                 <widget class="QWidget" name="widget_2" native="true">
                  <property name="minimumSize">
@@ -637,7 +912,7 @@ color: rgb(255, 255, 255);</string>
                   </size>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">background-color: rgb(93, 186, 0);</string>
+                  <string notr="true"/>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_10">
                   <property name="leftMargin">
@@ -654,8 +929,11 @@ color: rgb(255, 255, 255);</string>
                   </property>
                   <item row="0" column="0">
                    <widget class="QFrame" name="retirement_frame">
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
                     <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                     <enum>QFrame::NoFrame</enum>
                     </property>
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
@@ -697,7 +975,7 @@ color: rgb(255, 255, 255);</string>
                <item row="0" column="1">
                 <widget class="QFrame" name="frame_11">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -715,25 +993,62 @@ color: rgb(255, 255, 255);</string>
                   <property name="bottomMargin">
                    <number>0</number>
                   </property>
+                  <item row="0" column="3">
+                   <widget class="QToolButton" name="gen_retirement_help_button">
+                    <property name="styleSheet">
+                     <string notr="true">QToolButton:hover {
+    background-color: rgb(230, 230, 230);
+	border-radius:5px;
+}
+QToolButton:pressed {
+    background-color: rgb(180, 180, 180);		
+	 border-radius:5px;
+}</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../../../resources.qrc">
+                      <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>24</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
                   <item row="0" column="2">
                    <widget class="QPushButton" name="gen_retirement_button">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="font">
                      <font>
-                      <pointsize>12</pointsize>
+                      <family>Segoe UI</family>
+                      <pointsize>10</pointsize>
+                      <italic>false</italic>
                       <bold>true</bold>
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">background-color: rgb(127, 127, 127);
-color: rgb(255, 255, 255);</string>
+                     <string notr="true"/>
                     </property>
                     <property name="text">
                      <string>Retirement Schedule</string>
                     </property>
+                    <property name="flat">
+                     <bool>true</bool>
+                    </property>
                    </widget>
                   </item>
-                  <item row="0" column="1">
-                   <spacer name="horizontalSpacer_5">
+                  <item row="0" column="0">
+                   <spacer name="horizontalSpacer">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -746,7 +1061,7 @@ color: rgb(255, 255, 255);</string>
                    </spacer>
                   </item>
                   <item row="0" column="4">
-                   <spacer name="horizontalSpacer_6">
+                   <spacer name="horizontalSpacer_2">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -758,57 +1073,10 @@ color: rgb(255, 255, 255);</string>
                     </property>
                    </spacer>
                   </item>
-                  <item row="0" column="3">
-                   <widget class="QToolButton" name="gen_retirement_help_button">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
                  </layout>
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="Line" name="line_3">
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" alignment="Qt::AlignTop">
-             <widget class="QLabel" name="label_7">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Select generation retirements schedule</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignHCenter|Qt::AlignTop</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QPushButton" name="view_scenario_button">
-              <property name="styleSheet">
-               <string notr="true">
-background-color: rgb(0, 0, 0);
-font: 700 12pt &quot;Segoe UI&quot;;
-color: rgb(255, 255, 255);
-</string>
-              </property>
-              <property name="text">
-               <string>View Scenario</string>
-              </property>
              </widget>
             </item>
            </layout>
@@ -821,19 +1089,28 @@ color: rgb(255, 255, 255);
     </widget>
    </item>
    <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QFrame" name="frame_4">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -842,7 +1119,19 @@ color: rgb(255, 255, 255);
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item alignment="Qt::AlignLeft">
        <widget class="QPushButton" name="previous_button">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -850,30 +1139,21 @@ color: rgb(255, 255, 255);
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(208, 69, 0);
-color: rgb(255, 255, 255);
-font: 700 12pt &quot;Segoe UI&quot;;</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Previous</string>
         </property>
        </widget>
       </item>
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="label_5">
         <property name="minimumSize">
          <size>
@@ -889,20 +1169,7 @@ font: 700 12pt &quot;Segoe UI&quot;;</string>
         </property>
        </widget>
       </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
+      <item alignment="Qt::AlignRight">
        <widget class="QPushButton" name="next_button">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -910,10 +1177,14 @@ font: 700 12pt &quot;Segoe UI&quot;;</string>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(129, 194, 65);
-color: rgb(255, 255, 255);
-font: 700 12pt &quot;Segoe UI&quot;;</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Next</string>

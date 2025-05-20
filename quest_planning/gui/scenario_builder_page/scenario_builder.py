@@ -180,7 +180,7 @@ class ScenarioBuilderPage(QWidget, Ui_scenario_builder):
                     self.rps_schedules = dialog.rps_schedule
                     self.rps_box.addItem(str(self.rps_box.count()))
                     self.data_handler.set_rps_schedule(self.rps_schedules,option = self.rps)
-            elif self.rps == 'Default RPS Policy':
+            elif self.rps == 'Default':
                 '''use default csv data-no action needed'''
                 #print('Default RPS Policy')
                 policy_data = self.data_handler.load_data[self.data_handler.data_ls.index('policy')]
@@ -201,7 +201,7 @@ class ScenarioBuilderPage(QWidget, Ui_scenario_builder):
 
         except Exception as e:
             print(e)
-            self.error_message.showMessage("Failed to set RPS schedule")
+            self.error_message.showMessage("Failed to set Future Generation Mix Schedule")
 
         #print(self.rps_schedules)
     def on_tab_opened(self, i):
@@ -247,11 +247,11 @@ class ScenarioBuilderPage(QWidget, Ui_scenario_builder):
                         
                 self.rps_schedules = policy_data['RPS'][policy_data['Years'].isin(self.data_handler.years)]
                 if self.rps_schedules is None or self.rps_schedules.empty:
-                    message += "\nRPS years have not been defined. Check the default input data."
+                    message += "\nYears have not been defined. Check the default input data."
                     show_warning = True
                 #print(self.rps_schedules)
             except AttributeError:
-                message += "\nRPS years have not been defined. Check the default input data."
+                message += "\nYears have not been defined. Check the default input data."
                 show_warning = True
 
             if show_warning:
@@ -268,7 +268,7 @@ class ScenarioBuilderPage(QWidget, Ui_scenario_builder):
     
     def collect_inputs(self):
         '''Called before build and solve'''
-        #Set RPS
+        #Set Future generation mix
         self.on_rps_box_activated()
         #Set load forecast
         self.data_handler.set_load_profile(self.load_profile_box.currentText())
@@ -362,7 +362,7 @@ class ScenarioBuilderPage(QWidget, Ui_scenario_builder):
         """
         self.popup_message.setIcon(QMessageBox.Information)
         self.popup_message.setWindowTitle("Select Renewable Portfolio Standard Goals")
-        self.popup_message.setText("Select the RPS goals to be used in the scenario. The RPS schedule can be defined in the csv data. Alternatively, you can select <b><i>Custom</i></b> option to define custom RPS targets.<br>"
+        self.popup_message.setText("Select the Future Generation Mix to be used in the scenario. The Future Generation Mix schedule can be defined in the csv data. Alternatively, you can select <b><i>Custom</i></b> option to define custom RPS targets.<br>"
                                    "You can also select to enforce CO2 emisison reduction and CO2 intensity reduction targets. These targets must be defined in the csv data.")
         #self.popup_message.setStandardButtons(QMessageBox.Ok)
         self.popup_message.exec_()

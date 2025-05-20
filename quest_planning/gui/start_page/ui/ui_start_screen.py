@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'start_screengdwPbm.ui'
+## Form generated from reading UI file 'start_screenvhEHTn.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -24,7 +24,7 @@ class Ui_start_screen(object):
     def setupUi(self, start_screen):
         if not start_screen.objectName():
             start_screen.setObjectName(u"start_screen")
-        start_screen.resize(879, 622)
+        start_screen.resize(1427, 725)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -35,7 +35,9 @@ class Ui_start_screen(object):
 "	color: rgb(0, 0, 0);\n"
 "}")
         self.horizontalLayout = QHBoxLayout(start_screen)
+        self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.frame_2 = QFrame(start_screen)
         self.frame_2.setObjectName(u"frame_2")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -47,44 +49,26 @@ class Ui_start_screen(object):
         self.frame_2.setFrameShadow(QFrame.Plain)
         self.frame_2.setLineWidth(0)
         self.verticalLayout_2 = QVBoxLayout(self.frame_2)
+        self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.frame_3 = QFrame(self.frame_2)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setStyleSheet(u"")
-        self.frame_3.setFrameShape(QFrame.StyledPanel)
+        self.frame_3.setFrameShape(QFrame.NoFrame)
         self.frame_3.setFrameShadow(QFrame.Raised)
         self.gridLayout = QGridLayout(self.frame_3)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.label = QLabel(self.frame_3)
-        self.label.setObjectName(u"label")
-        font = QFont()
-        font.setPointSize(13)
-        font.setBold(False)
-        font.setItalic(False)
-        self.label.setFont(font)
-        self.label.setAutoFillBackground(False)
-        self.label.setStyleSheet(u"")
-        self.label.setFrameShape(QFrame.NoFrame)
-        self.label.setFrameShadow(QFrame.Raised)
-        self.label.setLineWidth(5)
-        self.label.setWordWrap(True)
-
-        self.gridLayout.addWidget(self.label, 0, 3, 1, 1)
-
-        self.line_5 = QFrame(self.frame_3)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.VLine)
-        self.line_5.setFrameShadow(QFrame.Sunken)
-
-        self.gridLayout.addWidget(self.line_5, 0, 2, 1, 1)
-
+        self.gridLayout.setHorizontalSpacing(0)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.frame_6 = QFrame(self.frame_3)
         self.frame_6.setObjectName(u"frame_6")
         self.frame_6.setStyleSheet(u"")
-        self.frame_6.setFrameShape(QFrame.StyledPanel)
+        self.frame_6.setFrameShape(QFrame.NoFrame)
         self.frame_6.setFrameShadow(QFrame.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.frame_6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.label_3 = QLabel(self.frame_6)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setStyleSheet(u"image: url(:/logos/images/logo/Quest_Planning_Logo_RGB.png);")
@@ -101,27 +85,39 @@ class Ui_start_screen(object):
 
         self.gridLayout.addWidget(self.frame_6, 0, 1, 1, 1)
 
-        self.line_5.raise_()
-        self.frame_6.raise_()
-        self.label.raise_()
 
         self.verticalLayout_2.addWidget(self.frame_3)
 
         self.frame_5 = QFrame(self.frame_2)
         self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShape(QFrame.NoFrame)
         self.frame_5.setFrameShadow(QFrame.Raised)
         self.verticalLayout = QVBoxLayout(self.frame_5)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.frame_7 = QFrame(self.frame_5)
         self.frame_7.setObjectName(u"frame_7")
-        self.frame_7.setFrameShape(QFrame.StyledPanel)
+        self.frame_7.setFrameShape(QFrame.NoFrame)
         self.frame_7.setFrameShadow(QFrame.Raised)
         self.gridLayout_4 = QGridLayout(self.frame_7)
-        self.gridLayout_4.setSpacing(0)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.frame_7)
+        self.label.setObjectName(u"label")
+        font = QFont()
+        font.setPointSize(13)
+        font.setBold(False)
+        font.setItalic(False)
+        self.label.setFont(font)
+        self.label.setAutoFillBackground(False)
+        self.label.setStyleSheet(u"")
+        self.label.setFrameShape(QFrame.NoFrame)
+        self.label.setFrameShadow(QFrame.Raised)
+        self.label.setLineWidth(5)
+        self.label.setWordWrap(True)
+
+        self.gridLayout_4.addWidget(self.label, 1, 0, 1, 1)
+
         self.label_8 = QLabel(self.frame_7)
         self.label_8.setObjectName(u"label_8")
         font1 = QFont()
@@ -131,7 +127,7 @@ class Ui_start_screen(object):
         self.label_8.setTextFormat(Qt.RichText)
         self.label_8.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
-        self.gridLayout_4.addWidget(self.label_8, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_8, 2, 0, 1, 1)
 
 
         self.verticalLayout.addWidget(self.frame_7)
@@ -150,10 +146,12 @@ class Ui_start_screen(object):
         self.frame_4.setObjectName(u"frame_4")
         self.frame_4.setMaximumSize(QSize(16777215, 16777215))
         self.frame_4.setInputMethodHints(Qt.ImhNoTextHandles)
-        self.frame_4.setFrameShape(QFrame.StyledPanel)
+        self.frame_4.setFrameShape(QFrame.NoFrame)
         self.frame_4.setFrameShadow(QFrame.Raised)
         self.gridLayout_2 = QGridLayout(self.frame_4)
+        self.gridLayout_2.setSpacing(6)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.line_2 = QFrame(self.frame_4)
         self.line_2.setObjectName(u"line_2")
         self.line_2.setFrameShape(QFrame.VLine)
@@ -206,10 +204,11 @@ class Ui_start_screen(object):
         sizePolicy2.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy2)
         self.frame.setMinimumSize(QSize(0, 0))
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.frame.setFrameShape(QFrame.NoFrame)
+        self.frame.setFrameShadow(QFrame.Sunken)
         self.gridLayout_3 = QGridLayout(self.frame)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.horizontalSpacer = QSpacerItem(10, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.gridLayout_3.addItem(self.horizontalSpacer, 0, 1, 1, 1)
@@ -223,10 +222,21 @@ class Ui_start_screen(object):
         self.start_button.setSizePolicy(sizePolicy3)
         self.start_button.setMaximumSize(QSize(200, 16777215))
         self.start_button.setAutoFillBackground(False)
-        self.start_button.setStyleSheet(u"font: 700 12pt \"Segoe UI\";\n"
-"background-color: rgb(129, 194, 65);\n"
-"color: rgb(255, 255, 255);")
-        self.start_button.setFlat(False)
+        self.start_button.setStyleSheet(u"QPushButton {\n"
+"        border: 2px solid rgb(40, 84, 113);\n"
+"        border-radius: 15px;\n"
+"        background-color: rgb(40, 84, 113);\n"
+"        color: white;\n"
+"		 font: 700 12pt \"Segoe UI\";\n"
+"        padding: 4px;\n"
+"    }\n"
+"QPushButton:hover {\n"
+"        background-color: rgb(60, 120, 150);\n"
+"    }\n"
+"QPushButton:pressed {\n"
+"        background-color: rgb(20, 60, 80);\n"
+"    }")
+        self.start_button.setFlat(True)
 
         self.gridLayout_3.addWidget(self.start_button, 0, 5, 1, 1)
 
@@ -246,17 +256,28 @@ class Ui_start_screen(object):
         sizePolicy3.setHeightForWidth(self.doc_button.sizePolicy().hasHeightForWidth())
         self.doc_button.setSizePolicy(sizePolicy3)
         self.doc_button.setMaximumSize(QSize(300, 16777215))
-        self.doc_button.setStyleSheet(u"background-color: rgb(40, 84, 113);\n"
-"color: rgb(255, 255, 255);\n"
-"font: 600 italic 11pt \"Segoe UI\";\n"
-"\n"
-"")
+        self.doc_button.setStyleSheet(u"QPushButton {\n"
+"        border: 2px solid rgb(40, 84, 113);\n"
+"        border-radius: 15px;\n"
+"        background-color: rgb(40, 84, 113);\n"
+"        color: white;\n"
+"		 font: 700 12pt \"Segoe UI\";\n"
+"        padding: 4px;\n"
+"    }\n"
+"QPushButton:hover {\n"
+"        background-color: rgb(60, 120, 150);\n"
+"    }\n"
+"QPushButton:pressed {\n"
+"        background-color: rgb(20, 60, 80);\n"
+"    }")
+        self.doc_button.setFlat(True)
 
         self.gridLayout_3.addWidget(self.doc_button, 0, 0, 1, 1)
 
 
         self.verticalLayout_2.addWidget(self.frame)
 
+        self.verticalLayout_2.setStretch(0, 1)
 
         self.horizontalLayout.addWidget(self.frame_2)
 
@@ -268,10 +289,10 @@ class Ui_start_screen(object):
 
     def retranslateUi(self, start_screen):
         start_screen.setWindowTitle(QCoreApplication.translate("start_screen", u"Form", None))
-        self.label.setText(QCoreApplication.translate("start_screen", u"<html><head/><body><p>The <span style=\" font-weight:700; font-style:italic; color:#285471;\">QuESt Planning</span> tool, developed by Sandia National Laboratories, is a long-term capacity expansion planning model that examines the role of energy storage technologies on optimal generation and transmission expansion. </p><p><span style=\" font-weight:700; font-style:italic; color:#285471;\">Key features include:</span></p><ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Identification of cost-optimal energy storage, generation, and transmission investments</li><li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Sizing and siting of energy storage resources &amp; generation </li><li style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt"
-                        "-block-indent:0; text-indent:0px;\">Scenario-based planning and model flexibility</li></ul></body></html>", None))
         self.label_3.setText("")
         self.label_4.setText("")
+        self.label.setText(QCoreApplication.translate("start_screen", u"<html><head/><body><p>The <span style=\" font-weight:700; font-style:italic; color:#285471;\">QuESt Planning</span> tool, developed by Sandia National Laboratories, is a long-term capacity expansion planning model that examines the role of energy storage technologies on optimal generation and transmission expansion. </p><p><span style=\" font-weight:700; font-style:italic; color:#285471;\">Key features include:</span></p><ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Identification of cost-optimal energy storage, generation, and transmission investments</li><li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Sizing and siting of energy storage resources &amp; generation </li><li style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt"
+                        "-block-indent:0; text-indent:0px;\">Scenario-based planning and model flexibility</li></ul></body></html>", None))
         self.label_8.setText(QCoreApplication.translate("start_screen", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

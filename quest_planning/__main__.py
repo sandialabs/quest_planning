@@ -61,23 +61,24 @@ class QuestPlanning(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)#self.main_win)
         self.ui.tabWidget.setCurrentWidget(self.ui.start)
-        
+
+
         #self.ui.max_resize_button.clicked.connect(lambda: self.main_win.showFullScreen())
         #self.ui.exit_app_button.clicked.connect(lambda: self.main_win.close())
         #self.ui.norm_resize_button.clicked.connect(lambda: self.main_win.showNormal())
         #self.ui.min_resize_button.clicked.connect(lambda: self.main_win.showMinimized())
 
-        self.ui.max_resize_button.clicked.connect(self.showFullScreen)
-        self.ui.exit_app_button.clicked.connect(self.close)
-        self.ui.norm_resize_button.clicked.connect(self.showNormal)
-        self.ui.min_resize_button.clicked.connect(self.showMinimized)
+        # self.ui.max_resize_button.clicked.connect(self.showFullScreen)
+        # self.ui.exit_app_button.clicked.connect(self.close)
+        # self.ui.norm_resize_button.clicked.connect(self.showNormal)
+        # self.ui.min_resize_button.clicked.connect(self.showMinimized)
         
         self.setWindowFlag(Qt.CustomizeWindowHint,True)
         #self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)
-        self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
-        self.setWindowFlag(Qt.WindowMinimizeButtonHint, False)
-        self.setWindowFlag(Qt.WindowCloseButtonHint, False)
-        self.setWindowFlag(Qt.Window, False)
+        #self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
+        # self.setWindowFlag(Qt.WindowMinimizeButtonHint, False)
+        # self.setWindowFlag(Qt.WindowCloseButtonHint, False)
+        self.setWindowFlag(Qt.Window, True)
 
         self.setWindowTitle("QuESt Planning")
         self.setWindowIcon(QIcon(":/logos/images/logo/Quest_App_Icon.svg"))
@@ -85,14 +86,26 @@ class QuestPlanning(QMainWindow):
         
         self.ui.home_button.clicked.connect(lambda: self.ui.tabWidget.setCurrentWidget(self.ui.start))
         
+
+
         # Add widgets to their respective layouts
         self.ui.start_page_layout.addWidget(StartScreen(self.ui.tabWidget))
         self.ui.power_system_data_page_layout.addWidget(PowerSystemDataPage(self.ui.tabWidget,self.data_handler))
         self.ui.planning_model_page_layout.addWidget(PlanningModelPage(self.ui.tabWidget,self.data_handler))
         self.ui.scenario_builder_page_layout.addWidget(ScenarioBuilderPage(self.ui.tabWidget,self.data_handler,self.ui.power_system_data_page_layout.itemAt(0).widget(),self.ui.planning_model_page_layout.itemAt(0).widget(), self.optimizer, self.results_viewer))
-        self.ui.build_run_page_layout.addWidget(BuildRunPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer,self.ui.planning_model_page_layout.itemAt(0).widget(),
-                                                             self.ui.scenario_builder_page_layout.itemAt(0).widget()))
-        self.ui.results_page_layout.addWidget(ResultsPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer))
+
+
+        #Making an instance of the build run to access a signal later
+        self.build_run = BuildRunPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer,self.ui.planning_model_page_layout.itemAt(0).widget(),
+                                                             self.ui.scenario_builder_page_layout.itemAt(0).widget())
+        #Collecting results in the backend
+        self.results_obj = ResultsPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer)
+        
+        self.ui.build_run_page_layout.addWidget(self.build_run)
+        # self.ui.build_run_page_layout.addWidget(BuildRunPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer,self.ui.planning_model_page_layout.itemAt(0).widget(),
+        #                                                      self.ui.scenario_builder_page_layout.itemAt(0).widget()))
+        # self.ui.results_page_layout.addWidget(ResultsPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer))
+        self.ui.results_page_layout.addWidget(self.results_obj)
 
         # Set signal to load profile box when tab is opened. This could be used in other applications to improve workflow.
         self.ui.tabWidget.currentChanged.connect(self.ui.scenario_builder_page_layout.itemAt(0).widget().on_tab_opened)
@@ -102,6 +115,8 @@ class QuestPlanning(QMainWindow):
         # TODO-not working, secondary feature
         self.animator = TabAnimator(self.ui.tabWidget)
         self.ui.tabWidget.currentChanged.connect(lambda index: self.animator.fade_in_tab_widget(index))
+
+        self.build_run.solved_it.connect(self.results_obj.collect_results_button_clicked)
         
     def show(self):
         """Show the main window."""
