@@ -10,7 +10,8 @@ warnings.filterwarnings("ignore")
 
 from PySide6.QtCore import (
     QThreadPool,
-    Qt
+    Qt,
+    Signal,
 )
 from PySide6.QtWidgets import (
     QMenu,
@@ -35,6 +36,8 @@ class BuildRunPage(QWidget, Ui_build_run):
     """
         Make scenario selections, build and run the scenario.
     """
+
+    solved_it = Signal()
 
     def __init__(self, tabWidget, data_handler, optimizer, results_viewer,
                  planning_model_page, scenario_builder_page):
@@ -74,7 +77,7 @@ class BuildRunPage(QWidget, Ui_build_run):
         self.previous_button.setToolTip('Return to Scenario Builder')
 
         self.model_status_frame.hide()
-        self.line_top.hide()
+#self.line_top.hide()
     
     def select_file(self):
         """Selects file directory using a QFileDialog and adds to the file_combo_box."""
@@ -210,7 +213,7 @@ class BuildRunPage(QWidget, Ui_build_run):
         '''collect solver and results folder call functions from each page to load inputs'''
         #print("Pyomo Model Building")
         self.model_status_frame.show()
-        self.line_top.show()
+       # self.line_top.show()
 
         #Solver collected if changed
      
@@ -275,9 +278,11 @@ class BuildRunPage(QWidget, Ui_build_run):
                     self.popup_message.done(1)
                     self.error_message.showMessage("Process results failed")
                 else:
-                    self.popup_message.setText("Model has solved to optimality and results have been processed. Please proceed to the Results page.")
-                    self.popup_message.setStandardButtons(QMessageBox.Ok)
-                    self.popup_message.exec()
+                    print("Collecting Results")
+                    self.solved_it.emit()
+                    # self.popup_message.setText("Model has solved to optimality and results have been processed. Please proceed to the Results page.")
+                    # self.popup_message.setStandardButtons(QMessageBox.Ok)
+                    # self.popup_message.exec()
 
             except RuntimeError:
                 pass

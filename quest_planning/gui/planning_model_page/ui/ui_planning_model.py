@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'planning_modelReuQuS.ui'
+## Form generated from reading UI file 'planning_modelwleKJM.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -26,52 +26,79 @@ class Ui_planning_model(object):
     def setupUi(self, planning_model):
         if not planning_model.objectName():
             planning_model.setObjectName(u"planning_model")
-        planning_model.resize(892, 678)
+        planning_model.resize(944, 678)
         planning_model.setStyleSheet(u"")
         self.verticalLayout = QVBoxLayout(planning_model)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 15, 0, 0)
         self.frame_2 = QFrame(planning_model)
         self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setStyleSheet(u"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"}")
-        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setStyleSheet(u"")
+        self.frame_2.setFrameShape(QFrame.NoFrame)
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.verticalLayout_2 = QVBoxLayout(self.frame_2)
+        self.verticalLayout_2.setSpacing(25)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.frame = QFrame(self.frame_2)
         self.frame.setObjectName(u"frame")
         font = QFont()
         font.setBold(False)
         self.frame.setFont(font)
-        self.frame.setStyleSheet(u"background-color: rgb(158, 158, 158);\n"
-"background-color: rgb(158, 158, 158);\n"
-"background-color: rgb(40, 84, 113);\n"
-"QLabel{color: rgb(255, 255, 255);};\n"
-"border-radius: 25px;")
-        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setStyleSheet(u"background-color: rgb(208, 208, 208);\n"
+"border-radius: 25px;\n"
+"\n"
+"color: black;")
+        self.frame.setFrameShape(QFrame.NoFrame)
         self.frame.setFrameShadow(QFrame.Raised)
         self.gridLayout_2 = QGridLayout(self.frame)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_2.addItem(self.horizontalSpacer_3, 6, 2, 1, 1)
+
         self.frame_3 = QFrame(self.frame)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setMinimumSize(QSize(500, 0))
-        self.frame_3.setStyleSheet(u"\n"
-"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"}")
-        self.frame_3.setFrameShape(QFrame.StyledPanel)
+        self.frame_3.setStyleSheet(u"")
+        self.frame_3.setFrameShape(QFrame.NoFrame)
         self.frame_3.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_2 = QHBoxLayout(self.frame_3)
+        self.horizontalLayout_2.setSpacing(6)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.frame_4 = QFrame(self.frame_3)
         self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setFrameShape(QFrame.StyledPanel)
+        self.frame_4.setStyleSheet(u"\n"
+"    QToolButton:hover {\n"
+"        background-color: rgb(230, 230, 230);\n"
+"		border-radius:5px;\n"
+"    }\n"
+"    QToolButton:pressed {\n"
+"        background-color: rgb(180, 180, 180);		\n"
+"		 border-radius:5px;\n"
+"    }\n"
+"QPushButton {\n"
+"        border: 1px solid rgb(40, 84, 113);\n"
+"        border-radius: 7px;\n"
+"        background-color: rgb(40, 84, 113);\n"
+"        color: white;\n"
+"		 font: 700 10pt \"Segoe UI\";\n"
+"        padding: 1px;\n"
+"    }\n"
+"QPushButton:hover {\n"
+"        background-color: rgb(60, 120, 150);\n"
+"    }\n"
+"QPushButton:pressed {\n"
+"        background-color: rgb(20, 60, 80);\n"
+"    }")
+        self.frame_4.setFrameShape(QFrame.NoFrame)
         self.frame_4.setFrameShadow(QFrame.Raised)
         self.gridLayout_5 = QGridLayout(self.frame_4)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.gridLayout_5.setHorizontalSpacing(35)
+        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.label_7 = QLabel(self.frame_4)
         self.label_7.setObjectName(u"label_7")
         font1 = QFont()
@@ -79,29 +106,31 @@ class Ui_planning_model(object):
         font1.setBold(True)
         font1.setItalic(False)
         self.label_7.setFont(font1)
-        self.label_7.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_7.setStyleSheet(u"")
         self.label_7.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_5.addWidget(self.label_7, 7, 1, 1, 1)
 
         self.transmission_model_help_button = QToolButton(self.frame_4)
         self.transmission_model_help_button.setObjectName(u"transmission_model_help_button")
-        self.transmission_model_help_button.setStyleSheet(u"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"\n"
-"}")
+        self.transmission_model_help_button.setStyleSheet(u"")
+        icon = QIcon()
+        icon.addFile(u":/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.transmission_model_help_button.setIcon(icon)
+        self.transmission_model_help_button.setIconSize(QSize(24, 24))
 
         self.gridLayout_5.addWidget(self.transmission_model_help_button, 4, 3, 1, 1)
 
         self.advanced_settings_button = QPushButton(self.frame_4)
         self.advanced_settings_button.setObjectName(u"advanced_settings_button")
         font2 = QFont()
-        font2.setPointSize(12)
+        font2.setFamilies([u"Segoe UI"])
+        font2.setPointSize(10)
         font2.setBold(True)
+        font2.setItalic(False)
         self.advanced_settings_button.setFont(font2)
-        self.advanced_settings_button.setStyleSheet(u"color: rgb(255, 255, 255);\n"
-"background-color: rgb(0, 0, 255);")
+        self.advanced_settings_button.setStyleSheet(u"")
+        self.advanced_settings_button.setFlat(True)
 
         self.gridLayout_5.addWidget(self.advanced_settings_button, 8, 2, 1, 1)
 
@@ -113,7 +142,7 @@ class Ui_planning_model(object):
         font3.setBold(True)
         font3.setItalic(False)
         self.label_5.setFont(font3)
-        self.label_5.setStyleSheet(u"color: rgb(255, 255, 255);\n"
+        self.label_5.setStyleSheet(u"\n"
 "font: 700 12pt \"Segoe UI\";")
         self.label_5.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
@@ -134,11 +163,9 @@ class Ui_planning_model(object):
         self.select_years_button = QPushButton(self.frame_4)
         self.select_years_button.setObjectName(u"select_years_button")
         self.select_years_button.setMaximumSize(QSize(250, 16777215))
-        self.select_years_button.setFont(font3)
-        self.select_years_button.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
-"color: rgb(255, 255, 255);\n"
-"font: 700 12pt \"Segoe UI\";\n"
-"background-color: rgb(85, 170, 0);")
+        self.select_years_button.setFont(font2)
+        self.select_years_button.setStyleSheet(u"")
+        self.select_years_button.setFlat(True)
 
         self.gridLayout_5.addWidget(self.select_years_button, 2, 2, 1, 1)
 
@@ -154,18 +181,16 @@ class Ui_planning_model(object):
 
         self.discount_rate_help_button = QToolButton(self.frame_4)
         self.discount_rate_help_button.setObjectName(u"discount_rate_help_button")
-        self.discount_rate_help_button.setStyleSheet(u"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"\n"
-"}")
+        self.discount_rate_help_button.setStyleSheet(u"")
+        self.discount_rate_help_button.setIcon(icon)
+        self.discount_rate_help_button.setIconSize(QSize(24, 24))
 
         self.gridLayout_5.addWidget(self.discount_rate_help_button, 6, 3, 1, 1)
 
         self.label_3 = QLabel(self.frame_4)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setFont(font1)
-        self.label_3.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_3.setStyleSheet(u"")
         self.label_3.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_5.addWidget(self.label_3, 4, 1, 1, 1)
@@ -173,17 +198,16 @@ class Ui_planning_model(object):
         self.label_4 = QLabel(self.frame_4)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setFont(font1)
-        self.label_4.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_4.setStyleSheet(u"")
         self.label_4.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_5.addWidget(self.label_4, 0, 1, 1, 1)
 
         self.temporal_selection_help_button = QToolButton(self.frame_4)
         self.temporal_selection_help_button.setObjectName(u"temporal_selection_help_button")
-        self.temporal_selection_help_button.setStyleSheet(u"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"}")
+        self.temporal_selection_help_button.setStyleSheet(u"")
+        self.temporal_selection_help_button.setIcon(icon)
+        self.temporal_selection_help_button.setIconSize(QSize(24, 24))
 
         self.gridLayout_5.addWidget(self.temporal_selection_help_button, 5, 3, 1, 1)
 
@@ -199,7 +223,7 @@ class Ui_planning_model(object):
         self.label = QLabel(self.frame_4)
         self.label.setObjectName(u"label")
         self.label.setFont(font1)
-        self.label.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label.setStyleSheet(u"")
         self.label.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_5.addWidget(self.label, 6, 1, 1, 1)
@@ -222,7 +246,7 @@ class Ui_planning_model(object):
         self.label_6 = QLabel(self.frame_4)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font1)
-        self.label_6.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_6.setStyleSheet(u"")
         self.label_6.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.gridLayout_5.addWidget(self.label_6, 1, 1, 1, 1)
@@ -236,10 +260,9 @@ class Ui_planning_model(object):
 
         self.select_simulation_years_help_button = QToolButton(self.frame_4)
         self.select_simulation_years_help_button.setObjectName(u"select_simulation_years_help_button")
-        self.select_simulation_years_help_button.setStyleSheet(u"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"}")
+        self.select_simulation_years_help_button.setStyleSheet(u"")
+        self.select_simulation_years_help_button.setIcon(icon)
+        self.select_simulation_years_help_button.setIconSize(QSize(24, 24))
 
         self.gridLayout_5.addWidget(self.select_simulation_years_help_button, 2, 3, 1, 1)
 
@@ -254,11 +277,9 @@ class Ui_planning_model(object):
 
         self.base_currency_help_button = QToolButton(self.frame_4)
         self.base_currency_help_button.setObjectName(u"base_currency_help_button")
-        self.base_currency_help_button.setStyleSheet(u"QToolButton{\n"
-"image: url(:/icon/images/icons/info_help1.png);\n"
-"	background-color: rgb(226, 226, 226);\n"
-"\n"
-"}")
+        self.base_currency_help_button.setStyleSheet(u"")
+        self.base_currency_help_button.setIcon(icon)
+        self.base_currency_help_button.setIconSize(QSize(24, 24))
 
         self.gridLayout_5.addWidget(self.base_currency_help_button, 7, 3, 1, 1)
 
@@ -272,10 +293,6 @@ class Ui_planning_model(object):
 
         self.gridLayout_2.addItem(self.horizontalSpacer_2, 6, 0, 1, 1)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_2.addItem(self.horizontalSpacer_3, 6, 2, 1, 1)
-
 
         self.verticalLayout_2.addWidget(self.frame)
 
@@ -286,34 +303,28 @@ class Ui_planning_model(object):
 
         self.verticalLayout_2.addWidget(self.line_2)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_2.addItem(self.verticalSpacer_2)
-
         self.planning_model_widget = QWidget(self.frame_2)
         self.planning_model_widget.setObjectName(u"planning_model_widget")
         self.gridLayout = QGridLayout(self.planning_model_widget)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_5, 1, 0, 1, 1)
-
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.planning_model_info_frame = QFrame(self.planning_model_widget)
         self.planning_model_info_frame.setObjectName(u"planning_model_info_frame")
-        self.planning_model_info_frame.setStyleSheet(u"background-color: rgb(40, 84, 113);\n"
-"background-color: rgb(193, 129, 0);\n"
+        self.planning_model_info_frame.setStyleSheet(u"background-color: rgb(208, 208, 208);\n"
 "border-radius: 25px;\n"
-"")
-        self.planning_model_info_frame.setFrameShape(QFrame.StyledPanel)
+"\n"
+"color: black;")
+        self.planning_model_info_frame.setFrameShape(QFrame.NoFrame)
         self.planning_model_info_frame.setFrameShadow(QFrame.Raised)
         self.gridLayout_4 = QGridLayout(self.planning_model_info_frame)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.gridLayout_4.setContentsMargins(0, 0, 20, 0)
         self.label_13 = QLabel(self.planning_model_info_frame)
         self.label_13.setObjectName(u"label_13")
-        self.label_13.setStyleSheet(u"font: 700 italic 9pt \"Segoe UI\";\n"
+        self.label_13.setStyleSheet(u"\n"
 "text-decoration: underline;\n"
 "font: 700 italic 16pt \"Segoe UI\";\n"
-"color: rgb(255, 255, 255);")
+"")
         self.label_13.setAlignment(Qt.AlignCenter)
 
         self.gridLayout_4.addWidget(self.label_13, 0, 0, 1, 1, Qt.AlignHCenter)
@@ -325,53 +336,49 @@ class Ui_planning_model(object):
         font5.setBold(True)
         font5.setItalic(True)
         self.label_9.setFont(font5)
-        self.label_9.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_9.setStyleSheet(u"")
 
-        self.gridLayout_4.addWidget(self.label_9, 2, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_9, 2, 0, 1, 1, Qt.AlignHCenter)
 
         self.label_10 = QLabel(self.planning_model_info_frame)
         self.label_10.setObjectName(u"label_10")
         self.label_10.setFont(font5)
-        self.label_10.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_10.setStyleSheet(u"")
 
-        self.gridLayout_4.addWidget(self.label_10, 3, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_10, 3, 0, 1, 1, Qt.AlignHCenter)
 
         self.trans_model_label = QLabel(self.planning_model_info_frame)
         self.trans_model_label.setObjectName(u"trans_model_label")
         font6 = QFont()
         font6.setPointSize(12)
         self.trans_model_label.setFont(font6)
-        self.trans_model_label.setStyleSheet(u"color:rgb(255, 255, 255)")
+        self.trans_model_label.setStyleSheet(u"")
 
         self.gridLayout_4.addWidget(self.trans_model_label, 2, 1, 1, 1)
 
         self.temporal_selection_label = QLabel(self.planning_model_info_frame)
         self.temporal_selection_label.setObjectName(u"temporal_selection_label")
         self.temporal_selection_label.setFont(font6)
-        self.temporal_selection_label.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.temporal_selection_label.setStyleSheet(u"")
 
         self.gridLayout_4.addWidget(self.temporal_selection_label, 3, 1, 1, 1)
 
         self.sim_years_label = QLabel(self.planning_model_info_frame)
         self.sim_years_label.setObjectName(u"sim_years_label")
         self.sim_years_label.setFont(font6)
-        self.sim_years_label.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.sim_years_label.setStyleSheet(u"")
 
         self.gridLayout_4.addWidget(self.sim_years_label, 1, 1, 1, 1)
 
         self.label_8 = QLabel(self.planning_model_info_frame)
         self.label_8.setObjectName(u"label_8")
         self.label_8.setFont(font5)
-        self.label_8.setStyleSheet(u"color: rgb(255, 255, 255);")
+        self.label_8.setStyleSheet(u"")
 
-        self.gridLayout_4.addWidget(self.label_8, 1, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_8, 1, 0, 1, 1, Qt.AlignHCenter)
 
 
-        self.gridLayout.addWidget(self.planning_model_info_frame, 1, 1, 1, 1)
-
-        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_4, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.planning_model_info_frame, 1, 0, 1, 1)
 
 
         self.verticalLayout_2.addWidget(self.planning_model_widget)
@@ -389,22 +396,31 @@ class Ui_planning_model(object):
 
         self.frame_5 = QFrame(self.frame_2)
         self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShape(QFrame.NoFrame)
         self.frame_5.setFrameShadow(QFrame.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame_5)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.previous_button = QPushButton(self.frame_5)
         self.previous_button.setObjectName(u"previous_button")
-        self.previous_button.setStyleSheet(u"background-color: rgb(208, 69, 0);\n"
-"font: 700 12pt \"Segoe UI\";\n"
-"color: rgb(255, 255, 255);\n"
-"")
+        self.previous_button.setMinimumSize(QSize(100, 0))
+        self.previous_button.setStyleSheet(u"QPushButton {\n"
+"        border: 1px solid rgb(40, 84, 113);\n"
+"        border-radius: 7px;\n"
+"        background-color: rgb(40, 84, 113);\n"
+"        color: white;\n"
+"		 font: 700 10pt \"Segoe UI\";\n"
+"        padding: 1px;\n"
+"    }\n"
+"QPushButton:hover {\n"
+"        background-color: rgb(60, 120, 150);\n"
+"    }\n"
+"QPushButton:pressed {\n"
+"        background-color: rgb(20, 60, 80);\n"
+"    }")
+        self.previous_button.setFlat(True)
 
-        self.horizontalLayout.addWidget(self.previous_button)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer)
+        self.horizontalLayout.addWidget(self.previous_button, 0, Qt.AlignLeft)
 
         self.label_2 = QLabel(self.frame_5)
         self.label_2.setObjectName(u"label_2")
@@ -412,19 +428,28 @@ class Ui_planning_model(object):
         self.label_2.setMaximumSize(QSize(16777211, 16777215))
         self.label_2.setStyleSheet(u"image: url(:/logos/images/logo/planning_model_icon.png);")
 
-        self.horizontalLayout.addWidget(self.label_2)
-
-        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer_6)
+        self.horizontalLayout.addWidget(self.label_2, 0, Qt.AlignHCenter)
 
         self.next_button = QPushButton(self.frame_5)
         self.next_button.setObjectName(u"next_button")
-        self.next_button.setStyleSheet(u"background-color: rgb(129, 194, 65);\n"
-"font: 700 12pt \"Segoe UI\";\n"
-"color: rgb(255, 255, 255);")
+        self.next_button.setMinimumSize(QSize(80, 0))
+        self.next_button.setStyleSheet(u"QPushButton {\n"
+"        border: 1px solid rgb(40, 84, 113);\n"
+"        border-radius: 7px;\n"
+"        background-color: rgb(40, 84, 113);\n"
+"        color: white;\n"
+"		 font: 700 10pt \"Segoe UI\";\n"
+"        padding: 1px;\n"
+"    }\n"
+"QPushButton:hover {\n"
+"        background-color: rgb(60, 120, 150);\n"
+"    }\n"
+"QPushButton:pressed {\n"
+"        background-color: rgb(20, 60, 80);\n"
+"    }")
+        self.next_button.setFlat(True)
 
-        self.horizontalLayout.addWidget(self.next_button)
+        self.horizontalLayout.addWidget(self.next_button, 0, Qt.AlignRight)
 
 
         self.verticalLayout_2.addWidget(self.frame_5)

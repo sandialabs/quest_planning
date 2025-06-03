@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
+    <width>944</width>
     <height>678</height>
    </rect>
   </property>
@@ -17,21 +17,45 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>15</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame_2">
      <property name="styleSheet">
-      <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>25</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QFrame" name="frame">
         <property name="font">
@@ -40,19 +64,43 @@ image: url(:/icon/images/icons/info_help1.png);
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(158, 158, 158);
-background-color: rgb(158, 158, 158);
-background-color: rgb(40, 84, 113);
-QLabel{color: rgb(255, 255, 255);};
-border-radius: 25px;</string>
+         <string notr="true">background-color: rgb(208, 208, 208);
+border-radius: 25px;
+
+color: black;</string>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="6" column="2">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="6" column="1">
           <widget class="QFrame" name="frame_3">
            <property name="minimumSize">
@@ -62,28 +110,79 @@ border-radius: 25px;</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">
-QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-}</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QFrame" name="frame_4">
+              <property name="styleSheet">
+               <string notr="true">
+    QToolButton:hover {
+        background-color: rgb(230, 230, 230);
+		border-radius:5px;
+    }
+    QToolButton:pressed {
+        background-color: rgb(180, 180, 180);		
+		 border-radius:5px;
+    }
+QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
+              </property>
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_5">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <property name="horizontalSpacing">
+                <number>35</number>
+               </property>
                <item row="7" column="1">
                 <widget class="QLabel" name="label_7">
                  <property name="font">
@@ -94,7 +193,7 @@ image: url(:/icon/images/icons/info_help1.png);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Base Currency Year:</string>
@@ -107,14 +206,20 @@ image: url(:/icon/images/icons/info_help1.png);
                <item row="4" column="3">
                 <widget class="QToolButton" name="transmission_model_help_button">
                  <property name="styleSheet">
-                  <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../resources.qrc">
+                   <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -122,16 +227,20 @@ image: url(:/icon/images/icons/info_help1.png);
                 <widget class="QPushButton" name="advanced_settings_button">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <family>Segoe UI</family>
+                   <pointsize>10</pointsize>
+                   <italic>false</italic>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Advanced Settings</string>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -146,7 +255,7 @@ background-color: rgb(0, 0, 255);</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);
+                  <string notr="true">
 font: 700 12pt &quot;Segoe UI&quot;;</string>
                  </property>
                  <property name="text">
@@ -195,19 +304,19 @@ font: 700 12pt &quot;Segoe UI&quot;;</string>
                  <property name="font">
                   <font>
                    <family>Segoe UI</family>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <italic>false</italic>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(255, 255, 255);
-font: 700 12pt &quot;Segoe UI&quot;;
-background-color: rgb(85, 170, 0);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Select Simulation Years</string>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -241,14 +350,20 @@ background-color: rgb(85, 170, 0);</string>
                <item row="6" column="3">
                 <widget class="QToolButton" name="discount_rate_help_button">
                  <property name="styleSheet">
-                  <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../resources.qrc">
+                   <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -262,7 +377,7 @@ image: url(:/icon/images/icons/info_help1.png);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Transmission Model:</string>
@@ -282,7 +397,7 @@ image: url(:/icon/images/icons/info_help1.png);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Begin Year:</string>
@@ -295,13 +410,20 @@ image: url(:/icon/images/icons/info_help1.png);
                <item row="5" column="3">
                 <widget class="QToolButton" name="temporal_selection_help_button">
                  <property name="styleSheet">
-                  <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../resources.qrc">
+                   <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -338,7 +460,7 @@ image: url(:/icon/images/icons/info_help1.png);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>Annual Discount Rate:</string>
@@ -395,7 +517,7 @@ image: url(:/icon/images/icons/info_help1.png);
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color: rgb(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>End Year:</string>
@@ -423,13 +545,20 @@ image: url(:/icon/images/icons/info_help1.png);
                <item row="2" column="3">
                 <widget class="QToolButton" name="select_simulation_years_help_button">
                  <property name="styleSheet">
-                  <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../resources.qrc">
+                   <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -461,14 +590,20 @@ image: url(:/icon/images/icons/info_help1.png);
                <item row="7" column="3">
                 <widget class="QToolButton" name="base_currency_help_button">
                  <property name="styleSheet">
-                  <string notr="true">QToolButton{
-image: url(:/icon/images/icons/info_help1.png);
-	background-color: rgb(226, 226, 226);
-
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../../resources.qrc">
+                   <normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</normaloff>:/icon/images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
                  </property>
                 </widget>
                </item>
@@ -491,19 +626,6 @@ image: url(:/icon/images/icons/info_help1.png);
            </property>
           </spacer>
          </item>
-         <item row="6" column="2">
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </widget>
       </item>
@@ -515,56 +637,54 @@ image: url(:/icon/images/icons/info_help1.png);
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QWidget" name="planning_model_widget" native="true">
         <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item row="1" column="0">
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="1">
           <widget class="QFrame" name="planning_model_info_frame">
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(40, 84, 113);
-background-color: rgb(193, 129, 0);
+            <string notr="true">background-color: rgb(208, 208, 208);
 border-radius: 25px;
-</string>
+
+color: black;</string>
            </property>
            <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item row="0" column="0" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label_13">
               <property name="styleSheet">
-               <string notr="true">font: 700 italic 9pt &quot;Segoe UI&quot;;
+               <string notr="true">
 text-decoration: underline;
 font: 700 italic 16pt &quot;Segoe UI&quot;;
-color: rgb(255, 255, 255);</string>
+</string>
               </property>
               <property name="text">
                <string>Planning Model Setup</string>
@@ -574,7 +694,7 @@ color: rgb(255, 255, 255);</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="2" column="0" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label_9">
               <property name="font">
                <font>
@@ -584,14 +704,14 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Transmission Model:</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="3" column="0" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label_10">
               <property name="font">
                <font>
@@ -601,7 +721,7 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Temporal Selection:</string>
@@ -616,7 +736,7 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color:rgb(255, 255, 255)</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>--</string>
@@ -631,7 +751,7 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>--</string>
@@ -646,14 +766,14 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>--</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="1" column="0" alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label_8">
               <property name="font">
                <font>
@@ -663,7 +783,7 @@ color: rgb(255, 255, 255);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>Simulation Years:</string>
@@ -672,19 +792,6 @@ color: rgb(255, 255, 255);</string>
             </item>
            </layout>
           </widget>
-         </item>
-         <item row="1" column="2">
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
@@ -712,39 +819,57 @@ color: rgb(255, 255, 255);</string>
       <item>
        <widget class="QFrame" name="frame_5">
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item alignment="Qt::AlignLeft">
           <widget class="QPushButton" name="previous_button">
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(208, 69, 0);
-font: 700 12pt &quot;Segoe UI&quot;;
-color: rgb(255, 255, 255);
-</string>
+            <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
            </property>
            <property name="text">
             <string>Previous</string>
            </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
+         <item alignment="Qt::AlignHCenter">
           <widget class="QLabel" name="label_2">
            <property name="minimumSize">
             <size>
@@ -766,28 +891,35 @@ color: rgb(255, 255, 255);
            </property>
           </widget>
          </item>
-         <item>
-          <spacer name="horizontalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
+         <item alignment="Qt::AlignRight">
+          <widget class="QPushButton" name="next_button">
+           <property name="minimumSize">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>80</width>
+             <height>0</height>
             </size>
            </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="next_button">
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(129, 194, 65);
-font: 700 12pt &quot;Segoe UI&quot;;
-color: rgb(255, 255, 255);</string>
+            <string notr="true">QPushButton {
+        border: 1px solid rgb(40, 84, 113);
+        border-radius: 7px;
+        background-color: rgb(40, 84, 113);
+        color: white;
+		 font: 700 10pt &quot;Segoe UI&quot;;
+        padding: 1px;
+    }
+QPushButton:hover {
+        background-color: rgb(60, 120, 150);
+    }
+QPushButton:pressed {
+        background-color: rgb(20, 60, 80);
+    }</string>
            </property>
            <property name="text">
             <string>Next</string>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

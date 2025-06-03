@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 DISTNAME = "quest_planning"
 VERSION = "1.0"
-PYTHON_REQUIRES = ">=3.6, <3.11"
+PYTHON_REQUIRES = ">=3.6"#, <3.11"
 DESCRIPTION = "Sandia National Laboratories Energy Storage Application Platform"
 LONG_DESCRIPTION = open("README.md").read()
 AUTHOR = "Sandia National Laboratories"
@@ -32,6 +32,7 @@ setup(
         "et-xmlfile==1.1.0",
         "folium==0.16.0",
         "fonttools==4.50.0",
+        "geopandas==1.0.1",
         "gurobipy==11.0.1",
         "idna==3.6",
         "Jinja2==3.1.3",
@@ -39,6 +40,7 @@ setup(
         "Markdown==3.7",
         "MarkupSafe==2.1.5",
         "matplotlib==3.8.3",
+        "narwhals==1.39.0",
         "networkx==3.2.1",
         "nose==1.3.7",
         "numpy==1.26.4",
@@ -46,6 +48,7 @@ setup(
         "packaging==24.0",
         "pandas==2.2.1",
         "pillow==10.2.0",
+        "plotly==6.0.1",
         "ply==3.11",
         "Pyomo==6.7.1",
         "pyparsing==3.1.2",

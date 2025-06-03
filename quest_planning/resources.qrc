@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icon">
+    <file>images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
     <file>images/icons/info_help1.png</file>
     <file>images/icons/info_help.png</file>
     <file>images/icons/send_FILL0_wght200_GRAD0_opsz48.svg</file>
@@ -308,19 +309,26 @@
     <file>images/logo/Quest_Q_RGB.svg</file>
     <file>images/logo/Quest_Tech_Logo_RGB.png</file>
   </qresource>
+  <qresource prefix="results_icons">
+    <file>images/results_icons/more_vert_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
+    <file>images/results_icons/data_check_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
+    <file>images/results_icons/folder_open_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
+    <file>images/results_icons/open_run_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
+    <file>images/results_icons/save_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
+    <file>images/results_icons/stacks_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
+  </qresource>
   <qresource prefix="pics">
     <file>images/pics/apex.png</file>
     <file>images/pics/custom_QP_logo.png</file>
     <file>images/pics/results_icon.png</file>
     <file>images/pics/solver_icon.png</file>
-    <file>images/pics/custom_QP_logo.png</file>
     <file>images/pics/icon_pic.png</file>
     <file>images/logo/SNL_Stacked_Black_Blue.jpg</file>
-    <file>images/logo/SNL_Stacked_Black_Blue.png</file>
     <file>images/pics/rts_gmlc.png</file>
     <file>images/pics/stacked_bar.png</file>
   </qresource>
   <qresource prefix="logos">
+    <file>images/logo/SNL_Stacked_Black_Blue.png</file>
     <file>images/logo/optimization_icon.png</file>
     <file>images/logo/planning_model_icon.png</file>
     <file>images/logo/power_system_icon.png</file>
@@ -328,8 +336,6 @@
     <file>images/logo/scenario_icon.png</file>
     <file>images/logo/start_icons.png</file>
     <file>images/logo/DOE_Logo_Color.png</file>
-    <file>images/logo/SNL_Stacked_Black_Blue.jpg</file>
-    <file>images/logo/SNL_Stacked_Black_Blue.png</file>
     <file>images/logo/Quest_App_Icon.png</file>
     <file>images/logo/Quest_App_Icon.svg</file>
     <file>images/logo/Quest_App_Icon_50_transparent.png</file>
@@ -353,8 +359,5 @@
     <file>images/logo/Quest_Q_RGB.png</file>
     <file>images/logo/Quest_Q_RGB.svg</file>
     <file>images/logo/Quest_Tech_Logo_RGB.png</file>
-    <file>images/logo/Quest_Tech_Logo_RGB.png</file>
-    <file>images/logo/SNL_Stacked_Black_Blue.png</file>
-    <file>images/logo/SNL_Stacked_Black_Blue.jpg</file>
   </qresource>
 </RCC>
