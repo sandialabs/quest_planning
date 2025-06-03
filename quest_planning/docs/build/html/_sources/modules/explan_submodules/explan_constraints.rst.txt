@@ -1,6 +1,6 @@
-=====================
+========================
 ExplanConstraints Class
-=====================
+========================
 
 The `ExplanConstraints` class defines constraints to be considered in the QuESt Planning optimization model. It contains methods for various constraints, including energy storage, thermal and renewable generation, policy constraints, transmission constraints, power balance, and investment constraints.
 
@@ -101,7 +101,7 @@ The `ExplanConstraints` class includes numerous constraint rules, such as:
 API Reference
 ------------------------
 
-For a detailed reference of all methods, attributes, and inherited properties, refer to the autodoc-generated content below.
+For a detailed reference of all methods, attributes, and inherited properties, refer to the content below.
 
 .. automodule:: quest_planning.explan.explan_constraints
    :noindex:

@@ -12,7 +12,7 @@ The `ExplanOptimizer` class sets up the Pyomo optimization model for the QuESt P
 ------------------------
 Class Reference
 ------------------------
-.. autoclass:: ExplanOptimizer
+.. autoclass:: quest_planning.explan.explan_optimizer.ExplanOptimizer
    :members:
    :special-members: __init__, __doc__
    :exclude-members: _process_results
@@ -114,7 +114,7 @@ The `ExplanOptimizer` class provides a specialized implementation for setting up
 API Reference
 ------------------------
 
-For a detailed reference of all methods, attributes, and inherited properties, refer to the autodoc-generated content below.
+For a detailed reference of all methods, attributes, and inherited properties, refer to the content below.
 
 .. automodule:: quest_planning.explan.explan_optimizer
    :noindex:

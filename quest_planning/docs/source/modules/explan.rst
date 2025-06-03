@@ -20,6 +20,6 @@ The `Explan` module contains the following submodules:
 
 - :doc:`explan_submodules/explan_constraints` - Defines mathematical constraints for optimization problems.
 - :doc:`explan_submodules/explan_data_handler` - Handles input data processing and parameter preparation.
-- :doc:`explan_submodules/explan_results_viewer` - Provides tools for visualizing and analyzing optimization results.
 - :doc:`explan_submodules/explan_optimizer` - Configures and solves Pyomo optimization models.
+- :doc:`explan_submodules/explan_results_viewer` - Provides tools for visualizing and analyzing optimization results.
 

@@ -1,7 +1,9 @@
 <a id="top"></a>
 
 <div style="text-align: center;">
-    <img src="images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
+
+<img src="images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
+
 </div>
 
 # **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
@@ -27,7 +29,9 @@ Current release version: 1.0.0
 
 QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of [QuESt 2.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
 <div style="text-align: center;">
+
 <img src = "images/readme/qp_overview.png" width="650" height="300" alt="overview" />
+
 </div>
 Long-term capacity expansion planning models are complex optimization models that require careful consideration of modeling assumptions and input data. Model build and solve times can vary significantly, from minutes to days, based on assumptions made while configuring the model inputs and the selection of solver. For more guidance, please refer to the Tips section.
 
@@ -122,7 +126,9 @@ The figure below provides the basic structure of the QuESt Planning tool. The in
 - Option B: [Advanced Simulations](#advanced): This command-line script is designed for larger problems and enables the use of remote computing for advanced simulations.
 
 <div style="text-align: center;">
-   <img src = "images/readme/qp_code_structure.png" width="750" height="450" alt="code" />
+
+<img src = "images/readme/qp_code_structure.png" width="750" height="450" alt="code" />
+
 </div>
 
 
@@ -401,22 +407,22 @@ The following section provides details on the workflow of the QuESt Planning use
 #### 1. Start
 Upon executing the `quest_planning` package, a landing page will appear. The `Documentation` button will provide access to this `README.md` file in a separate dialog window. To start using the tool press the `Start` button.
 
-<img src = "images/readme/start_page_1.png" width="500" height="450" alt="Start" />
+<img src = "images/readme/gui_tutorial/start_page.png" width="600" height="500" alt="Start" />
 
 #### 2. Power System Data 
 In the `Power System Data` page, the corresponding CSV data will be uploaded and processed via the data handler in the backend of the tool. To begin, the user must navigate to the correct directory where all CSV files are located. Use the `Browse` button to open File Explorer. The user should also fill in the `System Name` text box with the desired name. The `System name` will be used to name saved files, plots, and scenarios.
 
-<img src = "images/readme/power_system_data_1.png" width="500" height="450" alt="Power System Data" />
+<img src = "images/readme/gui_tutorial/power_system_data_1.png" width="600" height="500" alt="Power System Data" />
 
 Once the correct directory is selected, click `Open`. Upon clicking a breakdown of the system information will appear as follows:
 
-<img src = "images/readme/power_system_data_upload_1.png" width="500" height="450" alt="Power System Data" />
+<img src = "images/readme/gui_tutorial/power_system_data_upload.png" width="600" height="500" alt="Power System Data" />
 
 Once the data is collected, click `Next`.
 #### 3. Planning Model Setup 
 In the `Planning Model Setup` page, the user can define the modeling assumptions to be fed to the optimizer. Select the `Begin Year` and the `End Year` for the simulation. Then click the `Select Simulation Years` button and a separate dialog button will open.
 
-<img src = "images/readme/planning_model_setup_1.png" width="500" height="450" alt="Planning Model Setup" />
+<img src = "images/readme/gui_tutorial/planning_model_setup.png" width="600" height="500" alt="Planning Model Setup" />
 
 Select the years desired for the planning model simulation or select `All Years`. Click `OK` to save the years. 
 
@@ -430,7 +436,7 @@ Select a desired `Annual Discount Rate`, which will be used for the net-present 
 
 Once complete, the planning model setup will be populated in tab window as follows:
 
-<img src = "images/readme/planning_model_setup_complete_1.png" width="500" height="450" alt="Planning Model Setup" />
+<img src = "images/readme/gui_tutorial/planning_model_setup_complete.png" width="600" height="500" alt="Planning Model Setup" />
 
 When the planning model is setup, click `Next`.
 #### 4. Scenario Builder
@@ -444,25 +450,25 @@ Select a `Renewable Portfolio Standard` or create a new policy.
 
 `Transmission Expansion` will allow for the co-optimization of the generation and transmission expansion. This feature is in testing will be released in a later version.
 
-<img src = "images/readme/scenario_builder_1.png" width="500" height="450" alt="Scenario Builder" />
+<img src = "images/readme/gui_tutorial/scenario_builder.png" width="600" height="500" alt="Scenario Builder" />
 
 To select the candidate technologies click the `Candidate Technologies` buttons. The below window will appear. 
 
-<img src = "images/readme/candidate_technologies.png" width="350" height="350" alt="Scenario Builder" />
+<img src = "images/readme/gui_tutorial/candidate_technologies.png" width="350" height="350" alt="Scenario Builder" />
 
 Select the `default` technologies, combination of the candidate technologies, or a `Custom` technology. If a `Custom` technology is selected, the following window will appear:
 
-<img src = "images/readme/custom_candidate_technologies.png" width="450" height="350" alt="Scenario Builder" />
+<img src = "images/readme/gui_tutorial/custom_candidate_technologies.png" width="450" height="350" alt="Scenario Builder" />
 
 When completed selecting candidate technologies, press `OK`.
 
 Once the scenario is built the window should look like the below:
 
-<img src = "images/readme/scenario_builder_complete_1.png" width="500" height="450" alt="Scenario Builder" />
+<img src = "images/readme/gui_tutorial/scenario_builder_complete.png" width="600" height="500" alt="Scenario Builder" />
 
 If desired, click `View Scenario`. This will generate a planning model and scenario information breakdown page. Click 'Save Scenario` to save this page to a text file. This is useful to keep track of the scenarios if evaluating several scenarios. 
 
-<img src = "images/readme/save_scenario.png" width="350" height="300" alt="Scenario Builder" />
+<img src = "images/readme/gui_tutorial/save_scenario.png" width="600" height="500" alt="Scenario Builder" />
 
 When completed building the scenario, click `Next`. 
 
@@ -473,11 +479,11 @@ Specify the solver to be used for the optimization. For best performance, select
 
 Click 'Build' to build the optimization model.
 
-<img src = "images/readme/execute_model_1.png" width="500" height="450" alt="Execute Model" />
+<img src = "images/readme/gui_tutorial/execute_model.png" width="600" height="500" alt="Execute Model" />
 
 Progress will appear in the window as shown below. Once the Pyomo model has been built, click `Solve`.
 
-<img src = "images/readme/execute_model_running_1.png" width="500" height="450" alt="Execute Model" />
+<img src = "images/readme/gui_tutorial/execute_model_solved.png" width="600" height="500" alt="Execute Model" />
 
 Once, the model has solved. The user will be notified and prompted to go to the `Results Viewer` page by clicking `Next`.
 
@@ -485,7 +491,9 @@ Once, the model has solved. The user will be notified and prompted to go to the 
 
 The `Results Viewer` page is designed to provide high-level results including a breakdown of total costs, optimal installed resource capacities, and energy storage power and energy capacities throughout the planning horizon.
 
-To begin, click `Collect Results`. This will populate the cost results in a table and save all plots to the desired results file. 
+On the left, users can navigate to the `Results` directory to view the results that are generated by QuESt Planning. To view the results, drag and drop the files into the workspace on the right, as shown in the following figure. 
+
+<!--To begin, click `Collect Results`. This will populate the cost results in a table and save all plots to the desired results file. 
 
 Click `Generate Plots` to display the stacked bar charts for the optimal installed resource capacities and energy storage power and energy capacities throughout the planning horizon. 
 
@@ -494,8 +502,11 @@ Click `Open Results Folder` to open the results folder in File Explorer.
 Click `Open Maps` to open the subfolder containing several maps with generation and energy storage siting visualizations. 
 
 Click `Save Results` to save the raw results of the optimization model to an Excel file. Further analysis of results can be performed with the results via the Excel files.
+-->
 
-<img src = "images/readme/results_page_1.png" width="500" height="450" alt="Results Viewer" />
+<img src = "images/readme/gui_tutorial/results_page.png" width="600" height="500" alt="Results Viewer" />
+
+An interactive map viewer and scenario viewer are under construction. The detailed results are located in the Excel file that is generated upon execution in the `Results` folder. 
 
 [Back to Top](#top)
 

@@ -22,6 +22,7 @@ extensions = [
 
 myst_enable_extensions = ["linkify", "html_admonition", "html_image"]
 
+autodoc_mock_imports = ["geopandas", "plotly"]
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -29,3 +30,4 @@ exclude_patterns = []
 html_theme = 'alabaster'
 html_static_path = ['images']
 html_extra_path = ['images']
+html_baseurl = "https://sandialabs.github.io/quest_planning/"

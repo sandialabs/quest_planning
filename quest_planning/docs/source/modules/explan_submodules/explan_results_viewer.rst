@@ -1,6 +1,6 @@
-========================
+===========================
 ExplanResultsViewer Class
-========================
+===========================
 
 The `ExplanResultsViewer` class processes and visualizes the results from the QuESt Planning optimization model. It provides tools for creating result folders, visualizing data through plots and maps, and exporting results for further analysis.
 
@@ -121,7 +121,7 @@ Visualization
 API Reference
 ------------------------
 
-For a detailed reference of all methods, attributes, and inherited properties, refer to the autodoc-generated content below.
+For a detailed reference of all methods, attributes, and inherited properties, refer to the content below.
 
 .. automodule:: quest_planning.explan.explan_results_viewer
    :noindex:

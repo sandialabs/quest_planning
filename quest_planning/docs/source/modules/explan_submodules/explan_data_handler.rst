@@ -215,7 +215,7 @@ Advanced Functionality
 API Reference
 ------------------------
 
-For a detailed reference of all methods, attributes, and inherited properties, refer to the autodoc-generated content below.
+For a detailed reference of all methods, attributes, and inherited properties, refer to the API documentation below.
 
 .. automodule:: quest_planning.explan.explan_data_handler
    :noindex:
