@@ -12,6 +12,7 @@
     <script src="_static/documentation_options.js?v=8d563738"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="canonical" href="https://sandialabs.github.io/quest_planning/README.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Modules Overview" href="modules.html" />
@@ -35,7 +36,8 @@
             
   <p><a id="top"></a></p>
 <div style="text-align: center;">
-    <img src="images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
+<a class="reference internal image-reference" href="_images/custom_QP_logo.png"><img alt="Quest_Logo_RGB" src="_images/custom_QP_logo.png" style="width: 500px; height: 250px;" />
+</a>
 </div>
 <section id="quest-planning-a-long-term-power-system-capacity-expansion-planning-tool-focused-on-energy-storage-systems">
 <h1><strong>QuESt Planning</strong>: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems<a class="headerlink" href="#quest-planning-a-long-term-power-system-capacity-expansion-planning-tool-focused-on-energy-storage-systems" title="Link to this heading">¶</a></h1>
@@ -65,7 +67,8 @@
 <p><a id="intro"></a></p>
 <p>QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of <a class="reference external" href="https://github.com/sandialabs/snl-quest">QuESt 2.0</a>: Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.</p>
 <div style="text-align: center;">
-<img src = "images/readme/qp_overview.png" width="650" height="300" alt="overview" />
+<a class="reference internal image-reference" href="_images/qp_overview.png"><img alt="overview" src="_images/qp_overview.png" style="width: 650px; height: 300px;" />
+</a>
 </div>
 Long-term capacity expansion planning models are complex optimization models that require careful consideration of modeling assumptions and input data. Model build and solve times can vary significantly, from minutes to days, based on assumptions made while configuring the model inputs and the selection of solver. For more guidance, please refer to the Tips section.
 <!--QuESt Planning documentation is under development and will be available [here](https://github.com/sandialabs/snl-quest).-->
@@ -175,7 +178,8 @@ Key features of the QuESt Planning tool include:</p>
 <li><p>Option B: <a class="reference internal" href="#advanced"><span class="xref myst">Advanced Simulations</span></a>: This command-line script is designed for larger problems and enables the use of remote computing for advanced simulations.</p></li>
 </ul>
 <div style="text-align: center;">
-   <img src = "images/readme/qp_code_structure.png" width="750" height="450" alt="code" />
+<a class="reference internal image-reference" href="_images/qp_code_structure.png"><img alt="code" src="_images/qp_code_structure.png" style="width: 750px; height: 450px;" />
+</a>
 </div>
 <section id="data-preparation">
 <h3>Data Preparation<a id="data_prep"></a><a class="headerlink" href="#data-preparation" title="Link to this heading">¶</a></h3>
@@ -842,23 +846,23 @@ Key features of the QuESt Planning tool include:</p>
 <section id="start">
 <h4>1. Start<a class="headerlink" href="#start" title="Link to this heading">¶</a></h4>
 <p>Upon executing the <code class="docutils literal notranslate"><span class="pre">quest_planning</span></code> package, a landing page will appear. The <code class="docutils literal notranslate"><span class="pre">Documentation</span></code> button will provide access to this <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file in a separate dialog window. To start using the tool press the <code class="docutils literal notranslate"><span class="pre">Start</span></code> button.</p>
-<a class="reference internal image-reference" href="_images/start_page_1.png"><img alt="Start" src="_images/start_page_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/start_page.png"><img alt="Start" src="_images/start_page.png" style="width: 600px; height: 500px;" />
 </a>
 </section>
 <section id="id1">
 <h4>2. Power System Data<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
 <p>In the <code class="docutils literal notranslate"><span class="pre">Power</span> <span class="pre">System</span> <span class="pre">Data</span></code> page, the corresponding CSV data will be uploaded and processed via the data handler in the backend of the tool. To begin, the user must navigate to the correct directory where all CSV files are located. Use the <code class="docutils literal notranslate"><span class="pre">Browse</span></code> button to open File Explorer. The user should also fill in the <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Name</span></code> text box with the desired name. The <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">name</span></code> will be used to name saved files, plots, and scenarios.</p>
-<a class="reference internal image-reference" href="_images/power_system_data_1.png"><img alt="Power System Data" src="_images/power_system_data_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/power_system_data_1.png"><img alt="Power System Data" src="_images/power_system_data_1.png" style="width: 600px; height: 500px;" />
 </a>
 <p>Once the correct directory is selected, click <code class="docutils literal notranslate"><span class="pre">Open</span></code>. Upon clicking a breakdown of the system information will appear as follows:</p>
-<a class="reference internal image-reference" href="_images/power_system_data_upload_1.png"><img alt="Power System Data" src="_images/power_system_data_upload_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/power_system_data_upload.png"><img alt="Power System Data" src="_images/power_system_data_upload.png" style="width: 600px; height: 500px;" />
 </a>
 <p>Once the data is collected, click <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
 </section>
 <section id="planning-model-setup">
 <h4>3. Planning Model Setup<a class="headerlink" href="#planning-model-setup" title="Link to this heading">¶</a></h4>
 <p>In the <code class="docutils literal notranslate"><span class="pre">Planning</span> <span class="pre">Model</span> <span class="pre">Setup</span></code> page, the user can define the modeling assumptions to be fed to the optimizer. Select the <code class="docutils literal notranslate"><span class="pre">Begin</span> <span class="pre">Year</span></code> and the <code class="docutils literal notranslate"><span class="pre">End</span> <span class="pre">Year</span></code> for the simulation. Then click the <code class="docutils literal notranslate"><span class="pre">Select</span> <span class="pre">Simulation</span> <span class="pre">Years</span></code> button and a separate dialog button will open.</p>
-<a class="reference internal image-reference" href="_images/planning_model_setup_1.png"><img alt="Planning Model Setup" src="_images/planning_model_setup_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/planning_model_setup.png"><img alt="Planning Model Setup" src="_images/planning_model_setup.png" style="width: 600px; height: 500px;" />
 </a>
 <p>Select the years desired for the planning model simulation or select <code class="docutils literal notranslate"><span class="pre">All</span> <span class="pre">Years</span></code>. Click <code class="docutils literal notranslate"><span class="pre">OK</span></code> to save the years.</p>
 <a class="reference internal image-reference" href="_images/years_dialog.png"><img alt="Planning Model Setup" src="_images/years_dialog.png" style="width: 350px; height: 300px;" />
@@ -867,7 +871,7 @@ Key features of the QuESt Planning tool include:</p>
 <p>Select the desired <code class="docutils literal notranslate"><span class="pre">Temporal</span> <span class="pre">Resolution</span></code>. For quicker simulations, select <code class="docutils literal notranslate"><span class="pre">Seasonal</span> <span class="pre">Blocks</span></code>. More advanced features include <code class="docutils literal notranslate"><span class="pre">Representative</span> <span class="pre">Weeks</span></code> and <code class="docutils literal notranslate"><span class="pre">8760</span> <span class="pre">Analysis</span></code>, which will be upcoming in a future release.</p>
 <p>Select a desired <code class="docutils literal notranslate"><span class="pre">Annual</span> <span class="pre">Discount</span> <span class="pre">Rate</span></code>, which will be used for the net-present value calculations, and the <code class="docutils literal notranslate"><span class="pre">Base</span> <span class="pre">Currency</span> <span class="pre">Year</span></code>, which is used to scale costs based on the input data provided in the CSV files.</p>
 <p>Once complete, the planning model setup will be populated in tab window as follows:</p>
-<a class="reference internal image-reference" href="_images/planning_model_setup_complete_1.png"><img alt="Planning Model Setup" src="_images/planning_model_setup_complete_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/planning_model_setup_complete.png"><img alt="Planning Model Setup" src="_images/planning_model_setup_complete.png" style="width: 600px; height: 500px;" />
 </a>
 <p>When the planning model is setup, click <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
 </section>
@@ -878,7 +882,7 @@ Key features of the QuESt Planning tool include:</p>
 <p>Select a <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">Forecast</span></code>.</p>
 <p>Select a <code class="docutils literal notranslate"><span class="pre">Renewable</span> <span class="pre">Portfolio</span> <span class="pre">Standard</span></code> or create a new policy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Transmission</span> <span class="pre">Expansion</span></code> will allow for the co-optimization of the generation and transmission expansion. This feature is in testing will be released in a later version.</p>
-<a class="reference internal image-reference" href="_images/scenario_builder_1.png"><img alt="Scenario Builder" src="_images/scenario_builder_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/scenario_builder.png"><img alt="Scenario Builder" src="_images/scenario_builder.png" style="width: 600px; height: 500px;" />
 </a>
 <p>To select the candidate technologies click the <code class="docutils literal notranslate"><span class="pre">Candidate</span> <span class="pre">Technologies</span></code> buttons. The below window will appear.</p>
 <a class="reference internal image-reference" href="_images/candidate_technologies.png"><img alt="Scenario Builder" src="_images/candidate_technologies.png" style="width: 350px; height: 350px;" />
@@ -888,10 +892,10 @@ Key features of the QuESt Planning tool include:</p>
 </a>
 <p>When completed selecting candidate technologies, press <code class="docutils literal notranslate"><span class="pre">OK</span></code>.</p>
 <p>Once the scenario is built the window should look like the below:</p>
-<a class="reference internal image-reference" href="_images/scenario_builder_complete_1.png"><img alt="Scenario Builder" src="_images/scenario_builder_complete_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/scenario_builder_complete.png"><img alt="Scenario Builder" src="_images/scenario_builder_complete.png" style="width: 600px; height: 500px;" />
 </a>
 <p>If desired, click <code class="docutils literal notranslate"><span class="pre">View</span> <span class="pre">Scenario</span></code>. This will generate a planning model and scenario information breakdown page. Click ‘Save Scenario` to save this page to a text file. This is useful to keep track of the scenarios if evaluating several scenarios.</p>
-<a class="reference internal image-reference" href="_images/save_scenario.png"><img alt="Scenario Builder" src="_images/save_scenario.png" style="width: 350px; height: 300px;" />
+<a class="reference internal image-reference" href="_images/save_scenario.png"><img alt="Scenario Builder" src="_images/save_scenario.png" style="width: 600px; height: 500px;" />
 </a>
 <p>When completed building the scenario, click <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
 </section>
@@ -900,23 +904,30 @@ Key features of the QuESt Planning tool include:</p>
 <p>In the <code class="docutils literal notranslate"><span class="pre">Execute</span> <span class="pre">Model</span></code> page, the optimization model will be built and solved. First, select a location to save the results. If a results folder is not selected, a folder in the main directory will be created.</p>
 <p>Specify the solver to be used for the optimization. For best performance, select <code class="docutils literal notranslate"><span class="pre">Gurobi</span></code>. Ensure that you have the solver installed correctly.</p>
 <p>Click ‘Build’ to build the optimization model.</p>
-<a class="reference internal image-reference" href="_images/execute_model_1.png"><img alt="Execute Model" src="_images/execute_model_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/execute_model.png"><img alt="Execute Model" src="_images/execute_model.png" style="width: 600px; height: 500px;" />
 </a>
 <p>Progress will appear in the window as shown below. Once the Pyomo model has been built, click <code class="docutils literal notranslate"><span class="pre">Solve</span></code>.</p>
-<a class="reference internal image-reference" href="_images/execute_model_running_1.png"><img alt="Execute Model" src="_images/execute_model_running_1.png" style="width: 500px; height: 450px;" />
+<a class="reference internal image-reference" href="_images/execute_model_solved.png"><img alt="Execute Model" src="_images/execute_model_solved.png" style="width: 600px; height: 500px;" />
 </a>
 <p>Once, the model has solved. The user will be notified and prompted to go to the <code class="docutils literal notranslate"><span class="pre">Results</span> <span class="pre">Viewer</span></code> page by clicking <code class="docutils literal notranslate"><span class="pre">Next</span></code>.</p>
 </section>
 <section id="results-viewer">
 <h4>6. Results Viewer<a class="headerlink" href="#results-viewer" title="Link to this heading">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">Results</span> <span class="pre">Viewer</span></code> page is designed to provide high-level results including a breakdown of total costs, optimal installed resource capacities, and energy storage power and energy capacities throughout the planning horizon.</p>
-<p>To begin, click <code class="docutils literal notranslate"><span class="pre">Collect</span> <span class="pre">Results</span></code>. This will populate the cost results in a table and save all plots to the desired results file.</p>
-<p>Click <code class="docutils literal notranslate"><span class="pre">Generate</span> <span class="pre">Plots</span></code> to display the stacked bar charts for the optimal installed resource capacities and energy storage power and energy capacities throughout the planning horizon.</p>
-<p>Click <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Results</span> <span class="pre">Folder</span></code> to open the results folder in File Explorer.</p>
-<p>Click <code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Maps</span></code> to open the subfolder containing several maps with generation and energy storage siting visualizations.</p>
-<p>Click <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">Results</span></code> to save the raw results of the optimization model to an Excel file. Further analysis of results can be performed with the results via the Excel files.</p>
-<a class="reference internal image-reference" href="_images/results_page_1.png"><img alt="Results Viewer" src="_images/results_page_1.png" style="width: 500px; height: 450px;" />
+<p>On the left, users can navigate to the <code class="docutils literal notranslate"><span class="pre">Results</span></code> directory to view the results that are generated by QuESt Planning. To view the results, drag and drop the files into the workspace on the right, as shown in the following figure.</p>
+<!--To begin, click `Collect Results`. This will populate the cost results in a table and save all plots to the desired results file. 
+
+Click `Generate Plots` to display the stacked bar charts for the optimal installed resource capacities and energy storage power and energy capacities throughout the planning horizon. 
+
+Click `Open Results Folder` to open the results folder in File Explorer. 
+
+Click `Open Maps` to open the subfolder containing several maps with generation and energy storage siting visualizations. 
+
+Click `Save Results` to save the raw results of the optimization model to an Excel file. Further analysis of results can be performed with the results via the Excel files.
+-->
+<a class="reference internal image-reference" href="_images/results_page.png"><img alt="Results Viewer" src="_images/results_page.png" style="width: 600px; height: 500px;" />
 </a>
+<p>An interactive map viewer and scenario viewer are under construction. The detailed results are located in the Excel file that is generated upon execution in the <code class="docutils literal notranslate"><span class="pre">Results</span></code> folder.</p>
 <p><a class="reference internal" href="#top"><span class="xref myst">Back to Top</span></a></p>
 <p><a class="reference internal" href="#workflow"><span class="xref myst">Back to Workflow Options</span></a></p>
 </section>
