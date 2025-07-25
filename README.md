@@ -1,7 +1,7 @@
 <a id="top"></a>
 
 <div style="text-align: center;">
-    <img src="quest_planning/images/pics/new_logo.png.png" width="500" height="250" alt="Quest_Logo_RGB" />
+    <img src="quest_planning/images/pics/new_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
 </div>
 
 # **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
