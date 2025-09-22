@@ -11,7 +11,7 @@ Num,Tech,Tech_Name,ID,Tech_Num,Lead_Time,CandCap,SystCap,RampRate,FOM,VOM,PTC,IT
 10,ES,ES,10_ES,10,3,0,0,1,43000,0,0,0,0.95,30,2020
 11,Hydro,Hydro,11_Hydro,11,20,0,0,1,79000,0,0,0,0.95,30,2020
 12,CSP,CSP,12_CSP,12,20,0,0,0.1,66000,3.5,0,0,0.95,20,2020
-13,Gas_Cand,Gas (New),13_Gas_Cand,13,2,0,0,0.05,28000,2,0,0,0.95,20,2020
+13,Gas_Cand,Gas (New),13_Gas_Cand,13,2,3000,10000,0.05,28000,2,0,0,0.95,20,2020
 14,Wind_Cand,Wind (New),14_Wind_Cand,14,1,3000,10000,0,43000,0,26,0,0.39,20,2020
 15,Solar_Cand,Solar (New),15_Solar_Cand,15,1,3000,10000,0,23000,0,26,0,0.28,20,2020
 16,ES_4hr_Cand,ES 4hr (New),16_ES_4hr_Cand,16,1,0,0,1,6360,0.3,0,0.3,0.7,20,2020

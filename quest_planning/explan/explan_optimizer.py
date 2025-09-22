@@ -14,6 +14,10 @@ from pyomo.util.model_size import build_model_size_report
 from quest_planning.explan.optimizer import Optimizer
 from quest_planning.explan.explan_constraints import ExplanConstraints
 from pyomo.opt import TerminationCondition
+from pyomo.environ import value
+from pyomo.common.timing import report_timing
+import io
+
 
 class ExplanOptimizer(Optimizer):
     
@@ -106,56 +110,82 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['wind_can_cf'] = [
             'b', 'g', 'y', 's', 'i']
 
+        #Trnsmission params
+        line_X_dict = {row.Line_Number: row.X for idx, row in BRANCH.iterrows()}
+        line_fw_dict = {row.Line_Number: row.Rating_F for idx, row in BRANCH.iterrows()}
+        line_bw_dict = {row.Line_Number: row.Rating_B for idx, row in BRANCH.iterrows()}
+        line_cost_dict = {row.Line_Number: row.Tx_cost for idx, row in BRANCH.iterrows()}
+        line_limit_dict = {row.Line_Number: row.Tx_limit for idx, row in BRANCH.iterrows()}
+        line_lt_dict = {row.Line_Number: row.Lead_Time for idx, row in BRANCH.iterrows()}
+        line_from_dict = {row.Line_Number: row.From_Bus_Number for idx, row in BRANCH.iterrows()}
+        line_to_dict = {row.Line_Number: row.To_Bus_Number for idx, row in BRANCH.iterrows()}
+
         # turn off market sharing for specific scenario - Not used now..
         if self.data_handler.scenario == 'No Market Share':
             BRANCH['Rating_F'][1] = self.data_handler.market_share_max
             BRANCH['Rating_B'][1] = self.data_handler.market_share_max
-        #Existing forward line capacity - same as bw if nodal
-        def line_ex_fw_cap_init(model, l):
-            return BRANCH['Rating_F'].values[l-1]
-        model.line_ex_fw_cap = pm.Param(
-            model.L, initialize=line_ex_fw_cap_init)
-        par_index_labels['line_ex_fw_cap'] = ['l']
         
-        #Existing backward line capacity - same as fw if nodal
-        def line_ex_bw_cap_init(model, l):
-            return BRANCH['Rating_B'].values[l-1]
-        model.line_ex_bw_cap = pm.Param(
-            model.L, initialize=line_ex_bw_cap_init)
-        par_index_labels['line_ex_bw_cap'] = ['l']
-
-        #Existing line reactance
         def line_ex_imp_init(model, l):
-            return BRANCH['X'].values[l-1] 
-        model.line_X = pm.Param(
-            model.L, initialize=line_ex_imp_init)
+            x_raw = line_X_dict[l]
+            x_min = 0.0005
+            if x_raw < x_min:
+                print(f"Warning: line {l} X={x_raw:.4f} p.u. clipped to {x_min} p.u.")
+            return max(x_raw, x_min)
+        
+        model.line_X = pm.Param(model.L, initialize=line_ex_imp_init)
         par_index_labels['line_X'] = ['l']
 
-        #Line cost calculation 
-        #TODO: update cost numbers
-        def line_cost_init(model, l):
-            # just 1 column
-            lc = 1200*BRANCH['Length'].values[l-1]
-            return lc
-        model.line_cost = pm.Param(
-            model.L, initialize=line_cost_init)
-        par_index_labels['line_cost'] = ['l']
+        scale_factor = 1.0  # double all line ratings temporarily
+        #model.line_ex_fw_cap[l] *= scale_factor
+        #model.line_ex_bw_cap[l] *= scale_factor
+        def line_ex_fw_cap_init(model, l):
+            return line_fw_dict[l]*scale_factor
+
+        model.line_ex_fw_cap = pm.Param(model.L, initialize=line_ex_fw_cap_init)
+        par_index_labels['line_ex_fw_cap'] = ['l']
+
+        def line_ex_bw_cap_init(model, l):
+            return line_bw_dict[l]*scale_factor
+
+        model.line_ex_bw_cap = pm.Param(model.L, initialize=line_ex_bw_cap_init)
+        par_index_labels['line_ex_bw_cap'] = ['l']
         
-        #Limit on tx investment per line
+        
+
+        def line_cost_init(model, l):
+            return line_cost_dict[l]
+
+        model.line_cost = pm.Param(model.L, initialize=line_cost_init)
+        par_index_labels['line_cost'] = ['l']
+
         def line_ex_limit_init(model, l):
-            # just 1 column
-            return BRANCH['Tx_limit'].values[l-1]
-        model.line_ex_limit = pm.Param(
-            model.L, initialize=line_ex_limit_init)
+            return line_limit_dict[l]
+
+        model.line_ex_limit = pm.Param(model.L, initialize=line_ex_limit_init)
         par_index_labels['line_ex_limit'] = ['l']
 
-        #lead time of transmisison investment
         def line_lt_init(model, l):
-            # just 1 column
-            return BRANCH['Lead_Time'].values[l-1]
-        model.line_lt = pm.Param(
-            model.L, initialize=line_lt_init)
+            return line_lt_dict[l]
+
+        model.line_lt = pm.Param(model.L, initialize=line_lt_init)
         par_index_labels['line_lt'] = ['l']
+
+        # Precompute from/to buses as Params
+        model.from_bus = pm.Param(model.L, initialize=line_from_dict)
+        model.to_bus = pm.Param(model.L, initialize=line_to_dict)
+        
+        '''
+        print("\n=== Line parameters check ===")
+        for l in model.L:
+            print(f"Line {l}: X={value(model.line_X[l]):.4f}, "
+                f"PF_fw={value(model.line_ex_fw_cap[l]):.1f}, "
+                f"PF_bw={value(model.line_ex_bw_cap[l]):.1f}, "
+                f"Cost={value(model.line_cost[l])}, "
+                f"Limit={value(model.line_ex_limit[l])}, "
+                f"LeadTime={value(model.line_lt[l])}, "
+                f"From={value(model.from_bus[l])}, To={value(model.to_bus[l])}")
+        '''
+
 
         #RPS policy
         rps = POLICY['RPS'].filter(items=self.data_handler.years, axis=0)
@@ -189,7 +219,7 @@ class ExplanOptimizer(Optimizer):
             model.G, initialize=co2_gen_init)
         par_index_labels['gen_CO2'] = ['g']
         
-        # Discount factor with end effects TODO: fix the calculation and disregard csv
+        # Discount factor with end effects 
         def discount_factor_end_eff_init(model, y):
             money_years = np.arange(base_currency_year,self.data_handler.years[-1]+1)
             if self.data_handler.block_selection.lower() == 'Full_Year'.lower():
@@ -644,6 +674,22 @@ class ExplanOptimizer(Optimizer):
         model.year_gap_array = pm.Param(
             model.Y, initialize=dict(zip(self.data_handler.years, self.data_handler.year_gap_array)))
         par_index_labels['year_gap_array'] = ['y']
+
+        # Grab branch data once
+        branch_df = self.data_handler.load_data[self.index('branch')]
+
+        # Create mapping dicts (line index -> bus number)
+        from_bus_map = {l+1: branch_df.loc[l, 'From_Bus_Number'] for l in branch_df.index}
+        to_bus_map   = {l+1: branch_df.loc[l, 'To_Bus_Number']   for l in branch_df.index}
+
+        model.from_bus = pm.Param(model.L, initialize=from_bus_map)
+        par_index_labels['from_bus'] = ['y']
+        model.to_bus   = pm.Param(model.L, initialize=to_bus_map)
+        par_index_labels['to_bus'] = ['y']
+
+        model.CostScale = pm.Param(initialize=1e-6)
+        par_index_labels['CostScale'] = ['i']
+
         self.par_index_labels = par_index_labels
         
     def _set_model_var(self):
@@ -760,6 +806,12 @@ class ExplanOptimizer(Optimizer):
         #Bus angle for DC power flow calculation
         model.theta = pm.Var(model.B, model.Y, model.S_I, domain=pm.Reals, bounds=(-np.pi/3,
                                                                         np.pi/3))  # power flow angle - set the bounds
+        #set slack bus angle to 0
+        if self.data_handler.tx_model == 'dc':
+            for y in model.Y:
+                for (s,i) in model.S_I:
+                        model.theta[113, y, s, i].fix(0)
+
         var_index_labels['theta'] = ['b','y', 's', 'i']
 
         # Load not served
@@ -859,6 +911,18 @@ class ExplanOptimizer(Optimizer):
                     soc_s_i.append((s, i))
                 soc_s_i.append((s, self.data_handler.M))
 
+        elif self.data_handler.block_selection.lower() == 'Repr_3Days_Season'.lower():
+            for s in np.arange(1, self.data_handler.S+1):
+                if s != 5:  # for all seasons except peak summer
+                    for i in np.arange(0, self.data_handler.M):
+                        s_i.append((s, i))
+                        soc_s_i.append((s, i))
+                    soc_s_i.append((s, self.data_handler.M))
+                else:  # for peak summer, include an extra day
+                    for i in np.arange(0, 24):
+                        s_i.append((s, i))
+                        soc_s_i.append((s, i))
+                    soc_s_i.append((s, 24))
                   
         elif self.data_handler.block_selection.lower() == 'Full_Year'.lower() or self.data_handler.block_selection.lower() == 'Full_Year_MY'.lower():
             for i in self.data_handler.season_map.index:              
@@ -1080,8 +1144,13 @@ class ExplanOptimizer(Optimizer):
         print("Pyomo Model Successfully Built")
         print("Press the Solve Button")
         
-        #pct.report_timing(self.model)# - only used for testing and model setup time logging; let's keep for now
-
+        #self.log_report_timing(self.model)# - only used for testing and model setup time logging; let's keep for now
+    
+    def log_report_timing(self,model, logger=logging.getLogger(__name__)):
+        buf = io.StringIO()
+        report_timing(model, ostream=buf)   # capture timing into buffer
+        logger.info("\n" + buf.getvalue())  # dump into log file
+    
     def solve_model(self):
         """Solves the model using the specified solver."""
 

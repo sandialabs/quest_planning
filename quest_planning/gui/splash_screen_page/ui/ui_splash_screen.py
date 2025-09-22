@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'splash_screen_pageSZsXnR.ui'
+## Form generated from reading UI file 'splash_screen_pageKoedzR.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -46,7 +46,7 @@ class Ui_SplashScreen(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.frame_2 = QFrame(self.base)
         self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setStyleSheet(u"image: url(:/pics/images/pics/custom_QP_logo.png);\n"
+        self.frame_2.setStyleSheet(u"image: url(:/pics/images/pics/new_logo.png);\n"
 "background-color: rgb(217, 217, 217);\n"
 "border-color: rgb(129, 194, 65);")
         self.frame_2.setFrameShape(QFrame.StyledPanel)

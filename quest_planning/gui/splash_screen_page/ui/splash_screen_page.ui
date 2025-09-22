@@ -48,7 +48,7 @@
        <item>
         <widget class="QFrame" name="frame_2">
          <property name="styleSheet">
-          <string notr="true">image: url(:/pics/images/pics/custom_QP_logo.png);
+          <string notr="true">image: url(:/pics/images/pics/new_logo.png);
 background-color: rgb(217, 217, 217);
 border-color: rgb(129, 194, 65);</string>
          </property>

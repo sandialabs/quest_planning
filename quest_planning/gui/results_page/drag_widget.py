@@ -3,6 +3,18 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QTreeView, QVBoxLayout,
 from PySide6.QtGui import QPixmap, QDragEnterEvent, QDropEvent, QMouseEvent, QAction, QCursor, QDragMoveEvent, QPainter, QIcon, QAction
 from PySide6.QtCore import Qt, QUrl, QMimeData, QPoint, QRect, QSize
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEngineSettings
+
+import os
+from quest_planning.paths import get_path
+base_dir = get_path()
+map_loc = os.path.join (base_dir, "gui", "tools", "usa_110m.json")
+
+import os
+import sys
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PySide6.QtCore import Qt
+
 
 class DraggableResizableLabel(QLabel):
     def __init__(self, pix, parent=None):
@@ -10,7 +22,7 @@ class DraggableResizableLabel(QLabel):
         self.setPixmap(pix)
         self.setScaledContents(True)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.setFixedSize(250, 250)
+        self.setFixedSize(350, 350)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setMouseTracking(True)
@@ -70,10 +82,10 @@ class ImageGrid(QWidget):
         self.containerWidget.setStyleSheet("background-color:  rgb(208, 208, 208); border-radius: 25px;")
         self.scrollArea.setWidget(self.containerWidget)
         self.scrollArea.setWidgetResizable(True)
-        
+
         mainLayout = QVBoxLayout(self)
         mainLayout.addWidget(self.scrollArea)
-        
+
         self.setAcceptDrops(True)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -83,7 +95,7 @@ class ImageGrid(QWidget):
     def dropEvent(self, event: QDropEvent):
         position = event.position().toPoint()
         widget_position = self.containerWidget.mapFrom(self, position)
-        
+
         for url in event.mimeData().urls():
             file_path = url.toLocalFile()
             if file_path.endswith(('.png', '.jpeg', '.jpg', '.svg')):
@@ -104,6 +116,9 @@ class FileBrowser(QTreeView):
         self.setModel(self.model)
         self.setDragEnabled(True)
         self.setAcceptDrops(True)
+        self.hideColumn(1)
+        self.hideColumn(2)
+        self.hideColumn(3)
 
     def setRootPath(self, path):
         self.model.setRootPath(path)
@@ -115,47 +130,149 @@ class FileBrowser(QTreeView):
         mime_data.setUrls([QUrl.fromLocalFile(path) for path in file_paths])
         return mime_data
 
+# class WebEngineView(QWebEngineView):
+#     def __init__(self):
+#         super().__init__()
+#         self.setAcceptDrops(True)
+
+#         # Allow local content to access remote URLs
+#         self.page().settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+
+#     def dragEnterEvent(self, event):
+#         """
+#         Handle drag enter events.
+#         """
+#         if event.mimeData().hasUrls():
+#             event.acceptProposedAction()
+
+#     def dragMoveEvent(self, event):
+#         """
+#         Handle drag move events.
+#         """
+#         if event.mimeData().hasUrls():
+#             event.acceptProposedAction()
+
+#     def dropEvent(self, event):
+#         """
+#         Handle drop events. Load the dropped HTML file into the QWebEngineView.
+#         """
+#         self.page().settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+#         if event.mimeData().hasUrls():
+#             for url in event.mimeData().urls():
+#                 if url.isLocalFile() and url.toLocalFile().endswith('.html'):
+#                     # Load the local HTML file
+#                     self.load(QUrl.fromLocalFile(url.toLocalFile()))
+#                     break
+
+
+
+
+
+
+
 
 class WebEngineView(QWebEngineView):
     def __init__(self):
         super().__init__()
         self.setAcceptDrops(True)
 
+        # Allow local content to access remote URLs
+        self.page().settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setStyleSheet("background: transparent")
+        self.page().setBackgroundColor(Qt.transparent)
+
     def dragEnterEvent(self, event):
+        """
+        Handle drag enter events.
+        """
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
     def dragMoveEvent(self, event):
+        """
+        Handle drag move events.
+        """
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
     def dropEvent(self, event):
+        """
+        Handle drop events. Load the dropped HTML file into the QWebEngineView.
+        """
+        self.page().settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
         if event.mimeData().hasUrls():
             for url in event.mimeData().urls():
                 if url.isLocalFile() and url.toLocalFile().endswith('.html'):
-                    self.load_html_with_js(url.toLocalFile())
+                    # Load the local HTML file
+                    self.load(QUrl.fromLocalFile(url.toLocalFile()))
                     break
-    def load_html_with_js(self, file_path):
-        with open(file_path, 'r', encoding='utf-8') as file:
-            html_content = file.read()
 
-        # Inject the necessary JavaScript libraries (if any)
-        injected_html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Generated HTML</title>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <!-- Add any additional CSS or JS libraries here if needed -->
-        </head>
-        <body>
-            {html_content}
-        </body>
-        </html>
-        """
 
-        self.setHtml(injected_html)
+########above one is good
+# class WebEngineView(QWebEngineView):
+#     def __init__(self):
+#         super().__init__()
+#         self.setAcceptDrops(True)
+
+#     def dragEnterEvent(self, event):
+#         if event.mimeData().hasUrls():
+#             event.acceptProposedAction()
+
+#     def dragMoveEvent(self, event):
+#         if event.mimeData().hasUrls():
+#             event.acceptProposedAction()
+
+#     def dropEvent(self, event):
+#         if event.mimeData().hasUrls():
+#             for url in event.mimeData().urls():
+#                 if url.isLocalFile() and url.toLocalFile().endswith('.html'):
+#                     self.load(QUrl.fromLocalFile(url.toLocalFile()))
+#                     break
+
+
+
+# class WebEngineView(QWebEngineView):
+#     def __init__(self):
+#         super().__init__()
+#         self.setAcceptDrops(True)
+
+#     def dragEnterEvent(self, event):
+#         if event.mimeData().hasUrls():
+#             event.acceptProposedAction()
+
+#     def dragMoveEvent(self, event):
+#         if event.mimeData().hasUrls():
+#             event.acceptProposedAction()
+
+#     def dropEvent(self, event):
+#         if event.mimeData().hasUrls():
+#             for url in event.mimeData().urls():
+#                 if url.isLocalFile() and url.toLocalFile().endswith('.html'):
+#                     self.load_html_with_js(url.toLocalFile())
+#                     break
+#     def load_html_with_js(self, file_path):
+#         with open(file_path, 'r', encoding='utf-8') as file:
+#             html_content = file.read()
+
+#         # Inject the necessary JavaScript libraries (if any)
+#         injected_html = f"""
+#         <!DOCTYPE html>
+#         <html>
+#         <head>
+#             <title>Generated HTML</title>
+#             <meta charset="utf-8" />
+#             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+#             <!-- Add any additional CSS or JS libraries here if needed -->
+#         </head>
+#         <body>
+#             {html_content}
+#         </body>
+#         </html>
+#         """
+
+#         self.setHtml(injected_html)
 
     # def load_html_with_js(self, file_path):
     #     with open(file_path, 'r') as file:

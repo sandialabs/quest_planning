@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'start_screenvhEHTn.ui'
+## Form generated from reading UI file 'start_screenrNVtHP.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -71,16 +71,10 @@ class Ui_start_screen(object):
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.label_3 = QLabel(self.frame_6)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setStyleSheet(u"image: url(:/logos/images/logo/Quest_Planning_Logo_RGB.png);")
+        self.label_3.setStyleSheet(u"\n"
+"image: url(:/logos/images/logo/new_logo.png);")
 
         self.verticalLayout_3.addWidget(self.label_3)
-
-        self.label_4 = QLabel(self.frame_6)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setStyleSheet(u"image: url(:/pics/images/pics/icon_pic.png);\n"
-"")
-
-        self.verticalLayout_3.addWidget(self.label_4)
 
 
         self.gridLayout.addWidget(self.frame_6, 0, 1, 1, 1)
@@ -175,7 +169,7 @@ class Ui_start_screen(object):
         self.label_2 = QLabel(self.frame_4)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setAutoFillBackground(False)
-        self.label_2.setStyleSheet(u"image: url(:/logos/images/logo/SNL_Stacked_Black_Blue.png);")
+        self.label_2.setStyleSheet(u"image: url(:/logos/images/logo/Sandia_National_Laboratories_logo.svg);")
 
         self.gridLayout_2.addWidget(self.label_2, 0, 0, 1, 1)
 
@@ -290,7 +284,6 @@ class Ui_start_screen(object):
     def retranslateUi(self, start_screen):
         start_screen.setWindowTitle(QCoreApplication.translate("start_screen", u"Form", None))
         self.label_3.setText("")
-        self.label_4.setText("")
         self.label.setText(QCoreApplication.translate("start_screen", u"<html><head/><body><p>The <span style=\" font-weight:700; font-style:italic; color:#285471;\">QuESt Planning</span> tool, developed by Sandia National Laboratories, is a long-term capacity expansion planning model that examines the role of energy storage technologies on optimal generation and transmission expansion. </p><p><span style=\" font-weight:700; font-style:italic; color:#285471;\">Key features include:</span></p><ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Identification of cost-optimal energy storage, generation, and transmission investments</li><li style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Sizing and siting of energy storage resources &amp; generation </li><li style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt"
                         "-block-indent:0; text-indent:0px;\">Scenario-based planning and model flexibility</li></ul></body></html>", None))
         self.label_8.setText(QCoreApplication.translate("start_screen", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

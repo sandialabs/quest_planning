@@ -318,8 +318,8 @@
     <file>images/results_icons/stacks_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
   </qresource>
   <qresource prefix="pics">
-    <file>images/pics/apex.png</file>
     <file>images/pics/custom_QP_logo.png</file>
+    <file>images/pics/new_logo.png</file>
     <file>images/pics/results_icon.png</file>
     <file>images/pics/solver_icon.png</file>
     <file>images/pics/icon_pic.png</file>
@@ -328,6 +328,8 @@
     <file>images/pics/stacked_bar.png</file>
   </qresource>
   <qresource prefix="logos">
+    <file>images/logo/Sandia_National_Laboratories_logo.svg</file>
+    <file>images/logo/new_logo.png</file>
     <file>images/logo/SNL_Stacked_Black_Blue.png</file>
     <file>images/logo/optimization_icon.png</file>
     <file>images/logo/planning_model_icon.png</file>

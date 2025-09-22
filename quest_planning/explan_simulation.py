@@ -88,6 +88,8 @@ class Explan:
                                       config['coal_retirement_year'],
                                       config['nuclear_retirement_year'],
                                       config['oil_retirement_year'])
+        #RPS policy flag
+        d.set_rps_policy(config['rps_policy'])
         #Co2 policy flag
         d.set_co2_policy(config['co2_policy'])
         d.set_co2_intensity_policy(config['co2_intensity_policy'])
@@ -132,6 +134,10 @@ def read_input_yaml(yaml_file):
     dict
         Dictionary of input parameters.
     '''
+    # Ensure the file path is relative to the current working directory
+    if not os.path.isabs(yaml_file):
+        yaml_file = os.path.join(os.getcwd(), yaml_file)
+
     with open(yaml_file, 'r') as f:
         return yaml.safe_load(f)
 
@@ -156,8 +162,7 @@ if __name__ == '__main__':
     exp.run_optimizer()
     exp.view_results()
     
-    # to write the model.lp files...
-    #exp.optimizer._model.write('model.lp', io_options={'symbolic_solver_labels': True})
+    
     
     
     

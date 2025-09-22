@@ -36,10 +36,11 @@ ini_level: 50
 es_lifetime_extension: 50
 
 #********************Modeling Options:********************
-block_selection: seasonal_blocks
+block_selection: Repr_3Days_Season
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
+rps_policy: False
 co2_policy: False
 co2_intensity_policy: False
 mva_base: 100
@@ -58,7 +59,7 @@ limit_by_buses: null
 #********************System-wide resource limits********************
 system_wide_wind_max: 10000000
 system_wide_solar_max: 150000000
-system_wide_gas_max: 0
+system_wide_gas_max: 100000
 system_wide_tx_expansion_max: 3000
 
 #********************Reserves Parameters********************

@@ -1,0 +1,117 @@
+# ***QuESt Planning Configuration File***
+# CJN - Updated 7/12/24
+
+
+#********************Data Folder********************
+data_folder: 'rts_csv_data_cjn'
+
+#********************Scenario Configuration********************
+scenario: RTS_GMLC_1_MT
+system: RTS_GMLC
+tx_model: Transportation
+trans_expansion: False
+load_growth: 1.5
+load_forecast: system_wide
+es_cost: High
+ldes_switch: True
+
+#********************Time Horizon********************
+start_year: 2024
+end_year: 2040
+#year_gap: 16
+years:
+  - 2024
+  - 2028
+  - 2032
+  - 2036
+  - 2040
+
+#********************Economic Parameters********************
+discount_rate: 5
+base_curr_year: 2021
+end_effects: 10
+voll: 100000
+tax_credit_end_year: 2032
+
+#********************Energy Storage Options********************
+soc_max: 80
+soc_min: 20
+ini_level: 50
+es_lifetime_extension: 50
+
+#********************Modeling Options:********************
+block_selection: Repr_3Days_Season #repr_weeks
+reserves_option: True
+tax_credits_option: False
+es_lifetime_cost_option: True
+rps_policy: False
+co2_policy: False
+co2_intensity_policy: False
+mva_base: 100
+
+#********************Candidate Technologies - NOT ACTIVE********************
+candidate_techs:
+  - Num: 9
+    Tech: Gas_Cand
+    CandCap: 0
+    SystCap: 0
+  - Num: 10
+    Tech: Wind_Cand
+    CandCap: 200
+    SystCap: 1500
+  - Num: 11
+    Tech: Solar_Cand
+    CandCap: 200
+    SystCap: 1500
+  - Num: 17
+    Tech: Li_Ion_Cand
+    CandCap: 100
+    SystCap: 1000
+  - Num: 18
+    Tech: Flow_Cand
+    CandCap: 100
+    SystCap: 1000
+  - Num: 21
+    Tech: Therm_Cand
+    CandCap: 100
+    SystCap: 1000
+
+#********************Limit by Buses********************
+limit_by_buses: null
+  #- bus_num: 1
+   # solar: 1000
+   # wind: 0
+   # storage: 750
+
+
+#********************System-wide resource limits********************
+system_wide_wind_max: 10000
+system_wide_solar_max: 150000000
+system_wide_gas_max: 100000
+system_wide_tx_expansion_max: 3000
+
+#********************Reserves Parameters********************
+prm: 20
+reg_res_req: 1
+spin_res_req: 3
+flex_res_w_req: 10
+flex_res_s_req: 4
+
+#********************Custom Retirements********************
+custom_retirement: True
+ng_retirement_year: 2060
+coal_retirement_year: 2032
+nuclear_retirement_year: 2060
+oil_retirement_year: 2035
+
+#********************Solver********************
+solver: gurobi
+
+#********************Plotting Options********************
+stacked_bar_by_bus: False
+policy_plot_option: False
+
+
+
+
+

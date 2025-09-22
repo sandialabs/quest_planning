@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'resultspSmkks.ui'
+## Form generated from reading UI file 'resultsNULkAg.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -42,9 +42,9 @@ class Ui_results(object):
         self.frame_3 = QFrame(self.frame)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setStyleSheet(u"QFrame {\n"
-"	border: 2px solid #8f8f8f;\n"
+"	border: 10px;\n"
 "	border-radius: 5px;\n"
-"	background-color: rgba(140, 140, 140, .5);\n"
+"	background-color: rgba(140, 140, 140, .3);\n"
 "\n"
 "}\n"
 "QPushButton {\n"
@@ -108,6 +108,8 @@ class Ui_results(object):
         icon2.addFile(u":/results_icons/images/results_icons/data_check_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png", QSize(), QIcon.Normal, QIcon.Off)
         self.scenario_view_button.setIcon(icon2)
         self.scenario_view_button.setIconSize(QSize(32, 32))
+        self.scenario_view_button.setCheckable(True)
+        self.scenario_view_button.setAutoExclusive(True)
 
         self.verticalLayout.addWidget(self.scenario_view_button)
 
@@ -486,23 +488,23 @@ class Ui_results(object):
     def retranslateUi(self, results):
         results.setWindowTitle(QCoreApplication.translate("results", u"Form", None))
 #if QT_CONFIG(tooltip)
-        self.open_results_folder_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-weight:400;\">Open Results Folder</span></p></body></html>", None))
+        self.open_results_folder_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-weight:400;\">Results Viewer</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.open_results_folder_button.setText("")
 #if QT_CONFIG(tooltip)
-        self.open_maps_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-weight:400;\">Under Construction</span></p></body></html>", None))
+        self.open_maps_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-weight:400;\">Map Viewer</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.open_maps_button.setText("")
 #if QT_CONFIG(tooltip)
-        self.scenario_view_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-size:12pt;\">Under Construction</span></p></body></html>", None))
+        self.scenario_view_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-size:12pt;\">Scenario Viewer</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.scenario_view_button.setText("")
 #if QT_CONFIG(tooltip)
-        self.save_results_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p>Save Results</p></body></html>", None))
+        self.save_results_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-size:12pt;\">Save Results</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.save_results_button.setText("")
 #if QT_CONFIG(tooltip)
-        self.results_help_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p>Help</p></body></html>", None))
+        self.results_help_button.setToolTip(QCoreApplication.translate("results", u"<html><head/><body><p><span style=\" font-size:12pt;\">Help</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.results_help_button.setText("")
 #if QT_CONFIG(tooltip)

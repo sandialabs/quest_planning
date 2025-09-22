@@ -6,6 +6,8 @@ Control of the Results page
 import os
 import traceback
 
+
+
 from PySide6.QtCore import (
     QThreadPool,
     QUrl,
@@ -32,7 +34,8 @@ from PySide6.QtGui import QDesktopServices,QFont,QColor, QPixmap, QPainter, QReg
 from quest_planning.gui.results_page.ui.ui_results import Ui_results
 from quest_planning.gui.tools.tools import LoadingSplashScreen
 from quest_planning.gui.results_page.drag_widget import FileBrowser, ImageGrid, WebEngineView
-from quest_planning.gui.results_page.scenario_view import CSVScenarioSelector
+#from quest_planning.gui.results_page.scenario_view import CSVScenarioSelector
+from quest_planning.gui.scenario_viewer_page.scenario import GraphBuilder, ScenarioSelectionWidget
 
 
 class ResultsPage(QWidget, Ui_results):
@@ -56,7 +59,7 @@ class ResultsPage(QWidget, Ui_results):
         self.collect_results_button.clicked.connect(self.collect_results_button_clicked)
         self.gen_plots_button.clicked.connect(self.gen_plots_button_clicked)
         self.open_results_folder_button.clicked.connect(self.on_open_results_folder_button_clicked)
-        #self.open_maps_button.clicked.connect(self.open_map_button_clicked)
+        self.open_maps_button.clicked.connect(self.open_map_button_clicked)
         self.save_results_button.clicked.connect(self.save_results_button_clicked)
 
         self.results_help_button.clicked.connect(self.results_help)
@@ -104,11 +107,14 @@ class ResultsPage(QWidget, Ui_results):
        # self.collect_splash_screen = LoadingSplashScreen(self,title = "Collecting Results")
 
        ## scenario viewer
-        self.scenario_view_button.setEnabled(False)
-        self.open_maps_button.setEnabled(False)
-       # self.scenario_view_button.clicked.connect(self.scen_view)
-        self.scenario_widget = CSVScenarioSelector()
-        self.verticalLayout_5.addWidget(self.scenario_widget)
+        #self.scenario_view_button.setEnabled(False)
+        self.graph_build = GraphBuilder()
+        self.scenario_widg = ScenarioSelectionWidget(self.graph_build)
+        self.verticalLayout_5.addWidget(self.scenario_widg)
+        self.scenario_view_button.clicked.connect(self.scen_view)
+       # self.scenario_widget = CSVScenarioSelector()
+
+        #self.open_maps_button.setEnabled(False)
 
     def scen_view(self):
         self.stackedWidget.setCurrentWidget(self.scenario_viewer_page)
@@ -390,7 +396,8 @@ class ResultsPage(QWidget, Ui_results):
         '''Open the map htmls'''
         self.stackedWidget.setCurrentWidget(self.html_viewer_page)
         if self.results_viewer.rd is None:
-            self.error_message.showMessage("No solution exists")
+            pass
+            #self.error_message.showMessage("No solution exists")
             #self.html_file_browser.setRootPath(r"C:\Users\ylpomer\Desktop\planning\results")
         else:
             directory = self.results_viewer.map_folder_path
@@ -399,7 +406,8 @@ class ResultsPage(QWidget, Ui_results):
                 #QDesktopServices.openUrl(QUrl.fromLocalFile(directory))
                 self.html_file_browser.setRootPath(directory)
             else:
-                QMessageBox.warning(self, "Error", "The folder does not exist.", QMessageBox.StandardButton.Ok)
+                pass
+               # QMessageBox.warning(self, "Error", "The folder does not exist.", QMessageBox.StandardButton.Ok)
 
 
     def save_results_button_clicked(self):
@@ -409,7 +417,7 @@ class ResultsPage(QWidget, Ui_results):
         else:
             self.results_viewer.export_results()
         
-    '''Help information'''
+   # '''Help information'''
     def results_help(self):
         """
         Displays a help message in a pop-out window

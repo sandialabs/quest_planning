@@ -128,18 +128,8 @@
             <item>
              <widget class="QLabel" name="label_3">
               <property name="styleSheet">
-               <string notr="true">image: url(:/logos/images/logo/Quest_Planning_Logo_RGB.png);</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="styleSheet">
-               <string notr="true">image: url(:/pics/images/pics/icon_pic.png);
-</string>
+               <string notr="true">
+image: url(:/logos/images/logo/new_logo.png);</string>
               </property>
               <property name="text">
                <string/>
@@ -334,7 +324,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true">image: url(:/logos/images/logo/SNL_Stacked_Black_Blue.png);</string>
+            <string notr="true">image: url(:/logos/images/logo/Sandia_National_Laboratories_logo.svg);</string>
            </property>
            <property name="text">
             <string/>
