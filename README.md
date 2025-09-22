@@ -144,7 +144,7 @@ The input data is constructed via several CSV files. The QuESt Planning tool req
 - [**capex_es.csv**](#capex_es)
 - [**fuel.csv**](#fuel)
 
-#### Renewable Profile Data
+#### VER Profile Data
 - [**solar.csv**](#solar)
 - [**solar_cand.csv**](#solar_cand)
 - [**wind.csv**](#wind)
@@ -440,7 +440,7 @@ Select a `capital cost trend used` for the energy storage capital costs. These c
 
 Select a `Load Forecast`.
 
-Select a `Renewable Portfolio Standard` or create a new policy. 
+Select a `Future Generation Mix` or create a new policy. 
 
 `Transmission Expansion` will allow for the co-optimization of the generation and transmission expansion. This feature is in testing will be released in a later version.
 
@@ -594,7 +594,7 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 - [**Energy Storage Pricing Survey**](<https://www.osti.gov/biblio/1866526>): provides a standardized reference system prices various energy storage technologies with different power and energy ratings. (Sandia National Laboratories)
 - [**Annual Energy Outlook**](<https://www.eia.gov/outlooks/aeo/data/browser/>): provides regional projections of energy supply, demand, and fuel prices out to 2050 (developed by the Energy Information Administration)
 
-#### Renewable Data
+#### Weather Data
 
 - [**National Solar Radiation Database**](<https://nsrdb.nrel.gov/>): hourly and half-hourly timeseries of solar irradiance in the U.S. and select countries (developed by the National Renewable Energy Laboratory)
 
@@ -610,9 +610,6 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 
 - [**Form No. 714**](<https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual-electric/data>): provides balancing authority and planning area generation, actual and scheduled power transfers, and load. (Provided by the Federal Energy Regulatory Commission)
 
-#### Renewable & Energy Storage Policies
-
-- [**Database of State Incentives for Renewables & Efficiency**](<https://www.dsireusa.org/>): comprehensive set of renewable policies and incentives in the United States (developed by North Carolina State University)
 
 Additional test cases are under further development and will be included in future releases.
 
@@ -644,7 +641,7 @@ Future updates to QuESt Planning that are being considered include:
 - *Technology-specific energy storage models*
 - *Enhanced temporal resolution*
 - *Improved transmission models & investment options*
-- *Improved renewable energy resource modeling*
+- *Improved generation modeling*
 - *Improved GUI & scenario viewer*
 
 [Back to Top](#top)
