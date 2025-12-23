@@ -652,6 +652,7 @@ The QuESt Planning tool is developed and maintained by the [Energy Storage Analy
 Project team:
 - Cody Newlun (cjnewlu@sandia.gov)
 - Atri Bera
+- Dilip Pandit
 - Walker Olis
 - Andres Lopez Ramirez
 - Yung-Jai Pomeroy
