@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quest-planning"
+version = "1.0.0"
+description = "QuESt Planning is a long-term power system capacity expansion planning model that identifies cost-optimal energy storage, generation, and transmission investments and evaluates a broad range of energy storage technologies."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+license = { text = "BSD-3-Clause" }
+
+authors = [
+  { name = "Sandia National Laboratories" }
+]
+
+maintainers = [
+  { email = "cjnewlu@sandia.gov" }
+]
+
+keywords = [
+  "capacity-expansion",
+  "power-systems",
+  "energy-storage",
+  "planning"
+]
+
+classifiers = [
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Operating System :: OS Independent",
+]
+
+dependencies = [
+  "branca>=0.7,<1.0",
+  "folium>=0.16,<1.0",
+  "geopandas>=1.0,<2.0",
+  "matplotlib>=3.8,<4.0",
+  "networkx>=3.2,<4.0",
+  "numpy>=1.26,<2.0",
+  "pandas>=2.2,<3.0",
+  "plotly>=6.0,<7.0",
+  "pyomo>=6.7,<7.0",
+  "PySide6>=6.5,<7.0",
+  "requests>=2.31,<3.0",
+  "pyyaml>=6.0,<7.0",
+]
+
+[project.optional-dependencies]
+gurobi = [
+  "gurobipy==11.0.1"
+]
+
+[project.urls]
+Homepage = "https://github.com/sandialabs/quest_planning"
+Repository = "https://github.com/sandialabs/quest_planning"
+Issues = "https://github.com/sandialabs/quest_planning/issues"
+
+[project.scripts]
+quest_planning = "quest_planning.__main__:main"
+
+[tool.setuptools]
+include-package-data = true
+license-files = ["LICENSE"]
+
+[tool.setuptools.packages.find]
+where = ["."]
