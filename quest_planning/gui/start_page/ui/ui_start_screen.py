@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'start_screenvhEHTn.ui'
+## Form generated from reading UI file 'start_screen.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -24,7 +24,7 @@ class Ui_start_screen(object):
     def setupUi(self, start_screen):
         if not start_screen.objectName():
             start_screen.setObjectName(u"start_screen")
-        start_screen.resize(1427, 725)
+        start_screen.resize(997, 725)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
