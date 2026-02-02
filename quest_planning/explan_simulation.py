@@ -7,6 +7,7 @@ Created on Fri Jul 12 11:06:12 2024
 import os.path
 import yaml
 import argparse
+from pathlib import Path
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
 from quest_planning.explan.explan_optimizer import ExplanOptimizer
 from quest_planning.explan.explan_results_viewer import ExplanResultsViewer
@@ -141,11 +142,12 @@ if __name__ == '__main__':
     parser.add_argument('yaml_file', type=str, help='Path to the input YAML file.')
     args = parser.parse_args()
 
-    current_dir = os.getcwd()
+    _PKG_ROOT = Path(__file__).resolve().parent
+
     input_dict = read_input_yaml(args.yaml_file)
 
-    data_file = os.path.join(current_dir, 'quest_planning','data_explan', input_dict['data_folder'])
-    input_dict['data_dir'] = data_file
+    data_file = _PKG_ROOT / "data_explan" / input_dict["data_folder"]
+    input_dict['data_dir'] = str(data_file)
     input_dict['data_ls'] = ['bus','branch','capex_es','capex_l_es','capex_h_es','capex_tech','fuel','gen','gen_viz','load','scalars','solar','storage','tech','wind','policy','solar_cand','wind_cand']#'disfact',
     
 
