@@ -2,6 +2,7 @@
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
+
 [project]
 name = "quest-planning"
 version = "1.0.0"
@@ -26,25 +27,24 @@ keywords = [
 ]
 
 classifiers = [
-  "License :: OSI Approved :: BSD License",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3 :: Only",
   "Operating System :: OS Independent",
 ]
 
 dependencies = [
-  "branca>=0.7,<1.0",
-  "folium>=0.16,<1.0",
-  "geopandas>=1.0,<2.0",
-  "matplotlib>=3.8,<4.0",
-  "networkx>=3.2,<4.0",
-  "numpy>=1.26,<2.0",
-  "pandas>=2.2,<3.0",
-  "plotly>=6.0,<7.0",
-  "pyomo>=6.7,<7.0",
-  "PySide6>=6.5,<7.0",
-  "requests>=2.31,<3.0",
-  "pyyaml>=6.0,<7.0",
+  "branca>=0.7",
+  "folium>=0.16",
+  "geopandas>=1.0",
+  "matplotlib>=3.8",
+  "networkx>=3.2",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "plotly>=6.0",
+  "pyomo>=6.7",
+  "PySide6>=6.5",
+  "requests>=2.31",
+  "pyyaml>=6.0",
+  "Markdown>=3.4,<5.0"
 ]
 
 [project.optional-dependencies]
@@ -66,3 +66,13 @@ license-files = ["LICENSE"]
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.setuptools.package-data]
+quest_planning = [
+  "resources.qrc",
+  "data_explan/**/*",
+  "config/*.yaml",
+  "images/**/*",
+  "**/*.ui",
+]
+
