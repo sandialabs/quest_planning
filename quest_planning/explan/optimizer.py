@@ -6,6 +6,8 @@ Authors: Sandia National Laboratories
 
 from abc import ABCMeta, abstractmethod
 import logging
+import os
+import tempfile
 import pyutilib
 from six import with_metaclass
 from pyomo.environ import *
@@ -15,7 +17,12 @@ from pyomo.contrib.appsi.solvers.highs import Highs
 from pyomo.util.infeasible import log_infeasible_constraints
 from pyomo.contrib.iis import write_iis
 
-logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.INFO)
+os.makedirs(os.path.join(tempfile.gettempdir(), 'quest_planning'), exist_ok=True)
+logging.basicConfig(
+    filename=os.path.join(tempfile.gettempdir(), 'quest_planning', 'quest_planning.log'),
+    encoding='utf-8',
+    level=logging.INFO,
+)
 
 class Optimizer(with_metaclass(ABCMeta)):
     """Abstract base class for Pyomo ConcreteModel optimization framework."""
