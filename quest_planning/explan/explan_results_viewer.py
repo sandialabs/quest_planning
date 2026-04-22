@@ -20,7 +20,8 @@ import textwrap
 import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
-
+from quest_planning.paths import get_path
+base_dir = get_path()
 
 class ExplanResultsViewer():
 
@@ -566,11 +567,11 @@ class ExplanResultsViewer():
     def create_results_folder(self,filepath):
         # Create Results folder
         if filepath == None or filepath == '':
-            filepath = os.getcwd()
+            filepath = base_dir #os.getcwd()
             results_folder_path = os.path.join(
-                filepath,'quest_planning','Results')
+                filepath, 'Results')
             results_subfolder_path = os.path.join(
-                filepath,'quest_planning','Results', self.data_handler.system+'_Results')
+                filepath,'Results', self.data_handler.system+'_Results')
         else:
             #filepath = filepath
             results_folder_path = filepath
@@ -583,7 +584,7 @@ class ExplanResultsViewer():
             os.mkdir(results_subfolder_path)
         
         # all results
-        folder_name = str(self.data_handler.scenario)+'_LG' +str(self.data_handler.load_growth)+'_ESC'+str(self.data_handler.es_cost)+'_LDES'+str(self.data_handler.ldes_switch)+'_tx-'+ str(self.data_handler.tx_model)+str(self.data_handler.years[0])+'-'+str(self.data_handler.years[-1]) +'_'+str(self.timestamp)+'_'+str(self.data_handler.system)
+        folder_name = str(self.timestamp)+'_'+str(self.data_handler.system)
         self.folder_path = os.path.join(results_folder_path, folder_name)
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
@@ -1940,7 +1941,240 @@ class ExplanResultsViewer():
                 fig.savefig(self.dispatch_folder_path+'/'+season+'_' + str(select_year)
                             + '.png', bbox_inches='tight')
 
-    # def map_results(self):
+    def map_es_results(self):
+        """
+        Parameters
+        ----------
+        gen_map_info : TYPE
+            DESCRIPTION.
+        tech_map_info : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+        """
+        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
+        results = self.rd['P_cap_total']
+        results_en = self.rd['Store']
+        
+        if np.size(results.index.names) > 1:
+            results.reset_index(inplace=True)
+        if np.size(results_en.index.names) > 1:
+            results_en.reset_index(inplace=True)
+
+        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
+        tech_num = [translate.get(x, x) for x in results['g']]
+        results['Technology'] = tech_num
+        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
+        tech_name = [translate1.get(x, x) for x in results['Technology']]
+        results['Tech_Name'] = tech_name
+
+        # Filter down into ES technologies only
+        results = results[results['g'].isin(self.data_handler.tech_nums['storage'])]
+        results = results.assign(energy=list(results_en['Value'].values))
+
+        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
+        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+
+        # Custom scaling options for visualization purposes
+        if self.system == 'PNM':
+            rad_div = 10
+        elif self.system == 'RTS_GMLC_Nodal':
+            rad_div = 16
+        else:
+            rad_div = 16
+
+        for y in self.data_handler.years:
+            # Create a Plotly figure
+            fig = go.Figure()
+
+            # Add lines to the figure
+            for l in line_data['Line_Number']:
+                line = line_data[line_data['Line_Number'] == l]
+                from_bus = int(line['From_Bus_Number'].iloc[0])
+                to_bus = int(line['To_Bus_Number'].iloc[0])
+                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
+                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
+
+                fig.add_trace(go.Scattergeo(
+                    lon=[from_pt[1], to_pt[1]],
+                    lat=[from_pt[0], to_pt[0]],
+                    mode='lines',
+                    line=dict(width=2, color='black'),
+                    name='Transmission Line'
+                ))
+
+            results_y = results[results['y'] == y]
+            results_y = results_y[results_y['Value'] > 0]
+
+            duration = results_y['energy'] / results_y['Value']
+            max_d_t = int(duration.max())
+
+            for tech in np.unique(results_y['Tech_Name']):
+                results_y_t = results_y[results_y['Tech_Name'] == tech]
+                colormap = px.colors.sequential.Viridis
+
+                for g in results_y_t['g']:
+                    gen = results_y_t[results_y_t['g'] == g]
+                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
+                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
+                    power = float(gen['Value'].iloc[0])
+                    energy = float(gen['energy'].iloc[0])
+                    duration_g = energy / power
+
+                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
+
+                    fig.add_trace(go.Scattergeo(
+                        lon=[lon],
+                        lat=[lat],
+                        mode='markers',
+                        marker=dict(
+                            size=power / rad_div,
+                            color=color,
+                            opacity=0.5,
+                            showscale=True,
+                            colorbar=dict(title='Duration (h)')
+                        ),
+                        name=tech
+                    ))
+
+            # Update layout
+            fig.update_layout(
+                title=f'Energy Storage Results {y}',
+                geo=dict(
+                    scope='usa',  # Adjust scope as needed
+                    showland=True,
+                    landcolor='lightgray',
+                    subunitcolor='black',
+                    countrycolor='black'
+                )
+            )
+
+            # Save the figure with UTF-8 encoding
+            with open(f"{self.map_folder_path}/ES_{y}.html", 'w', encoding='utf-8') as f:
+                f.write(fig.to_html(full_html=True))
+
+    def map_results(self):
+        """
+        Parameters
+        ----------
+        gen_map_info : TYPE
+            DESCRIPTION.
+        tech_map_info : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+        """
+        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
+        results = self.rd['P_cap_total']
+        
+        if np.size(results.index.names) > 1:
+            results.reset_index(inplace=True)
+        
+        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
+        tech_num = [translate.get(x, x) for x in results['g']]
+        results['Technology'] = tech_num
+        
+        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
+        tech_name = [translate1.get(x, x) for x in results['Technology']]
+        results['Tech_Name'] = tech_name
+        
+        tx_expansion = self.rd['L_cap_total']
+        if np.size(tx_expansion.index.names) > 1:
+            tx_expansion.reset_index(inplace=True)
+        
+        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
+        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+        
+        # Custom scaling options for visualization purposes
+        if self.system == 'PNM':
+            rad_div = 10
+            line_div = 100
+        elif self.system == 'RTS_GMLC_Nodal':
+            rad_div = 16
+            line_div = 100
+        else:
+            rad_div = 16
+            line_div = 100
+        
+        for y in self.data_handler.years:
+            # Create a Plotly figure
+            fig = go.Figure()
+
+            # Add lines to the figure
+            for l in line_data['Line_Number']:
+                line = line_data[line_data['Line_Number'] == l]
+                from_bus = int(line['From_Bus_Number'].iloc[0])
+                to_bus = int(line['To_Bus_Number'].iloc[0])
+                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
+                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
+                weight_y = tx_expansion[(tx_expansion['l'] == l) & (tx_expansion['y'] == y)]['Value'].values[0]
+                weight = float(weight_y)
+
+                fig.add_trace(go.Scattergeo(
+                    lon=[from_pt[1], to_pt[1]],
+                    lat=[from_pt[0], to_pt[0]],
+                    mode='lines',
+                    line=dict(width=2, color='black'),
+                    name='Transmission Line'
+                ))
+                fig.add_trace(go.Scattergeo(
+                    lon=[from_pt[1], to_pt[1]],
+                    lat=[from_pt[0], to_pt[0]],
+                    mode='lines',
+                    line=dict(width=weight / line_div, color='blue'),
+                    name='Transmission Expansion'
+                ))
+
+            results_y = results[results['y'] == y]
+            results_y = results_y[results_y['Value'] > 0]
+
+            for tech in np.unique(results_y['Tech_Name']):
+                results_y_t = results_y[results_y['Tech_Name'] == tech]
+                color = self.color_tech(tech)
+
+                for g in results_y_t['g']:
+                    gen = results_y_t[results_y_t['g'] == g]
+                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
+                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
+                    capacity = float(gen['Value'].iloc[0])
+
+                    fig.add_trace(go.Scattergeo(
+                        lon=[lon],
+                        lat=[lat],
+                        mode='markers',
+                        marker=dict(
+                            size=capacity / rad_div,
+                            color=color,
+                            opacity=0.5,
+                            showscale=True,
+                            colorbar=dict(title='Capacity')
+                        ),
+                        name=tech
+                    ))
+
+            # Update layout
+            fig.update_layout(
+                title=f'Generation Results {y}',
+                geo=dict(
+                    scope='usa',  # Adjust scope as needed
+                    showland=True,
+                    landcolor='lightgray',
+                    subunitcolor='black',
+                    countrycolor='black'
+                )
+            )
+
+            # Save the figure with UTF-8 encoding
+            with open(f"{self.map_folder_path}/Generation_{y}.html", 'w', encoding='utf-8') as f:
+                f.write(fig.to_html(full_html=True))
+
+
+#******************SCRATCH**********************
+# def map_results(self):
     #     """
 
 
@@ -2201,234 +2435,3 @@ class ExplanResultsViewer():
     #         map_title = 'ES_'+str(y)+'.html'
     #         m.save(self.map_folder_path +
     #                "/"+map_title)
-
-    def map_es_results(self):
-        """
-        Parameters
-        ----------
-        gen_map_info : TYPE
-            DESCRIPTION.
-        tech_map_info : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-        """
-        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-        results = self.rd['P_cap_total']
-        results_en = self.rd['Store']
-        
-        if np.size(results.index.names) > 1:
-            results.reset_index(inplace=True)
-        if np.size(results_en.index.names) > 1:
-            results_en.reset_index(inplace=True)
-
-        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-        tech_num = [translate.get(x, x) for x in results['g']]
-        results['Technology'] = tech_num
-        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-        tech_name = [translate1.get(x, x) for x in results['Technology']]
-        results['Tech_Name'] = tech_name
-
-        # Filter down into ES technologies only
-        results = results[results['g'].isin(self.data_handler.tech_nums['storage'])]
-        results = results.assign(energy=list(results_en['Value'].values))
-
-        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-
-        # Custom scaling options for visualization purposes
-        if self.system == 'PNM':
-            rad_div = 10
-        elif self.system == 'RTS_GMLC_Nodal':
-            rad_div = 16
-        else:
-            rad_div = 16
-
-        for y in self.data_handler.years:
-            # Create a Plotly figure
-            fig = go.Figure()
-
-            # Add lines to the figure
-            for l in line_data['Line_Number']:
-                line = line_data[line_data['Line_Number'] == l]
-                from_bus = int(line['From_Bus_Number'].iloc[0])
-                to_bus = int(line['To_Bus_Number'].iloc[0])
-                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
-                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
-
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=2, color='black'),
-                    name='Transmission Line'
-                ))
-
-            results_y = results[results['y'] == y]
-            results_y = results_y[results_y['Value'] > 0]
-
-            duration = results_y['energy'] / results_y['Value']
-            max_d_t = int(duration.max())
-
-            for tech in np.unique(results_y['Tech_Name']):
-                results_y_t = results_y[results_y['Tech_Name'] == tech]
-                colormap = px.colors.sequential.Viridis
-
-                for g in results_y_t['g']:
-                    gen = results_y_t[results_y_t['g'] == g]
-                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
-                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
-                    power = float(gen['Value'].iloc[0])
-                    energy = float(gen['energy'].iloc[0])
-                    duration_g = energy / power
-
-                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
-
-                    fig.add_trace(go.Scattergeo(
-                        lon=[lon],
-                        lat=[lat],
-                        mode='markers',
-                        marker=dict(
-                            size=power / rad_div,
-                            color=color,
-                            opacity=0.5,
-                            showscale=True,
-                            colorbar=dict(title='Duration (h)')
-                        ),
-                        name=tech
-                    ))
-
-            # Update layout
-            fig.update_layout(
-                title=f'Energy Storage Results {y}',
-                geo=dict(
-                    scope='usa',  # Adjust scope as needed
-                    showland=True,
-                    landcolor='lightgray',
-                    subunitcolor='black',
-                    countrycolor='black'
-                )
-            )
-
-            # Save the figure with UTF-8 encoding
-            with open(f"{self.map_folder_path}/ES_{y}.html", 'w', encoding='utf-8') as f:
-                f.write(fig.to_html(full_html=True))
-
-    def map_results(self):
-        """
-        Parameters
-        ----------
-        gen_map_info : TYPE
-            DESCRIPTION.
-        tech_map_info : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-        """
-        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-        results = self.rd['P_cap_total']
-        
-        if np.size(results.index.names) > 1:
-            results.reset_index(inplace=True)
-        
-        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-        tech_num = [translate.get(x, x) for x in results['g']]
-        results['Technology'] = tech_num
-        
-        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-        tech_name = [translate1.get(x, x) for x in results['Technology']]
-        results['Tech_Name'] = tech_name
-        
-        tx_expansion = self.rd['L_cap_total']
-        if np.size(tx_expansion.index.names) > 1:
-            tx_expansion.reset_index(inplace=True)
-        
-        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-        
-        # Custom scaling options for visualization purposes
-        if self.system == 'PNM':
-            rad_div = 10
-            line_div = 100
-        elif self.system == 'RTS_GMLC_Nodal':
-            rad_div = 16
-            line_div = 100
-        else:
-            rad_div = 16
-            line_div = 100
-        
-        for y in self.data_handler.years:
-            # Create a Plotly figure
-            fig = go.Figure()
-
-            # Add lines to the figure
-            for l in line_data['Line_Number']:
-                line = line_data[line_data['Line_Number'] == l]
-                from_bus = int(line['From_Bus_Number'].iloc[0])
-                to_bus = int(line['To_Bus_Number'].iloc[0])
-                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
-                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
-                weight_y = tx_expansion[(tx_expansion['l'] == l) & (tx_expansion['y'] == y)]['Value'].values[0]
-                weight = float(weight_y)
-
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=2, color='black'),
-                    name='Transmission Line'
-                ))
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=weight / line_div, color='blue'),
-                    name='Transmission Expansion'
-                ))
-
-            results_y = results[results['y'] == y]
-            results_y = results_y[results_y['Value'] > 0]
-
-            for tech in np.unique(results_y['Tech_Name']):
-                results_y_t = results_y[results_y['Tech_Name'] == tech]
-                color = self.color_tech(tech)
-
-                for g in results_y_t['g']:
-                    gen = results_y_t[results_y_t['g'] == g]
-                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
-                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
-                    capacity = float(gen['Value'].iloc[0])
-
-                    fig.add_trace(go.Scattergeo(
-                        lon=[lon],
-                        lat=[lat],
-                        mode='markers',
-                        marker=dict(
-                            size=capacity / rad_div,
-                            color=color,
-                            opacity=0.5,
-                            showscale=True,
-                            colorbar=dict(title='Capacity')
-                        ),
-                        name=tech
-                    ))
-
-            # Update layout
-            fig.update_layout(
-                title=f'Generation Results {y}',
-                geo=dict(
-                    scope='usa',  # Adjust scope as needed
-                    showland=True,
-                    landcolor='lightgray',
-                    subunitcolor='black',
-                    countrycolor='black'
-                )
-            )
-
-            # Save the figure with UTF-8 encoding
-            with open(f"{self.map_folder_path}/Generation_{y}.html", 'w', encoding='utf-8') as f:
-                f.write(fig.to_html(full_html=True))
