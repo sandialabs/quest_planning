@@ -66,6 +66,7 @@ class Explan:
         d.set_reserves_option(config['reserves_option'])
         d.set_tax_credits_option(config['tax_credits_option'])
         d.set_es_lifetime_cost_option(config['es_lifetime_cost_option'])
+        d.set_large_load_option(config['large_load_option'])
         d.set_solver(config['solver'])
         d.set_system_name(config['system'])
         d.set_mva_base(config['mva_base'])
@@ -88,6 +89,8 @@ class Explan:
                                       config['coal_retirement_year'],
                                       config['nuclear_retirement_year'],
                                       config['oil_retirement_year'])
+        #RPS policy flag
+        d.set_rps_policy(config['rps_policy'])
         #Co2 policy flag
         d.set_co2_policy(config['co2_policy'])
         d.set_co2_intensity_policy(config['co2_intensity_policy'])
@@ -95,12 +98,18 @@ class Explan:
         d.set_es_lifetime_extension(config['es_lifetime_extension'])
         
         d.set_resource_bus_limits(config['limit_by_buses'])
+
+        if config.get('large_load_option', True):
+            ll = d.read_large_loads_config(config)
+
+       
         
     def load_data(self):
         self.data_handler.get_data()
     
     def construct_load_blocks(self):
         self.data_handler.construct_load_blocks()
+        self.data_handler.process_large_loads()
         
 
     def run_optimizer(self):
@@ -132,6 +141,10 @@ def read_input_yaml(yaml_file):
     dict
         Dictionary of input parameters.
     '''
+    # Ensure the file path is relative to the current working directory
+    if not os.path.isabs(yaml_file):
+        yaml_file = os.path.join(os.getcwd(), yaml_file)
+
     with open(yaml_file, 'r') as f:
         return yaml.safe_load(f)
 
@@ -156,8 +169,7 @@ if __name__ == '__main__':
     exp.run_optimizer()
     exp.view_results()
     
-    # to write the model.lp files...
-    #exp.optimizer._model.write('model.lp', io_options={'symbolic_solver_labels': True})
+    
     
     
     

@@ -20,6 +20,13 @@ import textwrap
 import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
+from quest_planning.paths import get_path
+base_dir = get_path()
+geo_path = os.path.join(base_dir, "gui", "tools", "usa_110m.json")
+import json
+
+
+
 
 
 class ExplanResultsViewer():
@@ -29,17 +36,17 @@ class ExplanResultsViewer():
         #TODO: Fix this
         self.system = None#self.data_handler.system#'PNM'#self.data_handler.scalars.loc['System']['Value']#TODO: change this
         self.rd = None
-        
+
         # Plotting options - FALSE by default
         self.stacked_bar_by_bus_option = False
         self.policy_plot_option = False
-    
+
     def create_lookup_info(self):
         self.gen_map_info = self.data_handler.load_data[self.data_handler.data_ls.index('gen')][[
             'Gen_num', 'Bus_num', 'Bus', 'Tech', 'Tech_Num']]
-        
+
         self.tech_map_info = self.data_handler.load_data[self.data_handler.data_ls.index('tech')][['Tech', 'Tech_Name', 'Tech_Num']]
-        
+
         self.bus_list = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]['Bus_number'].values
         self.bus_names = self.data_handler.load_data[self.data_handler.data_ls.index('bus')][[
             'Bus_number', 'Bus_name']]
@@ -47,31 +54,31 @@ class ExplanResultsViewer():
         """
         Plot stacked bar chart of installed capacity by year for multiple scenarios.
         """
-        
+
         # Define the desired order of scenarios
         scenario_order = [
             "Baseline",
             "Baseline + High Load",
             #"Baseline + High ES Costs",
-            
+
             #"Moderate Technology",
             "Advanced Tech + Low Econ. Growth",
             #"Baseline + Tx. Exp",
             "Advanced Tech + Tx. Exp. + High Load",
             "RPS80",
         ]
-        
+
         # Filter and reorder the scenarios based on the desired order
         ordered_scenarios = {name: scenarios[name] for name in scenario_order if name in scenarios}
-        
+
         num_scenarios = len(ordered_scenarios)
-        
+
         fig, axes = plt.subplots(1, num_scenarios, figsize=figsize, sharey=True)
-        
+
         all_handles = []
         all_labels = []
         seen_labels = set()
-        
+
         for i, (scenario_name, scenario) in enumerate(ordered_scenarios.items()):
             # Load results for the scenario
             results = scenario['P_cap_total']
@@ -80,76 +87,76 @@ class ExplanResultsViewer():
                 results.reset_index(inplace=True)
             if np.size(results_en1.index.names) > 1:
                 results_en1.reset_index(inplace=True)
-        
+
             # Add tech name
             translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
             tech_num = [translate.get(x, x) for x in results['g']]
             results['Technology'] = tech_num
             tech_num = [translate.get(x, x) for x in results_en1['g']]
             results_en1['Technology'] = tech_num
-        
+
             # Filter for ES tech
             results_es = results[results['Technology'].isin(np.unique(
                 self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num']))]
             results_es['Energy'] = results_en1['Value'].values
             results_es['Duration'] = results_es['Energy'] / results_es['Value']
-        
+
             # Define duration bins and labels
             bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
             labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-        
+
             # Create a new column for binned durations
             results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-        
+
             # Ensure Duration_Bin includes all categories
             results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-            
+
             # Combine Technology and Duration_Bin into a new column
             results_es['Tech_Name'] = results_es.apply(
                 lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-            
+
             # Replace entries in results with those in results_es based on generator number (g)
             results['Duration'] = 0
-            
+
             results.update(results_es)
-        
+
             # Pivot table based on the new Tech_Category column
             results_pivot = results[results['Value'] != 0].pivot_table(
                 index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-          
+
             results_pivot = results_pivot / 1000
-            
+
             # Rename columns
             translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
             cols = [translate1.get(x, x) for x in results_pivot.columns]
             results_pivot.columns = cols
-            
+
             # Define the order of technologies: thermal, renewables, storage
             thermal_techs = ['Coal','Nuclear','Oil_CT','Oil_ST','Gas_CT','Gas_CC','Hydro','Gas (New)']
             renewable_techs = ['Wind','Solar','Solar_RT','CSP','Wind (New)','Solar (New)']
             other_techs = sorted([tech for tech in cols if tech not in thermal_techs + renewable_techs])
             ordered_cols = [tech for tech in thermal_techs + renewable_techs + other_techs if tech in cols]
-            
+
             results_pivot = results_pivot[ordered_cols]
-            
+
             # Assign colors
             color_array = [self.color_tech(c) for c in ordered_cols]
-        
+
             ax = axes[i]
-                   
+
             results_pivot.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, linewidth=0.75,edgecolor="black", width=0.5)
             ax.set_ylabel('Capacity (GW)', fontsize=12)
             #ax.set_title(f'{scenario_name}', fontsize=14)
             ax.margins(x=0, y=0)
             ax.set_xlabel('')
             ax.tick_params(axis='y', labelsize=12)
-            
+
             if i > 0:
                 ax.set_facecolor('#f0f0f0')  # Light shade background color
             # Wrap and set the subplot title
             wrapped_title = "\n".join(textwrap.wrap(scenario_name, width=16))
             ax.set_title(wrapped_title, fontsize=14, fontweight='bold')
-            
+
             # Collect handles and labels for the legend
             handles, labels = ax.get_legend_handles_labels()
             for handle, label in zip(handles, labels):
@@ -157,112 +164,112 @@ class ExplanResultsViewer():
                     all_handles.append(handle)
                     all_labels.append(label)
                     seen_labels.add(label)
-            
+
             # Set x-axis labels to be integers, larger font, and diagonal
             ax.set_xticklabels(results_pivot.index.astype(int), rotation=45, ha='right', fontsize=12)
             # Add faint separator line between scenarios
             if i < num_scenarios - 1:
                 ax.axvline(x=ax.get_xlim()[1], color='gray', linestyle='--', linewidth=0.5)
-            
+
         # Create a single legend for the entire figure
         fig.legend(all_handles, all_labels, loc='lower center', bbox_to_anchor=(0.5, -0.25), fontsize=12, ncol=5)
-        
+
         plt.tight_layout()
         plt.show()
-    
+
     def stacked_resource_es_duration_bar_gen_diff(self, scenarios, figsize):
         """
         Plot stacked bar chart of installed capacity by year for multiple scenarios.
         """
         baseline_scenario_name = "Baseline"
-        
+
         # Define the desired order of scenarios
         scenario_order = [
             "Baseline",
             "Baseline + High Load",
             #"Baseline + High ES Costs",
-            
+
             #"Moderate Technology",
             "Advanced Tech + Low Econ. Growth",
             #"Baseline + Tx. Exp",
             "Advanced Tech + Tx. Exp. + High Load",
             "RPS80",
         ]
-        
+
         # Filter and reorder the scenarios based on the desired order
         ordered_scenarios = {name: scenarios[name] for name in scenario_order if name in scenarios}
-        
+
         num_scenarios = len(ordered_scenarios)
-        
+
         # Create subplots: one for the baseline and a grid for the rest
         fig = plt.figure(figsize=figsize)
         gs = fig.add_gridspec(1, num_scenarios, width_ratios=[1] + [1] * (num_scenarios - 1))
-        
+
         ax_baseline = fig.add_subplot(gs[0, 0])
         ax_deltas = [fig.add_subplot(gs[0, i + 1], sharey=ax_baseline) for i in range(num_scenarios - 1)]
-        
+
         all_handles = []
         all_labels = []
         seen_labels = set()
-        
+
         baseline_results_pivot = None
-        
+
         color_mapping = {}
-        
+
         for i, (scenario_name, scenario) in enumerate(ordered_scenarios.items()):
             # Load results for the scenario
-            
-            
+
+
             results = scenario['P_cap_total']
             results_en1 = scenario['Store']
             if np.size(results.index.names) > 1:
                 results.reset_index(inplace=True)
             if np.size(results_en1.index.names) > 1:
                 results_en1.reset_index(inplace=True)
-        
+
             # Add tech name
             translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
             tech_num = [translate.get(x, x) for x in results['g']]
             results['Technology'] = tech_num
             tech_num = [translate.get(x, x) for x in results_en1['g']]
             results_en1['Technology'] = tech_num
-        
+
             # Filter for ES tech
             results_es = results[results['Technology'].isin(np.unique(
                 self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num']))]
             results_es['Energy'] = results_en1['Value'].values
             results_es['Duration'] = results_es['Energy'] / results_es['Value']
-        
+
             # Define duration bins and labels
             bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
             labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-        
+
             # Create a new column for binned durations
             results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-        
+
             # Ensure Duration_Bin includes all categories
             results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-            
+
             # Combine Technology and Duration_Bin into a new column
             results_es['Tech_Name'] = results_es.apply(
                 lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-            
+
             # Replace entries in results with those in results_es based on generator number (g)
             results['Duration'] = 0
-            
+
             results.update(results_es)
-        
+
             # Pivot table based on the new Tech_Category column
             results_pivot = results[results['Value'] != 0].pivot_table(
                 index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-          
+
             results_pivot = results_pivot / 1000
-            
+
             # Rename columns
             translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
             cols = [translate1.get(x, x) for x in results_pivot.columns]
             results_pivot.columns = cols
-            
+
             # Define the order of technologies: thermal, renewables, storage
             thermal_techs = ['Coal','Nuclear','Oil_CT','Oil_ST','Gas_CT','Gas_CC','Hydro','Gas (New)']
             renewable_techs = ['Wind','Solar','Solar_RT','CSP','Wind (New)','Solar (New)']
@@ -271,9 +278,9 @@ class ExplanResultsViewer():
             # Ensure ordered_cols are in cols
             ordered_cols = [tech for tech in thermal_techs + renewable_techs + other_techs if tech in cols]
             #ordered_cols = thermal_techs + renewable_techs + other_techs #+ storage_techs
-            
+
             results_pivot = results_pivot[ordered_cols]
-            
+
             # Assign colors# Assign colors
             for tech in ordered_cols:
                 if tech not in color_mapping:
@@ -281,7 +288,7 @@ class ExplanResultsViewer():
             #print(color_mapping)
             color_array = [color_mapping[tech] for tech in ordered_cols]
             #color_array = [self.color_tech(c) for c in ordered_cols]
-        
+
             if scenario_name == baseline_scenario_name:
                 baseline_results_pivot = results_pivot.copy()
                 results_pivot.plot.bar(stacked=True, color=color_array, ax=ax_baseline, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
@@ -290,22 +297,22 @@ class ExplanResultsViewer():
                 ax_baseline.axhline(y=0, color='k', linewidth=0.5)
                 ax_baseline.set_xlabel('')
                 ax_baseline.set_xticklabels(baseline_results_pivot.index.astype(int), rotation=45, ha='right', fontsize=15)
-                
+
             else:
                 results_pivot1 = results_pivot.fillna(0)
                 baseline_results_pivot = baseline_results_pivot.fillna(0)
-                
+
                 # Calculate the change in energy storage investment compared to the baseline
                 results_pivot1 = results_pivot1.subtract(baseline_results_pivot, fill_value=0)
                 color_array = [self.color_tech(c) for c in results_pivot1.columns]
                 ax=ax_deltas[i-1]
                 results_pivot1.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
-                
+
                 # Wrap and set the subplot title
                 wrapped_title = "\n".join(textwrap.wrap(scenario_name, width=20))
                 ax.set_title(wrapped_title, fontsize=15, fontweight='bold')
                 #ax.set_ylabel('Change from Baseline (GW)', fontsize=15)
-                
+
                 y_min, y_max = ax.get_ylim()
                 if i == 1:
                     y_min, y_max = ax.get_ylim()
@@ -319,7 +326,7 @@ class ExplanResultsViewer():
                     decrease_text = mtext.Text(0.5, -37, "Decrease", color='red', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     increase_text = mtext.Text(0.5, 37, "Increase", color='blue', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     #combined_text = mtext.Text(0, 0, " / ", fontsize=15, rotation=90, va='center', ha='center')
-                    
+
                     # Combine the texts
                     ax.annotate('', xy=(0, 0.25), xytext=(-0.06, 1 / 2),
                                 textcoords='axes fraction', va='center', ha='center', rotation=90, fontsize=15)
@@ -327,11 +334,11 @@ class ExplanResultsViewer():
                     #decrease_text.set_position((-0.06, 0.25))
                     #combined_text.set_position((-0.06, 0.5))
                     #increase_text.set_position((-0.06, 0.5))
-                    
+
                     ax.add_artist(decrease_text)
                     #ax.add_artist(combined_text)
                     ax.add_artist(increase_text)
-                
+
                 # Collect handles and labels for the legend
                 handles, labels = ax.get_legend_handles_labels()
                 for handle, label in zip(handles, labels):
@@ -339,7 +346,7 @@ class ExplanResultsViewer():
                         all_handles.append(handle)
                         all_labels.append(label)
                         seen_labels.add(label)
-                
+
                 # Set x-axis labels to be integers, larger font, and diagonal
                 ax.set_xticklabels(results_pivot.index.astype(int), rotation=45, ha='right', fontsize=15)
                 ax.axhline(y=0, color='k', linewidth=0.5)
@@ -351,22 +358,22 @@ class ExplanResultsViewer():
          # Set y-axis label for the delta subplots
         for ax in ax_deltas:
             ax.set_ylabel('Delta Baseline', fontsize=15)
-            
+
         # Ensure all plots have the same y-axis scale
         y_limits = [ax.get_ylim() for ax in [ax_baseline] + ax_deltas]
         min_y, max_y = min(y[0] for y in y_limits), max(y[1] for y in y_limits)
         for ax in [ax_baseline] + ax_deltas:
             ax.set_ylim(-max_y, max_y)
-            
+
         for ax in ax_deltas:
             # Fill the positive and negative areas with light colors
             ax.fill_between(ax.get_xlim(), 0, max_y, color='lightblue', alpha=0.15)
             ax.fill_between(ax.get_xlim(), -max_y, 0, color='lightcoral', alpha=0.15)
-        
-        
+
+
         # Create a single legend for the entire figure
         fig.legend(all_handles, all_labels, loc='lower center', bbox_to_anchor=(0.5, -0.25), fontsize=14, ncol=5)
-        
+
         plt.tight_layout()
         plt.show()
 
@@ -375,41 +382,41 @@ class ExplanResultsViewer():
         Plot stacked bar chart of installed energy storage capacity by year for multiple scenarios.
         """
         baseline_scenario_name = "Baseline"
-        
+
         # Define the desired order of scenarios
         scenario_order = [
             "Baseline",
             "Baseline + High Load",
             #"Baseline + High ES Costs",
-            
+
             #"Moderate Technology",
             "Advanced Tech + Low Econ. Growth",
             #"Baseline + Tx. Exp",
             "Advanced Tech + Tx. Exp. + High Load",
             "RPS80",
         ]
-        
+
         # Filter and reorder the scenarios based on the desired order
         ordered_scenarios = {name: scenarios[name] for name in scenario_order if name in scenarios}
-        
+
         num_scenarios = len(ordered_scenarios)
-        
+
         # Create subplots: one for the baseline and a grid for the rest
         fig = plt.figure(figsize=figsize)
         #gs = fig.add_gridspec(1, num_scenarios, width_ratios=[1, 0.1] + [1] * (num_scenarios - 1))
         gs = fig.add_gridspec(1, num_scenarios, width_ratios=[1] + [1] * (num_scenarios - 1))
-        
+
         ax_baseline = fig.add_subplot(gs[0, 0])
         ax_deltas = [fig.add_subplot(gs[0, i + 1], sharey=ax_baseline) for i in range(num_scenarios - 1)]
-        
+
         all_handles = []
         all_labels = []
         seen_labels = set()
-        
+
         baseline_results_pivot = None
-        
+
         color_mapping = {}
-        
+
         for i, (scenario_name, scenario) in enumerate(ordered_scenarios.items()):
             # Load results for the scenario
             results = scenario['P_cap_total']
@@ -418,58 +425,58 @@ class ExplanResultsViewer():
                 results.reset_index(inplace=True)
             if np.size(results_en1.index.names) > 1:
                 results_en1.reset_index(inplace=True)
-        
+
             # Add tech name
             translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
             tech_num = [translate.get(x, x) for x in results['g']]
             results['Technology'] = tech_num
             tech_num = [translate.get(x, x) for x in results_en1['g']]
             results_en1['Technology'] = tech_num
-        
+
             # Filter for ES tech
             es_techs = np.unique(self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num'])
             results_es = results[results['Technology'].isin(es_techs)]
             results_es['Energy'] = results_en1['Value'].values
             results_es['Duration'] = results_es['Energy'] / results_es['Value']
-        
+
             # Define duration bins and labels
             bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
             labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-        
+
             # Create a new column for binned durations
             results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-        
+
             # Ensure Duration_Bin includes all categories
             results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-            
+
             # Combine Technology and Duration_Bin into a new column
             results_es['Tech_Name'] = results_es.apply(
                 lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-            
+
             # Replace entries in results with those in results_es based on generator number (g)
             results['Duration'] = 0
-            
+
             results.update(results_es)
-            
+
             results_es1 = results[results['Technology'].isin(es_techs)]
-        
+
             # Pivot table based on the new Tech_Category column
             results_pivot = results_es1[results_es1['Value'] != 0].pivot_table(
                 index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-          
+
             results_pivot = results_pivot / 1000
-            
+
             # Rename columns
             translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
             cols = [translate1.get(x, x) for x in results_pivot.columns]
             results_pivot.columns = cols
-            
+
             # Assign colors
             for tech in cols:
                 if tech not in color_mapping:
                     color_mapping[tech] = self.color_tech(tech)
             color_array = [color_mapping[tech] for tech in cols]
-        
+
             if scenario_name == baseline_scenario_name:
                 baseline_results_pivot = results_pivot.copy()
                 results_pivot.plot.bar(stacked=True, color=color_array, ax=ax_baseline, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
@@ -481,21 +488,21 @@ class ExplanResultsViewer():
             else:
                 results_pivot1 = results_pivot.fillna(0)
                 baseline_results_pivot = baseline_results_pivot.fillna(0)
-                
+
                 # Calculate the change in energy storage investment compared to the baseline
                 results_pivot1 = results_pivot1.subtract(baseline_results_pivot, fill_value=0)
                 #color_array = [self.color_tech[tech] for tech in results_pivot1.columns]
                 color_array = [self.color_tech(c) for c in results_pivot1.columns]
                 ax = ax_deltas[i - 1]
                 results_pivot1.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
-                
+
                 # Wrap and set the subplot title
                 wrapped_title = "\n".join(textwrap.wrap(scenario_name, width=20))
                 ax.set_title(wrapped_title, fontsize=14, fontweight='bold')
                 #ax.set_ylabel('Change from Baseline (GW)', fontsize=5)
-                
+
                 # Add y-axis labels for positive and negative values
-                
+
                 y_min, y_max = ax.get_ylim()
                 if i == 1:
                     y_min, y_max = ax.get_ylim()
@@ -509,7 +516,7 @@ class ExplanResultsViewer():
                     decrease_text = mtext.Text(0.5, -15, "Decrease", color='red', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     increase_text = mtext.Text(0.5, 15, "Increase", color='blue', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     #combined_text = mtext.Text(0, 0, " / ", fontsize=15, rotation=90, va='center', ha='center')
-                    
+
                     # Combine the texts
                     ax.annotate('', xy=(0, 0.25), xytext=(-0.06, 1 / 2),
                                 textcoords='axes fraction', va='center', ha='center', rotation=90, fontsize=15)
@@ -517,14 +524,14 @@ class ExplanResultsViewer():
                     #decrease_text.set_position((-0.06, 0.25))
                     #combined_text.set_position((-0.06, 0.5))
                     #increase_text.set_position((-0.06, 0.5))
-                    
+
                     ax.add_artist(decrease_text)
                     #ax.add_artist(combined_text)
                     ax.add_artist(increase_text)
-                    
-                    
-                    
-                    
+
+
+
+
                 # Collect handles and labels for the legend
                 handles, labels = ax.get_legend_handles_labels()
                 for handle, label in zip(handles, labels):
@@ -532,32 +539,32 @@ class ExplanResultsViewer():
                         all_handles.append(handle)
                         all_labels.append(label)
                         seen_labels.add(label)
-                
+
                 # Set x-axis labels to be integers, larger font, and diagonal
                 ax.set_xticklabels(results_pivot.index.astype(int), rotation=45, ha='right', fontsize=15)
                 ax.axhline(y=0, color='k', linewidth=0.5)
                 ax.set_xlabel('')
-                
+
                 ax.set_facecolor('#f0f0f0')  # Light shade background color
                 for spine in ax.spines.values():
                     spine.set_edgecolor('black')
                     spine.set_linewidth(1.5)
-        
+
         # Ensure all plots have the same y-axis scale
         y_limits = [ax.get_ylim() for ax in [ax_baseline] + ax_deltas]
         min_y, max_y = min(y[0] for y in y_limits), max(y[1] for y in y_limits)
         for ax in [ax_baseline] + ax_deltas:
             ax.set_ylim(-max_y, max_y)
-            
+
         for ax in ax_deltas:
             # Fill the positive and negative areas with light colors
             ax.fill_between(ax.get_xlim(), 0, max_y, color='lightblue', alpha=0.15)
             ax.fill_between(ax.get_xlim(), -max_y, 0, color='lightcoral', alpha=0.15)
-        
-        
+
+
         # Create a single legend for the entire figure
         fig.legend(all_handles, all_labels, loc='lower center', bbox_to_anchor=(0.5, -0.2), fontsize=14, ncol=3)
-        
+
         plt.tight_layout()
         plt.show()
         #del results_es,results
@@ -581,13 +588,13 @@ class ExplanResultsViewer():
 
         if not os.path.exists(results_folder_path):
             os.mkdir(results_subfolder_path)
-        
+
         # all results
         folder_name = str(self.data_handler.scenario)+'_LG' +str(self.data_handler.load_growth)+'_ESC'+str(self.data_handler.es_cost)+'_LDES'+str(self.data_handler.ldes_switch)+'_tx-'+ str(self.data_handler.tx_model)+str(self.data_handler.years[0])+'-'+str(self.data_handler.years[-1]) +'_'+str(self.timestamp)+'_'+str(self.data_handler.system)
         self.folder_path = os.path.join(results_folder_path, folder_name)
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
-            
+
         # bus expansion results folder
         self.bus_folder_path = os.path.join(
             self.folder_path, 'bus_exp_results')
@@ -626,23 +633,23 @@ class ExplanResultsViewer():
 
         #print model stats to txt file
         txt_file = self.folder_path+'/model_stats.txt'
-        
+
         with open(txt_file, "w") as text_file:
             print(self.report, file=text_file)
 
     def process_results_gui(self, rd, pd, timestamp, report,filepath):
         """Process the output of the optimizer - GUI only - filepath is provided as an option"""
-        print('Process Results')
+        # print('Process Results')
         self.rd = rd
         self.pd = pd
         self.timestamp = timestamp
         self.report = report
-        
+
         self.create_results_folder(filepath=filepath)
-        print('Create lookup info')
+        # print('Create lookup info')
         self.create_lookup_info()
         print("Model has solved to optimality and results have been processed. Please proceed to the Results page.")
-        
+
     def process_results(self, rd, pd, timestamp, report):
         """Process the output of the optimizer - Command line only"""
         self.system = self.data_handler.system
@@ -662,34 +669,34 @@ class ExplanResultsViewer():
         '''
         Create results plots and save in apprpriate folders
         '''
-        
+
         fig, ax = plt.subplots(1, 1)
         self.stacked_resource_bar(fig,ax,figsize=[6,6])
         #self.stacked_resource_es_duration_bar(fig,ax,figsize=[6,6])
         self.stacked_resource_area()
-        
+
         if self.stacked_bar_by_bus_option:
             for b in self.bus_list:
                 self.stacked_resource_bar_by_bus(b)
                 self.stacked_resource_area_by_bus(b)
         else:
             print('Too many buses/zones for detailed buildout plots')
-        
+
         self.plot_cost_bar()
-        
+
         if self.data_handler.block_selection.lower() != 'Seasonal_Blocks'.lower():
             for y in self.data_handler.years:
                 self.stacked_resource_dispatch(y)
 
             self.plot_tx_flow()
-        
+
         if self.policy_plot_option:
             self.policy_plot()
-            
+
         fig, ax = plt.subplots(1, 1)
         self.plot_es_system(fig,ax,figsize = [6,6])
 
-        
+
     def create_map(self):
         '''
         Create map visualizations
@@ -702,7 +709,7 @@ class ExplanResultsViewer():
         self.map_results()
 
         self.map_es_results()
-        
+
     def export_results(self):
         """
         Writes Excel file of optimizer's results
@@ -725,12 +732,12 @@ class ExplanResultsViewer():
                 df.to_excel(writer, sheet_name=key)
         writer.close()
         # writer.save()
-        print('Pyomo results exported to Excel')
+        # print('Pyomo results exported to Excel')
 
 
     def color_tech(self,tech):#self,
         """
-        
+
         Parameters
         ----------
         tech : technology
@@ -748,7 +755,7 @@ class ExplanResultsViewer():
 
         global color
         #global fg
-        
+
         tech_colors = {
         'Nuclear': 'darkred',
         'Coal': 'black',
@@ -859,7 +866,7 @@ class ExplanResultsViewer():
         }
         if tech not in tech_colors:
             raise TypeError(f"{tech} is not valid")
-    
+
         return tech_colors[tech]
 
     def stacked_resource_bar(self,fig,ax,figsize):
@@ -894,7 +901,7 @@ class ExplanResultsViewer():
                 for x in results_pivot.columns]
 
         results_pivot.columns = cols
-        
+
         # assign colors
         color_array = [self.color_tech(c) for c in cols]
 
@@ -920,11 +927,12 @@ class ExplanResultsViewer():
             fig.savefig(self.folder_path+'/'+str(self.data_handler.scenario) +
                         '_stacked_bar.png', bbox_inches='tight')
         # save legend as png for input into folium
-    
+
     def stacked_resource_es_duration_bar(self,fig,ax,figsize):
         """
         Plot staked bar chart of installed capacity by year
         """
+        
 
         results = self.rd['P_cap_total']
         results_en1 = self.rd['Store']
@@ -932,64 +940,64 @@ class ExplanResultsViewer():
             results.reset_index(inplace=True)
         if np.size(results_en1.index.names) > 1:
             results_en1.reset_index(inplace=True)
-    
+
         # Add tech name
         translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
         tech_num = [translate.get(x, x) for x in results['g']]
         results['Technology'] = tech_num
         tech_num = [translate.get(x, x) for x in results_en1['g']]
         results_en1['Technology'] = tech_num
-    
+
         # Filter for ES tech
         results_es = results[results['Technology'].isin(np.unique(
             self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num']))]
         results_es['Energy'] = results_en1['Value'].values
         results_es['Duration'] = results_es['Energy'] / results_es['Value']
-    
+
         # Define duration bins and labels
         bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
         labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-    
+
         # Create a new column for binned durations
         results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-    
+
         # Ensure Duration_Bin includes all categories
         results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-        
+
         # Combine Technology and Duration_Bin into a new column
         results_es['Tech_Name'] = results_es.apply(
             lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-        
+
         # Replace entries in results with those in results_es based on generator number (g)
         results['Duration'] = 0
-        
+
         results.update(results_es)
-    
+
         # Pivot table based on the new Tech_Category column
         results_pivot = results[results['Value'] != 0].pivot_table(
             index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-        
+
         '''
         # Combine results and results_es
         combined_results = pd.concat([results, results_es], ignore_index=True)
-    
+
         # Create a new column that merges Duration_Bin and Technology
         combined_results['Tech_Category'] = combined_results.apply(
             lambda row: row['Duration_Bin'] if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-    
+
         # Pivot table based on the new Tech_Category column
         results_pivot = combined_results[combined_results['Value'] != 0].pivot_table(
             index=['y'], columns='Tech_Category', values='Value', aggfunc='sum')
         '''
-        
+
         # Rename columns
         translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
         cols = [translate1.get(x, x) for x in results_pivot.columns]
         results_pivot.columns = cols
-    
+
         # Assign colors
         color_array = [self.color_tech(c) for c in cols]
-    
+
         if figsize is None:
             results_pivot.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
             ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=7)
@@ -1008,7 +1016,7 @@ class ExplanResultsViewer():
             ax.margins(x=0, y=0)
             plt.close(fig)
             fig.savefig(self.folder_path + '/' + str(self.data_handler.scenario) + '_stacked_es_duration_bar.png', bbox_inches='tight')
-            
+
     def stacked_resource_area(self):
         """
 
@@ -1061,7 +1069,7 @@ class ExplanResultsViewer():
             10, 8], legend=False, linewidth=0, ax=ax).figure
         ax.legend(loc="center left",
                   bbox_to_anchor=(1, 0.5), fontsize=15)
-       
+
         ax.set_ylabel('Capacity (MW)', fontsize=20)
         ax.set_xlabel('Years', fontsize=20)
         ax.set_title('Installed capacity', fontsize=25)
@@ -1400,20 +1408,20 @@ class ExplanResultsViewer():
             max_all= max([max(results_pivot.sum(axis=1)),max(results_en_pivot.sum(axis=1))])
             ax.set_ylim(0,max_all)
             h,l = ax.get_legend_handles_labels()
-         
-            
+
+
             l1 = ax.legend(loc="center left",
                       bbox_to_anchor=(1.2, 0.3), fontsize=7, ncol=1)
-            
-            
+
+
             patch_hatched = mpatches.Patch(facecolor='beige', hatch=' ', edgecolor="darkgrey", label='Power')
             patch_unhatched = mpatches.Patch(facecolor='beige', hatch='///', edgecolor="darkgrey", label='Energy')
-            
+
             l2=fig.legend(handles=[patch_hatched, patch_unhatched], loc='center left', bbox_to_anchor=(1.06, 0.5))
-    
+
             # as soon as a second legend is made, the first disappears and needs to be added back again
-            fig.add_artist(l1) 
-            
+            fig.add_artist(l1)
+
             ax.set_ylabel('Power Capacity (MW)')
             ax.right_ax.set_ylabel('Energy Capacity (MWh)')
             ax.set_xticklabels(results_pivot.index, rotation=75)
@@ -1427,7 +1435,7 @@ class ExplanResultsViewer():
                 'Installed ES capacity')
             ax.margins(x=0, y=0)
             #plt.yticks(14)
-            
+
         else:
             results_pivot.plot(kind='bar',stacked=True, align='edge', width=-0.4, color=color_array, legend=True, linewidth=0.3,ax=ax,edgecolor='black',figsize=figsize)
             results_en_pivot.plot(kind='bar',stacked=True, align='edge', width=0.4, color=color_array, legend=True, secondary_y=True,linewidth=0.3,ax=ax,edgecolor='black', hatch='///')
@@ -1435,19 +1443,19 @@ class ExplanResultsViewer():
             max_all= max([max(results_pivot.sum(axis=1)),max(results_en_pivot.sum(axis=1))])
             ax.set_ylim(0,max_all)
             h,l = ax.get_legend_handles_labels()
-         
-            
+
+
             l1 = ax.legend(loc="center left",
                       bbox_to_anchor=(1.2, 0.3), fontsize=12, ncol=1)
-            
+
             patch_hatched = mpatches.Patch(facecolor='beige', hatch=' ', edgecolor="darkgrey", label='Power')
             patch_unhatched = mpatches.Patch(facecolor='beige', hatch='///', edgecolor="darkgrey", label='Energy')
-            
+
             l2=fig.legend(handles=[patch_hatched, patch_unhatched], loc='center left', bbox_to_anchor=(1.06, 0.5), fontsize=12)
 
             # as soon as a second legend is made, the first disappears and needs to be added back again
-            fig.add_artist(l1) 
-            
+            fig.add_artist(l1)
+
             ax.set_ylabel('Power Capacity (MW)', fontsize=20)
             ax.right_ax.set_ylabel('Energy Capacity (MWh)', fontsize=20)
             ax.set_xticklabels(results_pivot.index, rotation=75)
@@ -1539,9 +1547,9 @@ class ExplanResultsViewer():
         """
         policy = self.data_handler.load_data[self.data_handler.data_ls.index('policy')]#['RPS']
         #CO2 = exp.data_handler.load_data['POLICY']#['CO2']
-        
+
         gen = self.data_handler.load_data[self.data_handler.data_ls.index('gen')]
-        
+
         gen_mx = pd.DataFrame(index = range(2021,2041),columns = ['Nuclear','Coal','Gas','Geothermal'])#'Solar','Wind_PPA','ES_PPA'
         gen_mx = gen_mx.fillna(0)
         for y in  gen_mx.index:
@@ -1554,25 +1562,25 @@ class ExplanResultsViewer():
                         gen_mx[tech][y] = gen_mx[tech][y]+gen_i['Cap']
                     elif y>=gen_i['RetYr']:
                         gen_mx[tech][y] = gen_mx[tech][y]+gen_i['Cap']-gen_i['RetCap']
-        
+
         #make plot
         fig, ax = plt.subplots(1, 1)
-       
+
         ax3 = ax.twinx()
         rspine = ax3.spines['right']
         rspine.set_position(('axes', 1.15))
         ax3.set_frame_on(True)
         ax3.patch.set_visible(False)
         fig.subplots_adjust(right=0.7)
-        
+
         #df.A.plot(ax=ax, style='b-')
         gen_mx.plot.bar(stacked=True,ax=ax,color = ['darkred','black','darkgrey','rosybrown'],figsize=[12, 6])
-        
+
         # same ax as above since it's automatically added on the right
         #df.B.plot(ax=ax, style='r-', secondary_y=True)
         #df.C.plot(ax=ax3, style='g-')
         policy['RPS'].plot(ax=ax,secondary_y=True,legend =False,color='green', linestyle='--',linewidth=4)
-        policy['CO2_intensity'].plot(ax=ax3,legend =False,color='blue', linestyle='-.',linewidth=4)            
+        policy['CO2_intensity'].plot(ax=ax3,legend =False,color='blue', linestyle='-.',linewidth=4)
         ax.set_ylabel('Capacity (MW)', fontsize=12,fontweight='bold')
         ax.set_xlabel('Year',fontsize=12,fontweight='bold')
         ax.right_ax.set_ylabel('RPS (%)', fontsize=12,fontweight='bold',color='green')
@@ -1581,11 +1589,11 @@ class ExplanResultsViewer():
         #plt.tight_layout()
         ax.right_ax.tick_params(axis='y', colors='green')
         ax.right_ax.spines['right'].set_color('green')
-        
+
         ax3.tick_params(axis='y', colors='blue')
         ax3.spines['right'].set_color('blue')
         plt.grid(True)
-        
+
         #lns = ax+ax3#lns1+lns2+lns3
         #labs = [l.get_label() for l in lns]
         #ax.legend([ax.get_label(),ax3.get_label()], labs, loc=0)
@@ -1594,12 +1602,12 @@ class ExplanResultsViewer():
         labels1 = ['RPS']
         lines2, labels2 = ax3.get_legend_handles_labels()
         ax.legend(lines + lines1+lines2, labels+labels1 + labels2, loc=1,bbox_to_anchor=(1.2, -0.152),ncol=6,fontsize=12)
-        
+
         # add legend --> take advantage of pandas providing us access
         # to the line associated with the right part of the axis
         #ax3.legend([ax.get_lines()[0], ax.right_ax.get_lines()[0], ax3.get_lines()[0]],\
          #          ['A','B','C'], bbox_to_anchor=(1.5, 0.5))
-        
+
     def stacked_resource_dispatch(self, select_year):
         """
 
@@ -1940,495 +1948,186 @@ class ExplanResultsViewer():
                 fig.savefig(self.dispatch_folder_path+'/'+season+'_' + str(select_year)
                             + '.png', bbox_inches='tight')
 
-    # def map_results(self):
-    #     """
+    def map_results(self):
+
+        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
+        results = self.rd['P_cap_total']
+        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
+        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+        tx_expansion = self.rd['L_cap_total']
+
+        if np.size(results.index.names) > 1:
+            results.reset_index(inplace=True)
+        if np.size(tx_expansion.index.names) > 1:
+            tx_expansion.reset_index(inplace=True)
+
+        tech_num_map = dict(self.gen_map_info[['Gen_num', 'Tech_Num']].values)
+        tech_name_map = dict(self.tech_map_info[['Tech_Num', 'Tech_Name']].values)
+
+        results['Technology'] = results['g'].map(tech_num_map)
+        results['Tech_Name'] = results['Technology'].map(tech_name_map)
+
+        gen_lat_lon_df = gen_lat_lon_df[['Gen_num', 'LAT', 'LON']]
+        merged = pd.merge(results, gen_lat_lon_df, left_on='g', right_on='Gen_num', how='left')
+        merged = merged[(merged['Value'] > 0) & merged['LAT'].notna()]
+
+        # Custom color mapping for technologies
+        color_map = {tech: self.color_tech(tech) for tech in merged['Tech_Name'].unique()}
+
+        rad_div = 10 if self.system == 'PNM' else 16
+        line_div = 100
+        bus_data = bus_data.set_index('Bus_number')
+
+        for y in self.data_handler.years:
+            year_data = merged[merged['y'] == y].copy()
+            if year_data.empty:
+                continue
+
+            fig = px.scatter_mapbox(
+                year_data,
+                lat="LAT",
+                lon="LON",
+                size=year_data["Value"] / rad_div,
+                color="Tech_Name",
+                color_discrete_map=color_map,
+                hover_name="Tech_Name",
+                zoom=4,
+                mapbox_style="open-street-map",
+                title=f"Generation Results {y}"
+            )
+
+            # Add transmission lines
+            for l in line_data['Line_Number']:
+                line = line_data[line_data['Line_Number'] == l]
+                from_bus = int(line['From_Bus_Number'].iloc[0])
+                to_bus = int(line['To_Bus_Number'].iloc[0])
+
+                try:
+                    from_pt = bus_data.loc[from_bus][['LAT', 'LON']]
+                    to_pt = bus_data.loc[to_bus][['LAT', 'LON']]
+                except KeyError:
+                    continue
+
+                # Base transmission line
+                fig.add_trace(go.Scattermapbox(
+                    lat=[from_pt['LAT'], to_pt['LAT']],
+                    lon=[from_pt['LON'], to_pt['LON']],
+                    mode='lines',
+                    line=dict(width=2, color='black'),
+                    name='Transmission Line',
+                    showlegend=False
+                ))
+
+                # Transmission expansion overlay
+                tx_row = tx_expansion[(tx_expansion['l'] == l) & (tx_expansion['y'] == y)]
+                if not tx_row.empty:
+                    weight = float(tx_row['Value'].iloc[0]) / line_div
+                    fig.add_trace(go.Scattermapbox(
+                        lat=[from_pt['LAT'], to_pt['LAT']],
+                        lon=[from_pt['LON'], to_pt['LON']],
+                        mode='lines',
+                        line=dict(width=weight, color='blue'),
+                        name='Transmission Expansion',
+                        showlegend=False
+                    ))
+
+            # Update the layout and legend title
+            fig.update_layout(
+                margin={"r": 0, "t": 40, "l": 0, "b": 0},
+                legend_title_text='Tech Name',
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)'
+            )
+
+            with open(f"{self.map_folder_path}/Generation_{y}.html", 'w', encoding='utf-8') as f:
+                f.write(fig.to_html(full_html=True, include_plotlyjs='cdn'))
 
 
-    #     Parameters
-    #     ----------
-    #     gen_map_info : TYPE
-    #         DESCRIPTION.
-    #     tech_map_info : TYPE
-    #         DESCRIPTION.
-
-    #     Returns
-    #     -------
-    #     None.
-
-    #     """
-    #     gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-
-    #     # self.rd['P_cap_total']
-    #     #results = exp.var_dict['P_cap_total']
-    #     results = self.rd['P_cap_total']
-    #     if np.size(results.index.names) > 1:
-    #         results.reset_index(inplace=True)
-    #     translate = {
-    #         x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-    #     tech_num = [translate.get(x, x)
-    #                 for x in results['g']]
-    #     results['Technology'] = tech_num
-    #     translate1 = {
-    #         x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-    #     tech_name = [translate1.get(x, x)
-    #                  for x in results['Technology']]
-    #     results['Tech_Name'] = tech_name
-        
-    #     tx_expansion = self.rd['L_cap_total']
-    #     if np.size(tx_expansion.index.names) > 1:
-    #         tx_expansion.reset_index(inplace=True)
-        
-    #     line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-    #     bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-        
-    #     #TODO: Custom scaling options for viz purposes only
-    #     if self.system == 'PNM':
-    #         rad_div = 10
-    #         line_div = 100
-    #     elif self.system == 'RTS_GMLC_Nodal':
-    #         rad_div = 16
-    #         line_div = 100
-    #     else:
-    #         rad_div = 16
-    #         line_div = 100
-        
-    #     for y in self.data_handler.years:  # self.data_handler.years:
-    #         m = folium.Map(location=[34.41013879673766, -
-    #                                  105.98914264797419], zoom_start=6.5, zoom_control=True,
-    #                        scrollWheelZoom=True,
-    #                        dragging=True)
-    #         # Add lines to the map
-    #         l_fg = folium.FeatureGroup(
-    #             name='Tx', overlay=True)
-    #         l_ex = folium.FeatureGroup(
-    #             name='Tx_exp', overlay=True)
-            
-    #         for l in line_data['Line_Number']:
-    #             line = line_data[line_data['Line_Number'] == l]
-    #             from_bus = int(
-    #                 line['From_Bus_Number'].iloc[0])
-    #             to_bus = int(line['To_Bus_Number'].iloc[0])
-    #             from_pt = tuple((float(bus_data[bus_data['Bus_number'] == from_bus]
-    #                             ['LAT'].iloc[0]), float(bus_data[bus_data['Bus_number'] == from_bus]['LON'].iloc[0])))
-    #             to_pt = tuple((float(bus_data[bus_data['Bus_number'] == to_bus]
-    #                           ['LAT'].iloc[0]), float(bus_data[bus_data['Bus_number'] == to_bus]['LON'].iloc[0])))
-    #             weight_y = tx_expansion[(tx_expansion['l']==l) & (tx_expansion['y']==y)]['Value'].values[0]
-    #             #weight_y_l = weight_y[weight_y['l']==line]
-    #             #print(weight_y)
-    #             weight = float(weight_y)
-            
-                
-    #             folium.PolyLine((from_pt, to_pt), color="black",
-    #                             weight=2, opacity=1).add_to(l_fg)
-    #             folium.PolyLine((from_pt, to_pt), color="blue",
-    #                             weight=weight/line_div, opacity=1).add_to(l_ex)
-                
-    #         m.add_child(l_fg)
-    #         m.add_child(l_ex)
-
-    #         results_y = results[results['y'] == y]
-    #         results_y = results_y[results_y['Value'] > 0]
-
-    #         for tech in np.unique(results_y['Tech_Name']):
-    #             results_y_t = results_y[results_y['Tech_Name'] == tech]
-    #             color = self.color_tech(tech)
-    #             fg = folium.FeatureGroup(
-    #                 name=tech, overlay=True)
-
-    #             for g in results_y_t['g']:
-    #                 gen = results_y_t[results_y_t['g'] == g]
-    #                 #t_name = gen['Tech_Name'].values[0]
-
-    #                 # self.color_tech(t_name)
-    #                 #fg = folium.FeatureGroup(name=t_name, overlay=True)
-    #                 # Change...
-
-    #                 lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num']
-    #                                      == g]['LAT']
-    #                 lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num']
-    #                                      == g]['LON']
-    #                 capacity = float(gen['Value'].iloc[0])
-    #                 folium.CircleMarker((float(lat.iloc[0]), float(lon.iloc[0])), color=color, fill_color=color, opacity=1,
-    #                                     fill_opacity=0.5,  radius=capacity/rad_div).add_to(fg)  # number_of_sides=4,
-    #             m.add_child(fg)
-
-    #         # Create a layer control object and add it to our map instance
-    #         folium.LayerControl().add_to(m)
-    #         map_title = 'Generation_'+str(y)+'.html'
-    #         m.save(self.map_folder_path+"/"+map_title)
-
-    # def map_es_results(self):
-    #     """
-
-
-    #     Parameters
-    #     ----------
-    #     gen_map_info : TYPE
-    #         DESCRIPTION.
-    #     tech_map_info : TYPE
-    #         DESCRIPTION.
-
-    #     Returns
-    #     -------
-    #     None.
-
-    #     """
-    #     gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-
-    #     # self.rd['P_cap_total']
-    #     #results = exp.var_dict['P_cap_total']
-    #     results = self.rd['P_cap_total']
-    #     results_en = self.rd['Store']
-    #     if np.size(results.index.names) > 1:
-    #         results.reset_index(inplace=True)
-    #     if np.size(results_en.index.names) > 1:
-    #         results_en.reset_index(inplace=True)
-
-    #     translate = {
-    #         x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-    #     tech_num = [translate.get(x, x)
-    #                 for x in results['g']]
-    #     results['Technology'] = tech_num
-    #     translate1 = {
-    #         x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-    #     tech_name = [translate1.get(x, x)
-    #                  for x in results['Technology']]
-    #     results['Tech_Name'] = tech_name
-
-    #     # filter down into ES technologies only
-    #     results = results[results['g'].isin(
-    #         self.data_handler.tech_nums['storage'])]
-
-    #     # Add energy components
-    #     results = results.assign(
-    #         energy=list(results_en['Value'].values))
-
-    #     line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-    #     bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-
-    #     if self.system == 'PNM':
-    #         rad_div = 10
-    #     elif self.system == 'RTS_GMLC_Nodal':
-    #         rad_div = 16
-    #     else:
-    #         rad_div = 10
-    #         line_div = 100
-
-    #     # get min and max durations for bounds
-    #     # min_duration = self.data_handler.load_data['STORAGE'][[
-    #     #   'Tech_Num', 'Min_Duration']].pivot_table(index='Tech_Num', values='Min_Duration', aggfunc='min')
-    #     # max_duration = self.data_handler.load_data['STORAGE'][[
-    #     #   'Tech_Num', 'Max_Duration']].pivot_table(index='Tech_Num', values='Max_Duration', aggfunc='max')
-    #     for y in self.data_handler.years:  # self.data_handler.years:
-    #         m = folium.Map(location=[34.41013879673766, -
-    #                                  105.98914264797419], zoom_start=6.5, zoom_control=True,
-    #                        scrollWheelZoom=True,
-    #                        dragging=True)
-    #         # Add lines to the map
-    #         l_fg = folium.FeatureGroup(
-    #             name='Tx', overlay=True)
-    #         for l in line_data['Line_Number']:
-    #             line = line_data[line_data['Line_Number'] == l]
-    #             from_bus = int(
-    #                 line['From_Bus_Number'].iloc[0])
-    #             to_bus = int(line['To_Bus_Number'].iloc[0])
-    #             from_pt = tuple((float(bus_data[bus_data['Bus_number'] == from_bus]
-    #                             ['LAT'].iloc[0]), float(bus_data[bus_data['Bus_number'] == from_bus]['LON'].iloc[0])))
-    #             to_pt = tuple((float(bus_data[bus_data['Bus_number'] == to_bus]
-    #                           ['LAT'].iloc[0]), float(bus_data[bus_data['Bus_number'] == to_bus]['LON'].iloc[0])))
-    #             folium.PolyLine((from_pt, to_pt), color="black",
-    #                             weight=2, opacity=1).add_to(l_fg)
-    #         m.add_child(l_fg)
-
-    #         results_y = results[results['y'] == y]
-    #         results_y = results_y[results_y['Value'] > 0]
-
-    #         duration = results_y['energy'] / \
-    #             results_y['Value']
-    #         min_d_t = 1  # int(min_duration.loc[tn])
-    #         # int(max_duration.loc[tn])
-    #         max_d_t = int(duration.max())
-
-    #         # cm_opts = ['YlOrBr', 'PRGn', 'RdGy',
-    #         #            'PuBu', 'PiYG', 'spectral']
-    #         for tech in np.unique(results_y['Tech_Name']):
-                
-    #             results_y_t = results_y[results_y['Tech_Name'] == tech]
-    #             # tn = int(
-    #             #     np.unique(results_y_t['Technology'].values))
-    #             # min_d_t = 1  # int(min_duration.loc[tn])
-    #             # max_d_t = 10  # int(max_duration.loc[tn])
-    #             # if min_d_t == max_d_t:
-    #             #     min_d_t = 1
-    #             # color = self.color_tech(tech)
-
-    #             colormap = cm.LinearColormap(colors=['darkblue', 'lightblue', 'yellow', 'red'],  # 'yellow', 'orange', 'red'],
-    #                                          vmin=min_d_t, vmax=max_d_t,
-    #                                          caption=tech+' Duration (h)')  # index=[0, 25, 62.5, 156.25, 390.6, 1000],
-
-    #             fg = folium.FeatureGroup(
-    #                 name=tech, overlay=True)
-
-    #             for g in results_y_t['g']:
-    #                 gen = results_y_t[results_y_t['g'] == g]
-    #                 #t_name = gen['Tech_Name'].values[0]
-
-    #                 # self.color_tech(t_name)
-    #                 #fg = folium.FeatureGroup(name=t_name, overlay=True)
-    #                 # Change...
-
-    #                 lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num']
-    #                                      == g]['LAT']
-    #                 lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num']
-    #                                      == g]['LON']
-    #                 power = float(gen['Value'].iloc[0])
-    #                 energy = float(gen['energy'].iloc[0])
-    #                 duration_g = energy/power
-
-    #                 color = colormap(duration_g)
-    #                 if tech == 'Therm (New)':#g in [132,133,134,135,136,137]:
-    #                     folium.RegularPolygonMarker((float(lat.iloc[0]), float(lon.iloc[0])), color=color, fill_color=color, opacity=1,
-    #                                     fill_opacity=0.5,  radius=power/rad_div,number_of_sides=5).add_to(fg)
-    #                 else:
-    #                     folium.CircleMarker((float(lat.iloc[0]), float(lon.iloc[0])), color=color, fill_color=color, opacity=1,
-    #                                     fill_opacity=0.5,  radius=power/rad_div).add_to(fg)  # number_of_sides=4,
-    #             m.add_child(fg)
-    #             m.add_child(colormap)
-    #             # colormap.add_to(m)
-
-    #         # Create a layer control object and add it to our map instance
-    #         folium.LayerControl().add_to(m)
-    #         map_title = 'ES_'+str(y)+'.html'
-    #         m.save(self.map_folder_path +
-    #                "/"+map_title)
 
     def map_es_results(self):
-        """
-        Parameters
-        ----------
-        gen_map_info : TYPE
-            DESCRIPTION.
-        tech_map_info : TYPE
-            DESCRIPTION.
 
-        Returns
-        -------
-        None.
-        """
         gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
         results = self.rd['P_cap_total']
         results_en = self.rd['Store']
-        
+        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
+        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+
         if np.size(results.index.names) > 1:
             results.reset_index(inplace=True)
         if np.size(results_en.index.names) > 1:
             results_en.reset_index(inplace=True)
 
-        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-        tech_num = [translate.get(x, x) for x in results['g']]
-        results['Technology'] = tech_num
-        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-        tech_name = [translate1.get(x, x) for x in results['Technology']]
-        results['Tech_Name'] = tech_name
+        tech_num_map = dict(self.gen_map_info[['Gen_num', 'Tech_Num']].values)
+        tech_name_map = dict(self.tech_map_info[['Tech_Num', 'Tech_Name']].values)
 
-        # Filter down into ES technologies only
-        results = results[results['g'].isin(self.data_handler.tech_nums['storage'])]
-        results = results.assign(energy=list(results_en['Value'].values))
+        results['Technology'] = results['g'].map(tech_num_map)
+        results['Tech_Name'] = results['Technology'].map(tech_name_map)
 
-        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+        results = results[results['g'].isin(self.data_handler.tech_nums['storage'])].copy()
+        results = results.merge(
+            results_en[['g', 'y', 'Value']].rename(columns={'Value': 'energy'}),
+            on=['g', 'y'],
+            how='left'
+        )
 
-        # Custom scaling options for visualization purposes
-        if self.system == 'PNM':
-            rad_div = 10
-        elif self.system == 'RTS_GMLC_Nodal':
-            rad_div = 16
-        else:
-            rad_div = 16
+        gen_lat_lon_df = gen_lat_lon_df[['Gen_num', 'LAT', 'LON']]
+        merged = pd.merge(results, gen_lat_lon_df, left_on='g', right_on='Gen_num', how='left')
+        merged = merged[(merged['Value'] > 0) & merged['LAT'].notna()]
+        merged['duration'] = merged['energy'] / merged['Value']
+
+        rad_div = 10 if self.system == 'PNM' else 16
+        bus_data = bus_data.set_index('Bus_number')
 
         for y in self.data_handler.years:
-            # Create a Plotly figure
-            fig = go.Figure()
+            year_data = merged[merged['y'] == y].copy()
+            if year_data.empty:
+                continue
 
-            # Add lines to the figure
+            fig = px.scatter_mapbox(
+                year_data,
+                lat="LAT",
+                lon="LON",
+                size=year_data["Value"] / rad_div,
+                color="duration",
+                color_continuous_scale="Viridis",  # Continuous color scale for duration
+                hover_name="Tech_Name",
+                zoom=4,
+                mapbox_style="open-street-map",
+                title=f"Energy Storage Results {y}"
+            )
+
+            # Add transmission lines
             for l in line_data['Line_Number']:
                 line = line_data[line_data['Line_Number'] == l]
                 from_bus = int(line['From_Bus_Number'].iloc[0])
                 to_bus = int(line['To_Bus_Number'].iloc[0])
-                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
-                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
 
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
+                try:
+                    from_pt = bus_data.loc[from_bus][['LAT', 'LON']]
+                    to_pt = bus_data.loc[to_bus][['LAT', 'LON']]
+                except KeyError:
+                    continue
+
+                fig.add_trace(go.Scattermapbox(
+                    lat=[from_pt['LAT'], to_pt['LAT']],
+                    lon=[from_pt['LON'], to_pt['LON']],
                     mode='lines',
                     line=dict(width=2, color='black'),
-                    name='Transmission Line'
+                    name='Transmission Line',
+                    showlegend=False
                 ))
 
-            results_y = results[results['y'] == y]
-            results_y = results_y[results_y['Value'] > 0]
-
-            duration = results_y['energy'] / results_y['Value']
-            max_d_t = int(duration.max())
-
-            for tech in np.unique(results_y['Tech_Name']):
-                results_y_t = results_y[results_y['Tech_Name'] == tech]
-                colormap = px.colors.sequential.Viridis
-
-                for g in results_y_t['g']:
-                    gen = results_y_t[results_y_t['g'] == g]
-                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
-                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
-                    power = float(gen['Value'].iloc[0])
-                    energy = float(gen['energy'].iloc[0])
-                    duration_g = energy / power
-
-                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
-
-                    fig.add_trace(go.Scattergeo(
-                        lon=[lon],
-                        lat=[lat],
-                        mode='markers',
-                        marker=dict(
-                            size=power / rad_div,
-                            color=color,
-                            opacity=0.5,
-                            showscale=True,
-                            colorbar=dict(title='Duration (h)')
-                        ),
-                        name=tech
-                    ))
-
-            # Update layout
+            # Update the layout and legend title
+            fig.update_traces(marker=dict(opacity=0.8), selector=dict(type='scattermapbox'))
             fig.update_layout(
-                title=f'Energy Storage Results {y}',
-                geo=dict(
-                    scope='usa',  # Adjust scope as needed
-                    showland=True,
-                    landcolor='lightgray',
-                    subunitcolor='black',
-                    countrycolor='black'
+                margin={"r": 0, "t": 40, "l": 0, "b": 0},
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                coloraxis_colorbar=dict(
+                    title='Duration'
                 )
             )
 
-            # Save the figure with UTF-8 encoding
             with open(f"{self.map_folder_path}/ES_{y}.html", 'w', encoding='utf-8') as f:
-                f.write(fig.to_html(full_html=True))
+                f.write(fig.to_html(full_html=True, include_plotlyjs='cdn'))
 
-    def map_results(self):
-        """
-        Parameters
-        ----------
-        gen_map_info : TYPE
-            DESCRIPTION.
-        tech_map_info : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-        """
-        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-        results = self.rd['P_cap_total']
-        
-        if np.size(results.index.names) > 1:
-            results.reset_index(inplace=True)
-        
-        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-        tech_num = [translate.get(x, x) for x in results['g']]
-        results['Technology'] = tech_num
-        
-        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-        tech_name = [translate1.get(x, x) for x in results['Technology']]
-        results['Tech_Name'] = tech_name
-        
-        tx_expansion = self.rd['L_cap_total']
-        if np.size(tx_expansion.index.names) > 1:
-            tx_expansion.reset_index(inplace=True)
-        
-        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-        
-        # Custom scaling options for visualization purposes
-        if self.system == 'PNM':
-            rad_div = 10
-            line_div = 100
-        elif self.system == 'RTS_GMLC_Nodal':
-            rad_div = 16
-            line_div = 100
-        else:
-            rad_div = 16
-            line_div = 100
-        
-        for y in self.data_handler.years:
-            # Create a Plotly figure
-            fig = go.Figure()
-
-            # Add lines to the figure
-            for l in line_data['Line_Number']:
-                line = line_data[line_data['Line_Number'] == l]
-                from_bus = int(line['From_Bus_Number'].iloc[0])
-                to_bus = int(line['To_Bus_Number'].iloc[0])
-                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
-                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
-                weight_y = tx_expansion[(tx_expansion['l'] == l) & (tx_expansion['y'] == y)]['Value'].values[0]
-                weight = float(weight_y)
-
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=2, color='black'),
-                    name='Transmission Line'
-                ))
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=weight / line_div, color='blue'),
-                    name='Transmission Expansion'
-                ))
-
-            results_y = results[results['y'] == y]
-            results_y = results_y[results_y['Value'] > 0]
-
-            for tech in np.unique(results_y['Tech_Name']):
-                results_y_t = results_y[results_y['Tech_Name'] == tech]
-                color = self.color_tech(tech)
-
-                for g in results_y_t['g']:
-                    gen = results_y_t[results_y_t['g'] == g]
-                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
-                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
-                    capacity = float(gen['Value'].iloc[0])
-
-                    fig.add_trace(go.Scattergeo(
-                        lon=[lon],
-                        lat=[lat],
-                        mode='markers',
-                        marker=dict(
-                            size=capacity / rad_div,
-                            color=color,
-                            opacity=0.5,
-                            showscale=True,
-                            colorbar=dict(title='Capacity')
-                        ),
-                        name=tech
-                    ))
-
-            # Update layout
-            fig.update_layout(
-                title=f'Generation Results {y}',
-                geo=dict(
-                    scope='usa',  # Adjust scope as needed
-                    showland=True,
-                    landcolor='lightgray',
-                    subunitcolor='black',
-                    countrycolor='black'
-                )
-            )
-
-            # Save the figure with UTF-8 encoding
-            with open(f"{self.map_folder_path}/Generation_{y}.html", 'w', encoding='utf-8') as f:
-                f.write(fig.to_html(full_html=True))
