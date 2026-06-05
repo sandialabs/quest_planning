@@ -1,7 +1,7 @@
 <a id="top"></a>
 
 <div style="text-align: center;">
-    <img src="quest_planning/images/pics/new_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
+    <img src="quest_planning/images/pics/custom_QP_logo.png" width="500" height="250" alt="Quest_Logo_RGB" />
 </div>
 
 # **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
@@ -17,6 +17,7 @@ Current release version: 1.0.0
     - [Graphical User Interface](#gui_workflow)
     - [Advanced Simulations](#advanced)
 - [Examples](#examples)
+- [Post-planning Reliability Assessment using ProGRESS](#progress)
 - [Tips for Running the QuESt Planning Tool](#tips)
 - [Feedback](#feedback)
 - [Development Status](#development-status)
@@ -144,7 +145,7 @@ The input data is constructed via several CSV files. The QuESt Planning tool req
 - [**capex_es.csv**](#capex_es)
 - [**fuel.csv**](#fuel)
 
-#### VER Profile Data
+#### Renewable Profile Data
 - [**solar.csv**](#solar)
 - [**solar_cand.csv**](#solar_cand)
 - [**wind.csv**](#wind)
@@ -440,7 +441,7 @@ Select a `capital cost trend used` for the energy storage capital costs. These c
 
 Select a `Load Forecast`.
 
-Select a `Future Generation Mix` or create a new policy. 
+Select a `Renewable Portfolio Standard` or create a new policy. 
 
 `Transmission Expansion` will allow for the co-optimization of the generation and transmission expansion. This feature is in testing will be released in a later version.
 
@@ -584,6 +585,34 @@ A test case is included with the initial release of QuESt Planning. The test cas
 
 The `data_explan` folder contains the RTS-GMLC test cases in the required format to run the QuESt Planning simulations. The nodal system is in the `rts_csv_data` folder and the zonal model is in the `rts_csv_data_zonal`. For Option A, which deploys the graphical user interface, follow the instructions detailed in the [**User-Interface Workflow**](#gui_workflow) section. For Option B, the advanced simulation option, follow the instructions detailed in the [**Advanced Simulations**](#advanced) section. The configuration files for a base case simulation of the nodal and zonal models are called `input_rts_nodal_base.yaml` and `input_rts_zonal_base.yaml`, respectively. These files are located in the `config` folder.  
 
+## Post-Planning Reliability Assessment Using PRoGRESS<a id="progress"></a>
+
+<img src = "quest_planning/images/readme/ProGRESS_exporter_outline.png" width="700" alt="RTS-GMLC-zonal" />
+
+
+QuESt Planning now features a direct pipeline to the [ProGRESS](<https://github.com/sandialabs/snl-progress/tree/degradation>) tool, a probabilistic reliability assessment framework. This feature enables users to evaluate reliability indices for selected investment years once the generation and transmission investment decisions have been obtained from QuESt Planning. The module translates QuESt Planning’s investment decision variables into the CSV and configuration files required by ProGRESS, and then executes ProGRESS simulations according to user-defined settings. This feature is currently available only for command line simulations in [explan_simulation.py](./quest_planning/explan_simulation.py). Follow the following steps to evaluate reliability using the ProGRESS tool:
+- **Clone the ProGRESS tool into your machine:** The ProGRESS tool and its dependencies must be installed into a python virtual environment. Follow the steps [here](<https://github.com/sandialabs/snl-progress>) to install ProGRESS. Be sure to install the package in ProGRESS's own virtual environment using: 
+```bash
+pip install .
+```
+
+- **Populate required parameters in the config file:** The config `input.yaml` file must contain the following parameters:
+
+| Parameter      | Comments                   |
+|--------------|-----------------------------------|
+|`progress_path`| Full path to the ProGRESS virtual environment python executable. Note: ProGRESS modules must be present within site_packages of this environment. Example: "C:/John_Doe/snl-progress/progress_venv/Scripts/python.exe". 
+|`rel_evaluation_years`| Investment years for which you want to evaluate reliability.|
+|`progress_sim_mode`| Select spatial fidelity for the ProGRESS tool ("Copper Sheet", "Nodal", or "Zonal").|
+|`ren_data_dir`| (Optional) Downloading wind and solar data every run can get very expensive computationally. Use this option to provide path to processed solar and wind data from previous runs. Leave empty if data download is necessary. Example "C:/quest_planning/data_explan/data_for_PRoGRESS/Nodal".
+|`num_sample_paths`| Select the number of sample years to obtain reliability indices.|
+|`num_mpi_processes`| Leverage message passing interface to simulate sample years in parallel. Leave as 0 to use sequential simulation.|
+
+- **Navigate to the `Reliability_Assessment` subfolder for results:** Users can access reliability indices, within the `Reliability_Assessment` subfolder inside the main `Results` folder generated by QuESt Planning. 
+
+<img src = "quest_planning/images/readme/ProGRESS_exporter.png" width="600" alt="RTS-GMLC-zonal" />
+
+[Back to Top](#top)
+
 ### Data Sources & Data Preparation Tools
 
 The QuESt Planning tool requires several data to run simulations. Listed below are common data sources that can be used to develop test cases for QuESt Planning:
@@ -594,7 +623,7 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 - [**Energy Storage Pricing Survey**](<https://www.osti.gov/biblio/1866526>): provides a standardized reference system prices various energy storage technologies with different power and energy ratings. (Sandia National Laboratories)
 - [**Annual Energy Outlook**](<https://www.eia.gov/outlooks/aeo/data/browser/>): provides regional projections of energy supply, demand, and fuel prices out to 2050 (developed by the Energy Information Administration)
 
-#### Weather Data
+#### Renewable Data
 
 - [**National Solar Radiation Database**](<https://nsrdb.nrel.gov/>): hourly and half-hourly timeseries of solar irradiance in the U.S. and select countries (developed by the National Renewable Energy Laboratory)
 
@@ -610,6 +639,9 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 
 - [**Form No. 714**](<https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual-electric/data>): provides balancing authority and planning area generation, actual and scheduled power transfers, and load. (Provided by the Federal Energy Regulatory Commission)
 
+#### Renewable & Energy Storage Policies
+
+- [**Database of State Incentives for Renewables & Efficiency**](<https://www.dsireusa.org/>): comprehensive set of renewable policies and incentives in the United States (developed by North Carolina State University)
 
 Additional test cases are under further development and will be included in future releases.
 
@@ -630,6 +662,7 @@ The advanced simulations could be exceptionally difficult to solve based on the 
 Please submit feedback, issues, and suggestions, through the [Issues](<https://github.com/codynewlun/quest_planning/issues>) page. For more information, please reach out to the project developer Cody Newlun (cjnewlu@sandia.gov).
 
 [Back to Top](#top)
+
 ## Development Status & Future Updates
 <a id="development-status"></a>
 
@@ -641,7 +674,7 @@ Future updates to QuESt Planning that are being considered include:
 - *Technology-specific energy storage models*
 - *Enhanced temporal resolution*
 - *Improved transmission models & investment options*
-- *Improved generation modeling*
+- *Improved renewable energy resource modeling*
 - *Improved GUI & scenario viewer*
 
 [Back to Top](#top)

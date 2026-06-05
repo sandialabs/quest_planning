@@ -10,7 +10,7 @@ import argparse
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
 from quest_planning.explan.explan_optimizer import ExplanOptimizer
 from quest_planning.explan.explan_results_viewer import ExplanResultsViewer
-
+from quest_planning.explan.run_progress import ProGRESS_Exporter
 
 class Explan:
     def __init__(self, config):
@@ -88,6 +88,8 @@ class Explan:
                                       config['coal_retirement_year'],
                                       config['nuclear_retirement_year'],
                                       config['oil_retirement_year'])
+        #RPS policy flag
+        d.set_rps_policy(config['rps_policy'])
         #Co2 policy flag
         d.set_co2_policy(config['co2_policy'])
         d.set_co2_intensity_policy(config['co2_intensity_policy'])
@@ -116,6 +118,10 @@ class Explan:
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
             self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
+        prg = ProGRESS_Exporter(exp)
+        if self.config["rel_evaluation_years"]:
+            prg.export_data(self.config["rel_evaluation_years"])
+            prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
 
 
 def read_input_yaml(yaml_file):

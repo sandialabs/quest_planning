@@ -714,9 +714,7 @@ class ExplanResultsViewer():
 
         """
 
-        filename = self.folder_path+'\\'+str(self.data_handler.scenario)+'_' + \
-            str(self.data_handler.start_year)+'-' + str(self.data_handler.end_year) + \
-            '_results_'+self.timestamp+'.xlsx'
+        filename = os.path.join(self.folder_path,'results_summary.xlsx')
         writer = pd.ExcelWriter(
             filename)  # , engine='xlsxwriter')
 

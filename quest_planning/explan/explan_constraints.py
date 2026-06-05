@@ -6,6 +6,7 @@ Authors: C. Newlun and W. Olis
 
 import pyomo.environ as pm
 import numpy as np
+from pyomo.environ import inequality
 
 
 class ExplanConstraints:
@@ -21,8 +22,12 @@ class ExplanConstraints:
         self.index = self.data_handler.data_ls.index
         
         if data_handler.block_selection.lower() == 'Full_year'.lower() or data_handler.block_selection.lower() == 'Full_year_MY'.lower():
-            self.start_hr = 0
+            self.start_hr = data_handler.start_hr
             self.end_hr = data_handler.end_hr
+            self.last_hr = data_handler.last_hr
+            self.first_hr = data_handler.first_hr
+            print('start_hr:', self.start_hr, 'end_hr:', self.end_hr)
+            print('last_hr:', self.last_hr, 'first_hr:', self.first_hr)
         else:
             self.start_hr = 0  
             self.end_hr = 167#can we just make this data_handler.end_hr
@@ -192,7 +197,8 @@ class ExplanConstraints:
         model.cRenAnnual = pm.Constraint(model.B_G_ren,
                                               model.Y, rule=self.cRenAnnual)
 
-        model.cRPS = pm.Constraint(model.Y, rule=self.cRPS)
+        if self.data_handler.rps_policy:
+            model.cRPS = pm.Constraint(model.Y, rule=self.cRPS)
 
         if self.data_handler.co2_policy:
             model.cCO2emm = pm.Constraint(
@@ -212,14 +218,20 @@ class ExplanConstraints:
         Define the transmission constraints of the optimization model
         '''
         if self.data_handler.tx_model != 'copper_sheet':
-            model.cTxFlwFw = pm.Constraint(model.L, model.Y, model.S_I, rule=self.cTxFlwFw)
-            model.cTxFlwBw = pm.Constraint(model.L, model.Y, model.S_I, rule=self.cTxFlwBw)
+            #model.cTxFlwBounds = pm.Constraint(
+                #model.L, model.Y, model.S_I, rule=self.cTxFlwBounds)
+            model.cTxFlwUpper = pm.Constraint(
+                model.L, model.Y, model.S_I, rule=self.cTxFlwUpper)
+            model.cTxFlwLower = pm.Constraint(
+                model.L, model.Y, model.S_I, rule=self.cTxFlwLower)
+            #model.cTxFlwFw = pm.Constraint(model.L, model.Y, model.S_I, rule=self.cTxFlwFw)
+            #model.cTxFlwBw = pm.Constraint(model.L, model.Y, model.S_I, rule=self.cTxFlwBw)
             
             if self.data_handler.tx_model == 'dc':#Only use if DC power flow is modeled
                 model.cDCPF = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cDCPF)
                 model.cThetaDiffMax = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMax)
                 model.cThetaDiffMin = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMin)
-                model.cSlackBus =pm.Constraint(model.B,model.Y, model.S_I, rule=self.cSlackBus)
+                #model.cSlackBus =pm.Constraint(model.Y, model.S_I, rule=self.cSlackBus)
         
         #if self.data_handler.tx_model == 'copper_sheet':
             #fix PF to 0
@@ -309,8 +321,8 @@ class ExplanConstraints:
         '''
         model.cGenInvCostAnnual = pm.Constraint(
             model.Y, rule=self.cGenInvCostAnnual)
-        model.cNGH2Costconv = pm.Constraint(
-            model.Y, rule=self.cNGH2Costconv)
+        #model.cNGH2Costconv = pm.Constraint(
+            #model.Y, rule=self.cNGH2Costconv)
         model.cTxInvCostAnnual = pm.Constraint(
             model.Y, rule=self.cTxInvCostAnnual)
         
@@ -345,10 +357,11 @@ class ExplanConstraints:
         
         TODO: add regulating reserves into this calculation
         '''
-        if (b, g) in self.storage_tuple:
+        if (b, g) in self.storage_tuple: 
             if self.data_handler.block_selection.lower() == 'Full_Year'.lower() or self.data_handler.block_selection.lower() == 'Full_Year_MY'.lower():
                 delta = 1#hr
                 if (b, g) in model.B_G_ldes:
+                    
                     if i == 0:  # self.start_hr:
                         # Start at 50% state of charge (S0C) on first hour in time range
                         SOCpre = self.ini_level * \
@@ -356,8 +369,23 @@ class ExplanConstraints:
                         return model.SOC[b, g, y, s, i] == (SOCpre)
                     elif i == self.data_handler.M:  # in self.end_hr:
                         return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    elif i in np.array(self.end_hr):
-                        if i != self.end_hr[-1] and s != 1:
+                    elif i in np.array(self.first_hr):
+                        if s != 1:
+                            SOCpre = model.SOC[b,
+                                               g, y, s - 1, i - 1]
+                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i] )*delta
+                        elif i == self.first_hr[-1]:
+                            SOCpre = model.SOC[b,
+                                               g, y, 4, i - 1]
+                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
+                    else:
+                        # SOCpre is the starting state of charge for this time step
+                        SOCpre = model.SOC[b,
+                                           g, y, s, i - 1]
+                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
+                    '''
+                    elif i in self.last_hr:
+                        if s != 1: #i != self.end_hr[-1] and
                             SOCpre = model.SOC[b,
                                                g, y, s - 1, i - 1]
                             return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
@@ -366,28 +394,24 @@ class ExplanConstraints:
                             SOCpre = model.SOC[b,
                                                g, y, 4, i - 1]
                             return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b,
-                                           g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
+                    '''
+                    
                 else:
                     
-                    if i == self.start_hr:
+                    if i in self.start_hr or i == 0:
                         # Start at 50% state of charge (S0C) on first hour in time range
                         SOCpre = self.ini_level * \
                             model.Store[b, g, y]
                         return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i in self.end_hr:
+                    elif i in self.last_hr:
                         return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    elif i in np.array(self.end_hr):
-                        if i != self.end_hr[-1] and s != 1:
+                    elif i in np.array(self.first_hr):
+                        if s != 1:
                             SOCpre = model.SOC[b,
                                                g, y, s - 1, i - 1]
                             return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i] )*delta
-
-                        elif i == self.end_hr[-1]:
+                        
+                        elif i == self.first_hr[-1]:
                             SOCpre = model.SOC[b,
                                                g, y, 4, i - 1]
                             return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
@@ -421,6 +445,35 @@ class ExplanConstraints:
                         # SOCpre is the starting state of charge for this time step
                         SOCpre = model.SOC[b, g, y, s, i - 1]
                         return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
+            if self.data_handler.block_selection.lower() == 'Repr_3Days_Season'.lower():
+                delta = 1  # 1 hour resolution
+
+                if (b, g) in model.B_G_ldes:
+                    # long-duration storage: enforce continuity across the whole horizon
+                    if i == 0:  # very first hour
+                        SOCpre = self.ini_level * model.Store[b, g, y]
+                        return model.SOC[b, g, y, s, i] == SOCpre
+                    elif i == self.data_handler.M:  # very last hour
+                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                    else:
+                        SOCpre = model.SOC[b, g, y, s, i - 1]
+                        return model.SOC[b, g, y, s, i] == SOCpre + (
+                            model.rte_eff[g] * model.Pcha[b, g, y, s, i] -
+                            model.Pdis[b, g, y, s, i]
+                        ) * delta
+                else:
+                    # short-duration storage (daily-cycling): enforce reset at start of each representative day
+                    if i % 24 == 0:  # start of a rep-day
+                        SOCpre = self.ini_level * model.Store[b, g, y]
+                        return model.SOC[b, g, y, s, i] == SOCpre
+                    elif (i + 1) % 24 == 0:  # end of a rep-day
+                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                    else:
+                        SOCpre = model.SOC[b, g, y, s, i - 1]
+                        return model.SOC[b, g, y, s, i] == SOCpre + (
+                            model.rte_eff[g] * model.Pcha[b, g, y, s, i] -
+                            model.Pdis[b, g, y, s, i]
+                        ) * delta
             if self.data_handler.block_selection.lower() == 'Seasonal_blocks'.lower():
                 
                 if (b, g) in model.B_G_ldes:
@@ -594,11 +647,28 @@ class ExplanConstraints:
         Ramping constraint for each generator - ensures adequate ramp up - only valid for hourly simulation
         '''
         if (b, g) in self.thermal_tuple:
-            if i != 0:
-                P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
-                return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
+            if self.data_handler.block_selection.lower() == 'Full_Year'.lower() or self.data_handler.block_selection.lower() == 'Full_Year_MY'.lower():
+                if i != 0:
+                    if i in self.last_hr and s != 4:
+                        P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s+1, self.first_hr[s-1]]
+                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
+                    elif i in self.last_hr and s == 4:
+                        P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, 1, self.last_hr[0]]
+                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
+                    elif i in self.first_hr and s != 1:
+                        P_diff = model.P_gen[b, g, y, s-1, self.last_hr[s-1]] - model.P_gen[b, g, y, s, i]
+                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
+                    else:
+                        P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
+                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
+                else:
+                    return pm.Constraint.Skip
             else:
-                return pm.Constraint.Skip
+                if i != 0:
+                    P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
+                    return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
+                else:
+                    return pm.Constraint.Skip
         else:
             return pm.Constraint.Skip
     def cThermRdwn(self, model, b, g, y, s, i):
@@ -805,85 +875,46 @@ class ExplanConstraints:
     5.) Transmission constraints
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     '''
+    def cTxFlwBounds(self, model, l, y, s, i):
+        fw_cap = model.line_ex_fw_cap[l] + model.L_cap_total[l, y]
+        bw_cap = model.line_ex_bw_cap[l] + model.L_cap_total[l, y]
 
-    def cTxFlwFw(self, model, l, y, s, i):
-        '''
-        Transmission forward flow constraint with pipe and bubble OR DC-power flow
-        '''
         if self.data_handler.tx_model == 'Transportation':
-            if self.system == 'PNM':#specialty constraints
-                if l != 2:
-                    return model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-    
-                else:
-                   return model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-            else:
-                return model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-        elif self.data_handler.tx_model == 'dc':
-            return  model.PF[l, y, s, i] <= (model.line_ex_fw_cap[l]+model.L_cap_total[l, y])
-    def cTxFlwBw(self, model, l, y, s, i):
-        '''
-        Backwards flow constraint
-        '''
-        if self.data_handler.tx_model == 'Transportation':
-            if self.system == 'PNM':#specialty constraints
-                if l != 2:
-                    return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
+            if self.system == 'PNM':
                 if l == 5 and y > 2033:
-                    return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y]-1000)
-                else:                    
-                    return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
-            else:
-                return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
+                    bw_cap += 1000
+            # forward/backward unified
+            return inequality(-bw_cap, model.PF[l, y, s, i], fw_cap)
+
         elif self.data_handler.tx_model == 'dc':
-            return model.PF[l, y, s, i] >= (-model.line_ex_bw_cap[l]-model.L_cap_total[l, y])
-        
-    def cDCPF(self, model,l,y,s,i):
-        '''
-        DC Power Flow Constraint
-        **Under construction; add self.mva_base**
-        '''
-        if self.data_handler.tx_model == 'dc':
-            
-            from_b = self.data_handler.load_data[self.index('branch')]['From_Bus_Number'][l-1]
-            to_b = self.data_handler.load_data[self.index('branch')]['To_Bus_Number'][l-1]
-            return model.PF[l, y, s, i] == (1/model.line_X[l])*(model.theta[from_b,y,s, i]-model.theta[to_b,y,s, i])
-        else:
-            return pm.Constraint.Skip       
+            return inequality(-bw_cap, model.PF[l, y, s, i], fw_cap)
+    def cTxFlwUpper(self, model, l, y, s, i):
+        fw_cap = model.line_ex_fw_cap[l]
+        inv = model.L_cap_total[l, y]
+        return model.PF[l, y, s, i] <= fw_cap + inv
 
-    def cThetaDiffMax(self, model,l,y,s,i):
-        '''
-        Bounds on phase angle difference when running DC power flow
-        '''
-        if self.data_handler.tx_model == 'dc':
-            from_b = self.data_handler.load_data[self.index('branch')]['From_Bus_Number'][l-1]
-            to_b = self.data_handler.load_data[self.index('branch')]['To_Bus_Number'][l-1]
-            
-            return model.theta[from_b,y,s, i]-model.theta[to_b,y,s, i] <= np.pi/3
-        else:
-            return pm.Constraint.Skip
+    def cTxFlwLower(self, model, l, y, s, i):
+        bw_cap = model.line_ex_bw_cap[l]
+        inv = model.L_cap_total[l, y]
+        return model.PF[l, y, s, i] >= - (bw_cap + inv)
+    
+    def cDCPF(self,model, l, y, s, i):
+        fb = model.from_bus[l]
+        tb = model.to_bus[l]
+        theta_diff = model.theta[fb, y, s, i] - model.theta[tb, y, s, i]
+        return ( (1e-3/self.mva_base) * model.PF[l, y, s, i]
+            - (1e-3/model.line_X[l]) * theta_diff
+            == 0 )
         
-    def cThetaDiffMin(self, model,l,y,s,i):
-        '''
-        Bounds on phase angle difference when running DC power flow
-        '''
-        if self.data_handler.tx_model == 'dc':
-            from_b = self.data_handler.load_data[self.index('branch')]['From_Bus_Number'][l-1]
-            to_b = self.data_handler.load_data[self.index('branch')]['To_Bus_Number'][l-1]
-            
-            return model.theta[from_b,y,s, i]-model.theta[to_b,y,s, i] >= -np.pi/3
-        else:
-            return pm.Constraint.Skip
+    def cThetaDiffMax(self,model, l, y, s, i):
+        theta_diff = model.theta[model.from_bus[l], y, s, i] - model.theta[model.to_bus[l], y, s, i]
+        return theta_diff <= np.pi/6
 
-    def cSlackBus(self, model,b,y,s,i):
-        '''
-        Define slack bus
-        **TODO: define in data_handler**
-        '''
-        if  self.system == 'RTS_GMLC_Nodal' and b == 113:
-            return model.theta[b,y,s,i] == 0
-        else:
-            return pm.Constraint.Skip
+    def cThetaDiffMin(self,model, l, y, s, i):
+        theta_diff = model.theta[model.from_bus[l], y, s, i] - model.theta[model.to_bus[l], y, s, i]
+        return theta_diff >= -np.pi/6
+
+    
                                             
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1054,8 +1085,8 @@ class ExplanConstraints:
         Maximum system wind capacity
         '''
         if self.data_handler.system_wide_wind_max is not None:
-            
-            return sum(model.G_inv[b, g, y] for (b, g) in self.wind_can_tuple for y in model.Y) <= self.data_handler.system_wide_wind_max
+            scale = 1000.0
+            return sum(model.G_inv[b, g, y]/scale for (b, g) in self.wind_can_tuple for y in model.Y) <= self.data_handler.system_wide_wind_max/scale
         else:
             return pm.Constraint.Skip
 
@@ -1065,7 +1096,8 @@ class ExplanConstraints:
         
         '''
         if self.data_handler.system_wide_solar_max is not None:
-            return sum(model.G_inv[b, g, y] for (b, g) in self.solar_can_tuple for y in model.Y) <= self.data_handler.system_wide_solar_max
+            scale = 1000.0
+            return sum(model.G_inv[b, g, y]/scale for (b, g) in self.solar_can_tuple for y in model.Y) <= self.data_handler.system_wide_solar_max/scale
         else:
             return pm.Constraint.Skip
      
@@ -1075,7 +1107,8 @@ class ExplanConstraints:
         
         '''
         if self.data_handler.system_wide_gas_max is not None:
-            return sum(model.G_inv[b, g, y] for (b, g) in model.B_G_ng_can for y in model.Y) <= self.data_handler.system_wide_gas_max 
+            scale = 1000.0
+            return sum(model.G_inv[b, g, y]/scale for (b, g) in model.B_G_ng_can for y in model.Y) <= self.data_handler.system_wide_gas_max/scale
         else:
             return pm.Constraint.Skip
         
@@ -1102,6 +1135,8 @@ class ExplanConstraints:
             
             if y1 <= y:
                 return model.L_cap_total[l, y] == sum(model.LineCap[l, y1] for y1 in model.Y1)
+            elif y==self.data_handler.years[0]:
+                return model.L_cap_total[l, y] == model.LineCap[l, y]
             else:
                 return pm.Constraint.Skip
         else:
@@ -1125,19 +1160,20 @@ class ExplanConstraints:
         """
         Enforce candidate line investment capacity
         """
-        
-        return sum(model.LineCap[l, y] for y in model.Y) <= model.line_ex_limit[l]
+        scale = 1000.0
+        return sum(model.LineCap[l, y]/scale for y in model.Y) <= model.line_ex_limit[l]/scale
         
 
     def cTxCapSystMax(self, model):
         """
         Enforce system-wide transmission investment capacity
         """
+        scale = 1000.0
         if self.data_handler.system_wide_tx_expansion_max is not None:
             if self.data_handler.trans_expansion is False:
                 return sum(model.LineCap[l, y] for l in model.L for y in model.Y) <= 0
             elif self.data_handler.trans_expansion is True:
-                return sum(model.LineCap[l, y] for l in model.L for y in model.Y) <= self.data_handler.system_wide_tx_expansion_max
+                return sum(model.LineCap[l, y]/scale for l in model.L for y in model.Y) <= self.data_handler.system_wide_tx_expansion_max/scale
             else:
                 return pm.Constraint.Skip
         else:
@@ -1168,7 +1204,8 @@ class ExplanConstraints:
         Planning reserve margin constraint
         TODO: Add piecewise ELCC or dynamic elcc curves for PRM calculations OR Seasonal ELCC 
         """
-        return sum(model.G_cc[g]*model.P_cap_total[b, g, y] for (b, g) in model.B_G) >= (1+float(self.data_handler.prm)) * model.PEAK[y]
+        scale = 1000.0
+        return sum(model.G_cc[g]*model.P_cap_total[b, g, y]/scale for (b, g) in model.B_G) >= (1+float(self.data_handler.prm)) * model.PEAK[y]/scale
         # self.data_handler.scalars.loc['PRM']['Value'])/100
     
     '''
@@ -1235,12 +1272,13 @@ class ExplanConstraints:
     10.) Objective Function & Cost Breakdown
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     '''
-
+    
     def cGenInvCostAnnual(self, model, y):
         """
         Define annual generation investment costs
         """
-        return model.annual_gen_inv_cost[y] == model.dis_factor[y]*(sum((model.C_g[g, y]+model.G_tx_add[g])*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_can_no_es) +
+        
+        return model.annual_gen_inv_cost[y] == model.CostScale*model.dis_factor[y]*(sum((model.C_g[g, y]+model.G_tx_add[g])*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_can_no_es) +
                                                                     sum((model.C_g_es_pwr[g, y]+model.G_tx_add[g])*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_sto_cand) +
                                                                     sum(model.C_g_es_energy[g, y]*1000*model.Sto_inv[b, g, y] for (b, g) in model.B_G_sto_cand))
 
@@ -1249,10 +1287,11 @@ class ExplanConstraints:
         Define hydrogen conversion costs
         **Optional cost**
         '''
+        
         if y == model.Y.at(-1):
-            return model.ng_h2_conv_cost[y] == model.dis_factor[y]*1200*1000*sum(model.G_inv[b, g, y1] for (b, g) in model.B_G_ng_can for y1 in self.data_handler.years[0:np.where(np.array(self.data_handler.years) == y)[0][0]])
+            return model.ng_h2_conv_cost[y] == model.CostScale*model.dis_factor[y]*1200*1000*sum(model.G_inv[b, g, y1] for (b, g) in model.B_G_ng_can for y1 in self.data_handler.years[0:np.where(np.array(self.data_handler.years) == y)[0][0]])
         elif y > model.Y.at(-1):
-            return model.ng_h2_conv_cost[y] == model.dis_factor[y]*1200*1000*sum(model.G_inv[b, g, y] for (b, g) in model.B_G_ng_can)
+            return model.ng_h2_conv_cost[y] == model.CostScale*self.dis_factor[y]*1200*1000*sum(model.G_inv[b, g, y] for (b, g) in model.B_G_ng_can)
         else:
             return model.ng_h2_conv_cost[y] == 0
 
@@ -1260,7 +1299,8 @@ class ExplanConstraints:
         """
         Define annual transmission investment costs
         """
-        return model.annual_trans_inv_cost[y] == model.dis_factor[y]*sum(model.line_cost[l]*model.LineCap[l, y] for l in model.L)
+        
+        return model.annual_trans_inv_cost[y] == model.CostScale*model.dis_factor[y]*sum(model.line_cost[l]*model.LineCap[l, y] for l in model.L)
 
 
     def cESReplaceCostSum(self, model):
@@ -1276,10 +1316,11 @@ class ExplanConstraints:
         """
         Energy storage lifetime extension costs for each storage device
         """
+        
         if self.data_handler.es_lifetime_cost_option == True: 
             if model.G_lifetime[g] < self.data_handler.es_lifetime_extension :
                 y1 = self.data_handler.years[-1]
-                return model.annual_es_replace_cost_gen[b, g] == int(self.data_handler.es_lifetime_extension/model.G_lifetime[g])*model.dis_factor[y1]*(sum((model.C_g_es_pwr[g, y]+model.G_tx_add[g])*1000*model.G_inv[b, g, y] for y in model.Y) +
+                return model.annual_es_replace_cost_gen[b, g] == model.CostScale*int(self.data_handler.es_lifetime_extension/model.G_lifetime[g])*model.dis_factor[y1]*(sum((model.C_g_es_pwr[g, y]+model.G_tx_add[g])*1000*model.G_inv[b, g, y] for y in model.Y) +
                                                                                                                    sum(model.C_g_es_energy[g, y]*1000*model.Sto_inv[b, g, y] for y in model.Y))
             else:
                 return model.annual_es_replace_cost_gen[b, g] == 0
@@ -1289,44 +1330,49 @@ class ExplanConstraints:
         """
         Define annual fixed operating & maintenance costs
         """
+        
         if y < model.Y.at(-1):
-            return model.annual_fom_cost[y] == model.year_gap_array[y]*model.dis_factor[y]*sum(model.P_cap_total[b, g, y]*model.G_fom[g] for (b, g) in model.B_G)
+            return model.annual_fom_cost[y] == model.CostScale*model.year_gap_array[y]*model.dis_factor[y]*sum(model.P_cap_total[b, g, y]*model.G_fom[g] for (b, g) in model.B_G)
         elif y == model.Y.at(-1):
-            return model.annual_fom_cost[y] == model.dis_factor_end_eff[y]*sum(model.P_cap_total[b, g, y]*model.G_fom[g] for (b, g) in model.B_G)
+            return model.annual_fom_cost[y] == model.CostScale*model.dis_factor_end_eff[y]*sum(model.P_cap_total[b, g, y]*model.G_fom[g] for (b, g) in model.B_G)
 
     def cVOMCostAnnual(self, model, y):
         """
         Define annual variable operating & maintenance costs
         """
+        
         if y < model.Y.at(-1):
-            return model.annual_vom_cost[y] == model.year_gap_array[y]*model.dis_factor[y]*(sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_vom[g] for (b, g) in model.B_G for (s, i) in model.S_I)+
+            return model.annual_vom_cost[y] == model.CostScale*model.year_gap_array[y]*model.dis_factor[y]*(sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_vom[g] for (b, g) in model.B_G for (s, i) in model.S_I)+
                                                                                             sum(model.season_time_weight[s,i]*(model.Pcha[b, g, y, s, i] +model.Pdis[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_vom[g] for (b, g) in model.B_G_sto for (s, i) in model.S_I))
         elif y == model.Y.at(-1):
-            return model.annual_vom_cost[y] == model.dis_factor_end_eff[y]*(sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_vom[g] for (b, g) in model.B_G for (s, i) in model.S_I)+
+            return model.annual_vom_cost[y] == model.CostScale*model.dis_factor_end_eff[y]*(sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_vom[g] for (b, g) in model.B_G for (s, i) in model.S_I)+
                                                                                 sum(model.season_time_weight[s,i]*(model.Pcha[b, g, y, s, i] +model.Pdis[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_vom[g] for (b, g) in model.B_G_sto for (s, i) in model.S_I))
 
     def cFuelCostAnnual(self, model, y):
         """
         Define annual fuel costs
         """
+        
         if y < model.Y.at(-1):
-            return model.annual_fuel_cost[y] == model.year_gap_array[y]*model.dis_factor[y]*sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_hr[g]*model.G_fp[g,y] for (b, g) in model.B_G_thermal for (s, i) in model.S_I)
+            return model.annual_fuel_cost[y] == model.CostScale*model.year_gap_array[y]*model.dis_factor[y]*sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_hr[g]*model.G_fp[g,y] for (b, g) in model.B_G_thermal for (s, i) in model.S_I)
         elif y == model.Y.at(-1):
-            return model.annual_fuel_cost[y] == model.dis_factor_end_eff[y]*sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_hr[g]*model.G_fp[g,y] for (b, g) in model.B_G_thermal for (s, i) in model.S_I)
+            return model.annual_fuel_cost[y] == model.CostScale*model.dis_factor_end_eff[y]*sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i])*model.G_hr[g]*model.G_fp[g,y] for (b, g) in model.B_G_thermal for (s, i) in model.S_I)
 
     def cLNSCostAnnual(self, model, y):
         """
         Define load shed penalty cost
         """
-        return model.annual_ls_cost[y] == model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LNS[b, y, s, i]*100*float(self.data_handler.voll) for b in model.B for (s, i) in model.S_I)#10000*
+        
+        return model.annual_ls_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LNS[b, y, s, i]*100*float(self.data_handler.voll) for b in model.B for (s, i) in model.S_I)#10000*
         # self.data_handler.scalars.loc['VOLL']['Value']
     def cITCAnnual(self, model, y):
         """
         Define investment tax credit incentives
         """
+        
         if self.data_handler.tax_credits_option == True:
             if y <= self.tax_credit_end_year:
-                return model.annual_itc[y] == model.dis_factor[y]*(sum(model.G_itc[g]*model.C_g[g, y]*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_ren_can)+sum(model.G_itc[g]*model.C_g_es_pwr[g, y]*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_sto_cand) +
+                return model.annual_itc[y] == model.CostScale*model.dis_factor[y]*(sum(model.G_itc[g]*model.C_g[g, y]*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_ren_can)+sum(model.G_itc[g]*model.C_g_es_pwr[g, y]*1000*model.G_inv[b, g, y] for (b, g) in model.B_G_sto_cand) +
                                                                        sum(model.G_itc[g]*model.C_g_es_energy[g, y]*1000*model.Sto_inv[b, g, y] for (b, g) in model.B_G_sto_cand))
             else:
                 return model.annual_itc[y] == 0
@@ -1337,8 +1383,9 @@ class ExplanConstraints:
         """
         Define production tax credit incentives
         """
+        
         if self.data_handler.tax_credits_option == True:
-            return model.annual_ptc[y] == model.year_gap_array[y]*model.dis_factor[y]*sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i])*model.G_ptc[g] for (b, g) in model.B_G_ren_can for (s, i) in model.S_I)
+            return model.annual_ptc[y] == model.CostScale*model.year_gap_array[y]*model.dis_factor[y]*sum(model.season_time_weight[s,i]*(model.P_gen[b, g, y, s, i])*model.G_ptc[g] for (b, g) in model.B_G_ren_can for (s, i) in model.S_I)
         else:
             return model.annual_ptc[y] == 0
         
@@ -1352,7 +1399,8 @@ class ExplanConstraints:
         """
         Define objective function to mimimize
         """
-        return sum(model.annual_total_cost[y] for y in model.Y)+model.annual_es_replace_cost
+        scale_factor = 1
+        return (sum(model.annual_total_cost[y] for y in model.Y)+model.annual_es_replace_cost)/scale_factor
 
     
     

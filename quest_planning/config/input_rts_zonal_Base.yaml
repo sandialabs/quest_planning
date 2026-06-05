@@ -36,10 +36,11 @@ ini_level: 50
 es_lifetime_extension: 50
 
 #********************Modeling Options:********************
-block_selection: seasonal_blocks
+block_selection: seasonal_blocks #Options are: "seasonal_blocks", "Repr_3Days_Season", "Repr_Weeks"
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
+rps_policy: False
 co2_policy: False
 co2_intensity_policy: False
 mva_base: 100
@@ -76,13 +77,23 @@ nuclear_retirement_year: None
 oil_retirement_year: None
 
 #********************Solver********************
-solver: gurobi
+solver: cplex
 
 #********************Plotting Options********************
 stacked_bar_by_bus: False
 policy_plot_option: False
 
+#********Reliability_assessment using ProGRESS tool***************
+rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
+ #- 2024
+ #- 2028
+ - 2032
+ #- 2036
+ #- 2040
+progress_venv_path: "C:/snl-progress/progress_venv/Scripts/python.exe" #Full path to progress virtual environment python executable. 
+progress_sim_mode: "Zonal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
+#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data.
+ren_data_dir:  "C:/quest_planning/data_explan/data_for_ProGRESS/Zonal" 
 
-
-
-
+num_sample_paths: 1 # How many sample years to simulate
+num_mpi_processes: 0 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)

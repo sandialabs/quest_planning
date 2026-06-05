@@ -2,6 +2,7 @@
 """
 Control of the main window for the Quest Planning Application.
 """
+import os
 import sys
 import ctypes
 from PySide6.QtGui import (
@@ -191,6 +192,7 @@ class SplashScreen(QMainWindow):
 def main():
     print('Opening QuESt Planning Tool')
     # Suppress Qt warnings
+    sys.stderr = open(os.devnull, 'w')
     Settings = QSettings()
     Settings.clear()
     QImageReader.setAllocationLimit(0)
@@ -212,6 +214,7 @@ def main():
     #print(app.styleSheet())
 
     window = SplashScreen()
+
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
