@@ -67,7 +67,22 @@ class ExplanOptimizer(Optimizer):
         wind_ex_dict = self.data_handler.ren_profile_par_adj('wind_ex')
         solar_can_dict = self.data_handler.ren_profile_par_adj('upv_can')
         wind_can_dict = self.data_handler.ren_profile_par_adj('wind_can')
-                
+        par_index_labels = {}
+        if self.data_handler.large_load_option:
+
+            ll_load_dict = self.data_handler.load_dict_ll
+
+            model.large_load = pm.Param(
+                model.B,
+                model.Y,
+                model.S_I,
+                initialize=ll_load_dict,
+                default=0
+            )
+
+            par_index_labels['large_load'] = [
+                'b','y','s','i'
+            ]
 
         C_g_dict = self.data_handler.capex_par_adjust()
 
@@ -77,7 +92,7 @@ class ExplanOptimizer(Optimizer):
 
         G_fp_dict = self.data_handler.fp_par_adjust()
 
-        par_index_labels = {}
+        
 
         #print("Set up parameters")
         '''
@@ -186,6 +201,61 @@ class ExplanOptimizer(Optimizer):
                 f"LeadTime={value(model.line_lt[l])}, "
                 f"From={value(model.from_bus[l])}, To={value(model.to_bus[l])}")
         '''
+        if self.data_handler.large_load_option:
+
+            ll_data = self.data_handler.processed_ll
+
+            ll_ids = [ll["id"] for ll in ll_data]
+
+            model.LL = pm.Set(
+                initialize=ll_ids
+            )
+
+            ll_bus_dict = {
+                ll["id"]: ll["bus"]
+                for ll in ll_data
+            }
+
+            model.LL_bus = pm.Param(
+                model.LL,
+                initialize=ll_bus_dict
+            )
+
+            ll_deploy_dict = {
+                ll["id"]: ll["deploy_year"]
+                for ll in ll_data
+            }
+
+            model.LL_deploy_year = pm.Param(
+                model.LL,
+                initialize=ll_deploy_dict
+            )
+            model.LL_NG_Max = pm.Param(
+                model.LL,
+                initialize={
+                    ll["id"]: ll["ng_max_capacity_mw"]
+                    for ll in ll_data
+                },
+                default=0
+            )
+
+            model.LL_BESS_Power_Max = pm.Param(
+                model.LL,
+                initialize={
+                    ll["id"]: ll["bess_max_power_mw"]
+                    for ll in ll_data
+                },
+                default=0
+            )
+
+            model.LL_BESS_Energy_Max = pm.Param(
+                model.LL,
+                initialize={
+                    ll["id"]: ll["bess_max_energy_mwh"]
+                    for ll in ll_data
+                },
+                default=0
+            )
 
 
         #RPS policy
@@ -718,8 +788,97 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['CostScale'] = ['i']
 
         self.par_index_labels = par_index_labels
-        
-    def add_large_loads_to_model(self,model, processed_profiles: Dict[str, Dict[int, object]], cfg: Dict):
+
+
+    def add_large_loads_to_model(self, model):
+
+        ll_data = self.data_handler.processed_ll
+
+        ll_ids = [ll["id"] for ll in ll_data]
+
+        model.LL = pm.Set(
+            initialize=ll_ids
+        )
+
+        self.par_index_labels["LL"] = ["ll"]
+
+        ll_bus_dict = {
+            ll["id"]: ll["bus"]
+            for ll in ll_data
+        }
+
+        model.LL_bus = pm.Param(
+            model.LL,
+            initialize=ll_bus_dict
+        )
+
+        self.par_index_labels["LL_bus"] = ["ll"]
+
+        ll_deploy_dict = {
+            ll["id"]: ll["deploy_year"]
+            for ll in ll_data
+        }
+
+        model.LL_deploy_year = pm.Param(
+            model.LL,
+            initialize=ll_deploy_dict
+        )
+
+        self.par_index_labels["LL_deploy_year"] = ["ll"]
+
+        ll_load_dict = self.data_handler.load_dict_ll
+
+        model.large_load = pm.Param(
+            model.B,
+            model.Y,
+            model.S_I,
+            initialize=ll_load_dict,
+            default=0
+        )
+
+        self.par_index_labels["large_load"] = [
+            "b",
+            "y",
+            "s",
+            "i"
+        ]
+
+        model.large_load_net = pm.Var(
+            model.B,
+            model.Y,
+            model.S_I,
+            domain=pm.NonNegativeReals
+        )
+
+        self.var_index_labels["large_load_net"] = [
+            "b",
+            "y",
+            "s",
+            "i"
+        ]
+        ll_bess_power = {
+                ll["id"]: ll["bess_max_power_mw"]
+                for ll in ll_data
+            }
+
+        ll_bess_energy = {
+            ll["id"]: ll["bess_max_energy_mwh"]
+            for ll in ll_data
+        }
+
+        model.LL_BESS_Power_Max = pm.Param(
+            model.LL,
+            initialize=ll_bess_power,
+            default=0
+        )
+
+        model.LL_BESS_Energy_Max = pm.Param(
+            model.LL,
+            initialize=ll_bess_energy,
+            default=0
+        )
+
+    def add_large_loads_to_model_OLD(self,model, processed_profiles: Dict[str, Dict[int, object]], cfg: Dict):
         """
         Add large load sets/params/variables/constraints to the provided Pyomo model.
     
@@ -896,6 +1055,18 @@ class ExplanOptimizer(Optimizer):
                            domain=pm.NonNegativeReals)
         var_index_labels['LNS'] = ['b', 'y', 's', 'i']
         
+        if self.data_handler.large_load_option:
+            model.large_load_net = pm.Var(
+                model.B,
+                model.Y,
+                model.S_I,
+                domain=pm.NonNegativeReals
+            )
+
+            var_index_labels['large_load_net'] = [
+                'b','y','s','i'
+            ]
+
         #model.dummy = pm.Var(model.B, model.Y, model.S_I,
                            #domain=pm.NonNegativeReals)
         #var_index_labels['dummy'] = ['b', 'y', 's', 'i']

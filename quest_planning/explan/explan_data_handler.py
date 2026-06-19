@@ -38,7 +38,7 @@ class ExplanDataHandler():
         self.scalars = None
         self.tech_nums = None
         self.load_blocks = None
-        self.ll_load_blocks = []
+        self.load_blocks_ll = {}
         self.system_peak = None
         self.hour_duration = None
         self.season_time_duration = None
@@ -399,6 +399,45 @@ class ExplanDataHandler():
             else:
                 l['profile_df'] = df
             
+            self.ll_load_growth = cfg.get(
+                "large_load_growth",
+                0.0
+            )
+            # ----------------------------
+            # Onsite NG metadata
+            # ----------------------------
+            ng_cfg = l.get("onsite_resources", {}).get("ng", {})
+
+            l["ng_candidate"] = ng_cfg.get(
+                "candidate",
+                False
+            )
+
+            l["ng_max_capacity_mw"] = ng_cfg.get(
+                "max_capacity_mw",
+                0
+            )
+
+            # ----------------------------
+            # Onsite BESS metadata
+            # ----------------------------
+            bess_cfg = l.get("onsite_resources", {}).get("bess", {})
+
+            l["bess_candidate"] = bess_cfg.get(
+                "candidate",
+                False
+            )
+
+            l["bess_max_power_mw"] = bess_cfg.get(
+                "max_power_mw",
+                0
+            )
+
+            l["bess_max_energy_mwh"] = bess_cfg.get(
+                "max_energy_mwh",
+                0
+            )
+                        
             self.processed_ll.append(l)
         return self.processed_ll
     
@@ -502,7 +541,7 @@ class ExplanDataHandler():
                         np.array(self.years) == y)[0][0]
                     prev_y = self.years[idx-1]
 
-                    years_since_base = self.year_gap_array[self.years.index(y)]
+                    years_since_base = y - self.years[0]#self.year_gap_array[self.years.index(y)]
                     sim_block[str(y)] = (1 + self.ll_load_growth) ** years_since_base * sim_block[str(self.years[0])]
 
                     #sim_block[str(y)] = (
@@ -580,7 +619,7 @@ class ExplanDataHandler():
                         np.array(self.years) == y)[0][0]
                     prev_y = self.years[idx-1]
                     
-                    years_since_base = self.year_gap_array[self.years.index(y)]
+                    years_since_base = y - self.years[0]#self.year_gap_array[self.years.index(y)]
                     sim_block[str(y)] = (1 + self.ll_load_growth) ** years_since_base * sim_block[str(self.years[0])]
 
                     #sim_block[str(y)] = (
@@ -744,7 +783,7 @@ class ExplanDataHandler():
                     "Invalid selection")
               
 
-        self.ll_load_blocks[ll['id']] = sim_block
+        self.load_blocks_ll[ll['id']] = sim_block
         #self.dt_info = dt_info
         #self.create_season_map()
         #self.S = season_num
@@ -922,7 +961,15 @@ class ExplanDataHandler():
         df1 = df1.set_index(['y', 's', 'i'])
         
         #for b in np.arange(0, len(bus_nums)):
+        deploy_year = ll['deploy_year']
+
+        df1.loc[df1['y'] < deploy_year, 'total'] = 0
+        
         df1[bus_num] = df1['total']
+
+        deploy_year = ll['deploy_year']
+
+        df1.loc[df1['y'] < deploy_year, 'total'] = 0
             
         df1 = df1.drop(['total'], axis=1)
         df_final = pd.DataFrame(data=df1.stack(level=-1))
@@ -943,8 +990,10 @@ class ExplanDataHandler():
             self.load_dict_ll = {}
             for ll in self.processed_ll:
                 self.construct_load_blocks_ll(ll)
-                self.load_blocks_ll[ll['id']] = self.ll_load_blocks[ll['id']]
-                self.load_dict_ll[ll['id']] = self.load_par_adjust_ll(ll)
+                
+                self.load_dict_ll.update(
+                    self.load_par_adjust_ll(ll)
+                )
         else:
             self.load_blocks_ll = None
             self.load_dict_ll = None

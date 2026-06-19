@@ -26,9 +26,6 @@ geo_path = os.path.join(base_dir, "gui", "tools", "usa_110m.json")
 import json
 
 
-
-
-
 class ExplanResultsViewer():
 
     def __init__(self, data_handler):
