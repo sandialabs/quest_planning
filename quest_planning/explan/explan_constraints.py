@@ -973,7 +973,7 @@ class ExplanConstraints:
         
         return model.LNS[b, y, s, i] <= model.load_full[b, y, s, i]
 
-    def cLLNet(self, model, b, y,s,i):
+    def cLLnet(self, model, b, y,s,i):
         '''
         Large load net calculation:TODO: add co-loacated generation
         '''

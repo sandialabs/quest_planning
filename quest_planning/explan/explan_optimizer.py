@@ -256,6 +256,15 @@ class ExplanOptimizer(Optimizer):
                 },
                 default=0
             )
+            self.par_index_labels["LL_bus"] = ["ll"]
+            
+            self.par_index_labels["LL_deploy_year"] = ["ll"]
+
+            self.par_index_labels["LL_NG_Max"] = ["ll"]
+
+            self.par_index_labels["LL_BESS_Power_Max"] = ["ll"]
+
+            self.par_index_labels["LL_BESS_Energy_Max"] = ["ll"]
 
 
         #RPS policy

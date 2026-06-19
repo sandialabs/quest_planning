@@ -958,27 +958,35 @@ class ExplanDataHandler():
                         
             
 
-        df1 = df1.set_index(['y', 's', 'i'])
+        
         
         #for b in np.arange(0, len(bus_nums)):
+        # Apply deployment year
         deploy_year = ll['deploy_year']
-
         df1.loc[df1['y'] < deploy_year, 'total'] = 0
-        
+
+        # Assign load to bus
         df1[bus_num] = df1['total']
 
-        deploy_year = ll['deploy_year']
+        # Build multi-index
+        df1 = df1.set_index(['y', 's', 'i'])
 
-        df1.loc[df1['y'] < deploy_year, 'total'] = 0
-            
-        df1 = df1.drop(['total'], axis=1)
-        df_final = pd.DataFrame(data=df1.stack(level=-1))
+        # Remove temporary column
+        df1 = df1.drop(columns=['total'])
+
+        df_final = pd.DataFrame(df1.stack())
         df_final = df_final.rename_axis(
-            ['y', 's', 'i', 'b'], axis=0)
+            ['y', 's', 'i', 'b'],
+            axis=0
+        )
+
         df_final = df_final.reset_index()
-        df_final = df_final.set_index(['b', 'y', 's', 'i'])
-        # df_final.index = df_final.index.map(str)
+        df_final = df_final.set_index(
+            ['b', 'y', 's', 'i']
+        )
+
         ll_bus_load = df_final.to_dict()[0]
+
         return ll_bus_load
 
 
@@ -2409,6 +2417,12 @@ class ExplanDataHandler():
         df_final = df_final.rename_axis(
             ['y', 's', 'i', 'b'], axis=0)
         df_final = df_final.reset_index()
+
+        df_final['b'] = df_final['b'].astype(int)
+        df_final['y'] = df_final['y'].astype(int)
+        df_final['s'] = df_final['s'].astype(int)
+        df_final['i'] = df_final['i'].astype(int)
+
         df_final = df_final.set_index(['b', 'y', 's', 'i'])
         # df_final.index = df_final.index.map(str)
         all_bus_load = df_final.to_dict()[0]
