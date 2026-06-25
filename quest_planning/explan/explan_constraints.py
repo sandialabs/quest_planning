@@ -244,7 +244,9 @@ class ExplanConstraints:
         model.cPwrBal = pm.Constraint(model.B, model.Y, model.S_I, rule=self.cPwrBal)
         model.cLNSMax = pm.Constraint(model.B, model.Y, model.S_I, rule=self.cLNSMax)
         if self.data_handler.large_load_option:
-            model.cLLnet = pm.Constraint(model.B, model.Y, model.S_I, rule=self.cLLnet)
+            model.cLLnet = pm.Constraint(model.B_LL, model.Y, model.S_I, rule=self.cLLnet)
+            model.cLLCurtLimit = pm.Constraint(model.B_LL, model.Y, model.S_I,rule=self.cLLCurtLimit)
+            model.cLLResourceRequirement = pm.Constraint(model.B_LL, model.Y, rule=self.cLLResourceRequirement)
         if self.data_handler.tx_model == 'copper_sheet':
             model.cPwrBal_CopperSheet = pm.Constraint(model.Y, model.S_I, rule=self.cPwrBal_CopperSheet)
 
@@ -339,6 +341,10 @@ class ExplanConstraints:
         
         model.cTotalCostAnnual = pm.Constraint(
             model.Y, rule=self.cTotalCostAnnual)
+
+        model.cLLCurtCost=pm.Constraint(
+            model.Y, rule=self.cLLCurtCost)
+        
         model.OBJ = pm.Objective(rule=self.cOBJ)
                 
         model.cESReplaceCostSum = pm.Constraint(
@@ -936,16 +942,63 @@ class ExplanConstraints:
         gen_nums = self.data_handler.bus_gen_num.loc[self.data_handler.bus_gen_num['Bus_num']
                                                      == b]['Gen_num'].values.astype(int)
         
+        
+
         gen_ren_nums = np.intersect1d(
             gen_nums, self.data_handler.tech_nums['renewables'])
 
         gen_sto_nums = np.intersect1d(
             gen_nums, self.data_handler.tech_nums['storage'])
         
+        
+
         if self.data_handler.large_load_option:
-            return sum(model.P_gen[b, g, y, s, i] for g in gen_nums) + sum(model.Pdis[b, g, y, s, i]-model.Pcha[b, g, y, s, i] for g in gen_sto_nums)\
-                - sum(model.Curt[b, g, y, s, i] for g in gen_ren_nums) + sum(model.PF[l, y, s, i] for l in in_branches) \
-                    - sum(model.PF[l, y, s, i] for l in out_branches) == model.load_full[b, y, s, i] + model.large_load_net[b,y,s,i]- model.LNS[b, y, s, i]#-model.dummy[b, y, s, i]
+                
+            ll_ng = np.intersect1d(
+                gen_nums,
+                list(model.G_LL_NG)
+            )
+
+            ll_ren = np.intersect1d(
+                gen_ren_nums,
+                list(model.G_LL_NG)
+            )
+
+            ll_bess = np.intersect1d(
+                gen_sto_nums,
+                list(model.G_LL_BESS)
+            )
+
+            grid_gen_nums = np.setdiff1d(
+                gen_nums,
+                ll_ng
+            )
+
+            grid_ren_nums = np.setdiff1d(
+                gen_ren_nums,
+                ll_ren
+            )
+
+            grid_sto_nums = np.setdiff1d(
+                gen_sto_nums,
+                ll_bess
+            )
+            
+            #if len(ll_ng) > 0:
+              #  print("BUS", b, "LL_NG", ll_ng)
+            #if len(ll_bess) > 0:
+             #   print("BUS", b, "LL_BESS", ll_bess)
+            #print(grid_gen_nums)
+
+            ll_term = (
+                model.large_load_net[b,y,s,i]
+                if b in model.B_LL
+                else 0
+                )
+
+            return sum(model.P_gen[b, g, y, s, i] for g in grid_gen_nums) + sum(model.Pdis[b, g, y, s, i]-model.Pcha[b, g, y, s, i] for g in grid_sto_nums)\
+                - sum(model.Curt[b, g, y, s, i] for g in grid_ren_nums) + sum(model.PF[l, y, s, i] for l in in_branches) \
+                    - sum(model.PF[l, y, s, i] for l in out_branches) == model.load_full[b, y, s, i] + ll_term- model.LNS[b, y, s, i]
         else:
             return sum(model.P_gen[b, g, y, s, i] for g in gen_nums) + sum(model.Pdis[b, g, y, s, i]-model.Pcha[b, g, y, s, i] for g in gen_sto_nums)\
                 - sum(model.Curt[b, g, y, s, i] for g in gen_ren_nums) + sum(model.PF[l, y, s, i] for l in in_branches) \
@@ -977,11 +1030,106 @@ class ExplanConstraints:
         '''
         Large load net calculation:TODO: add co-loacated generation
         '''
-        if self.data_handler.large_load_option:
-            return model.large_load[b,y,s,i] == model.large_load_net[b,y,s,i]
-        else:
-            return pm.Constraint.Skip
+        #if self.data_handler.large_load_option:
+        #    return model.large_load[b,y,s,i] == model.large_load_net[b,y,s,i]
+        #else:
+        #    return pm.Constraint.Skip
        
+        if not self.data_handler.large_load_option:
+            return pm.Constraint.Skip
+
+        gen_nums = self.data_handler.bus_gen_num.loc[
+            self.data_handler.bus_gen_num['Bus_num'] == b
+        ]['Gen_num'].values.astype(int)
+
+        ll_ng = np.intersect1d(
+            gen_nums,
+            list(model.G_LL_NG)
+        )
+
+        ll_bess = np.intersect1d(
+            gen_nums,
+            list(model.G_LL_BESS)
+        )
+
+        return (
+            model.large_load_net[b,y,s,i]
+            ==
+            model.large_load[b,y,s,i]
+            - model.LL_Curt[b,y,s,i]
+            - sum(
+                model.P_gen[b,g,y,s,i]
+                for g in ll_ng
+            )
+            - sum(
+                model.Pdis[b,g,y,s,i]
+                for g in ll_bess
+            )
+            + sum(
+                model.Pcha[b,g,y,s,i]
+                for g in ll_bess
+            )
+        )
+    def cLLCurtLimit(self, model, b, y, s, i):
+
+        if self.data_handler.large_load_flex:
+           
+            return (
+                model.LL_Curt[b,y,s,i]
+                <=
+                model.LL_Curt_MaxFrac
+                * model.large_load[b,y,s,i]
+            )    
+        else:
+            
+            return model.LL_Curt[b,y,s,i] ==0
+    
+    def cLLResourceRequirement(self, model, b, y):
+        #print("INSIDE NEW ANNUAL LL CONSTRAINT")
+        gen_nums = self.data_handler.bus_gen_num.loc[
+            self.data_handler.bus_gen_num['Bus_num'] == b
+        ]['Gen_num'].values.astype(int)
+
+        ll_ng = np.intersect1d(
+            gen_nums,
+            list(model.G_LL_NG)
+        )
+
+        ll_bess = np.intersect1d(
+            gen_nums,
+            list(model.G_LL_BESS)
+        )
+        
+        btm_energy = sum(
+            sum(model.P_gen[b,g,y,s,i]
+                for g in ll_ng)
+            +
+            sum(model.Pdis[b,g,y,s,i]
+                for g in ll_bess)
+            +
+            model.LL_Curt[b,y,s,i]
+
+            for (s,i) in model.S_I
+        )
+
+        ll_energy = sum(
+            model.large_load[b,y,s,i]
+            for (s,i) in model.S_I
+        )
+
+        #if b == 211 and y == 2024:
+
+        #print("ll_ng =", ll_ng)
+        #print("ll_bess =", ll_bess)
+
+        #print(
+          #  "large load sum =",
+          #  sum(
+          #      model.large_load[b,y,s,i]
+           #     for (s,i) in model.S_I
+           # )
+        #)
+        return btm_energy >= 0 * ll_energy
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     7.) Investment Constraints
@@ -1004,7 +1152,10 @@ class ExplanConstraints:
                         return model.P_cap_total[b, g, y] == model.P_cap[g] + sum(model.G_inv[b, g, y1] for y1 in range(model.Y.at(1), y-model.G_lt[g]))
                 else:
                     if y == model.Y.at(1):
-                        return model.P_cap_total[b, g, y] == model.P_cap[g]
+                        if self.data_handler.large_load_option and (b,g) in model.B_G_LL:
+                            return model.P_cap_total[b, g, y] == model.P_cap[g]+ model.G_inv[b, g, y]
+                        else:
+                            return model.P_cap_total[b, g, y] == model.P_cap[g]
                     else:
                         index = self.data_handler.years.index(y)
                         if y == self.data_handler.years[-1]:
@@ -1418,11 +1569,17 @@ class ExplanConstraints:
         else:
             return model.annual_ptc[y] == 0
         
+    def cLLCurtCost(self, model, y):
+        '''
+        Define large load curtailment costs
+        '''
+        return model.annual_ll_curt_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LL_Curt[b, y, s, i]*200 for b in model.B_LL for (s, i) in model.S_I)#10000*
+
     def cTotalCostAnnual(self, model, y):
         """
         Define total annual costs
         """
-        return model.annual_total_cost[y] == model.annual_gen_inv_cost[y]+ model.annual_trans_inv_cost[y] + model.annual_fom_cost[y] + model.annual_vom_cost[y] + model.annual_fuel_cost[y] + model.annual_ls_cost[y]-model.annual_itc[y]-model.annual_ptc[y]+model.ng_h2_conv_cost[y]
+        return model.annual_total_cost[y] == model.annual_gen_inv_cost[y]+ model.annual_trans_inv_cost[y] + model.annual_fom_cost[y] + model.annual_vom_cost[y] + model.annual_fuel_cost[y] + model.annual_ls_cost[y]-model.annual_itc[y]-model.annual_ptc[y]+model.ng_h2_conv_cost[y]+model.annual_ll_curt_cost[y]
 
     def cOBJ(self, model):
         """

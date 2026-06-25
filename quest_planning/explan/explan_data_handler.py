@@ -108,6 +108,7 @@ class ExplanDataHandler():
         self.es_lifetime_cost_option = False
         self.es_lifetime_extension = 50
         self.large_load_option = False
+        self.large_load_flex = False
         self.ll_load_growth = 0.0 #Default for now
         
         self.mva_base = 100
@@ -376,8 +377,14 @@ class ExplanDataHandler():
     def set_large_load_option(self,value):
         self.large_load_option = value
 
+    def set_large_load_flex(self,value):
+        self.large_load_flex = value
+    
+
     def read_large_loads_config(self,cfg):
         loads = cfg.get("large_loads", [])
+        self.large_load_option= cfg.get("large_load_option", False)
+        self.large_load_flex = cfg.get("large_load_flex", False)
         self.processed_ll = []
         for l in loads:
             # validate required fields
@@ -439,12 +446,17 @@ class ExplanDataHandler():
             )
                         
             self.processed_ll.append(l)
+            self.large_load_buses = [
+                l['bus']
+                for l in self.processed_ll
+            ]           
+
         return self.processed_ll
     
     def construct_load_blocks_ll(self,ll):
         #for ll in self.processed_ll:
         load_df = ll['profile_df']
-        print(load_df)
+        #print(load_df)
         # Assume ll_profile has a 'datetime' column and a load column (e.g., 'normalized' or MW)
         
         load_df["datetime"] = pd.to_datetime(
@@ -987,6 +999,19 @@ class ExplanDataHandler():
 
         ll_bus_load = df_final.to_dict()[0]
 
+        print("\n========================")
+        print("Large Load Dictionary Sample")
+        print("Load ID:", ll['id'])
+        print("Deploy Year:", ll['deploy_year'])
+        print("Bus:", bus_num)
+
+        for k,v in list(ll_bus_load.items())[:2000]:
+            print(k, v)
+
+        print("Max LL MW:", max(ll_bus_load.values()))
+        print("Min LL MW:", min(ll_bus_load.values()))
+        #print("========================\n")
+
         return ll_bus_load
 
 
@@ -1002,6 +1027,13 @@ class ExplanDataHandler():
                 self.load_dict_ll.update(
                     self.load_par_adjust_ll(ll)
                 )
+            #print("\nMerged LL Dict")
+
+            #for k,v in list(self.load_dict_ll.items())[:20]:
+            #    print(k,v)
+
+            #print("Total Entries:", len(self.load_dict_ll))
+            #print("Max LL:", max(self.load_dict_ll.values()))
         else:
             self.load_blocks_ll = None
             self.load_dict_ll = None
@@ -1032,24 +1064,26 @@ class ExplanDataHandler():
 
         # Define technology categories
         self.tech_categories = {
-            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand'],
+            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand','Gas_LL_Cand'],
             'nuclear': ['Nuclear'],
             'coal' : ['Coal'],
             'oil' : ['Oil_CT','Oil_St'],
             'retire': ['Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Oil_CT', 'Oil_ST'],
             'upv_ex': ['Solar', 'Solar_PPA', 'Solar_RT', 'CSP'],
             'wind_ex': ['Wind', 'Wind_PPA'],
-            'upv_can': ['Solar_Cand'],
-            'wind_can': ['Wind_Cand'],
-            'ng': ['Gas', 'Gas_CC', 'Gas_CT', 'Gas_Cand'],
-            'storage': ['ES', 'ES_PPA', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand'],
-            'storage_cand': ['ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand'],
+            'upv_can': ['Solar_Cand','Solar_LL_Cand'],
+            'wind_can': ['Wind_Cand','Wind_LL_Cand'],
+            'ng': ['Gas', 'Gas_CC', 'Gas_CT', 'Gas_Cand','Gas_LL_Cand'],
+            'storage': ['ES', 'ES_PPA', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand','Li_Ion_Cand_LL_Cand'],
+            'storage_cand': ['ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand','Li_Ion_Cand_LL_Cand'],
             #'storage_cand_year': ['Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10'],
             'ldes': ['ES_100hr_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Flow_Cand', 'Iron_Air_Cand'],
             'dr': ['DR_Cand'],
-            'renewables': ['Solar', 'Solar_RT', 'CSP', 'Solar_PPA', 'Hydro', 'Wind', 'Wind_PPA', 'Solar_Cand', 'Wind_Cand'],
-            'candidates': ['Solar_Cand', 'Wind_Cand', 'Gas_Cand', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'DR_Cand', 'Iron_Air_Cand'],
-            'exist': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Wind_PPA', 'Wind', 'Solar_PPA', 'ES_PPA', 'Solar', 'Solar_RT', 'CSP', 'ES']
+            'renewables': ['Solar', 'Solar_RT', 'CSP', 'Solar_PPA', 'Hydro', 'Wind', 'Wind_PPA', 'Solar_Cand', 'Wind_Cand','Solar_LL_Cand','Wind_LL_Cand'],
+            'candidates': ['Solar_Cand', 'Wind_Cand', 'Gas_Cand', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'DR_Cand', 'Iron_Air_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand','Solar_LL_Cand','Wind_LL_Cand'],
+            'exist': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Wind_PPA', 'Wind', 'Solar_PPA', 'ES_PPA', 'Solar', 'Solar_RT', 'CSP', 'ES'],
+            'large_load_gen': ['Solar_LL_Cand','Wind_LL_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand'],
+            'large_load_sto': ['Li_Ion_Cand_LL_Cand'],
         }
 
         # Initialize dictionary to hold generator numbers
@@ -2426,6 +2460,9 @@ class ExplanDataHandler():
         df_final = df_final.set_index(['b', 'y', 's', 'i'])
         # df_final.index = df_final.index.map(str)
         all_bus_load = df_final.to_dict()[0]
+
+        
+
         return all_bus_load
 
 
