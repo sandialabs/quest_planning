@@ -52,8 +52,6 @@ class ExplanDataHandler():
         self.end_year = None
         self.start_hr = None
         self.end_hr = None
-        self.last_hr = None
-        self.first_hr = None
 
         self.solver = None
         self.rps_schedule = None
@@ -119,9 +117,9 @@ class ExplanDataHandler():
             self.data_ls = data_ls
             self.index = self.data_ls.index
         else:
-            self.data_ls = ['branch', 'bus', 'capex_es', 'capex_h_es', 'capex_l_es',
+            self.data_ls = ['branch', 'bus', 'cap_cred', 'capex_es', 'capex_h_es', 'capex_l_es',
                              'capex_tech', 'fuel', 'gen_viz', 'gen',
-                             'load', 'policy', 'scalars', 'solar_cand', 'solar', 
+                             'load', 'policy', 'prm', 'scalars', 'solar_cand', 'solar', 
                              'storage', 'tech', 'wind_cand', 'wind']#'disfact',
             
             self.index = self.data_ls.index
@@ -176,9 +174,13 @@ class ExplanDataHandler():
     def set_load_profile(self, value):
         """Set the load profile selection"""
         self.load_forecast = value
-        
+
+    def set_capacity_credits(self, value):
+        "Set time-varying capacity credits"
+        self.varying_CC_mode = value
+          
     def set_es_cost(self,value):
-        """Set the annual load growth"""
+        """Set the capital cost trend for energy storage"""
         self.es_cost = value
     
     def set_scenario(self,value):
@@ -253,10 +255,26 @@ class ExplanDataHandler():
         """Set the optimization solver"""
         self.solver = value.lower()
 
-    '''The following methods are currently for the input.yaml file only'''
-    def set_load_growth(self,value):
-        """Set the annual load growth used if a full load forecast is not uploaded"""
-        self.load_growth = float(value)/100
+    # Old version
+    # '''The following methods are currently for the input.yaml file only'''
+    # def set_load_growth(self,value):
+    #     """Set the annual load growth used if a full load forecast is not uploaded"""
+    #     self.load_growth = float(value)/100
+
+    #To include regional_load_growth
+    def set_load_growth(self, load_growth_value, regional_load_growth_option=False, regional_growth_list=None):
+        """Configure load growth using system-wide or regional method"""
+        if regional_load_growth_option:
+            self.regional_load_growth = {}
+            for entry in regional_growth_list or []:
+                region = entry.get("region")
+                growth = entry.get("growth")
+                if region is not None and growth is not None:
+                    self.regional_load_growth[int(region)] = float(growth) / 100
+            self.load_growth = None
+        else:
+            self.load_growth = float(load_growth_value) / 100
+            self.regional_load_growth = None
     
     def set_ldes_switch(self,value):
         """Set the ldes_switch"""
@@ -291,11 +309,19 @@ class ExplanDataHandler():
     
     def set_reserve_params(self,prm,reg_res_req,spin_res_req,flex_res_w_req,flex_res_s_req):
         '''Set reserves requirements (Convert to percent)'''
-        self.prm = float(prm)/100
         self.reg_res_req = float(reg_res_req)/100
         self.spin_res_req = float(spin_res_req)/100
         self.flex_res_w_req = float(flex_res_w_req)/100
         self.flex_res_s_req = float(flex_res_s_req)/100
+
+    def set_prm(self, prm_value, regional_load_growth_option=False):
+        '''Configure PRM using system-wide or regional method'''
+        if regional_load_growth_option:
+            # Regional PRM → comes from CSV
+            self.prm = None
+        else:
+            # System-wide PRM from config
+            self.prm = float(prm_value) / 100
     
     def set_custom_retirement_years(self,custom_retirement,ng_retirement_year,coal_retirement_year,nuclear_retirement_year,oil_retirement_year):
         '''
@@ -394,8 +420,8 @@ class ExplanDataHandler():
 
         # Define technology categories
         self.tech_categories = {
-            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand'],
-            'nuclear': ['Nuclear'],
+            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'SMR_Cand'],
+            'nuclear': ['Nuclear','SMR_Cand'],
             'coal' : ['Coal'],
             'oil' : ['Oil_CT','Oil_St'],
             'retire': ['Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Oil_CT', 'Oil_ST'],
@@ -403,14 +429,14 @@ class ExplanDataHandler():
             'wind_ex': ['Wind', 'Wind_PPA'],
             'upv_can': ['Solar_Cand'],
             'wind_can': ['Wind_Cand'],
-            'ng': ['Gas', 'Gas_CC', 'Gas_CT', 'Gas_Cand'],
+            'ng': ['Gas', 'Gas_CC', 'Gas_CT', 'Gas_Cand', 'Gas_CC_Cand', 'Gas_CT_Cand'],
             'storage': ['ES', 'ES_PPA', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand'],
             'storage_cand': ['ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand'],
             #'storage_cand_year': ['Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10'],
             'ldes': ['ES_100hr_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Flow_Cand', 'Iron_Air_Cand'],
             'dr': ['DR_Cand'],
             'renewables': ['Solar', 'Solar_RT', 'CSP', 'Solar_PPA', 'Hydro', 'Wind', 'Wind_PPA', 'Solar_Cand', 'Wind_Cand'],
-            'candidates': ['Solar_Cand', 'Wind_Cand', 'Gas_Cand', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'DR_Cand', 'Iron_Air_Cand'],
+            'candidates': ['Solar_Cand', 'Wind_Cand', 'Gas_Cand', 'Gas_CC_Cand', 'Gas_CT_Cand', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'DR_Cand', 'Iron_Air_Cand', 'SMR_Cand'],
             'exist': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Wind_PPA', 'Wind', 'Solar_PPA', 'ES_PPA', 'Solar', 'Solar_RT', 'CSP', 'ES']
         }
 
@@ -1075,6 +1101,7 @@ class ExplanDataHandler():
                           
                             #if y == self.years[0]:
                         load_df_y_pivot = load_df_y_pivot.reset_index()
+                        
                         sim_block[str(y)] = pd.concat([load_df_y_pivot.loc[load_df_y_pivot['s'] == 1][self.load_forecast],
                                                        load_df_y_pivot.loc[load_df_y_pivot['s']
                                                                            == 2][self.load_forecast],
@@ -1179,15 +1206,16 @@ class ExplanDataHandler():
                                                                                == 4][self.load_forecast],
                                                            peak_week_profile_pivot[self.load_forecast]], ignore_index=True)
                         else:
-                            idx = np.where(
-                                np.array(self.years) == y)[0][0]
-                            prev_y = self.years[idx-1]
+                            #Old version
+                            # idx = np.where(
+                            #     np.array(self.years) == y)[0][0]
+                            # prev_y = self.years[idx-1]
+                            # sim_block[str(y)] = (
+                            #     1+(self.year_gap_array[self.years.index(y)]*self.load_growth))*sim_block[str(prev_y)]
 
-                            years_since_base = self.year_gap_array[self.years.index(y)]
-                            sim_block[str(y)] = (1 + self.load_growth) ** years_since_base * sim_block[str(self.years[0])]
-
-                            #sim_block[str(y)] = (
-                                #1+(self.year_gap_array[self.years.index(y)]*self.load_growth))*sim_block[str(prev_y)]
+                            #New version by GCP
+                            gap_from_base = y - self.years[0]
+                            sim_block[str(y)] = sim_block[str(self.years[0])] * ((1 + self.load_growth) ** gap_from_base) 
     
                     hour_duration = [
                         13.0357, 13.0357, 12.0357, 13.0357, 1]#Check validity
@@ -1291,11 +1319,8 @@ class ExplanDataHandler():
                                 np.array(self.years) == y)[0][0]
                             prev_y = self.years[idx-1]
                             
-                            years_since_base = self.year_gap_array[self.years.index(y)]
-                            sim_block[str(y)] = (1 + self.load_growth) ** years_since_base * sim_block[str(self.years[0])]
-
-                            #sim_block[str(y)] = (
-                              #  1+(self.year_gap_array[self.years.index(y)]*self.load_growth))*sim_block[str(prev_y)]#self.load_growth/100))*sim_block[str(prev_y)]
+                            sim_block[str(y)] = (
+                                1+(self.year_gap_array[self.years.index(y)]*self.load_growth))*sim_block[str(prev_y)]#self.load_growth/100))*sim_block[str(prev_y)]
     
                     hour_duration = [
                         13.0357, 13.0357, 12.0357, 13.0357, 1]
@@ -1404,7 +1429,7 @@ class ExplanDataHandler():
 
                     # --- scale for future years using load growth ---
                     for y in self.years[1:]:
-                        years_since_base = self.year_gap_array[self.years.index(y)]
+                        years_since_base = y - base_year
                         growth_factor = (1 + self.load_growth) ** years_since_base
                         sim_block[str(y)] = growth_factor * sim_block[str(base_year)]
                         # keep same dt_info
@@ -1423,7 +1448,7 @@ class ExplanDataHandler():
                     season_time_duration = s_i_weight
 
                 elif self.block_selection.lower() == 'Full_Year'.lower():
-                    # CJN fixed temporarily - 7/3
+                    # print('TODO')
                     if len(self.years) == 1:
                         sim_block = pd.DataFrame()
                         dt_info = pd.DataFrame()
@@ -1433,17 +1458,15 @@ class ExplanDataHandler():
                             zip(range(1, 13), seasons))
                         load_df['s'] = load_df['month'].map(
                             month_to_season)
-                        #for y in self.years:
+                        for y in self.years:
                             # load for year y
-                            #load_df_y = load_df.loc[load_df['year'] == y]
+                            load_df_y = load_df.loc[load_df['year'] == y]
     
-                        sim_block[str(
-                            self.years[0])] = load_df[self.load_forecast].values
-                        dt_info[str(
-                            self.years[0])] = load_df['datetime'].values
-                        
-                        season_time_duration = 1 
-
+                            sim_block[str(
+                                y)] = load_df_y[self.load_forecast].values
+                            dt_info[str(
+                                y)] = load_df_y['datetime'].values
+                            season_time_duration = 1 
                     else:
                         raise Exception(
                             "Can only select one simulation year if 8760 time steps are chosen")
@@ -1462,6 +1485,63 @@ class ExplanDataHandler():
         self.S = season_num
         self.hour_duration = hour_duration
         self.season_time_duration = season_time_duration
+
+
+    def construct_regional_load_blocks(self):
+
+        load_df = self.load_data[self.index('load')]
+        bus_df  = self.load_data[self.index('bus')]
+        regions = list(self.regional_load_growth.keys())
+        shares  = (bus_df.groupby('Region')['Load_share'].sum().astype(float) / 100.0)
+        y0 = self.years[0]
+
+        # Save and temporarily override years and growth to build a clean base block
+        orig_years   = list(self.years)
+        orig_growth  = self.load_growth
+
+        try:
+            # Parameters used to calculate base-year blocks using existing construct_load_blocks()
+            self.years = [y0]
+            self.set_years_hours(self.years)     
+            self.load_growth = 0.0               
+
+            # Build the standard system-wide blocks for y0
+            self.construct_load_blocks()         
+            base_block = self.load_blocks[str(y0)].values
+            dt_info = self.dt_info
+            S = self.S
+            hour_duration = self.hour_duration
+            season_time_duration = self.season_time_duration
+
+        finally:
+            # Restore full horizon and growth, and recompute gaps for the full list
+            self.years = orig_years
+            self.set_years_hours(self.years)
+            self.load_growth = orig_growth
+
+        # Build a block per region across all years using compounded growth
+        regional_blocks = {}
+        for r in regions:
+            g = float((self.regional_load_growth or {}).get(r, 0.0))
+            share_r = float(shares.get(r, 0.0))
+
+            cols = []
+            for y in self.years:
+                gap = y - y0
+                col = base_block * share_r * ((1.0 + g) ** gap)
+                cols.append(pd.Series(col))
+
+            sim_block_r = pd.concat(cols, axis=1)
+            sim_block_r.columns = [str(y) for y in self.years]
+            regional_blocks[r] = sim_block_r
+
+        # Output
+        self.regional_load_blocks = regional_blocks
+        self.dt_info = dt_info
+        self.S = S
+        self.hour_duration = hour_duration
+        self.season_time_duration = season_time_duration
+
 
     def find_system_peak(self):
         '''
@@ -1493,25 +1573,56 @@ class ExplanDataHandler():
             peak = max(load_df[self.load_forecast])
             peak_pivot = pd.DataFrame(index = self.years,columns = [self.load_forecast])
             self.set_years_hours(self.years)
-            
             for y in self.years:
-                years_since_base = self.year_gap_array[self.years.index(y)]
                 if y == self.years[0]:
                     peak_pivot.loc[y] = peak
                 else:
-                    peak_pivot.loc[y] = peak * (1 + self.load_growth) ** years_since_base
-            #for y in self.years:
-             #   if y == self.years[0]:
-              #      peak_pivot.loc[y] = peak
-               # else:
                     #TODO: fix load growth
                     
                     #print(self.years)
                     #print(self.year_gap_array[y])
-                #    peak_pivot.loc[y] = peak*(1+self.year_gap_array[self.years.index(y)]*self.load_growth) #(self).year_gap*self.load_growth/100)
+                    #OLD VERSION
+                    #peak_pivot.loc[y] = peak*(1+self.year_gap_array[self.years.index(y)]*self.load_growth) #(self).year_gap*self.load_growth/100)
 
+                    #New version by GCP
+                    gap_from_base = y - self.years[0]
+                    peak_pivot.loc[y] = peak * ((1 + self.load_growth)**gap_from_base)    
            
         return peak_pivot
+
+    def find_regional_peak(self):
+        '''
+        Determines the annual peak per region
+
+        Returns
+        -------
+        regional_peak_pivot : Returns annual peak per region, columns = region ids
+
+        ''' 
+        load_df = self.load_data[self.index('load')]
+        bus_df  = self.load_data[self.index('bus')]
+
+        years_int   = [int(y) for y in self.years]
+        regions_int = [int(r) for r in self.regional_load_growth.keys()]
+        # system-wide shares (sum across all buses ~= 100)
+        regional_share = (bus_df.groupby('Region')['Load_share'].sum().astype(float) / 100.0)
+
+        years_in_file = set(int(y) for y in np.unique(load_df['year'].values))
+        base_year     = int(load_df.loc[0, 'year'])
+
+        # robust base peak: if base_year not in file, use overall max from file
+        if base_year in years_in_file:
+            base_peak = float(load_df.loc[load_df['year'] == base_year, self.load_forecast].max())
+        else:
+            base_peak = float(load_df[self.load_forecast].max())
+
+        regional_peak_pivot = pd.DataFrame(index=years_int, columns=regions_int, dtype=float)
+        for y in years_int:
+            gap = y - base_year
+            for r in regions_int:
+                g = float((self.regional_load_growth or {}).get(r, 0.0))
+                regional_peak_pivot.loc[y, r] = base_peak * float(regional_share.get(r, 0.0)) * ((1.0 + g) ** gap)
+        return regional_peak_pivot
 
     def find_system_energy(self):
         '''
@@ -1547,8 +1658,44 @@ class ExplanDataHandler():
                 if y == self.years[0]:
                     energy_pivot.loc[y] = energy
                 else:
-                    energy_pivot.loc[y] = energy*(1+self.year_gap_array[self.years.index(y)]*self.load_growth)#(self).year_gap*self.load_growth/100)
+                    #old version
+                    #energy_pivot.loc[y] = energy*(1+self.year_gap_array[self.years.index(y)]*self.load_growth)#(self).year_gap*self.load_growth/100)
+                    #New version by GCP
+                    gap_from_base = y - self.years[0]
+                    energy_pivot.loc[y] = energy * ((1 + self.load_growth)**gap_from_base)
         return energy_pivot
+
+    def find_regional_energy(self):
+        '''
+        Determines the annual energy per region
+
+        Returns
+        -------
+        regional_energy_pivot : Returns annual energy per region, columns = region ids
+
+        ''' 
+        load_df = self.load_data[self.index('load')]
+        bus_df  = self.load_data[self.index('bus')]
+
+        years_int   = [int(y) for y in self.years]
+        regions_int = [int(r) for r in self.regional_load_growth.keys()]
+        regional_share = (bus_df.groupby('Region')['Load_share'].sum().astype(float) / 100.0)
+
+        years_in_file = set(int(y) for y in np.unique(load_df['year'].values))
+        base_year     = int(self.years[0])
+
+        if base_year in years_in_file:
+            base_energy = float(load_df.loc[load_df['year'] == base_year, self.load_forecast].sum())
+        else:
+            base_energy = float(load_df[self.load_forecast].sum())
+
+        regional_energy_pivot = pd.DataFrame(index=years_int, columns=regions_int, dtype=float)
+        for y in years_int:
+            gap = y - base_year
+            for r in regions_int:
+                g = float((self.regional_load_growth or {}).get(r, 0.0))
+                regional_energy_pivot.loc[y, r] = base_energy * float(regional_share.get(r, 0.0)) * ((1.0 + g) ** gap)
+        return regional_energy_pivot
 
     def create_season_map(self):
         '''
@@ -1566,7 +1713,6 @@ class ExplanDataHandler():
             if self.block_selection.lower() == 'Full_year'.lower():
                 df = self.dt_info[str(self.years[0])].dt.month.map(
                     month_to_season)
-                
             elif self.block_selection.lower() == 'Seasonal_blocks'.lower():
                 for c in df.columns:
                     season_array = np.concatenate([np.ones(
@@ -1598,7 +1744,6 @@ class ExplanDataHandler():
                 df[c] = season_array
 
         self.season_map = df
-       
 
     def load_par_adjust(self):
         """
@@ -1728,46 +1873,22 @@ class ExplanDataHandler():
             else:
                 season_time_array = pd.DataFrame(
                     [season_array.values, time_array], index=['s', 'i']).T
-            
-            # Find the first and last hour of each season
-            season_time_array['s'] = season_time_array['s'].astype(int)
-            season_time_array['i'] = season_time_array['i'].astype(int)
-            
-            season_changes = season_time_array['s'].ne(season_time_array['s'].shift())
-            season_starts = season_time_array.index[season_changes].tolist()
-            season_ends = (season_time_array.index[season_changes.shift(-1, fill_value=False)]).tolist()
-            #if season_ends[-1] != season_time_array.index[-1]:
-                #season_ends.append(season_time_array.index[-1])
-
-            self.start_hr = season_starts
-            self.end_hr = season_ends
-
-            #find last hour of one season and first hour of next
-            
-            #fh = np.array(season_time_array.index[season_changes])  # first hour of each season neglect t=0
-            fh = np.array(season_time_array.index[season_changes])[1:]  # first hour of each season, skip the first
-            lh = np.array(season_time_array.index[season_changes.shift(-1, fill_value=False)])  # last hour of each season
-
-            self.last_hr = lh
-            self.first_hr = fh
-
-            '''
-            lh = []#last hour
-            fh = []#first hour
+            sh = []
+            eh = []
             for i in np.unique(season_time_array['i']):
                 
                 if i != 0:
                     s = season_time_array['s'][i]
                     s_1 = season_time_array['s'][i-1]
                     if s != s_1:  # and i != 0:
-                        lh = np.concatenate(
-                            (lh, i-1), axis=None)
-                        fh = np.concatenate(
-                            (fh, i), axis=None)
-            '''
-            
+                        sh = np.concatenate(
+                            (sh, i-1), axis=None)
+                        eh = np.concatenate(
+                            (eh, i), axis=None)
                         
-            
+            #Not used right now...
+            self.start_hr = sh
+            self.end_hr = eh
 
         df1 = df1.set_index(['y', 's', 'i'])
         
@@ -1784,6 +1905,133 @@ class ExplanDataHandler():
         all_bus_load = df_final.to_dict()[0]
         return all_bus_load
 
+    def load_par_adjust_regional(self):
+        """
+        Adjust the load parameter for Pyomo using regional blocks.
+        Mirrors load_par_adjust, but for each region r:
+        regional_block(y,s,i) -> split to buses in r by within-region Load_share.
+        Returns
+        -------
+        load_dict : dict keyed by (b, y, s, i)
+        """
+
+        reg_blocks = self.regional_load_blocks
+
+        # Bus info and within-region weights
+        bus_df = self.load_data[self.index('bus')][['Bus_number', 'Region', 'Load_share']].copy()
+        bus_df['Load_share'] = bus_df['Load_share'].astype(float)
+        bus_df['region_total'] = bus_df.groupby('Region')['Load_share'].transform('sum')
+        bus_df['w_in_region']  = bus_df['Load_share'] / bus_df['region_total']
+
+        years = self.years
+        load_dict = {}
+
+        # helper to build df1 (y,s,i,total) like the system-wide version
+        def _to_y_s_i_total(df):
+            df = df.copy()
+            df.columns = years
+            time, year = np.shape(df)
+
+            if self.block_selection.lower() == 'peak_day':
+                time_array = np.arange(0, 24)
+                season_array = 1
+                df1 = pd.DataFrame(data=df.unstack(level=0))
+                df1['s'] = season_array
+                df1 = df1.reset_index()
+                df1.columns = ['y', 'i', 'total', 's']
+                df1['i'] = np.concatenate([time_array] * year)
+
+            elif self.block_selection.lower() == 'peak_week_season':
+                time_array = np.concatenate([np.arange(0, 168)] * 4)
+                season_array = self.season_map(self.dt_info).unstack(level=0)[years].values
+                df1 = pd.DataFrame(data=df.unstack(level=0))
+                df1['s'] = season_array
+                df1 = df1.reset_index()
+                df1.columns = ['y', 'i', 'total', 's']
+                df1['i'] = time_array
+
+            elif self.block_selection.lower() == 'seasonal_blocks':
+                time_array = np.concatenate([np.arange(0, 5)] * 5)
+                season_array = np.concatenate([np.ones(5)*1, np.ones(5)*2, np.ones(5)*3, np.ones(5)*4, np.ones(5)*5])
+                df1 = pd.DataFrame(data=df.unstack(level=0))
+                df1['i'] = np.concatenate([time_array] * year)
+                df1['s'] = np.concatenate([season_array] * year)
+                df1 = df1.reset_index()
+                df1.columns = ['y', 'drop', 'total', 'i', 's']
+                df1 = df1.drop('drop', axis=1)
+
+            elif self.block_selection.lower() == 'repr_weeks':
+                time_array = np.concatenate([np.arange(0, 168)] * 5)
+                season_array = np.concatenate([np.ones(168)*1, np.ones(168)*2, np.ones(168)*3, np.ones(168)*4, np.ones(168)*5])
+                df1 = pd.DataFrame(data=df.unstack(level=0))
+                df1['i'] = np.concatenate([time_array] * year)
+                df1['s'] = np.concatenate([season_array] * year)
+                df1 = df1.reset_index()
+                df1.columns = ['y', 'drop', 'total', 'i', 's']
+                df1 = df1.drop('drop', axis=1)
+
+            elif self.block_selection.lower() == 'repr_3days_season':
+                # rows per year = 3 days/season * 24 * 4 seasons + 24 peak = 312
+                time_array = np.concatenate([
+                    np.arange(0, 3 * 24),
+                    np.arange(0, 3 * 24),
+                    np.arange(0, 3 * 24),
+                    np.arange(0, 3 * 24),
+                    np.arange(0, 24)
+                ])
+                season_array = np.concatenate([
+                    np.ones(3 * 24) * 1,
+                    np.ones(3 * 24) * 2,
+                    np.ones(3 * 24) * 3,
+                    np.ones(3 * 24) * 4,
+                    np.ones(24) * 5
+                ])
+                df1 = pd.DataFrame(data=df.unstack(level=0))
+                df1['i'] = np.concatenate([time_array] * year)
+                df1['s'] = np.concatenate([season_array] * year)
+                df1 = df1.reset_index()
+                df1.columns = ['y', 'drop', 'total', 'i', 's']
+                df1 = df1.drop('drop', axis=1)
+
+            elif self.block_selection.lower() == 'full_year' or self.block_selection.lower() == 'full_year_my':
+                time_array = np.arange(0, time)
+                season_array = self.season_map
+                df1 = pd.DataFrame(data=df.unstack(level=0))
+                df1['i'] = np.concatenate([time_array] * year)
+                if self.block_selection.lower() == 'full_year_my':
+                    df1['s'] = np.concatenate([season_array[season_array.columns[0]]] * year)
+                else:
+                    df1['s'] = np.concatenate([season_array] * year)
+                df1 = df1.reset_index()
+                df1.columns = ['y', 'drop', 'total', 'i', 's']
+                df1 = df1.drop('drop', axis=1)
+
+            else:
+                raise Exception("Invalid selection")
+
+            return df1.set_index(['y', 's', 'i'])
+
+        # Build (b,y,s,i) dict by region, then buses within that region
+        for r, df_reg in reg_blocks.items():
+            # df_reg: regional block (rows=time-steps, cols=str(year))
+            df1 = _to_y_s_i_total(df_reg)  # index (y,s,i), column 'total'
+            # buses in this region
+            buses_r = bus_df.loc[bus_df['Region'] == r, ['Bus_number', 'w_in_region']]
+            for _, row in buses_r.iterrows():
+                bnum = int(row['Bus_number'])
+                w    = float(row['w_in_region']) 
+                df1[bnum] = df1['total'] * w
+
+            # stack to dict and merge
+            df1 = df1.drop(columns=['total'])
+            df_final = pd.DataFrame(data=df1.stack(level=-1))
+            df_final = df_final.rename_axis(['y', 's', 'i', 'b'], axis=0).reset_index()
+            df_final = df_final.set_index(['b', 'y', 's', 'i'])
+            load_dict_r = df_final.to_dict()[0]
+            # merge into overall dict
+            load_dict.update(load_dict_r)
+
+        return load_dict
 
     def ren_profile_par_adj(self, tech_type):
         '''
@@ -2020,11 +2268,8 @@ class ExplanDataHandler():
             date_selected = self.dt_info[str(
                 years[0])].values
             
-            #Handle leap day if leap year is selected AND leap day is in the load data
-            dates = pd.to_datetime(self.dt_info[str(years[0])].values)
-            has_leap_day = any((d.month == 2 and d.day == 29) for d in dates)
-
-            if calendar.isleap(self.years[0]) and has_leap_day:
+            #Handle leap day if leap year is selected
+            if calendar.isleap(self.years[0]):
                 # Find the row for February 28th
                 #print('yes')
                 feb_28_row = ren_df[ren_df['day'] == "02-28"]
@@ -2062,9 +2307,9 @@ class ExplanDataHandler():
             
         
         ren_df_selected['i'] = time_array
-    
+        
         ren_df_selected['s'] = season_array
-
+        
         ren_df_selected['y'] = years[0]
         
         ren_df_selected = ren_df_selected.set_index(
@@ -2104,7 +2349,6 @@ class ExplanDataHandler():
         ren_df_all_years = ren_df_all_years.to_dict()[0]
         
         ren_df_all_years = self.round_params(ren_df_all_years)
-        #print(ren_df_all_years)
         
         return ren_df_all_years
             

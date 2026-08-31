@@ -1,4 +1,4 @@
-﻿Number,Bus_name,Bus_number,Load_share,LAT,LON,Zone
+﻿Number,Bus_name,Bus_number,Load_share,LAT,LON,Region
 101,Abel,101,1.263157895,33.3961036,-113.835642,1
 102,Adams,102,1.134502924,33.35767844,-113.8259335,1
 103,Adler,103,2.105263158,33.53683282,-114.6703991,1

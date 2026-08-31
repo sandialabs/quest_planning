@@ -4,8 +4,8 @@
 data_folder: 'rts_csv_data_zonal'
 
 #********************Scenario Configuration********************
-scenario: RTS_GMLC_1_Base
-system: RTS_GMLC
+scenario: RTS_GMLC_zonal
+system: RTS_GMLC_Zonal
 tx_model: Transportation
 trans_expansion: False
 load_growth: 1.5
@@ -86,14 +86,14 @@ policy_plot_option: False
 #********Reliability_assessment using ProGRESS tool***************
 rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
  #- 2024
- #- 2028
  - 2032
- #- 2036
  #- 2040
-progress_venv_path: "C:/snl-progress/progress_venv/Scripts/python.exe" #Full path to progress virtual environment python executable. 
-progress_sim_mode: "Zonal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
-#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data.
-ren_data_dir:  "C:/quest_planning/data_explan/data_for_ProGRESS/Zonal" 
+
+progress_sim_mode: "Nodal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
+
+#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data, must have the cdsapi key present.
+ren_data_dir: "./quest_planning/data_explan/data_for_ProGRESS/Zonal"  
 
 num_sample_paths: 1 # How many sample years to simulate
+num_hours: 100 # How many hours to simulate within each sample, default is 8760 hours
 num_mpi_processes: 0 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)

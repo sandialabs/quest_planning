@@ -4,6 +4,8 @@ QuESt Planning - explan optimizer to set up the Pyomo model
 Authors: C. Newlun and W. Olis
 """
 
+from pyexpat import model
+
 import pyomo.environ as pm
 import numpy as np
 import pandas as pd
@@ -14,10 +16,6 @@ from pyomo.util.model_size import build_model_size_report
 from quest_planning.explan.optimizer import Optimizer
 from quest_planning.explan.explan_constraints import ExplanConstraints
 from pyomo.opt import TerminationCondition
-from pyomo.environ import value
-from pyomo.common.timing import report_timing
-import io
-
 
 class ExplanOptimizer(Optimizer):
     
@@ -57,10 +55,67 @@ class ExplanOptimizer(Optimizer):
             #'year')
         tech_nums = self.data_handler.tech_nums
         
-        peak = self.data_handler.find_system_peak()
-        energy = self.data_handler.find_system_energy()
+        # Build generator-year capacity credit dictionary
+        gen_tech = GEN[['Gen_num', 'Tech_Num']].copy()
+        gen_tech['Gen_num'] = gen_tech['Gen_num'].astype(int)
+        gen_tech['Tech_Num'] = gen_tech['Tech_Num'].astype(int)
+        
+        if bool(getattr(self.data_handler, 'varying_CC_mode', None)):      
+            CAPCRED = self.data_handler.load_data[self.index('cap_cred')]
+            capcred = CAPCRED[['Tech_Num', 'Year', 'Cap_Cred']].copy()
+            capcred['Tech_Num'] = capcred['Tech_Num'].astype(int)
+            capcred['Year'] = capcred['Year'].astype(int)
 
-        load_dict = self.data_handler.load_par_adjust()
+            gen_cc_df = gen_tech.merge(capcred, on='Tech_Num', how='left')
+            gen_cc_dict = gen_cc_df.set_index(['Gen_num', 'Year'])['Cap_Cred'].to_dict()
+        else:
+            gen_cc_df = GEN[['Gen_num', 'CapCred']].copy()
+            gen_cc_df['Gen_num'] = gen_cc_df['Gen_num'].astype(int)
+
+            years = self.data_handler.years  # replace with your actual modeled years
+
+            gen_cc_df = (gen_cc_df.merge(pd.DataFrame({'Year': years}), how='cross'))
+
+            gen_cc_dict = (gen_cc_df.set_index(['Gen_num', 'Year'])['CapCred'].to_dict())
+
+        # Old
+        # peak = self.data_handler.find_system_peak()
+        # energy = self.data_handler.find_system_energy()
+        # load_dict = self.data_handler.load_par_adjust()
+        
+
+        # To include regional load growth
+        use_regional = bool(getattr(self.data_handler, 'regional_load_growth', None))
+        
+        if use_regional:
+            # regional blocks → per-bus dict
+            load_dict = self.data_handler.load_par_adjust_regional()
+
+            # regional peaks/energies (DataFrames: cols = regions)
+            reg_peak   = self.data_handler.find_regional_peak()
+            reg_energy = self.data_handler.find_regional_energy()
+
+            # make system-wide equivalents by summing across regions (REGIONAL PATH ONLY)
+            years = [int(y) for y in self.data_handler.years]
+            col   = str(self.data_handler.load_forecast)
+
+            peak_sum   = reg_peak.sum(axis=1)   # Series indexed by year
+            energy_sum = reg_energy.sum(axis=1)
+
+            # normalize index dtype and order to exactly match model.Y
+            peak_sum.index   = peak_sum.index.astype(int)
+            energy_sum.index = energy_sum.index.astype(int)
+
+            peak   = peak_sum.reindex(years).astype(float).to_frame(col)
+            energy = energy_sum.reindex(years).astype(float).to_frame(col)
+
+            # (optional) keep regionals to use later
+            #self.data_handler.regional_peak_df   = reg_peak
+            #self.data_handler.regional_energy_df = reg_energy
+        else:
+            load_dict = self.data_handler.load_par_adjust()
+            peak   = self.data_handler.find_system_peak()  
+            energy = self.data_handler.find_system_energy()
         
         solar_ex_dict = self.data_handler.ren_profile_par_adj('upv_ex')
         wind_ex_dict = self.data_handler.ren_profile_par_adj('wind_ex')
@@ -110,82 +165,62 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['wind_can_cf'] = [
             'b', 'g', 'y', 's', 'i']
 
-        #Trnsmission params
-        line_X_dict = {row.Line_Number: row.X for idx, row in BRANCH.iterrows()}
-        line_fw_dict = {row.Line_Number: row.Rating_F for idx, row in BRANCH.iterrows()}
-        line_bw_dict = {row.Line_Number: row.Rating_B for idx, row in BRANCH.iterrows()}
-        line_cost_dict = {row.Line_Number: row.Tx_cost for idx, row in BRANCH.iterrows()}
-        line_limit_dict = {row.Line_Number: row.Tx_limit for idx, row in BRANCH.iterrows()}
-        line_lt_dict = {row.Line_Number: row.Lead_Time for idx, row in BRANCH.iterrows()}
-        line_from_dict = {row.Line_Number: row.From_Bus_Number for idx, row in BRANCH.iterrows()}
-        line_to_dict = {row.Line_Number: row.To_Bus_Number for idx, row in BRANCH.iterrows()}
+        #Region definitions (new by GCP)
+        model.R = pm.Set(initialize=list(BUS['Region'].dropna().unique()))
+        bus_region_dict = BUS.set_index('Bus_number')['Region'].to_dict()
+        model.bus_region = pm.Param(model.B, initialize=bus_region_dict)
+        par_index_labels['bus_region'] = ['b']
 
         # turn off market sharing for specific scenario - Not used now..
         if self.data_handler.scenario == 'No Market Share':
             BRANCH['Rating_F'][1] = self.data_handler.market_share_max
             BRANCH['Rating_B'][1] = self.data_handler.market_share_max
+        #Existing forward line capacity - same as bw if nodal
+        def line_ex_fw_cap_init(model, l):
+            return BRANCH['Rating_F'].values[l-1]
+        model.line_ex_fw_cap = pm.Param(
+            model.L, initialize=line_ex_fw_cap_init)
+        par_index_labels['line_ex_fw_cap'] = ['l']
         
+        #Existing backward line capacity - same as fw if nodal
+        def line_ex_bw_cap_init(model, l):
+            return BRANCH['Rating_B'].values[l-1]
+        model.line_ex_bw_cap = pm.Param(
+            model.L, initialize=line_ex_bw_cap_init)
+        par_index_labels['line_ex_bw_cap'] = ['l']
+
+        #Existing line reactance
         def line_ex_imp_init(model, l):
-            x_raw = line_X_dict[l]
-            x_min = 0.0005
-            if x_raw < x_min:
-                print(f"Warning: line {l} X={x_raw:.4f} p.u. clipped to {x_min} p.u.")
-            return max(x_raw, x_min)
-        
-        model.line_X = pm.Param(model.L, initialize=line_ex_imp_init)
+            return BRANCH['X'].values[l-1] 
+        model.line_X = pm.Param(
+            model.L, initialize=line_ex_imp_init)
         par_index_labels['line_X'] = ['l']
 
-        scale_factor = 1.0  # double all line ratings temporarily
-        #model.line_ex_fw_cap[l] *= scale_factor
-        #model.line_ex_bw_cap[l] *= scale_factor
-        def line_ex_fw_cap_init(model, l):
-            return line_fw_dict[l]*scale_factor
-
-        model.line_ex_fw_cap = pm.Param(model.L, initialize=line_ex_fw_cap_init)
-        par_index_labels['line_ex_fw_cap'] = ['l']
-
-        def line_ex_bw_cap_init(model, l):
-            return line_bw_dict[l]*scale_factor
-
-        model.line_ex_bw_cap = pm.Param(model.L, initialize=line_ex_bw_cap_init)
-        par_index_labels['line_ex_bw_cap'] = ['l']
-        
-        
-
+        #Line cost calculation 
+        #TODO: update cost numbers
         def line_cost_init(model, l):
-            return line_cost_dict[l]
-
-        model.line_cost = pm.Param(model.L, initialize=line_cost_init)
+            # just 1 column
+            lc = BRANCH['Tx_cost'].values[l-1]
+            return lc
+        model.line_cost = pm.Param(
+            model.L, initialize=line_cost_init)
         par_index_labels['line_cost'] = ['l']
-
+        
+        #Limit on tx investment per line
         def line_ex_limit_init(model, l):
-            return line_limit_dict[l]
-
-        model.line_ex_limit = pm.Param(model.L, initialize=line_ex_limit_init)
+            # just 1 column
+            return BRANCH['Tx_limit'].values[l-1]
+        model.line_ex_limit = pm.Param(
+            model.L, initialize=line_ex_limit_init)
         par_index_labels['line_ex_limit'] = ['l']
 
+        #lead time of transmisison investment
         def line_lt_init(model, l):
-            return line_lt_dict[l]
-
-        model.line_lt = pm.Param(model.L, initialize=line_lt_init)
+            # just 1 column
+            return BRANCH['Lead_Time'].values[l-1]
+        model.line_lt = pm.Param(
+            model.L, initialize=line_lt_init)
         par_index_labels['line_lt'] = ['l']
-
-        # Precompute from/to buses as Params
-        model.from_bus = pm.Param(model.L, initialize=line_from_dict)
-        model.to_bus = pm.Param(model.L, initialize=line_to_dict)
-        
-        '''
-        print("\n=== Line parameters check ===")
-        for l in model.L:
-            print(f"Line {l}: X={value(model.line_X[l]):.4f}, "
-                f"PF_fw={value(model.line_ex_fw_cap[l]):.1f}, "
-                f"PF_bw={value(model.line_ex_bw_cap[l]):.1f}, "
-                f"Cost={value(model.line_cost[l])}, "
-                f"Limit={value(model.line_ex_limit[l])}, "
-                f"LeadTime={value(model.line_lt[l])}, "
-                f"From={value(model.from_bus[l])}, To={value(model.to_bus[l])}")
-        '''
-
 
         #RPS policy
         rps = POLICY['RPS'].filter(items=self.data_handler.years, axis=0)
@@ -219,7 +254,7 @@ class ExplanOptimizer(Optimizer):
             model.G, initialize=co2_gen_init)
         par_index_labels['gen_CO2'] = ['g']
         
-        # Discount factor with end effects 
+        # Discount factor with end effects TODO: fix the calculation and disregard csv
         def discount_factor_end_eff_init(model, y):
             money_years = np.arange(base_currency_year,self.data_handler.years[-1]+1)
             if self.data_handler.block_selection.lower() == 'Full_Year'.lower():
@@ -451,17 +486,24 @@ class ExplanOptimizer(Optimizer):
             model.G, initialize=gen_hr_init)
         par_index_labels['G_hr'] = ['g']
 
-        # Capacity credit of generator
-        def gen_cc_init(model, g):
-            cc = GEN[['Gen_num', 'CapCred']
-                     ].set_index('Gen_num')
-            cc.index = cc.index.map(
-                int)  # .index.astype(str)
-            cc = cc.to_dict()['CapCred']
-            return cc[g]
-        model.G_cc = pm.Param(
-            model.G, initialize=gen_cc_init)
-        par_index_labels['G_cc'] = ['g']
+        # Capacity credit of generator (Old version)
+        # def gen_cc_init(model, g):
+        #     cc = GEN[['Gen_num', 'CapCred']
+        #              ].set_index('Gen_num')
+        #     cc.index = cc.index.map(
+        #         int)  # .index.astype(str)
+        #     cc = cc.to_dict()['CapCred']
+        #     return cc[g]
+        # model.G_cc = pm.Param(
+        #     model.G, initialize=gen_cc_init)
+        # par_index_labels['G_cc'] = ['g']
+
+        # New capacity credit based on generator technology and year - from separate csv by GCP
+        def gen_cc_init(model, g, y):
+            return gen_cc_dict[(g, y)]
+
+        model.G_cc = pm.Param(model.G, model.Y, initialize=gen_cc_init)
+        par_index_labels['G_cc'] = ['g', 'y']
 
         # Dynamic ELCC - TODO
 
@@ -528,18 +570,95 @@ class ExplanOptimizer(Optimizer):
             model.G, initialize=gen_year_avail_init)
         par_index_labels['G_y_avail'] = ['g']
         
-        # Annual peak demand of system
-        peak_dict = peak[self.data_handler.load_forecast].filter(
-            items=self.data_handler.years, axis=0).to_dict()
-        model.PEAK = pm.Param(model.Y, initialize=peak_dict)
-        par_index_labels['PEAK'] = ['g']
+        # Old - Annual peak demand of system
+        # peak_dict = peak[self.data_handler.load_forecast].filter(
+        #     items=self.data_handler.years, axis=0).to_dict()
+        # model.PEAK = pm.Param(model.Y, initialize=peak_dict)
+        # par_index_labels['PEAK'] = ['y']
 
-        # Annual energy consumption of system
-        energy_dict = energy[self.data_handler.load_forecast].filter(
-            items=self.data_handler.years, axis=0).to_dict()
-        model.ENERGY = pm.Param(
-            model.Y, initialize=energy_dict)
-        par_index_labels['ENERGY'] = ['g']
+        # # Old - Annual energy consumption of system
+        # energy_dict = energy[self.data_handler.load_forecast].filter(
+        #     items=self.data_handler.years, axis=0).to_dict()
+        # model.ENERGY = pm.Param(
+        #     model.Y, initialize=energy_dict)
+        # par_index_labels['ENERGY'] = ['y']
+
+        # Build PEAK / ENERGY dicts and create Params (by GCP)
+        years = [int(y) for y in self.data_handler.years]
+
+        if use_regional:
+            # REGIONAL: sum across region columns -> Series indexed by year
+            rp = reg_peak.copy()
+            re = reg_energy.copy()
+            rp.index = rp.index.astype(int)
+            re.index = re.index.astype(int)
+            rp = rp.reindex(years).fillna(0.0)
+            re = re.reindex(years).fillna(0.0)
+
+            peak_sum   = rp.sum(axis=1) 
+            energy_sum = re.sum(axis=1)  
+
+            # Explicit dicts for Pyomo
+            peak_dict   = {y: float(peak_sum.loc[y])   for y in years}
+            energy_dict = {y: float(energy_sum.loc[y]) for y in years}
+
+            # Regional peak parameter
+            peak_reg_dict = {
+                (r, y): float(rp.loc[y, r])
+                for y in years
+                for r in rp.columns
+            }
+
+            def peak_reg_init(model, r, y):
+                return peak_reg_dict[(r, y)]
+
+            model.PEAK_REG = pm.Param(model.R, model.Y, initialize=peak_reg_init)
+            par_index_labels['PEAK_REG'] = ['r', 'y']
+
+            model.PEAK   = pm.Param(model.Y, initialize=peak_dict)
+            model.ENERGY = pm.Param(model.Y, initialize=energy_dict)
+
+            # Regional PRM parameter
+            PRM = self.data_handler.load_data[self.index('prm')].copy()
+            PRM['Region'] = PRM['Region'].astype(int)
+            PRM['Year'] = PRM['Year'].astype(int)
+            PRM['PRM'] = PRM['PRM'].astype(float) / 100.0
+
+            prm_dict = PRM.set_index(['Region', 'Year'])['PRM'].to_dict()
+
+            def prm_init(model, r, y):
+                return prm_dict[(r, y)]
+
+            model.PRM = pm.Param(model.R, model.Y, initialize=prm_init)
+            par_index_labels['PRM'] = ['r', 'y']
+
+            print("Regions in model.R:", list(model.R.data()))
+            print("Bus-region mapping:", {b: pm.value(model.bus_region[b]) for b in model.B})
+            print("PRM values:", {(r, y): pm.value(model.PRM[r, y]) for r in model.R for y in model.Y})
+            print("PEAK_REG values:", {(r, y): pm.value(model.PEAK_REG[r, y]) for r in model.R for y in model.Y})
+
+            for r in model.R:
+                buses = [
+                    b for b in model.B
+                    if int(pm.value(model.bus_region[b])) == int(r)
+                ]
+                print(f"Region {r}: {len(buses)} buses")
+
+        else:
+            # SYSTEM-WIDE: keep prior behavior (unchanged)
+            peak_dict = peak[self.data_handler.load_forecast].filter(
+                items=self.data_handler.years, axis=0).to_dict()
+            model.PEAK = pm.Param(model.Y, initialize=peak_dict)
+
+            energy_dict = energy[self.data_handler.load_forecast].filter(
+                items=self.data_handler.years, axis=0).to_dict()
+            model.ENERGY = pm.Param(model.Y, initialize=energy_dict)
+
+        # Register labels so post-processing doesn’t KeyError
+        par_index_labels["PEAK"]   = ["y"]
+        par_index_labels["ENERGY"] = ["y"]
+
+
 
         #Round trip efficiency of ES technologies
         def es_rt_eff_init(model, g):
@@ -674,23 +793,9 @@ class ExplanOptimizer(Optimizer):
         model.year_gap_array = pm.Param(
             model.Y, initialize=dict(zip(self.data_handler.years, self.data_handler.year_gap_array)))
         par_index_labels['year_gap_array'] = ['y']
-
-        # Grab branch data once
-        branch_df = self.data_handler.load_data[self.index('branch')]
-
-        # Create mapping dicts (line index -> bus number)
-        from_bus_map = {l+1: branch_df.loc[l, 'From_Bus_Number'] for l in branch_df.index}
-        to_bus_map   = {l+1: branch_df.loc[l, 'To_Bus_Number']   for l in branch_df.index}
-
-        model.from_bus = pm.Param(model.L, initialize=from_bus_map)
-        par_index_labels['from_bus'] = ['y']
-        model.to_bus   = pm.Param(model.L, initialize=to_bus_map)
-        par_index_labels['to_bus'] = ['y']
+        self.par_index_labels = par_index_labels
 
         model.CostScale = pm.Param(initialize=1e-6)
-        par_index_labels['CostScale'] = ['i']
-
-        self.par_index_labels = par_index_labels
         
     def _set_model_var(self):
         """A method for initializing model decision variables for the model."""
@@ -806,12 +911,6 @@ class ExplanOptimizer(Optimizer):
         #Bus angle for DC power flow calculation
         model.theta = pm.Var(model.B, model.Y, model.S_I, domain=pm.Reals, bounds=(-np.pi/3,
                                                                         np.pi/3))  # power flow angle - set the bounds
-        #set slack bus angle to 0
-        if self.data_handler.tx_model == 'dc':
-            for y in model.Y:
-                for (s,i) in model.S_I:
-                        model.theta[113, y, s, i].fix(0)
-
         var_index_labels['theta'] = ['b','y', 's', 'i']
 
         # Load not served
@@ -1076,7 +1175,6 @@ class ExplanOptimizer(Optimizer):
             zip(B_G_ng_df['Bus_num'].values, B_G_ng_df['Gen_num'].values)))
 
         # bus_gen pair-ng cand only
-
         B_G_ng_can_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
             np.intersect1d(tech_nums['candidates'], tech_nums['ng']))]
 
@@ -1144,13 +1242,8 @@ class ExplanOptimizer(Optimizer):
         print("Pyomo Model Successfully Built")
         print("Press the Solve Button")
         
-        #self.log_report_timing(self.model)# - only used for testing and model setup time logging; let's keep for now
-    
-    def log_report_timing(self,model, logger=logging.getLogger(__name__)):
-        buf = io.StringIO()
-        report_timing(model, ostream=buf)   # capture timing into buffer
-        logger.info("\n" + buf.getvalue())  # dump into log file
-    
+        #pct.report_timing(self.model)# - only used for testing and model setup time logging; let's keep for now
+
     def solve_model(self):
         """Solves the model using the specified solver."""
 
@@ -1161,7 +1254,7 @@ class ExplanOptimizer(Optimizer):
                 self.model, opt=opt)
         elif self.solver == "gurobi":
             solver = pm.SolverFactory(self.solver)
-            solver.options["MIP_gap"] = 0.005
+
             try:
                 solver.available()
             except pyutilib.common._exceptions.ApplicationError as e:
@@ -1182,8 +1275,7 @@ class ExplanOptimizer(Optimizer):
             print(results)
         else:
             solver = pm.SolverFactory(self.solver)
-            solver.options["mipgap"] = 0.01
-            #solver.options["emphasis"] = 1
+
             try:
                 solver.available()
             except pyutilib.common._exceptions.ApplicationError as e:
@@ -1192,7 +1284,7 @@ class ExplanOptimizer(Optimizer):
             else:
                 
                 results = solver.solve(
-                    self.model, tee=True, keepfiles=True)
+                    self.model, tee=True, keepfiles=True, symbolic_solver_labels=True)
                 
                 #logger = logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
                 #log_infeasible_constraints(self.model, log_expression=True, log_variables=True,logger = logger)        

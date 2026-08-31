@@ -1,35 +1,47 @@
 # ***QuESt Planning Configuration File***
-# CJN - Updated 7/12/24
-
 
 #********************Data Folder********************
-data_folder: 'rts_csv_data_zonal'
+data_folder: 'rts_csv_data_extended'
 
 #********************Scenario Configuration********************
-scenario: RTS_GMLC_1_Base
-system: RTS_GMLC
+scenario: RTS_GMLC_Extended
+system: RTS_GMLC_Extended
 tx_model: Transportation
 trans_expansion: False
-load_growth: 0
-load_forecast: system_wide
 es_cost: Base
 ldes_switch: False
 
+#******************** Load Growth********************
+#If System-wide load growth is used:
+system-wide_load_growth: 1.5
+load_forecast: system_wide
+
+#If Regional load growth is used:
+regional_load_growth_option: True
+regional_load_growth:  
+ - region: 1
+   growth: 0.5
+ - region: 2
+   growth: 2.5
+ - region: 3
+   growth: 5.0
+regional_prm: True #If set to true, prm.csv file must be populated
+
+#********************Capacity Credits****************
+time_varying_capacity_credit: True #If set to True, cap_cred.csv file must be populated
+
 #********************Time Horizon********************
-start_year: 2024
-end_year: 2040
+start_year: 2025
+end_year: 2055
 #year_gap: 16
 years:
-  - 2024
- # - 2024
- # - 2028
-  - 2032
- # - 2036
- # - 2040
+  - 2030
+  - 2040
+  - 2050
 
 #********************Economic Parameters********************
-discount_rate: 5
-base_curr_year: 2021
+discount_rate: 6
+base_curr_year: 2025
 end_effects: 10
 voll: 100000
 tax_credit_end_year: 2032
@@ -41,7 +53,7 @@ ini_level: 50
 es_lifetime_extension: 50
 
 #********************Modeling Options:********************
-block_selection: Repr_3Days_Season
+block_selection: seasonal_blocks #Repr_3Days_Season
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
@@ -86,10 +98,10 @@ limit_by_buses: null
 
 
 #********************System-wide resource limits********************
-system_wide_wind_max: 10000
-system_wide_solar_max: 150000000
-system_wide_gas_max: 0
-system_wide_tx_expansion_max: 3000
+system_wide_wind_max: 16000
+system_wide_solar_max: 16000
+system_wide_gas_max: 16000
+system_wide_tx_expansion_max: 10000
 
 #********************Reserves Parameters********************
 prm: 20
@@ -112,22 +124,17 @@ solver: cplex
 stacked_bar_by_bus: False
 policy_plot_option: False
 
-#********Export data to ProGRESS tool***************
+#********Reliability_assessment using ProGRESS tool (Optional)***************
 rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
- #- 2024
- #- 2028
- - 2032
- #- 2036
- #- 2040
-progress_venv_path: "C:/Dilip/Quest_Reliability/PRoGRESS_multiperiod/cds_branch/cds_venv/Scripts/python.exe"
-progress_sim_mode: "Zonal"
-#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data.
-ren_data_dir:  "C:\\Dilip\\CRADA\\quest_planning_reliability\\quest_planning\\quest_planning\\data_explan\\data_for_ProGRESS\\Zonal" 
+ - 2030
+ - 2040
+ - 2050
+
+progress_sim_mode: "Nodal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
+
+#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data, must have the cdsapi key present.
+ren_data_dir: "./quest_planning/data_explan/data_for_ProGRESS/Nodal_Extended"  
 
 num_sample_paths: 1 # How many sample years to simulate
-num_mpi_processes: 2 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)
-
-
-
-
-
+num_hours: 100 # How many hours to simulate within each sample, default is 8760 hours
+num_mpi_processes: 0 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)

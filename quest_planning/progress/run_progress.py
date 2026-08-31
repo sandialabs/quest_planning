@@ -24,6 +24,9 @@ import copy
 import yaml 
 import subprocess
 import textwrap
+from pathlib import Path
+from quest_planning.paths import get_path
+root_dir = Path(get_path())
 
 class ProGRESS_Exporter:
     """
@@ -46,7 +49,7 @@ class ProGRESS_Exporter:
             `config` required by the exporter.
     """
 
-    def __init__(self, exp_obj):
+    def __init__(self, exp_obj, venv_path = None):
         """
         Initialize exporter with an experiment object.
 
@@ -55,14 +58,21 @@ class ProGRESS_Exporter:
         ranges required for external data generation.
 
         Parameters:
-            exp_obj: experiment object
-                Must contain `data_handler`, `results`, and `config`.
+            exp_obj: Must contain `data_handler`, `results`, and `config`.
+            venv_path (Path): Optional, path to ProGRESS venv python executable
         """
         self.data_inputs = exp_obj.data_handler
         self.results = exp_obj.results
         self.index = self.data_inputs.data_ls.index
 
-        self.progress_path = exp_obj.config["progress_venv_path"]
+        if venv_path:
+            self.progress_path = venv_path
+        else:
+            if sys.platform == "win32":
+                self.progress_path = (root_dir / "progress" / "env_progress" / "Scripts" / "python.exe")
+            else:  # macOS and Linux
+                self.progress_path = (root_dir / "progress" / "env_progress" / "bin" / "python")
+        
         sys.path.append(self.progress_path)
        
         self.sim_option = exp_obj.config.get("progress_sim_mode", "Nodal")
@@ -74,6 +84,7 @@ class ProGRESS_Exporter:
             self.existing_wind_dir = None
             self.existing_solar_dir = None
         self.num_sample_paths = exp_obj.config.get("num_sample_paths", 1)
+        self.num_hours = exp_obj.config.get('num_hours', 8760)
         self.num_mpi_processes = exp_obj.config.get("num_mpi_processes", 0)
 
     def export_data(self, export_years):
@@ -150,13 +161,14 @@ class ProGRESS_Exporter:
 
         # Monte Carlo simulation parameters
         config_dict["samples"] = self.num_sample_paths
-        config_dict["sim_hours"] = 8760
+        config_dict["sim_hours"] = self.num_hours
         config_dict["load_factor"] = 1
         config_dict["model"] = self.sim_option
         config_dict["optimization_period"] = 24
         config_dict["evaluate_degradation"] = False
         config_dict["degradation_interval"] = 168
         config_dict["detailed_thermal_model"] = False
+        config_dict["use_pcm"] = False
         
         class QuotedDumper(yaml.SafeDumper):
             pass
@@ -187,7 +199,7 @@ class ProGRESS_Exporter:
         bus_df = pd.DataFrame({
             'Bus Name': exp_bus_df.get('Bus_name'),
             'Bus No.': exp_bus_df.get('Bus_number'),
-            "Zone": exp_bus_df.get('Zone'),
+            "Zone": exp_bus_df.get('Region'),
         })
         
         original_bus_numbers = bus_df["Bus No."].tolist()
@@ -237,7 +249,19 @@ class ProGRESS_Exporter:
         load_file_path = os.path.join(folder_path, "load.csv")
         explan_load_df = self.data_inputs.load_data[self.index('load')]
         base_load_year = int(self.data_inputs.load_data[self.index('load')].loc[0,'year'])
-        system_wide_load = np.array((1 + (current_year - base_load_year) * self.data_inputs.load_growth) * explan_load_df.loc[:,'system_wide'])
+        if self.data_inputs.regional_load_growth is None: 
+            system_wide_load = np.array(((1 + self.data_inputs.load_growth) ** (current_year - base_load_year)) * explan_load_df.loc[:, 'system_wide']) #New
+        else:
+            zonal_system_load = {}
+            regional_base_share = (exp_bus_df.groupby("Region")["Load_share"].sum().astype(float) / 100)
+
+            for zone, g in self.data_inputs.regional_load_growth.items():
+                zonal_system_load[zone] = np.array(
+                    regional_base_share.loc[zone]
+                    * ((1 + g) ** (current_year - base_load_year))
+                    * explan_load_df.loc[:, 'system_wide']
+                ) 
+            system_wide_load = sum(zonal_system_load.values())
 
         load_dict = {}
         load_dict["datetime"] = list(explan_load_df.loc[:,"datetime"])
@@ -284,7 +308,8 @@ class ProGRESS_Exporter:
         gen_dict["Bus Name"] = thermal_gen_df.get("Bus").values
         gen_dict["Bus No."] =  [self.bus_newbus_mapper.get(bus, bus) if self.bus_newbus_mapper else bus for bus in thermal_gen_df.get("Bus_num").values]
         gen_dict["Zone"] = [self.bus_zone_mapper.get(bus, bus) for bus in gen_dict["Bus No."]]
-        gen_dict["Tech"] =  thermal_gen_df.get("Tech").values
+        gen_dict["Type"] = ['Thermal']*len(thermal_gen_df.iloc[:,0])
+        gen_dict["Fuel"] =  thermal_gen_df.get("Tech").values
         gen_dict["Max Cap"] = current_year_gen_mix.loc[thermal_gen_df.index,"Value"].values
         gen_dict["Min Cap"] = pd.Series([0]*n_gen).values
         gen_dict["FOR"] =  thermal_gen_df.get("FOR", pd.Series([0.02]*n_gen)).replace(0,0.02).values
@@ -294,6 +319,7 @@ class ProGRESS_Exporter:
         gen_dict["Cost"] = (thermal_gen_df["HR"]*thermal_gen_df[str(current_year)]).values
 
         gen_df = pd.DataFrame(gen_dict)
+        column_order = ["Gen No.", "Gen Name", "Bus Name", "Bus No.","Zone","Type","Fuel","Max Cap","Min Cap","FOR","MTTR","MTTF","Cost"]
         gen_df = gen_df[gen_df["Max Cap"] != 0]
         gen_df.to_csv(gen_file_path, index = False)
 
@@ -340,7 +366,7 @@ class ProGRESS_Exporter:
         storage_dict["Efficiency"] = storage_dat.loc[storage_df.index, "RTE"]
         storage_dict["Discharge Cost"] = pd.Series([20]*n_storage).values
         storage_dict["Charge Cost"] = pd.Series([0]*n_storage).values
-        storage_dict["Units"] = np.maximum(np.ceil(storage_power_ratings / 50).astype(int), 1)
+        storage_dict["Units"] = np.maximum(np.ceil(storage_power_ratings / 5).astype(int), 1)
         storage_dict["MTTF"] =  storage_df.get("MTTF", pd.Series([2000]*n_storage)).values
         storage_dict["MTTR"] = storage_df.get("MTTR", pd.Series([30]*n_storage)).values
 
@@ -420,7 +446,7 @@ class ProGRESS_Exporter:
         solar_dict["Latitude"] = solar_data_locations_reset["LAT"]
         solar_dict["Longitude"] = solar_data_locations_reset["LON"]
         solar_dict["MW_Capacity"] = solar_data_df_reset["Cap"]
-        solar_dict["tracking"] = pd.Series([1]*n_solar)
+        solar_dict["Tracking"] = pd.Series([1]*n_solar)
         solar_dict["Bus No."] = solar_buses
         solar_dict["Zone"] = solar_zones
 
@@ -550,7 +576,7 @@ class ProGRESS_Exporter:
             current_data_path = os.path.join(folder_path, str(year))
             current_yaml_file = os.path.join(current_data_path, "input.yaml")
             
-            print(f"Running ProGRESS for year {year}...")
+            print(f"Running reliability assessment using ProGRESS for year {year}...")
             results_subdir = os.path.join(current_data_path, 'Results')
             os.makedirs(results_subdir, exist_ok=True)
             
