@@ -20,7 +20,8 @@ import textwrap
 import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
-
+from quest_planning.paths import get_path
+base_dir = get_path()
 
 class ExplanResultsViewer():
 
@@ -566,11 +567,11 @@ class ExplanResultsViewer():
     def create_results_folder(self,filepath):
         # Create Results folder
         if filepath == None or filepath == '':
-            filepath = os.getcwd()
+            filepath = base_dir #os.getcwd()
             results_folder_path = os.path.join(
-                filepath,'quest_planning','Results')
+                filepath, 'Results')
             results_subfolder_path = os.path.join(
-                filepath,'quest_planning','Results', self.data_handler.system+'_Results')
+                filepath,'Results', self.data_handler.system+'_Results')
         else:
             #filepath = filepath
             results_folder_path = filepath
@@ -583,7 +584,7 @@ class ExplanResultsViewer():
             os.mkdir(results_subfolder_path)
         
         # all results
-        folder_name = str(self.data_handler.scenario)+'_LG' +str(self.data_handler.load_growth)+'_ESC'+str(self.data_handler.es_cost)+'_LDES'+str(self.data_handler.ldes_switch)+'_tx-'+ str(self.data_handler.tx_model)+str(self.data_handler.years[0])+'-'+str(self.data_handler.years[-1]) +'_'+str(self.timestamp)+'_'+str(self.data_handler.system)
+        folder_name = str(self.timestamp)+'_'+str(self.data_handler.system)
         self.folder_path = os.path.join(results_folder_path, folder_name)
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
@@ -713,9 +714,7 @@ class ExplanResultsViewer():
 
         """
 
-        filename = self.folder_path+'\\'+str(self.data_handler.scenario)+'_' + \
-            str(self.data_handler.start_year)+'-' + str(self.data_handler.end_year) + \
-            '_results_'+self.timestamp+'.xlsx'
+        filename = os.path.join(self.folder_path,'results_summary.xlsx')
         writer = pd.ExcelWriter(
             filename)  # , engine='xlsxwriter')
 
@@ -750,113 +749,130 @@ class ExplanResultsViewer():
         #global fg
         
         tech_colors = {
-        'Nuclear': 'darkred',
-        'Coal': 'black',
-        'Oil_CT': 'slategrey',
-        'Oil_ST': 'lightslategrey',
-        'Hydro': 'steelblue',
-        'Gas': 'darkgrey',
-        'Gas_CC': 'silver',
-        'Gas_CT': 'dimgray',
-        'Gas (New)': 'silver',
-        'Geothermal': 'rosybrown',
-        'Wind PPA': 'darkgreen',
-        'Wind_PPA': 'darkgreen',
-        'Wind': 'darkgreen',
-        'Solar': 'yellow',
-        'Solar_PPA': 'yellow',
-        'Solar_RT': 'khaki',
-        'CSP': 'darkgoldenrod',
-        'Solar PPA': 'goldenrod',
-        'ES PPA': 'lightsteelblue',
-        'ES_PPA': 'lightsteelblue',
-        'ES': 'lightsteelblue',
-        'Nat. Gas H2 Conv. (New)': 'lightgrey',
-        'Wind (New)': 'lime',
-        'Solar (New)': 'gold',
-        'ES 4hr (New)': 'royalblue',
-        'ES 6hr (New)': 'blue',
-        'ES 8hr (New)': 'slateblue',
-        'ES 10hr (New)': 'darkviolet',
-        'ES 100hr (New)': 'deeppink',
-        'ES (2-4 hrs.)': 'royalblue',
-        'ES 6hr (New)': 'blue',
-        'ES 8hr (New)': 'slateblue',
-        'ES 10hr (New)': 'darkviolet',
-        'ES 100hr (New)': 'deeppink',
-        'Li-Ion Battery (New)': 'royalblue',
-        'Li-Ion Battery (New) (0-2 hrs.)': '#add8e6',
-        'Li-Ion Battery (New) (2-4 hrs.)': '#87ceeb',
-        'Li-Ion Battery (New) (4-6 hrs.)': '#4682b4',
-        'Li-Ion Battery (New) (6-8 hrs.)': '#4169e1',
-        'Li-Ion Battery (New) (8-10 hrs.)': '#0000ff',
-        'Li-Ion Battery (New) (10-15 hrs.)': '#0000cd',
-        'Li-Ion Battery (New) (15-24 hrs.)': '#00008b',
-        'Li-Ion Battery (New) (24+ hrs.)': '#000080',
-        'Flow Battery (New)': 'darkviolet',
-        'Grav (New)': 'orangered',
-        'PSH (New)': 'darkblue',
-        'Therm (New)': 'salmon',
-        'CAES (New)': 'chocolate',
-        'Demand Response (New)': 'cyan',
-        'LDES (New)': 'deeppink',
-        'Zinc (New)': 'darkturquoise',
-        'Hydrogen (New)': 'pink',
-        'Iron Air (New)': 'white',
-        'ES PPA-charge': 'lightblue',
-        'ES-discharge': 'lightblue',
-        'ES 4hr (New)-charge': 'lightskyblue',
-        'ES 6hr (New)-charge': 'deepskyblue',
-        'ES 8hr (New)-charge': 'steelblue',
-        'ES 10hr (New)-charge': 'darkslateblue',
-        'ES 100hr (New)-charge': 'darkblue',
-        'Li-Ion Battery (New)-charge': 'royalblue',
-        'Li-Ion Battery 1 (New)-charge': 'royalblue',
-        'Li-Ion Battery 2 (New)-charge': 'royalblue',
-        'Li-Ion Battery 3 (New)-charge': 'royalblue',
-        'Li-Ion Battery 4 (New)-charge': 'royalblue',
-        'Li-Ion Battery 5 (New)-charge': 'royalblue',
-        'Li-Ion Battery 6 (New)-charge': 'royalblue',
-        'Li-Ion Battery 7 (New)-charge': 'royalblue',
-        'Li-Ion Battery 8 (New)-charge': 'royalblue',
-        'Li-Ion Battery 9 (New)-charge': 'royalblue',
-        'Li-Ion Battery 10 (New)-charge': 'royalblue',
-        'Flow Battery (New)-charge': 'darkviolet',
-        'Grav (New)-charge': 'orangered',
-        'PSH (New)-charge': 'darkblue',
-        'Therm (New)-charge': 'salmon',
-        'CAES (New)-charge': 'chocolate',
-        'LDES (New)-charge': 'darkblue',
-        'Zinc (New)-charge': 'darkturquoise',
-        'Hydrogen (New)-charge': 'pink',
-        'ES PPA-discharge': 'lightpink',
-        'ES-charge': 'lightpink',
-        'ES 4hr (New)-discharge': 'hotpink',
-        'ES 6hr (New)-discharge': 'deeppink',
-        'ES 8hr (New)-discharge': 'mediumvioletred',
-        'ES 10hr (New)-discharge': 'mediumorchid',
-        'ES 100hr (New)-discharge': 'purple',
-        'Li-Ion Battery (New)-discharge': 'hotpink',
-        'Li-Ion Battery 1 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 2 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 3 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 4 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 5 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 6 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 7 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 8 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 9 (New)-discharge': 'hotpink',
-        'Li-Ion Battery 10 (New)-discharge': 'hotpink',
-        'Flow Battery (New)-discharge': 'mediumorchid',
-        'Grav (New)-discharge': 'lightsalmon',
-        'PSH (New)-discharge': 'lightblue',
-        'Therm (New)-discharge': 'salmon',
-        'CAES (New)-discharge': 'sandybrown',
-        'LDES (New)-discharge': 'purple',
-        'Zinc (New)-discharge': 'aquamarine',
-        'Hydrogen (New)-discharge': 'plum',
-        'Curtailment': 'moccasin'
-        }
+                'Nuclear': 'darkred',
+                'Coal': 'black',
+                'Oil_CT': 'slategrey',
+                'Oil_ST': 'lightslategrey',
+                'Hydro': 'steelblue',
+                'Gas': 'darkgrey',
+                'Gas_CC': 'silver',
+                'Gas_CT': 'dimgray',
+                'Gas_CT (New)': 'lightgrey',     
+                'Gas_CC (New)': 'darkgrey',
+                'Geothermal': 'rosybrown',
+                'Wind PPA': 'darkgreen',
+                'Wind_PPA': 'darkgreen',
+                'Wind': 'darkgreen',
+                'Solar': 'yellow',
+                'Solar_PPA': 'yellow',
+                'Solar_RT': 'khaki',
+                'CSP': 'darkgoldenrod',
+                'Solar PPA': 'goldenrod',
+                'ES PPA': 'lightsteelblue',
+                'ES_PPA': 'lightsteelblue',
+                'ES': 'lightsteelblue',
+                'Wind (New)': 'lime',
+                'Solar (New)': 'gold',
+                'ES 4hr (New)': 'royalblue',
+                'ES 6hr (New)': 'blue',
+                'ES 8hr (New)': 'slateblue',
+                'ES 10hr (New)': 'darkviolet',
+                'ES 100hr (New)': 'deeppink',
+                'ES (2-4 hrs.)': 'royalblue',
+                'ES 6hr (New)': 'blue',
+                'ES 8hr (New)': 'slateblue',
+                'ES 10hr (New)': 'darkviolet',
+                'ES 100hr (New)': 'deeppink',
+                'Li-Ion Battery (New)': 'royalblue',
+                'Li-Ion Battery (New) (0-2 hrs.)': '#add8e6',
+                'Li-Ion Battery (New) (2-4 hrs.)': '#87ceeb',
+                'Li-Ion Battery (New) (4-6 hrs.)': '#4682b4',
+                'Li-Ion Battery (New) (6-8 hrs.)': '#4169e1',
+                'Li-Ion Battery (New) (8-10 hrs.)': '#0000ff',
+                'Li-Ion Battery (New) (10-15 hrs.)': '#0000cd',
+                'Li-Ion Battery (New) (15-24 hrs.)': '#00008b',
+                'Li-Ion Battery (New) (24+ hrs.)': '#000080',
+                'Flow Battery (New)': 'darkviolet',
+                'Flow Battery (New) (0-2 hrs.)': '#f8bbee',  # LightPink
+                'Flow Battery (New) (2-4 hrs.)': '#ee82ee',  # Violet
+                'Flow Battery (New) (4-6 hrs.)': '#dda0dd',  # Plum
+                'Flow Battery (New) (6-8 hrs.)': '#da70d6',  # Orchid
+                'Flow Battery (New) (8-10 hrs.)': '#ba55d3', # MediumOrchid
+                'Flow Battery (New) (10-15 hrs.)': '#9370db',# MediumPurple
+                'Flow Battery (New) (15-24 hrs.)': '#8a2be2',# BlueViolet
+                'Flow Battery (New) (24+ hrs.)': '#4b0082',  # Indigo
+                'Grav (New)': 'orangered',
+                'PSH (New)': 'darkblue',
+                'Therm (New)': 'salmon',
+                'Therm (New) (0-2 hrs.)': '#ffe4e1', # MistyRose
+                'Therm (New) (2-4 hrs.)': '#ffb6c1',# LightPink
+                'Therm (New) (4-6 hrs.)': '#ffa07a',# LightSalmon
+                'Therm (New) (6-8 hrs.)': '#fa8072', # Salmon
+                'Therm (New) (8-10 hrs.)': '#e9967a',  # DarkSalmon
+                'Therm (New) (10-15 hrs.)': '#cd5c5c',  # IndianRed
+                'Therm (New) (15-24 hrs.)': '#b22222',  # FireBrick
+                'Therm (New) (24+ hrs.)': '#8b0000',  # DarkRed
+                'CAES (New)': 'chocolate',
+                'Demand Response (New)': 'cyan',
+                'LDES (New)': 'deeppink',
+                'Zinc (New)': 'darkturquoise',
+                'Hydrogen (New)': 'pink',
+                'Iron Air (New)': 'white',
+                'ES PPA-charge': 'lightblue',
+                'ES-discharge': 'lightblue',
+                'ES 4hr (New)-charge': 'lightskyblue',
+                'ES 6hr (New)-charge': 'deepskyblue',
+                'ES 8hr (New)-charge': 'steelblue',
+                'ES 10hr (New)-charge': 'darkslateblue',
+                'ES 100hr (New)-charge': 'darkblue',
+                'Li-Ion Battery (New)-charge': 'royalblue',
+                'Li-Ion Battery 1 (New)-charge': 'royalblue',
+                'Li-Ion Battery 2 (New)-charge': 'royalblue',
+                'Li-Ion Battery 3 (New)-charge': 'royalblue',
+                'Li-Ion Battery 4 (New)-charge': 'royalblue',
+                'Li-Ion Battery 5 (New)-charge': 'royalblue',
+                'Li-Ion Battery 6 (New)-charge': 'royalblue',
+                'Li-Ion Battery 7 (New)-charge': 'royalblue',
+                'Li-Ion Battery 8 (New)-charge': 'royalblue',
+                'Li-Ion Battery 9 (New)-charge': 'royalblue',
+                'Li-Ion Battery 10 (New)-charge': 'royalblue',
+                'Flow Battery (New)-charge': 'darkviolet',
+                'Grav (New)-charge': 'orangered',
+                'PSH (New)-charge': 'darkblue',
+                'Therm (New)-charge': 'salmon',
+                'CAES (New)-charge': 'chocolate',
+                'LDES (New)-charge': 'darkblue',
+                'Zinc (New)-charge': 'darkturquoise',
+                'Hydrogen (New)-charge': 'pink',
+                'ES PPA-discharge': 'lightpink',
+                'ES-charge': 'lightpink',
+                'ES 4hr (New)-discharge': 'hotpink',
+                'ES 6hr (New)-discharge': 'deeppink',
+                'ES 8hr (New)-discharge': 'mediumvioletred',
+                'ES 10hr (New)-discharge': 'mediumorchid',
+                'ES 100hr (New)-discharge': 'purple',
+                'Li-Ion Battery (New)-discharge': 'hotpink',
+                'Li-Ion Battery 1 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 2 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 3 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 4 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 5 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 6 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 7 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 8 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 9 (New)-discharge': 'hotpink',
+                'Li-Ion Battery 10 (New)-discharge': 'hotpink',
+                'Flow Battery (New)-discharge': 'mediumorchid',
+                'Grav (New)-discharge': 'lightsalmon',
+                'PSH (New)-discharge': 'lightblue',
+                'Therm (New)-discharge': 'salmon',
+                'CAES (New)-discharge': 'sandybrown',
+                'LDES (New)-discharge': 'purple',
+                'Zinc (New)-discharge': 'aquamarine',
+                'Hydrogen (New)-discharge': 'plum',
+                'Curtailment': 'moccasin',
+                'SMR (New)': 'mediumseagreen'
+                }
         if tech not in tech_colors:
             raise TypeError(f"{tech} is not valid")
     
@@ -1940,7 +1956,240 @@ class ExplanResultsViewer():
                 fig.savefig(self.dispatch_folder_path+'/'+season+'_' + str(select_year)
                             + '.png', bbox_inches='tight')
 
-    # def map_results(self):
+    def map_es_results(self):
+        """
+        Parameters
+        ----------
+        gen_map_info : TYPE
+            DESCRIPTION.
+        tech_map_info : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+        """
+        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
+        results = self.rd['P_cap_total']
+        results_en = self.rd['Store']
+        
+        if np.size(results.index.names) > 1:
+            results.reset_index(inplace=True)
+        if np.size(results_en.index.names) > 1:
+            results_en.reset_index(inplace=True)
+
+        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
+        tech_num = [translate.get(x, x) for x in results['g']]
+        results['Technology'] = tech_num
+        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
+        tech_name = [translate1.get(x, x) for x in results['Technology']]
+        results['Tech_Name'] = tech_name
+
+        # Filter down into ES technologies only
+        results = results[results['g'].isin(self.data_handler.tech_nums['storage'])]
+        results = results.assign(energy=list(results_en['Value'].values))
+
+        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
+        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+
+        # Custom scaling options for visualization purposes
+        if self.system == 'PNM':
+            rad_div = 10
+        elif self.system == 'RTS_GMLC_Nodal':
+            rad_div = 16
+        else:
+            rad_div = 16
+
+        for y in self.data_handler.years:
+            # Create a Plotly figure
+            fig = go.Figure()
+
+            # Add lines to the figure
+            for l in line_data['Line_Number']:
+                line = line_data[line_data['Line_Number'] == l]
+                from_bus = int(line['From_Bus_Number'].iloc[0])
+                to_bus = int(line['To_Bus_Number'].iloc[0])
+                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
+                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
+
+                fig.add_trace(go.Scattergeo(
+                    lon=[from_pt[1], to_pt[1]],
+                    lat=[from_pt[0], to_pt[0]],
+                    mode='lines',
+                    line=dict(width=2, color='black'),
+                    name='Transmission Line'
+                ))
+
+            results_y = results[results['y'] == y]
+            results_y = results_y[results_y['Value'] > 0]
+
+            duration = results_y['energy'] / results_y['Value']
+            max_d_t = int(duration.max())
+
+            for tech in np.unique(results_y['Tech_Name']):
+                results_y_t = results_y[results_y['Tech_Name'] == tech]
+                colormap = px.colors.sequential.Viridis
+
+                for g in results_y_t['g']:
+                    gen = results_y_t[results_y_t['g'] == g]
+                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
+                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
+                    power = float(gen['Value'].iloc[0])
+                    energy = float(gen['energy'].iloc[0])
+                    duration_g = energy / power
+
+                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
+
+                    fig.add_trace(go.Scattergeo(
+                        lon=[lon],
+                        lat=[lat],
+                        mode='markers',
+                        marker=dict(
+                            size=power / rad_div,
+                            color=color,
+                            opacity=0.5,
+                            showscale=True,
+                            colorbar=dict(title='Duration (h)')
+                        ),
+                        name=tech
+                    ))
+
+            # Update layout
+            fig.update_layout(
+                title=f'Energy Storage Results {y}',
+                geo=dict(
+                    scope='usa',  # Adjust scope as needed
+                    showland=True,
+                    landcolor='lightgray',
+                    subunitcolor='black',
+                    countrycolor='black'
+                )
+            )
+
+            # Save the figure with UTF-8 encoding
+            with open(f"{self.map_folder_path}/ES_{y}.html", 'w', encoding='utf-8') as f:
+                f.write(fig.to_html(full_html=True))
+
+    def map_results(self):
+        """
+        Parameters
+        ----------
+        gen_map_info : TYPE
+            DESCRIPTION.
+        tech_map_info : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+        """
+        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
+        results = self.rd['P_cap_total']
+        
+        if np.size(results.index.names) > 1:
+            results.reset_index(inplace=True)
+        
+        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
+        tech_num = [translate.get(x, x) for x in results['g']]
+        results['Technology'] = tech_num
+        
+        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
+        tech_name = [translate1.get(x, x) for x in results['Technology']]
+        results['Tech_Name'] = tech_name
+        
+        tx_expansion = self.rd['L_cap_total']
+        if np.size(tx_expansion.index.names) > 1:
+            tx_expansion.reset_index(inplace=True)
+        
+        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
+        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
+        
+        # Custom scaling options for visualization purposes
+        if self.system == 'PNM':
+            rad_div = 10
+            line_div = 100
+        elif self.system == 'RTS_GMLC_Nodal':
+            rad_div = 16
+            line_div = 100
+        else:
+            rad_div = 16
+            line_div = 100
+        
+        for y in self.data_handler.years:
+            # Create a Plotly figure
+            fig = go.Figure()
+
+            # Add lines to the figure
+            for l in line_data['Line_Number']:
+                line = line_data[line_data['Line_Number'] == l]
+                from_bus = int(line['From_Bus_Number'].iloc[0])
+                to_bus = int(line['To_Bus_Number'].iloc[0])
+                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
+                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
+                weight_y = tx_expansion[(tx_expansion['l'] == l) & (tx_expansion['y'] == y)]['Value'].values[0]
+                weight = float(weight_y)
+
+                fig.add_trace(go.Scattergeo(
+                    lon=[from_pt[1], to_pt[1]],
+                    lat=[from_pt[0], to_pt[0]],
+                    mode='lines',
+                    line=dict(width=2, color='black'),
+                    name='Transmission Line'
+                ))
+                fig.add_trace(go.Scattergeo(
+                    lon=[from_pt[1], to_pt[1]],
+                    lat=[from_pt[0], to_pt[0]],
+                    mode='lines',
+                    line=dict(width=weight / line_div, color='blue'),
+                    name='Transmission Expansion'
+                ))
+
+            results_y = results[results['y'] == y]
+            results_y = results_y[results_y['Value'] > 0]
+
+            for tech in np.unique(results_y['Tech_Name']):
+                results_y_t = results_y[results_y['Tech_Name'] == tech]
+                color = self.color_tech(tech)
+
+                for g in results_y_t['g']:
+                    gen = results_y_t[results_y_t['g'] == g]
+                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
+                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
+                    capacity = float(gen['Value'].iloc[0])
+
+                    fig.add_trace(go.Scattergeo(
+                        lon=[lon],
+                        lat=[lat],
+                        mode='markers',
+                        marker=dict(
+                            size=capacity / rad_div,
+                            color=color,
+                            opacity=0.5,
+                            showscale=True,
+                            colorbar=dict(title='Capacity')
+                        ),
+                        name=tech
+                    ))
+
+            # Update layout
+            fig.update_layout(
+                title=f'Generation Results {y}',
+                geo=dict(
+                    scope='usa',  # Adjust scope as needed
+                    showland=True,
+                    landcolor='lightgray',
+                    subunitcolor='black',
+                    countrycolor='black'
+                )
+            )
+
+            # Save the figure with UTF-8 encoding
+            with open(f"{self.map_folder_path}/Generation_{y}.html", 'w', encoding='utf-8') as f:
+                f.write(fig.to_html(full_html=True))
+
+
+#******************SCRATCH**********************
+# def map_results(self):
     #     """
 
 
@@ -2201,234 +2450,3 @@ class ExplanResultsViewer():
     #         map_title = 'ES_'+str(y)+'.html'
     #         m.save(self.map_folder_path +
     #                "/"+map_title)
-
-    def map_es_results(self):
-        """
-        Parameters
-        ----------
-        gen_map_info : TYPE
-            DESCRIPTION.
-        tech_map_info : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-        """
-        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-        results = self.rd['P_cap_total']
-        results_en = self.rd['Store']
-        
-        if np.size(results.index.names) > 1:
-            results.reset_index(inplace=True)
-        if np.size(results_en.index.names) > 1:
-            results_en.reset_index(inplace=True)
-
-        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-        tech_num = [translate.get(x, x) for x in results['g']]
-        results['Technology'] = tech_num
-        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-        tech_name = [translate1.get(x, x) for x in results['Technology']]
-        results['Tech_Name'] = tech_name
-
-        # Filter down into ES technologies only
-        results = results[results['g'].isin(self.data_handler.tech_nums['storage'])]
-        results = results.assign(energy=list(results_en['Value'].values))
-
-        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-
-        # Custom scaling options for visualization purposes
-        if self.system == 'PNM':
-            rad_div = 10
-        elif self.system == 'RTS_GMLC_Nodal':
-            rad_div = 16
-        else:
-            rad_div = 16
-
-        for y in self.data_handler.years:
-            # Create a Plotly figure
-            fig = go.Figure()
-
-            # Add lines to the figure
-            for l in line_data['Line_Number']:
-                line = line_data[line_data['Line_Number'] == l]
-                from_bus = int(line['From_Bus_Number'].iloc[0])
-                to_bus = int(line['To_Bus_Number'].iloc[0])
-                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
-                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
-
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=2, color='black'),
-                    name='Transmission Line'
-                ))
-
-            results_y = results[results['y'] == y]
-            results_y = results_y[results_y['Value'] > 0]
-
-            duration = results_y['energy'] / results_y['Value']
-            max_d_t = int(duration.max())
-
-            for tech in np.unique(results_y['Tech_Name']):
-                results_y_t = results_y[results_y['Tech_Name'] == tech]
-                colormap = px.colors.sequential.Viridis
-
-                for g in results_y_t['g']:
-                    gen = results_y_t[results_y_t['g'] == g]
-                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
-                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
-                    power = float(gen['Value'].iloc[0])
-                    energy = float(gen['energy'].iloc[0])
-                    duration_g = energy / power
-
-                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
-
-                    fig.add_trace(go.Scattergeo(
-                        lon=[lon],
-                        lat=[lat],
-                        mode='markers',
-                        marker=dict(
-                            size=power / rad_div,
-                            color=color,
-                            opacity=0.5,
-                            showscale=True,
-                            colorbar=dict(title='Duration (h)')
-                        ),
-                        name=tech
-                    ))
-
-            # Update layout
-            fig.update_layout(
-                title=f'Energy Storage Results {y}',
-                geo=dict(
-                    scope='usa',  # Adjust scope as needed
-                    showland=True,
-                    landcolor='lightgray',
-                    subunitcolor='black',
-                    countrycolor='black'
-                )
-            )
-
-            # Save the figure with UTF-8 encoding
-            with open(f"{self.map_folder_path}/ES_{y}.html", 'w', encoding='utf-8') as f:
-                f.write(fig.to_html(full_html=True))
-
-    def map_results(self):
-        """
-        Parameters
-        ----------
-        gen_map_info : TYPE
-            DESCRIPTION.
-        tech_map_info : TYPE
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-        """
-        gen_lat_lon_df = self.data_handler.load_data[self.data_handler.data_ls.index('gen_viz')]
-        results = self.rd['P_cap_total']
-        
-        if np.size(results.index.names) > 1:
-            results.reset_index(inplace=True)
-        
-        translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
-        tech_num = [translate.get(x, x) for x in results['g']]
-        results['Technology'] = tech_num
-        
-        translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
-        tech_name = [translate1.get(x, x) for x in results['Technology']]
-        results['Tech_Name'] = tech_name
-        
-        tx_expansion = self.rd['L_cap_total']
-        if np.size(tx_expansion.index.names) > 1:
-            tx_expansion.reset_index(inplace=True)
-        
-        line_data = self.data_handler.load_data[self.data_handler.data_ls.index('branch')]
-        bus_data = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]
-        
-        # Custom scaling options for visualization purposes
-        if self.system == 'PNM':
-            rad_div = 10
-            line_div = 100
-        elif self.system == 'RTS_GMLC_Nodal':
-            rad_div = 16
-            line_div = 100
-        else:
-            rad_div = 16
-            line_div = 100
-        
-        for y in self.data_handler.years:
-            # Create a Plotly figure
-            fig = go.Figure()
-
-            # Add lines to the figure
-            for l in line_data['Line_Number']:
-                line = line_data[line_data['Line_Number'] == l]
-                from_bus = int(line['From_Bus_Number'].iloc[0])
-                to_bus = int(line['To_Bus_Number'].iloc[0])
-                from_pt = bus_data[bus_data['Bus_number'] == from_bus][['LAT', 'LON']].values[0]
-                to_pt = bus_data[bus_data['Bus_number'] == to_bus][['LAT', 'LON']].values[0]
-                weight_y = tx_expansion[(tx_expansion['l'] == l) & (tx_expansion['y'] == y)]['Value'].values[0]
-                weight = float(weight_y)
-
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=2, color='black'),
-                    name='Transmission Line'
-                ))
-                fig.add_trace(go.Scattergeo(
-                    lon=[from_pt[1], to_pt[1]],
-                    lat=[from_pt[0], to_pt[0]],
-                    mode='lines',
-                    line=dict(width=weight / line_div, color='blue'),
-                    name='Transmission Expansion'
-                ))
-
-            results_y = results[results['y'] == y]
-            results_y = results_y[results_y['Value'] > 0]
-
-            for tech in np.unique(results_y['Tech_Name']):
-                results_y_t = results_y[results_y['Tech_Name'] == tech]
-                color = self.color_tech(tech)
-
-                for g in results_y_t['g']:
-                    gen = results_y_t[results_y_t['g'] == g]
-                    lat = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LAT'].values[0]
-                    lon = gen_lat_lon_df[gen_lat_lon_df['Gen_num'] == g]['LON'].values[0]
-                    capacity = float(gen['Value'].iloc[0])
-
-                    fig.add_trace(go.Scattergeo(
-                        lon=[lon],
-                        lat=[lat],
-                        mode='markers',
-                        marker=dict(
-                            size=capacity / rad_div,
-                            color=color,
-                            opacity=0.5,
-                            showscale=True,
-                            colorbar=dict(title='Capacity')
-                        ),
-                        name=tech
-                    ))
-
-            # Update layout
-            fig.update_layout(
-                title=f'Generation Results {y}',
-                geo=dict(
-                    scope='usa',  # Adjust scope as needed
-                    showland=True,
-                    landcolor='lightgray',
-                    subunitcolor='black',
-                    countrycolor='black'
-                )
-            )
-
-            # Save the figure with UTF-8 encoding
-            with open(f"{self.map_folder_path}/Generation_{y}.html", 'w', encoding='utf-8') as f:
-                f.write(fig.to_html(full_html=True))

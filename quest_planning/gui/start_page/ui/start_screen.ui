@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>997</width>
+    <width>1427</width>
     <height>725</height>
    </rect>
   </property>
@@ -128,18 +128,7 @@
             <item>
              <widget class="QLabel" name="label_3">
               <property name="styleSheet">
-               <string notr="true">image: url(:/logos/images/logo/Quest_Planning_Logo_RGB.png);</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="styleSheet">
-               <string notr="true">image: url(:/pics/images/pics/icon_pic.png);
-</string>
+               <string notr="true">image:url(:/pics/images/pics/custom_QP_logo.png);</string>
               </property>
               <property name="text">
                <string/>

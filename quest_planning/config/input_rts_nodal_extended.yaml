@@ -1,0 +1,140 @@
+# ***QuESt Planning Configuration File***
+
+#********************Data Folder********************
+data_folder: 'rts_csv_data_extended'
+
+#********************Scenario Configuration********************
+scenario: RTS_GMLC_Extended
+system: RTS_GMLC_Extended
+tx_model: Transportation
+trans_expansion: False
+es_cost: Base
+ldes_switch: False
+
+#******************** Load Growth********************
+#If System-wide load growth is used:
+system-wide_load_growth: 1.5
+load_forecast: system_wide
+
+#If Regional load growth is used:
+regional_load_growth_option: True
+regional_load_growth:  
+ - region: 1
+   growth: 0.5
+ - region: 2
+   growth: 2.5
+ - region: 3
+   growth: 5.0
+regional_prm: True #If set to true, prm.csv file must be populated
+
+#********************Capacity Credits****************
+time_varying_capacity_credit: True #If set to True, cap_cred.csv file must be populated
+
+#********************Time Horizon********************
+start_year: 2025
+end_year: 2055
+#year_gap: 16
+years:
+  - 2030
+  - 2040
+  - 2050
+
+#********************Economic Parameters********************
+discount_rate: 6
+base_curr_year: 2025
+end_effects: 10
+voll: 100000
+tax_credit_end_year: 2032
+
+#********************Energy Storage Options********************
+soc_max: 80
+soc_min: 20
+ini_level: 50
+es_lifetime_extension: 50
+
+#********************Modeling Options:********************
+block_selection: seasonal_blocks #Repr_3Days_Season
+reserves_option: True
+tax_credits_option: False
+es_lifetime_cost_option: True
+rps_policy: False
+co2_policy: False
+co2_intensity_policy: False
+mva_base: 100
+
+#********************Candidate Technologies - NOT ACTIVE********************
+candidate_techs:
+  - Num: 9
+    Tech: Gas_Cand
+    CandCap: 0
+    SystCap: 0
+  - Num: 10
+    Tech: Wind_Cand
+    CandCap: 200
+    SystCap: 1500
+  - Num: 11
+    Tech: Solar_Cand
+    CandCap: 200
+    SystCap: 1500
+  - Num: 17
+    Tech: Li_Ion_Cand
+    CandCap: 100
+    SystCap: 1000
+  - Num: 18
+    Tech: Flow_Cand
+    CandCap: 100
+    SystCap: 1000
+  - Num: 21
+    Tech: Therm_Cand
+    CandCap: 100
+    SystCap: 1000
+
+#********************Limit by Buses********************
+limit_by_buses: null
+  #- bus_num: 1
+   # solar: 1000
+   # wind: 0
+   # storage: 750
+
+
+#********************System-wide resource limits********************
+system_wide_wind_max: 16000
+system_wide_solar_max: 16000
+system_wide_gas_max: 16000
+system_wide_tx_expansion_max: 10000
+
+#********************Reserves Parameters********************
+prm: 20
+reg_res_req: 1
+spin_res_req: 3
+flex_res_w_req: 10
+flex_res_s_req: 4
+
+#********************Custom Retirements********************
+custom_retirement: False
+ng_retirement_year: None
+coal_retirement_year: None
+nuclear_retirement_year: None
+oil_retirement_year: None
+
+#********************Solver********************
+solver: cplex
+
+#********************Plotting Options********************
+stacked_bar_by_bus: False
+policy_plot_option: False
+
+#********Reliability_assessment using ProGRESS tool (Optional)***************
+rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
+ - 2030
+ - 2040
+ - 2050
+
+progress_sim_mode: "Nodal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
+
+#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data, must have the cdsapi key present.
+ren_data_dir: "./quest_planning/data_explan/data_for_ProGRESS/Nodal_Extended"  
+
+num_sample_paths: 1 # How many sample years to simulate
+num_hours: 100 # How many hours to simulate within each sample, default is 8760 hours
+num_mpi_processes: 0 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)

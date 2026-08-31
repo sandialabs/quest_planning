@@ -4,8 +4,8 @@
 data_folder: 'rts_csv_data_zonal'
 
 #********************Scenario Configuration********************
-scenario: RTS_GMLC_1_Base
-system: RTS_GMLC
+scenario: RTS_GMLC_zonal
+system: RTS_GMLC_Zonal
 tx_model: Transportation
 trans_expansion: False
 load_growth: 1.5
@@ -36,10 +36,11 @@ ini_level: 50
 es_lifetime_extension: 50
 
 #********************Modeling Options:********************
-block_selection: seasonal_blocks
+block_selection: seasonal_blocks #Options are: "seasonal_blocks", "Repr_3Days_Season", "Repr_Weeks"
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
+rps_policy: False
 co2_policy: False
 co2_intensity_policy: False
 mva_base: 100
@@ -76,13 +77,23 @@ nuclear_retirement_year: None
 oil_retirement_year: None
 
 #********************Solver********************
-solver: gurobi
+solver: cplex
 
 #********************Plotting Options********************
 stacked_bar_by_bus: False
 policy_plot_option: False
 
+#********Reliability_assessment using ProGRESS tool***************
+rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
+ #- 2024
+ - 2032
+ #- 2040
 
+progress_sim_mode: "Nodal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
 
+#If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data, must have the cdsapi key present.
+ren_data_dir: "./quest_planning/data_explan/data_for_ProGRESS/Zonal"  
 
-
+num_sample_paths: 1 # How many sample years to simulate
+num_hours: 100 # How many hours to simulate within each sample, default is 8760 hours
+num_mpi_processes: 0 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)

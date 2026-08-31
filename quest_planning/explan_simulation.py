@@ -10,7 +10,7 @@ import argparse
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
 from quest_planning.explan.explan_optimizer import ExplanOptimizer
 from quest_planning.explan.explan_results_viewer import ExplanResultsViewer
-
+from quest_planning.progress.run_progress import ProGRESS_Exporter
 
 class Explan:
     def __init__(self, config):
@@ -50,11 +50,31 @@ class Explan:
         d.set_transmission_expansion(config['trans_expansion'])
         d.set_years_hours(config['years'])
         d.set_block_selection(config['block_selection'])
-        d.set_load_growth(config['load_growth'])
         d.set_es_cost(config['es_cost'])
         d.set_ldes_switch(config['ldes_switch'])
         d.set_load_profile(config['load_forecast'])
-        
+
+        #To include regional load growth
+        if config.get('regional_load_growth_option', False):
+            # Regional growth
+            d.set_load_growth(
+                load_growth_value=config.get('system-wide_load_growth', 0),
+                regional_load_growth_option=True,
+                regional_growth_list=config.get('regional_load_growth', [])
+            )
+            if not config.get('regional_prm', False):
+                raise ValueError("For regional load growth, regional PRM values must be used. Set `regional_prm` to True and populate `prm.csv` file.")
+        else:
+            # System-wide growth
+            d.set_load_growth(
+                load_growth_value=config.get('system-wide_load_growth', 0),
+                regional_load_growth_option=False
+            )
+
+        #To include time varying capacity credits
+        if config.get('time_varying_capacity_credit', False):
+            d.set_capacity_credits(config.get('time_varying_capacity_credit'))
+
         # Economic parameters
         d.set_discount_rate(config['discount_rate'])
         d.set_base_currency_year(config['base_curr_year'])
@@ -78,6 +98,7 @@ class Explan:
         
         #set reserve parameters
         d.set_reserve_params(config['prm'],config['reg_res_req'],config['spin_res_req'],config['flex_res_w_req'],config['flex_res_s_req'])
+        d.set_prm(config['prm'], regional_load_growth_option=config.get('regional_load_growth_option', False))
         
         #ES min and max SOC %
         d.set_es_soc_min_max(config['soc_min'],config['soc_max'],config['ini_level'])
@@ -88,6 +109,8 @@ class Explan:
                                       config['coal_retirement_year'],
                                       config['nuclear_retirement_year'],
                                       config['oil_retirement_year'])
+        #RPS policy flag
+        d.set_rps_policy(config['rps_policy'])
         #Co2 policy flag
         d.set_co2_policy(config['co2_policy'])
         d.set_co2_intensity_policy(config['co2_intensity_policy'])
@@ -99,9 +122,12 @@ class Explan:
     def load_data(self):
         self.data_handler.get_data()
     
+    # To include regional load blocks
     def construct_load_blocks(self):
-        self.data_handler.construct_load_blocks()
-        
+        if self.config.get('regional_load_growth_option', False):
+            self.data_handler.construct_regional_load_blocks()
+        else:
+            self.data_handler.construct_load_blocks()
 
     def run_optimizer(self):
         ''' Run the optimization model'''
@@ -116,7 +142,10 @@ class Explan:
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
             self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
-
+        prg = ProGRESS_Exporter(exp)
+        if self.config["rel_evaluation_years"]:
+            prg.export_data(self.config["rel_evaluation_years"])
+            prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
 
 def read_input_yaml(yaml_file):
     '''
@@ -137,6 +166,7 @@ def read_input_yaml(yaml_file):
 
 
 if __name__ == '__main__':
+    
     parser = argparse.ArgumentParser(description='Run Explan simulation with specified YAML configuration file.')
     parser.add_argument('yaml_file', type=str, help='Path to the input YAML file.')
     args = parser.parse_args()
@@ -146,8 +176,16 @@ if __name__ == '__main__':
 
     data_file = os.path.join(current_dir, 'quest_planning','data_explan', input_dict['data_folder'])
     input_dict['data_dir'] = data_file
-    input_dict['data_ls'] = ['bus','branch','capex_es','capex_l_es','capex_h_es','capex_tech','fuel','gen','gen_viz','load','scalars','solar','storage','tech','wind','policy','solar_cand','wind_cand']#'disfact',
-    
+    if input_dict.get("time_varying_capacity_credit", False):
+        if input_dict.get("regional_prm", False):
+            input_dict['data_ls'] = ['bus','branch','cap_cred','capex_es','capex_l_es','capex_h_es','capex_tech','fuel','gen','gen_viz','load','scalars','solar','storage','tech','wind','policy','prm','solar_cand','wind_cand']#'disfact',
+        else:
+            input_dict['data_ls'] = ['bus','branch','cap_cred','capex_es','capex_l_es','capex_h_es','capex_tech','fuel','gen','gen_viz','load','scalars','solar','storage','tech','wind','policy', 'solar_cand','wind_cand']
+    else:
+        if input_dict.get("regional_prm", False):
+            input_dict['data_ls'] = ['bus','branch','capex_es','capex_l_es','capex_h_es','capex_tech','fuel','gen','gen_viz','load','scalars','solar','storage','tech','wind','policy','prm','solar_cand','wind_cand']
+        else:
+            input_dict['data_ls'] = ['bus','branch','capex_es','capex_l_es','capex_h_es','capex_tech','fuel','gen','gen_viz','load','scalars','solar','storage','tech','wind','policy','solar_cand','wind_cand']
 
     exp = Explan(input_dict)
     exp.setup_data_handler()
