@@ -76,7 +76,7 @@ nuclear_retirement_year: None
 oil_retirement_year: None
 
 #********************Solver********************
-solver: gurobi
+solver: appsi_highs
 
 #********************Plotting Options********************
 stacked_bar_by_bus: False
