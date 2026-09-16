@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>997</width>
-    <height>725</height>
+    <width>674</width>
+    <height>781</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -199,6 +199,7 @@
               <property name="font">
                <font>
                 <pointsize>13</pointsize>
+                <weight>50</weight>
                 <italic>false</italic>
                 <bold>false</bold>
                </font>
@@ -274,7 +275,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </size>
         </property>
         <property name="inputMethodHints">
-         <set>Qt::ImhNoTextHandles</set>
+         <set>Qt::ImhNone</set>
         </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>

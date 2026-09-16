@@ -335,6 +335,12 @@
     <file>images/logo/scenario_icon.png</file>
     <file>images/logo/start_icons.png</file>
     <file>images/logo/DOE_Logo_Color.png</file>
+    <file>images/logo/footer/DOE_inverted.png</file>
+    <file>images/logo/footer/DOE_transparent.png</file>
+    <file>images/logo/footer/DOE_transparent_black_white.png</file>
+    <file>images/logo/footer/Quest_Logo_RGB.png</file>
+    <file>images/logo/footer/SNL_logo.png</file>
+    <file>images/logo/footer/SNL_logo_inverted.png</file>
     <file>images/logo/Quest_App_Icon.png</file>
     <file>images/logo/Quest_App_Icon.svg</file>
     <file>images/logo/Quest_App_Icon_50_transparent.png</file>
@@ -358,5 +364,6 @@
     <file>images/logo/Quest_Q_RGB.png</file>
     <file>images/logo/Quest_Q_RGB.svg</file>
     <file>images/logo/Quest_Tech_Logo_RGB.png</file>
+    <file>images/logo/QuESt_Planning_LOGO.png</file>
   </qresource>
 </RCC>
