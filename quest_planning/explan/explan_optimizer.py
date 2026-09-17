@@ -210,6 +210,23 @@ class ExplanOptimizer(Optimizer):
             model.LL = pm.Set(
                 initialize=ll_ids
             )
+            
+            ll_ng_df = GEN.loc[
+                GEN['Tech'] == 'Gas_LL_Cand'
+            ]
+            
+
+            model.G_LL_NG = pm.Set(
+                initialize=list(ll_ng_df['Gen_num'].values)
+            )
+
+            ll_bess_df = GEN.loc[
+                GEN['Tech'] == 'Li_Ion_Cand_LL_Cand'
+            ]
+
+            model.G_LL_BESS = pm.Set(
+                initialize=list(ll_bess_df['Gen_num'].values)
+            )
 
             ll_bus_dict = {
                 ll["id"]: ll["bus"]
@@ -220,6 +237,7 @@ class ExplanOptimizer(Optimizer):
                 model.LL,
                 initialize=ll_bus_dict
             )
+
 
             ll_deploy_dict = {
                 ll["id"]: ll["deploy_year"]
@@ -256,15 +274,15 @@ class ExplanOptimizer(Optimizer):
                 },
                 default=0
             )
-            self.par_index_labels["LL_bus"] = ["ll"]
+            par_index_labels["LL_bus"] = ["ll"]
             
-            self.par_index_labels["LL_deploy_year"] = ["ll"]
+            par_index_labels["LL_deploy_year"] = ["ll"]
 
-            self.par_index_labels["LL_NG_Max"] = ["ll"]
+            par_index_labels["LL_NG_Max"] = ["ll"]
 
-            self.par_index_labels["LL_BESS_Power_Max"] = ["ll"]
+            par_index_labels["LL_BESS_Power_Max"] = ["ll"]
 
-            self.par_index_labels["LL_BESS_Energy_Max"] = ["ll"]
+            par_index_labels["LL_BESS_Energy_Max"] = ["ll"]
 
 
         #RPS policy
@@ -796,6 +814,12 @@ class ExplanOptimizer(Optimizer):
         model.CostScale = pm.Param(initialize=1e-6)
         par_index_labels['CostScale'] = ['i']
 
+        model.LL_Curt_MaxFrac = pm.Param(
+            initialize=0.25,
+            mutable=True
+        )
+        par_index_labels['LL_Curt_MaxFrac'] = ['i']
+
         self.par_index_labels = par_index_labels
 
 
@@ -844,6 +868,7 @@ class ExplanOptimizer(Optimizer):
             initialize=ll_load_dict,
             default=0
         )
+       
 
         self.par_index_labels["large_load"] = [
             "b",
@@ -853,10 +878,10 @@ class ExplanOptimizer(Optimizer):
         ]
 
         model.large_load_net = pm.Var(
-            model.B,
+            model.B_LL,
             model.Y,
             model.S_I,
-            domain=pm.NonNegativeReals
+            domain=pm.Reals
         )
 
         self.var_index_labels["large_load_net"] = [
@@ -865,6 +890,15 @@ class ExplanOptimizer(Optimizer):
             "s",
             "i"
         ]
+
+        model.LL_Curt = pm.Var(
+            model.B_LL,
+            model.Y,
+            model.S_I,
+            domain=pm.NonNegativeReals
+        )
+        self.var_index_labels['LL_Curt'] = ['b','y','s','i']
+
         ll_bess_power = {
                 ll["id"]: ll["bess_max_power_mw"]
                 for ll in ll_data
@@ -886,6 +920,9 @@ class ExplanOptimizer(Optimizer):
             initialize=ll_bess_energy,
             default=0
         )
+        
+
+        
 
     def add_large_loads_to_model_OLD(self,model, processed_profiles: Dict[str, Dict[int, object]], cfg: Dict):
         """
@@ -934,6 +971,8 @@ class ExplanOptimizer(Optimizer):
         self.var_index_labels['large_load_net'] = ['b', 'y', 's', 'i']
 
         
+
+
 
 
 
@@ -1066,7 +1105,7 @@ class ExplanOptimizer(Optimizer):
         
         if self.data_handler.large_load_option:
             model.large_load_net = pm.Var(
-                model.B,
+                model.B_LL,
                 model.Y,
                 model.S_I,
                 domain=pm.NonNegativeReals
@@ -1075,6 +1114,14 @@ class ExplanOptimizer(Optimizer):
             var_index_labels['large_load_net'] = [
                 'b','y','s','i'
             ]
+
+            model.LL_Curt = pm.Var(
+                model.B_LL,
+                model.Y,
+                model.S_I,
+                domain=pm.NonNegativeReals
+            )
+            var_index_labels['LL_Curt'] = ['b','y','s','i']
 
         #model.dummy = pm.Var(model.B, model.Y, model.S_I,
                            #domain=pm.NonNegativeReals)
@@ -1130,10 +1177,15 @@ class ExplanOptimizer(Optimizer):
         model.annual_total_cost = pm.Var(
             model.Y, domain=pm.NonNegativeReals)
         var_index_labels['annual_total_cost'] = ['y']
+        model.annual_ll_curt_cost = pm.Var(
+            model.Y, domain=pm.NonNegativeReals)
+        var_index_labels['annual_ll_curt_cost'] = ['y']
         # Objective Value
         model.objective_value = pm.Var(
             domain=pm.NonNegativeReals)
         var_index_labels['objective_value'] = ['n']
+
+        
 
         self.var_index_labels = var_index_labels
 
@@ -1211,6 +1263,12 @@ class ExplanOptimizer(Optimizer):
         # an alias 
         model.B_i = pm.Set(initialize=list(
             BUS['Bus_number'].values))
+        
+        print(self.data_handler.large_load_buses)
+        if self.data_handler.large_load_option:
+            model.B_LL = pm.Set(
+                initialize=self.data_handler.large_load_buses
+            )
 
         # generator indices
         model.G = pm.Set(
@@ -1239,15 +1297,31 @@ class ExplanOptimizer(Optimizer):
         #line - L_tfb
         
         model.L_tfb = pm.Set(within = model.L*model.B*model.B_i, initialize = self.data_handler.line_bus_num)
-        #%%
+        
         # bus_gen pair-renewables only
         bus_gen_num = GEN[['Bus_num', 'Gen_num']]
 
         B_G_ren_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
             tech_nums['renewables'])]
 
+        
+
         model.B_G_ren = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_ren_df['Bus_num'].values, B_G_ren_df['Gen_num'].values)))
+        
+        B_G_LL_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['large_load_gen'])]
+        
+        
+        model.B_G_LL = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_LL_df['Bus_num'].values, B_G_LL_df['Gen_num'].values)))
+
+      
+        B_G_LL_sto_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['large_load_sto'])]
+        
+        model.B_G_LL_sto = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_LL_sto_df['Bus_num'].values, B_G_LL_sto_df['Gen_num'].values)))
 
         B_G_carbon_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
             list(set(tech_nums['thermal'])-set(tech_nums['nuclear'])))]
@@ -1389,7 +1463,18 @@ class ExplanOptimizer(Optimizer):
         self._set_model_param()
         print('Define Variables')
         self._set_model_var()
-        
+        print("B_LL =", list(self.model.B_LL))
+        print("G_LL_NG =", list(self.model.G_LL_NG))
+        print("G_LL_BESS =", list(self.model.G_LL_BESS))
+        for y in self.model.Y:
+            for b in self.model.B_LL:
+                print(
+                    b,
+                    value(
+                        sum(self.model.large_load[b,y,s,i]
+                            for (s,i) in self.model.S_I)
+                    )
+                )
         #Define constraints and build
         self.constraints = ExplanConstraints(
             self.data_handler)
@@ -1472,6 +1557,7 @@ class ExplanOptimizer(Optimizer):
 
         self.print_model_stats()
         
+
         return self.get_results()
     
     def print_model_stats(self):
@@ -1483,6 +1569,77 @@ class ExplanOptimizer(Optimizer):
     def _process_results(self):
         """A method for computing derived quantities of interest and creating the results DataFrame."""
         print('Unpack and process results')
+        for b,y in [(211,2024),(107,2024)]:
+
+            c = self.model.cLLResourceRequirement[b,y]
+
+            print("\nConstraint", b, y)
+            print("Lower:", c.lower)
+            print("Body :", value(c.body))
+            print("Upper:", c.upper)
+        
+        for b,y in [(211,2024),(107,2024)]:
+
+            gen_nums = self.data_handler.bus_gen_num.loc[
+                self.data_handler.bus_gen_num['Bus_num'] == b
+            ]['Gen_num'].values.astype(int)
+
+            ll_ng = np.intersect1d(gen_nums, list(self.model.G_LL_NG))
+            ll_bess = np.intersect1d(gen_nums, list(self.model.G_LL_BESS))
+
+            ng_energy = sum(
+                value(self.model.P_gen[b,g,y,s,i])
+                for g in ll_ng
+                for (s,i) in self.model.S_I
+            )
+
+            bess_energy = sum(
+                value(self.model.Pdis[b,g,y,s,i])
+                for g in ll_bess
+                for (s,i) in self.model.S_I
+            )
+
+            curt_energy = sum(
+                value(self.model.LL_Curt[b,y,s,i])
+                for (s,i) in self.model.S_I
+            )
+
+            print(
+                f"Bus={b} Year={y}"
+                f" NG={ng_energy:.2f}"
+                f" BESS={bess_energy:.2f}"
+                f" CURT={curt_energy:.2f}"
+            )
+        for y in self.model.Y:
+            for b in self.model.B_LL:
+
+                gen_nums = self.data_handler.bus_gen_num.loc[
+                    self.data_handler.bus_gen_num['Bus_num'] == b
+                ]['Gen_num'].values.astype(int)
+
+                ll_bess = np.intersect1d(
+                    gen_nums,
+                    list(self.model.G_LL_BESS)
+                )
+
+                lhs = sum(
+                    value(self.model.Pdis[b,g,y,s,i])
+                    for g in ll_bess
+                    for (s,i) in self.model.S_I
+                )
+
+                rhs = 0.8 * value(
+                    sum(
+                        self.model.large_load[b,y,s,i]
+                        for (s,i) in self.model.S_I
+                    )
+                )
+
+                print(
+                    f"Bus={b} Year={y}"
+                    f"  LHS={lhs:.2f}"
+                    f"  RHS={rhs:.2f}"
+                )
         instance = self.model
         all_vars = {}
         for v in instance.component_objects(pm.Var, active=True):
