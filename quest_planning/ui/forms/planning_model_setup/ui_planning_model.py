@@ -25,7 +25,7 @@ class Ui_PlanningModelPage(object):
     def setupUi(self, PlanningModelPage):
         if not PlanningModelPage.objectName():
             PlanningModelPage.setObjectName(u"PlanningModelPage")
-        PlanningModelPage.resize(1118, 928)
+        PlanningModelPage.resize(760, 781)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -58,8 +58,6 @@ class Ui_PlanningModelPage(object):
         font.setPointSize(18)
         font.setBold(True)
         self.label_title.setFont(font)
-        self.label_title.setStyleSheet(u"color: rgb(40, 84, 113);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_title)
 
@@ -69,8 +67,6 @@ class Ui_PlanningModelPage(object):
         font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(10)
         self.label_subtitle.setFont(font1)
-        self.label_subtitle.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_subtitle)
 
@@ -83,17 +79,6 @@ class Ui_PlanningModelPage(object):
 
         self.planning_model_help_button = QToolButton(self.frame_header)
         self.planning_model_help_button.setObjectName(u"planning_model_help_button")
-        self.planning_model_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         icon = QIcon()
         icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.planning_model_help_button.setIcon(icon)
@@ -113,22 +98,6 @@ class Ui_PlanningModelPage(object):
         sizePolicy2.setHeightForWidth(self.frame_config.sizePolicy().hasHeightForWidth())
         self.frame_config.setSizePolicy(sizePolicy2)
         self.frame_config.setMaximumSize(QSize(16777215, 430))
-        self.frame_config.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDateEdit, QFrame QDoubleSpinBox {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.frame_config.setFrameShape(QFrame.NoFrame)
         self.frame_config.setFrameShadow(QFrame.Raised)
         self.verticalLayout_config = QVBoxLayout(self.frame_config)
@@ -153,7 +122,6 @@ class Ui_PlanningModelPage(object):
         font2.setPointSize(10)
         font2.setBold(True)
         self.label_config_title.setFont(font2)
-        self.label_config_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_config_title.addWidget(self.label_config_title)
 
@@ -221,35 +189,11 @@ class Ui_PlanningModelPage(object):
         self.select_years_button.setSizePolicy(sizePolicy4)
         self.select_years_button.setMinimumSize(QSize(200, 0))
         self.select_years_button.setFont(font2)
-        self.select_years_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    color: rgb(40, 84, 113);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(235, 244, 248);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(214, 232, 240);\n"
-"}")
 
         self.gridLayout_config.addWidget(self.select_years_button, 1, 1, 1, 1)
 
         self.select_simulation_years_help_button = QToolButton(self.frame_config)
         self.select_simulation_years_help_button.setObjectName(u"select_simulation_years_help_button")
-        self.select_simulation_years_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.select_simulation_years_help_button.setIcon(icon)
         self.select_simulation_years_help_button.setIconSize(QSize(20, 20))
         self.select_simulation_years_help_button.setAutoRaise(True)
@@ -277,17 +221,6 @@ class Ui_PlanningModelPage(object):
 
         self.transmission_model_help_button = QToolButton(self.frame_config)
         self.transmission_model_help_button.setObjectName(u"transmission_model_help_button")
-        self.transmission_model_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.transmission_model_help_button.setIcon(icon)
         self.transmission_model_help_button.setIconSize(QSize(20, 20))
         self.transmission_model_help_button.setAutoRaise(True)
@@ -315,17 +248,6 @@ class Ui_PlanningModelPage(object):
 
         self.temporal_selection_help_button = QToolButton(self.frame_config)
         self.temporal_selection_help_button.setObjectName(u"temporal_selection_help_button")
-        self.temporal_selection_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.temporal_selection_help_button.setIcon(icon)
         self.temporal_selection_help_button.setIconSize(QSize(20, 20))
         self.temporal_selection_help_button.setAutoRaise(True)
@@ -354,17 +276,6 @@ class Ui_PlanningModelPage(object):
 
         self.discount_rate_help_button = QToolButton(self.frame_config)
         self.discount_rate_help_button.setObjectName(u"discount_rate_help_button")
-        self.discount_rate_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.discount_rate_help_button.setIcon(icon)
         self.discount_rate_help_button.setIconSize(QSize(20, 20))
         self.discount_rate_help_button.setAutoRaise(True)
@@ -389,17 +300,6 @@ class Ui_PlanningModelPage(object):
 
         self.base_currency_help_button = QToolButton(self.frame_config)
         self.base_currency_help_button.setObjectName(u"base_currency_help_button")
-        self.base_currency_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.base_currency_help_button.setIcon(icon)
         self.base_currency_help_button.setIconSize(QSize(20, 20))
         self.base_currency_help_button.setAutoRaise(True)
@@ -430,19 +330,6 @@ class Ui_PlanningModelPage(object):
         self.advanced_settings_button.setSizePolicy(sizePolicy4)
         self.advanced_settings_button.setMinimumSize(QSize(190, 0))
         self.advanced_settings_button.setFont(font2)
-        self.advanced_settings_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_advanced.addWidget(self.advanced_settings_button)
 
@@ -457,19 +344,6 @@ class Ui_PlanningModelPage(object):
         sizePolicy2.setHeightForWidth(self.planning_model_info_frame.sizePolicy().hasHeightForWidth())
         self.planning_model_info_frame.setSizePolicy(sizePolicy2)
         self.planning_model_info_frame.setMaximumSize(QSize(16777215, 170))
-        self.planning_model_info_frame.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame#frame_tile_summary {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}")
         self.planning_model_info_frame.setFrameShape(QFrame.NoFrame)
         self.planning_model_info_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_summary = QVBoxLayout(self.planning_model_info_frame)
@@ -490,7 +364,6 @@ class Ui_PlanningModelPage(object):
         self.label_summary_title = QLabel(self.planning_model_info_frame)
         self.label_summary_title.setObjectName(u"label_summary_title")
         self.label_summary_title.setFont(font2)
-        self.label_summary_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_summary_title.addWidget(self.label_summary_title)
 
@@ -506,7 +379,6 @@ class Ui_PlanningModelPage(object):
         self.horizontalLayout_summary_rows.setObjectName(u"horizontalLayout_summary_rows")
         self.frame_tile_summary = QFrame(self.planning_model_info_frame)
         self.frame_tile_summary.setObjectName(u"frame_tile_summary")
-        self.frame_tile_summary.setStyleSheet(u"color: rgb(0, 0, 0);")
         self.frame_tile_summary.setFrameShape(QFrame.NoFrame)
         self.frame_tile_summary.setFrameShadow(QFrame.Raised)
         self.verticalLayout_tile_years = QVBoxLayout(self.frame_tile_summary)
@@ -518,7 +390,6 @@ class Ui_PlanningModelPage(object):
         font3.setFamilies([u"Segoe UI"])
         font3.setPointSize(9)
         self.label_years_term.setFont(font3)
-        self.label_years_term.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_years.addWidget(self.label_years_term)
 
@@ -529,7 +400,6 @@ class Ui_PlanningModelPage(object):
         font4.setPointSize(14)
         font4.setBold(True)
         self.sim_years_label.setFont(font4)
-        self.sim_years_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_years.addWidget(self.sim_years_label)
 
@@ -546,14 +416,12 @@ class Ui_PlanningModelPage(object):
         self.label_trans_term = QLabel(self.frame_tile_summary_2)
         self.label_trans_term.setObjectName(u"label_trans_term")
         self.label_trans_term.setFont(font3)
-        self.label_trans_term.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_trans.addWidget(self.label_trans_term)
 
         self.trans_model_label = QLabel(self.frame_tile_summary_2)
         self.trans_model_label.setObjectName(u"trans_model_label")
         self.trans_model_label.setFont(font4)
-        self.trans_model_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_trans.addWidget(self.trans_model_label)
 
@@ -570,14 +438,12 @@ class Ui_PlanningModelPage(object):
         self.label_temporal_term = QLabel(self.frame_tile_summary_3)
         self.label_temporal_term.setObjectName(u"label_temporal_term")
         self.label_temporal_term.setFont(font3)
-        self.label_temporal_term.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_temporal.addWidget(self.label_temporal_term)
 
         self.temporal_selection_label = QLabel(self.frame_tile_summary_3)
         self.temporal_selection_label.setObjectName(u"temporal_selection_label")
         self.temporal_selection_label.setFont(font4)
-        self.temporal_selection_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_temporal.addWidget(self.temporal_selection_label)
 
@@ -594,14 +460,12 @@ class Ui_PlanningModelPage(object):
         self.label_discount_term = QLabel(self.frame_tile_summary_4)
         self.label_discount_term.setObjectName(u"label_discount_term")
         self.label_discount_term.setFont(font3)
-        self.label_discount_term.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_discount.addWidget(self.label_discount_term)
 
         self.discount_rate_label = QLabel(self.frame_tile_summary_4)
         self.discount_rate_label.setObjectName(u"discount_rate_label")
         self.discount_rate_label.setFont(font4)
-        self.discount_rate_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_discount.addWidget(self.discount_rate_label)
 
@@ -618,14 +482,12 @@ class Ui_PlanningModelPage(object):
         self.label_currency_term = QLabel(self.frame_tile_summary_5)
         self.label_currency_term.setObjectName(u"label_currency_term")
         self.label_currency_term.setFont(font3)
-        self.label_currency_term.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_currency.addWidget(self.label_currency_term)
 
         self.base_currency_label = QLabel(self.frame_tile_summary_5)
         self.base_currency_label.setObjectName(u"base_currency_label")
         self.base_currency_label.setFont(font4)
-        self.base_currency_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_currency.addWidget(self.base_currency_label)
 
@@ -638,7 +500,6 @@ class Ui_PlanningModelPage(object):
 
         self.verticalLayout_main.addWidget(self.planning_model_info_frame)
 
-        self.verticalLayout_main.setStretch(3, 1)
 
         self.retranslateUi(PlanningModelPage)
 
@@ -648,45 +509,69 @@ class Ui_PlanningModelPage(object):
     def retranslateUi(self, PlanningModelPage):
         PlanningModelPage.setWindowTitle(QCoreApplication.translate("PlanningModelPage", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("PlanningModelPage", u"Planning Model Setup", None))
+        self.label_title.setProperty("textRole", u"heading")
         self.label_subtitle.setText(QCoreApplication.translate("PlanningModelPage", u"Configure the simulation years, transmission model, temporal resolution, and economic parameters.", None))
+        self.label_subtitle.setProperty("textRole", u"subtitle")
         self.planning_model_help_button.setText("")
+        self.planning_model_help_button.setProperty("btnRole", u"icon")
+        self.frame_config.setProperty("cardType", u"card")
         self.label_config_icon.setText("")
         self.label_config_title.setText(QCoreApplication.translate("PlanningModelPage", u"MODEL CONFIGURATION", None))
+        self.label_config_title.setProperty("textRole", u"section")
         self.label_begin.setText(QCoreApplication.translate("PlanningModelPage", u"Begin Year", None))
         self.begin_date.setDisplayFormat(QCoreApplication.translate("PlanningModelPage", u"yyyy", None))
         self.label_end.setText(QCoreApplication.translate("PlanningModelPage", u"End Year", None))
         self.end_date.setDisplayFormat(QCoreApplication.translate("PlanningModelPage", u"yyyy", None))
         self.select_years_button.setText(QCoreApplication.translate("PlanningModelPage", u"Select Simulation Years", None))
         self.select_simulation_years_help_button.setText("")
+        self.select_simulation_years_help_button.setProperty("btnRole", u"icon")
         self.label_3.setText(QCoreApplication.translate("PlanningModelPage", u"Transmission Model", None))
         self.transmission_box.setItemText(0, QCoreApplication.translate("PlanningModelPage", u"Transportation (Pipe & Bubble)", None))
         self.transmission_box.setItemText(1, QCoreApplication.translate("PlanningModelPage", u"Copper Sheet", None))
         self.transmission_box.setItemText(2, QCoreApplication.translate("PlanningModelPage", u"DC Power Flow (Upcoming)", None))
 
         self.transmission_model_help_button.setText("")
+        self.transmission_model_help_button.setProperty("btnRole", u"icon")
         self.label_5.setText(QCoreApplication.translate("PlanningModelPage", u"Temporal Selection", None))
         self.temporal_box.setItemText(0, QCoreApplication.translate("PlanningModelPage", u"Representative Weeks", None))
         self.temporal_box.setItemText(1, QCoreApplication.translate("PlanningModelPage", u"Seasonal Blocks", None))
         self.temporal_box.setItemText(2, QCoreApplication.translate("PlanningModelPage", u"8760 Analysis (Upcoming)", None))
 
         self.temporal_selection_help_button.setText("")
+        self.temporal_selection_help_button.setProperty("btnRole", u"icon")
         self.label.setText(QCoreApplication.translate("PlanningModelPage", u"Annual Discount Rate", None))
         self.discount_rate_help_button.setText("")
+        self.discount_rate_help_button.setProperty("btnRole", u"icon")
         self.label_7.setText(QCoreApplication.translate("PlanningModelPage", u"Base Currency Year", None))
         self.base_currency_year.setText(QCoreApplication.translate("PlanningModelPage", u"2021", None))
         self.base_currency_help_button.setText("")
+        self.base_currency_help_button.setProperty("btnRole", u"icon")
         self.advanced_settings_button.setText(QCoreApplication.translate("PlanningModelPage", u"Advanced Settings", None))
+        self.advanced_settings_button.setProperty("btnRole", u"primary")
+        self.planning_model_info_frame.setProperty("cardType", u"tile")
         self.label_summary_icon.setText("")
         self.label_summary_title.setText(QCoreApplication.translate("PlanningModelPage", u"SELECTION SUMMARY", None))
+        self.label_summary_title.setProperty("textRole", u"section")
+        self.frame_tile_summary.setProperty("cardType", u"tile")
         self.label_years_term.setText(QCoreApplication.translate("PlanningModelPage", u"Simulation Years", None))
+        self.label_years_term.setProperty("textRole", u"caption")
         self.sim_years_label.setText(QCoreApplication.translate("PlanningModelPage", u"--", None))
+        self.sim_years_label.setProperty("textRole", u"section")
         self.label_trans_term.setText(QCoreApplication.translate("PlanningModelPage", u"Transmission Model", None))
+        self.label_trans_term.setProperty("textRole", u"caption")
         self.trans_model_label.setText(QCoreApplication.translate("PlanningModelPage", u"--", None))
+        self.trans_model_label.setProperty("textRole", u"section")
         self.label_temporal_term.setText(QCoreApplication.translate("PlanningModelPage", u"Temporal Selection", None))
+        self.label_temporal_term.setProperty("textRole", u"caption")
         self.temporal_selection_label.setText(QCoreApplication.translate("PlanningModelPage", u"--", None))
+        self.temporal_selection_label.setProperty("textRole", u"section")
         self.label_discount_term.setText(QCoreApplication.translate("PlanningModelPage", u"Discount Rate", None))
+        self.label_discount_term.setProperty("textRole", u"caption")
         self.discount_rate_label.setText(QCoreApplication.translate("PlanningModelPage", u"--", None))
+        self.discount_rate_label.setProperty("textRole", u"section")
         self.label_currency_term.setText(QCoreApplication.translate("PlanningModelPage", u"Base Currency Year", None))
+        self.label_currency_term.setProperty("textRole", u"caption")
         self.base_currency_label.setText(QCoreApplication.translate("PlanningModelPage", u"--", None))
+        self.base_currency_label.setProperty("textRole", u"section")
     # retranslateUi
 

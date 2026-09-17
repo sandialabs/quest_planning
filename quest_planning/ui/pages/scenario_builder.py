@@ -1,6 +1,4 @@
-import sys
-
-from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QWidget
+from PySide6.QtWidgets import QDialog, QFileDialog, QWidget
 
 from quest_planning.ui.forms.scenario_builder.ui_scenario_builder import (
     Ui_ScenarioBuilderPage,
@@ -213,56 +211,3 @@ class ScenarioBuilderPage(QWidget):
 
     def display_help_message(self, topic):
         pass
-
-
-def main():
-    app = QApplication(sys.argv)
-    app.setStyleSheet("* { background-color: #f0f0f0; color: #000000; }")
-    page = ScenarioBuilderPage()
-    page.setGeometry(0, 0, 1118, 928)
-    page.show()
-    for name in (
-        "scenario_name_box",
-        "scenario_name_help_button",
-        "capital_cost_box",
-        "capital_cost_trajectory_help_button",
-        "load_profile_box",
-        "load_profile_help_button",
-        "annual_load_growth_box",
-        "load_growth_help_button",
-        "rps_box",
-        "rps_help_button",
-        "transmission_box",
-        "trans_expansion_help_button",
-        "cand_tech_button",
-        "cand_technologies_help_button",
-        "candidate_tech_box",
-        "cand_tech_frame",
-        "gen_retirement_button",
-        "gen_retirement_help_button",
-        "retirement_box",
-        "retirement_frame",
-        "view_scenario_button",
-    ):
-        print("has {}: {}".format(name, hasattr(page.ui, name)))
-    print("cand frame hidden:", page.ui.cand_tech_frame.isHidden())
-    print("retirement frame hidden:", page.ui.retirement_frame.isHidden())
-    print("scenario name placeholder:", page.ui.scenario_name_box.placeholderText())
-    print("annual load growth:", repr(page.ui.annual_load_growth_box.text()))
-    print(
-        "capital costs items:",
-        [page.ui.capital_cost_box.itemText(i) for i in range(page.ui.capital_cost_box.count())],
-    )
-    print(
-        "rps items:",
-        [page.ui.rps_box.itemText(i) for i in range(page.ui.rps_box.count())],
-    )
-    print(
-        "transmission items:",
-        [page.ui.transmission_box.itemText(i) for i in range(page.ui.transmission_box.count())],
-    )
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()

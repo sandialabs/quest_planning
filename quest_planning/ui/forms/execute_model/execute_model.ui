@@ -1,0 +1,734 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+  <class>ExecuteModelPage</class>
+  <widget class="QWidget" name="ExecuteModelPage">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1118</width>
+        <height>928</height>
+      </rect>
+    </property>
+    <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
+    </property>
+    <property name="windowTitle">
+      <string>Form</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_main" stretch="0,0,0,1">
+      <property name="leftMargin">
+        <number>24</number>
+      </property>
+      <property name="topMargin">
+        <number>24</number>
+      </property>
+      <property name="rightMargin">
+        <number>24</number>
+      </property>
+      <property name="bottomMargin">
+        <number>24</number>
+      </property>
+      <property name="spacing">
+        <number>18</number>
+      </property>
+      <item>
+        <widget class="QFrame" name="frame_header">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="maximumSize">
+            <size>
+              <width>16777215</width>
+              <height>80</height>
+            </size>
+          </property>
+          <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_header">
+            <property name="leftMargin">
+              <number>0</number>
+            </property>
+            <property name="topMargin">
+              <number>0</number>
+            </property>
+            <property name="rightMargin">
+              <number>0</number>
+            </property>
+            <property name="bottomMargin">
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" name="verticalLayout_header_text">
+                <property name="spacing">
+                  <number>2</number>
+                </property>
+                <item>
+                  <widget class="QLabel" name="label_title">
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>18</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Execute Model</string>
+                    </property>
+                    <property name="textRole">
+                      <string>heading</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="label_subtitle">
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>The Execute Model step builds the QuESt Planning optimization model and solves it with your selected solver.</string>
+                    </property>
+                    <property name="textRole">
+                      <string>subtitle</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <spacer name="horizontalSpacer_header">
+                <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                  <size>
+                    <width>40</width>
+                    <height>20</height>
+                  </size>
+                </property>
+              </spacer>
+            </item>
+            <item>
+              <widget class="QToolButton" name="build_run_help_button">
+                <property name="text">
+                  <string />
+                </property>
+                <property name="icon">
+                  <iconset resource="../../../resources.qrc">
+                    <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
+                </property>
+                <property name="iconSize">
+                  <size>
+                    <width>24</width>
+                    <height>24</height>
+                  </size>
+                </property>
+                <property name="autoRaise">
+                  <bool>true</bool>
+                </property>
+                <property name="btnRole">
+                  <string>icon</string>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="QFrame" name="frame_execution">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="maximumSize">
+            <size>
+              <width>16777215</width>
+              <height>360</height>
+            </size>
+          </property>
+          <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_execution">
+            <property name="leftMargin">
+              <number>20</number>
+            </property>
+            <property name="topMargin">
+              <number>14</number>
+            </property>
+            <property name="rightMargin">
+              <number>20</number>
+            </property>
+            <property name="bottomMargin">
+              <number>14</number>
+            </property>
+            <property name="spacing">
+              <number>10</number>
+            </property>
+            <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_execution_title">
+                <property name="spacing">
+                  <number>8</number>
+                </property>
+                <item>
+                  <widget class="QLabel" name="label_execution_icon">
+                    <property name="maximumSize">
+                      <size>
+                        <width>22</width>
+                        <height>22</height>
+                      </size>
+                    </property>
+                    <property name="text">
+                      <string />
+                    </property>
+                    <property name="pixmap">
+                      <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-paper-plane.png</pixmap>
+                    </property>
+                    <property name="scaledContents">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="label_execution_title">
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>MODEL EXECUTION</string>
+                    </property>
+                    <property name="textRole">
+                      <string>section</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="horizontalSpacer_execution_title">
+                    <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                      <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                      <size>
+                        <width>40</width>
+                        <height>20</height>
+                      </size>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <widget class="QLabel" name="label_execution_desc">
+                <property name="font">
+                  <font>
+                    <family>Segoe UI</family>
+                    <pointsize>10</pointsize>
+                  </font>
+                </property>
+                <property name="text">
+                  <string>The &lt;b&gt;&lt;i&gt;QuESt Planning&lt;/i&gt;&lt;/b&gt; optimization model is built and solved in this step. Choose where the results will be saved, select the solver, then press &lt;i&gt;Build Model&lt;/i&gt; followed by &lt;i&gt;Solve Model&lt;/i&gt;.</string>
+                </property>
+                <property name="wordWrap">
+                  <bool>true</bool>
+                </property>
+                <property name="textRole">
+                  <string>body</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_results_folder">
+                <property name="spacing">
+                  <number>10</number>
+                </property>
+                <item>
+                  <widget class="QLabel" name="label_results_folder">
+                    <property name="minimumSize">
+                      <size>
+                        <width>150</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Results Folder</string>
+                    </property>
+                    <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="textRole">
+                      <string>section</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QComboBox" name="results_file_box">
+                    <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                      <size>
+                        <width>520</width>
+                        <height>16777215</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                      </font>
+                    </property>
+                    <property name="editable">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="browse_folder_button">
+                    <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                      <size>
+                        <width>110</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Browse</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="horizontalSpacer_results_folder">
+                    <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                      <size>
+                        <width>20</width>
+                        <height>10</height>
+                      </size>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_solver">
+                <property name="spacing">
+                  <number>10</number>
+                </property>
+                <item>
+                  <widget class="QLabel" name="label_solver">
+                    <property name="minimumSize">
+                      <size>
+                        <width>150</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Solver</string>
+                    </property>
+                    <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="textRole">
+                      <string>section</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QComboBox" name="solver_select_box">
+                    <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                      <size>
+                        <width>300</width>
+                        <height>16777215</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                      </font>
+                    </property>
+                    <item>
+                      <property name="text">
+                        <string>Clp</string>
+                      </property>
+                    </item>
+                    <item>
+                      <property name="text">
+                        <string>GLPK</string>
+                      </property>
+                    </item>
+                    <item>
+                      <property name="text">
+                        <string>Gurobi</string>
+                      </property>
+                    </item>
+                    <item>
+                      <property name="text">
+                        <string>HiGHs</string>
+                      </property>
+                    </item>
+                    <item>
+                      <property name="text">
+                        <string>Other (Upcoming)</string>
+                      </property>
+                    </item>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="label_solver_hint">
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>9</pointsize>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>The solver and any required licenses must be installed and accessible.</string>
+                    </property>
+                    <property name="wordWrap">
+                      <bool>true</bool>
+                    </property>
+                    <property name="textRole">
+                      <string>caption</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="horizontalSpacer_solver">
+                    <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                      <size>
+                        <width>20</width>
+                        <height>10</height>
+                      </size>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <widget class="Line" name="line_divider">
+                <property name="maximumSize">
+                  <size>
+                    <width>16777215</width>
+                    <height>1</height>
+                  </size>
+                </property>
+                <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_actions">
+                <property name="spacing">
+                  <number>12</number>
+                </property>
+                <item>
+                  <widget class="QPushButton" name="build_button">
+                    <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                      <size>
+                        <width>160</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Build Model</string>
+                    </property>
+                    <property name="btnRole">
+                      <string>primary</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="run_button">
+                    <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                      <size>
+                        <width>160</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Solve Model</string>
+                    </property>
+                    <property name="btnRole">
+                      <string>primary</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="label_actions_hint">
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>9</pointsize>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>Build the model first, then solve it. Progress appears in the Model Status panel.</string>
+                    </property>
+                    <property name="textRole">
+                      <string>caption</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="horizontalSpacer_actions">
+                    <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                      <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                      <size>
+                        <width>40</width>
+                        <height>20</height>
+                      </size>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+          </layout>
+          <property name="cardType">
+            <string>card</string>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QFrame" name="model_status_frame">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_status">
+            <property name="leftMargin">
+              <number>20</number>
+            </property>
+            <property name="topMargin">
+              <number>14</number>
+            </property>
+            <property name="rightMargin">
+              <number>20</number>
+            </property>
+            <property name="bottomMargin">
+              <number>14</number>
+            </property>
+            <property name="spacing">
+              <number>10</number>
+            </property>
+            <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_status_title">
+                <property name="spacing">
+                  <number>8</number>
+                </property>
+                <item>
+                  <widget class="QLabel" name="label_status_icon">
+                    <property name="maximumSize">
+                      <size>
+                        <width>22</width>
+                        <height>22</height>
+                      </size>
+                    </property>
+                    <property name="text">
+                      <string />
+                    </property>
+                    <property name="pixmap">
+                      <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-terminal.png</pixmap>
+                    </property>
+                    <property name="scaledContents">
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QLabel" name="label_status_title">
+                    <property name="font">
+                      <font>
+                        <family>Segoe UI</family>
+                        <pointsize>10</pointsize>
+                        <bold>true</bold>
+                      </font>
+                    </property>
+                    <property name="text">
+                      <string>MODEL STATUS</string>
+                    </property>
+                    <property name="textRole">
+                      <string>section</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="horizontalSpacer_status_title">
+                    <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                      <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                      <size>
+                        <width>40</width>
+                        <height>20</height>
+                      </size>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <widget class="QLabel" name="label_status_desc">
+                <property name="font">
+                  <font>
+                    <family>Segoe UI</family>
+                    <pointsize>9</pointsize>
+                  </font>
+                </property>
+                <property name="text">
+                  <string>Optimization Model Solve Status:</string>
+                </property>
+                <property name="textRole">
+                  <string>caption</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QPlainTextEdit" name="report_progress_box">
+                <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                  <size>
+                    <width>0</width>
+                    <height>200</height>
+                  </size>
+                </property>
+                <property name="plainText">
+                  <string>Ready to build the model.</string>
+                </property>
+                <property name="readOnly">
+                  <bool>true</bool>
+                </property>
+                <property name="codeRole">
+                  <bool>true</bool>
+                </property>
+              </widget>
+            </item>
+          </layout>
+          <property name="cardType">
+            <string>card</string>
+          </property>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <resources>
+    <include location="../../../resources.qrc" />
+  </resources>
+  <connections />
+</ui>

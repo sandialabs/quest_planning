@@ -58,8 +58,6 @@ class Ui_ScenarioBuilderPage(object):
         font.setPointSize(18)
         font.setBold(True)
         self.label_title.setFont(font)
-        self.label_title.setStyleSheet(u"color: rgb(40, 84, 113);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_title)
 
@@ -69,8 +67,6 @@ class Ui_ScenarioBuilderPage(object):
         font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(10)
         self.label_subtitle.setFont(font1)
-        self.label_subtitle.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_subtitle)
 
@@ -83,17 +79,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.scenario_builder_help_button = QToolButton(self.frame_header)
         self.scenario_builder_help_button.setObjectName(u"scenario_builder_help_button")
-        self.scenario_builder_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         icon = QIcon()
         icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.scenario_builder_help_button.setIcon(icon)
@@ -133,22 +118,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_scenario.sizePolicy().hasHeightForWidth())
         self.frame_scenario.setSizePolicy(sizePolicy3)
         self.frame_scenario.setMaximumSize(QSize(16777215, 150))
-        self.frame_scenario.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.frame_scenario.setFrameShape(QFrame.NoFrame)
         self.frame_scenario.setFrameShadow(QFrame.Raised)
         self.verticalLayout_scenario = QVBoxLayout(self.frame_scenario)
@@ -173,7 +142,6 @@ class Ui_ScenarioBuilderPage(object):
         font2.setPointSize(10)
         font2.setBold(True)
         self.label_scenario_title.setFont(font2)
-        self.label_scenario_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_scenario_title.addWidget(self.label_scenario_title)
 
@@ -183,17 +151,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.scenario_name_help_button = QToolButton(self.frame_scenario)
         self.scenario_name_help_button.setObjectName(u"scenario_name_help_button")
-        self.scenario_name_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.scenario_name_help_button.setIcon(icon)
         self.scenario_name_help_button.setIconSize(QSize(20, 20))
         self.scenario_name_help_button.setAutoRaise(True)
@@ -206,7 +163,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_scenario_desc = QLabel(self.frame_scenario)
         self.label_scenario_desc.setObjectName(u"label_scenario_desc")
         self.label_scenario_desc.setFont(font1)
-        self.label_scenario_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_scenario_desc.setWordWrap(True)
 
         self.verticalLayout_scenario.addWidget(self.label_scenario_desc)
@@ -231,22 +187,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_capital_cost.sizePolicy().hasHeightForWidth())
         self.frame_capital_cost.setSizePolicy(sizePolicy3)
         self.frame_capital_cost.setMaximumSize(QSize(16777215, 150))
-        self.frame_capital_cost.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.frame_capital_cost.setFrameShape(QFrame.NoFrame)
         self.frame_capital_cost.setFrameShadow(QFrame.Raised)
         self.verticalLayout_capital_cost = QVBoxLayout(self.frame_capital_cost)
@@ -267,7 +207,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_capital_cost_title = QLabel(self.frame_capital_cost)
         self.label_capital_cost_title.setObjectName(u"label_capital_cost_title")
         self.label_capital_cost_title.setFont(font2)
-        self.label_capital_cost_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_capital_cost_title.addWidget(self.label_capital_cost_title)
 
@@ -277,17 +216,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.capital_cost_trajectory_help_button = QToolButton(self.frame_capital_cost)
         self.capital_cost_trajectory_help_button.setObjectName(u"capital_cost_trajectory_help_button")
-        self.capital_cost_trajectory_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.capital_cost_trajectory_help_button.setIcon(icon)
         self.capital_cost_trajectory_help_button.setIconSize(QSize(20, 20))
         self.capital_cost_trajectory_help_button.setAutoRaise(True)
@@ -300,7 +228,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_capital_cost_desc = QLabel(self.frame_capital_cost)
         self.label_capital_cost_desc.setObjectName(u"label_capital_cost_desc")
         self.label_capital_cost_desc.setFont(font1)
-        self.label_capital_cost_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_capital_cost_desc.setWordWrap(True)
 
         self.verticalLayout_capital_cost.addWidget(self.label_capital_cost_desc)
@@ -326,22 +253,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_load.sizePolicy().hasHeightForWidth())
         self.frame_load.setSizePolicy(sizePolicy3)
         self.frame_load.setMaximumSize(QSize(16777215, 200))
-        self.frame_load.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.frame_load.setFrameShape(QFrame.NoFrame)
         self.frame_load.setFrameShadow(QFrame.Raised)
         self.verticalLayout_load = QVBoxLayout(self.frame_load)
@@ -362,7 +273,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_load_title = QLabel(self.frame_load)
         self.label_load_title.setObjectName(u"label_load_title")
         self.label_load_title.setFont(font2)
-        self.label_load_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_load_title.addWidget(self.label_load_title)
 
@@ -372,17 +282,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.load_profile_help_button = QToolButton(self.frame_load)
         self.load_profile_help_button.setObjectName(u"load_profile_help_button")
-        self.load_profile_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.load_profile_help_button.setIcon(icon)
         self.load_profile_help_button.setIconSize(QSize(20, 20))
         self.load_profile_help_button.setAutoRaise(True)
@@ -395,7 +294,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_load_desc = QLabel(self.frame_load)
         self.label_load_desc.setObjectName(u"label_load_desc")
         self.label_load_desc.setFont(font1)
-        self.label_load_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_load_desc.setWordWrap(True)
 
         self.verticalLayout_load.addWidget(self.label_load_desc)
@@ -406,7 +304,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_load_profile_text = QLabel(self.frame_load)
         self.label_load_profile_text.setObjectName(u"label_load_profile_text")
         self.label_load_profile_text.setFont(font2)
-        self.label_load_profile_text.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_load_profile.addWidget(self.label_load_profile_text)
 
@@ -432,7 +329,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_load_growth_text = QLabel(self.frame_load)
         self.label_load_growth_text.setObjectName(u"label_load_growth_text")
         self.label_load_growth_text.setFont(font2)
-        self.label_load_growth_text.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_load_growth.addWidget(self.label_load_growth_text)
 
@@ -454,17 +350,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.load_growth_help_button = QToolButton(self.frame_load)
         self.load_growth_help_button.setObjectName(u"load_growth_help_button")
-        self.load_growth_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.load_growth_help_button.setIcon(icon)
         self.load_growth_help_button.setIconSize(QSize(20, 20))
         self.load_growth_help_button.setAutoRaise(True)
@@ -482,22 +367,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_transmission.sizePolicy().hasHeightForWidth())
         self.frame_transmission.setSizePolicy(sizePolicy3)
         self.frame_transmission.setMaximumSize(QSize(16777215, 150))
-        self.frame_transmission.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.frame_transmission.setFrameShape(QFrame.NoFrame)
         self.frame_transmission.setFrameShadow(QFrame.Raised)
         self.verticalLayout_transmission = QVBoxLayout(self.frame_transmission)
@@ -518,7 +387,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_transmission_title = QLabel(self.frame_transmission)
         self.label_transmission_title.setObjectName(u"label_transmission_title")
         self.label_transmission_title.setFont(font2)
-        self.label_transmission_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_transmission_title.addWidget(self.label_transmission_title)
 
@@ -528,17 +396,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.trans_expansion_help_button = QToolButton(self.frame_transmission)
         self.trans_expansion_help_button.setObjectName(u"trans_expansion_help_button")
-        self.trans_expansion_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.trans_expansion_help_button.setIcon(icon)
         self.trans_expansion_help_button.setIconSize(QSize(20, 20))
         self.trans_expansion_help_button.setAutoRaise(True)
@@ -551,7 +408,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_transmission_desc = QLabel(self.frame_transmission)
         self.label_transmission_desc.setObjectName(u"label_transmission_desc")
         self.label_transmission_desc.setFont(font1)
-        self.label_transmission_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_transmission_desc.setWordWrap(True)
 
         self.verticalLayout_transmission.addWidget(self.label_transmission_desc)
@@ -592,22 +448,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_policy.sizePolicy().hasHeightForWidth())
         self.frame_policy.setSizePolicy(sizePolicy3)
         self.frame_policy.setMaximumSize(QSize(16777215, 150))
-        self.frame_policy.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.frame_policy.setFrameShape(QFrame.NoFrame)
         self.frame_policy.setFrameShadow(QFrame.Raised)
         self.verticalLayout_policy = QVBoxLayout(self.frame_policy)
@@ -628,7 +468,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_policy_title = QLabel(self.frame_policy)
         self.label_policy_title.setObjectName(u"label_policy_title")
         self.label_policy_title.setFont(font2)
-        self.label_policy_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_policy_title.addWidget(self.label_policy_title)
 
@@ -638,17 +477,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.rps_help_button = QToolButton(self.frame_policy)
         self.rps_help_button.setObjectName(u"rps_help_button")
-        self.rps_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.rps_help_button.setIcon(icon)
         self.rps_help_button.setIconSize(QSize(20, 20))
         self.rps_help_button.setAutoRaise(True)
@@ -661,7 +489,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_policy_desc = QLabel(self.frame_policy)
         self.label_policy_desc.setObjectName(u"label_policy_desc")
         self.label_policy_desc.setFont(font1)
-        self.label_policy_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_policy_desc.setWordWrap(True)
 
         self.verticalLayout_policy.addWidget(self.label_policy_desc)
@@ -685,27 +512,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_candidates.sizePolicy().hasHeightForWidth())
         self.frame_candidates.setSizePolicy(sizePolicy3)
         self.frame_candidates.setMaximumSize(QSize(16777215, 230))
-        self.frame_candidates.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}\n"
-"QFrame#cand_tech_frame {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}")
         self.frame_candidates.setFrameShape(QFrame.NoFrame)
         self.frame_candidates.setFrameShadow(QFrame.Raised)
         self.verticalLayout_candidates = QVBoxLayout(self.frame_candidates)
@@ -726,7 +532,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_candidates_title = QLabel(self.frame_candidates)
         self.label_candidates_title.setObjectName(u"label_candidates_title")
         self.label_candidates_title.setFont(font2)
-        self.label_candidates_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_candidates_title.addWidget(self.label_candidates_title)
 
@@ -736,17 +541,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.cand_technologies_help_button = QToolButton(self.frame_candidates)
         self.cand_technologies_help_button.setObjectName(u"cand_technologies_help_button")
-        self.cand_technologies_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.cand_technologies_help_button.setIcon(icon)
         self.cand_technologies_help_button.setIconSize(QSize(20, 20))
         self.cand_technologies_help_button.setAutoRaise(True)
@@ -759,7 +553,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_candidates_desc = QLabel(self.frame_candidates)
         self.label_candidates_desc.setObjectName(u"label_candidates_desc")
         self.label_candidates_desc.setFont(font1)
-        self.label_candidates_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_candidates_desc.setWordWrap(True)
 
         self.verticalLayout_candidates.addWidget(self.label_candidates_desc)
@@ -773,19 +566,6 @@ class Ui_ScenarioBuilderPage(object):
         self.cand_tech_button.setSizePolicy(sizePolicy5)
         self.cand_tech_button.setMinimumSize(QSize(220, 0))
         self.cand_tech_button.setFont(font2)
-        self.cand_tech_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_cand_button.addWidget(self.cand_tech_button)
 
@@ -801,14 +581,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.cand_tech_frame.sizePolicy().hasHeightForWidth())
         self.cand_tech_frame.setSizePolicy(sizePolicy3)
         self.cand_tech_frame.setMaximumSize(QSize(16777215, 150))
-        self.cand_tech_frame.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.cand_tech_frame.setFrameShape(QFrame.NoFrame)
         self.cand_tech_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_cand_tech = QVBoxLayout(self.cand_tech_frame)
@@ -822,7 +594,6 @@ class Ui_ScenarioBuilderPage(object):
         font3.setPointSize(9)
         font3.setBold(True)
         self.label_cand_tech_list_title.setFont(font3)
-        self.label_cand_tech_list_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_cand_tech.addWidget(self.label_cand_tech_list_title)
 
@@ -845,27 +616,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.frame_retirements.sizePolicy().hasHeightForWidth())
         self.frame_retirements.setSizePolicy(sizePolicy3)
         self.frame_retirements.setMaximumSize(QSize(16777215, 230))
-        self.frame_retirements.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox, QFrame QDoubleSpinBox, QFrame QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}\n"
-"QFrame#retirement_frame {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}")
         self.frame_retirements.setFrameShape(QFrame.NoFrame)
         self.frame_retirements.setFrameShadow(QFrame.Raised)
         self.verticalLayout_retirements = QVBoxLayout(self.frame_retirements)
@@ -886,7 +636,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_retirements_title = QLabel(self.frame_retirements)
         self.label_retirements_title.setObjectName(u"label_retirements_title")
         self.label_retirements_title.setFont(font2)
-        self.label_retirements_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_retirements_title.addWidget(self.label_retirements_title)
 
@@ -896,17 +645,6 @@ class Ui_ScenarioBuilderPage(object):
 
         self.gen_retirement_help_button = QToolButton(self.frame_retirements)
         self.gen_retirement_help_button.setObjectName(u"gen_retirement_help_button")
-        self.gen_retirement_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.gen_retirement_help_button.setIcon(icon)
         self.gen_retirement_help_button.setIconSize(QSize(20, 20))
         self.gen_retirement_help_button.setAutoRaise(True)
@@ -919,7 +657,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_retirements_desc = QLabel(self.frame_retirements)
         self.label_retirements_desc.setObjectName(u"label_retirements_desc")
         self.label_retirements_desc.setFont(font1)
-        self.label_retirements_desc.setStyleSheet(u"color: rgb(70, 70, 70);")
         self.label_retirements_desc.setWordWrap(True)
 
         self.verticalLayout_retirements.addWidget(self.label_retirements_desc)
@@ -933,19 +670,6 @@ class Ui_ScenarioBuilderPage(object):
         self.gen_retirement_button.setSizePolicy(sizePolicy5)
         self.gen_retirement_button.setMinimumSize(QSize(200, 0))
         self.gen_retirement_button.setFont(font2)
-        self.gen_retirement_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_retirement_button.addWidget(self.gen_retirement_button)
 
@@ -961,14 +685,6 @@ class Ui_ScenarioBuilderPage(object):
         sizePolicy3.setHeightForWidth(self.retirement_frame.sizePolicy().hasHeightForWidth())
         self.retirement_frame.setSizePolicy(sizePolicy3)
         self.retirement_frame.setMaximumSize(QSize(16777215, 150))
-        self.retirement_frame.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.retirement_frame.setFrameShape(QFrame.NoFrame)
         self.retirement_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_retirement = QVBoxLayout(self.retirement_frame)
@@ -978,7 +694,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_retirement_list_title = QLabel(self.retirement_frame)
         self.label_retirement_list_title.setObjectName(u"label_retirement_list_title")
         self.label_retirement_list_title.setFont(font3)
-        self.label_retirement_list_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_retirement.addWidget(self.label_retirement_list_title)
 
@@ -1019,8 +734,6 @@ class Ui_ScenarioBuilderPage(object):
         self.label_actions_hint = QLabel(self.frame_actions)
         self.label_actions_hint.setObjectName(u"label_actions_hint")
         self.label_actions_hint.setFont(font1)
-        self.label_actions_hint.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.horizontalLayout_actions.addWidget(self.label_actions_hint)
 
@@ -1034,19 +747,6 @@ class Ui_ScenarioBuilderPage(object):
         self.view_scenario_button.setSizePolicy(sizePolicy5)
         self.view_scenario_button.setMinimumSize(QSize(180, 0))
         self.view_scenario_button.setFont(font2)
-        self.view_scenario_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_actions.addWidget(self.view_scenario_button)
 
@@ -1063,58 +763,100 @@ class Ui_ScenarioBuilderPage(object):
     def retranslateUi(self, ScenarioBuilderPage):
         ScenarioBuilderPage.setWindowTitle(QCoreApplication.translate("ScenarioBuilderPage", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Scenario Builder", None))
+        self.label_title.setProperty("textRole", u"heading")
         self.label_subtitle.setText(QCoreApplication.translate("ScenarioBuilderPage", u"The QuESt Planning scenario builder turns your model configuration into a runnable scenario.", None))
+        self.label_subtitle.setProperty("textRole", u"subtitle")
         self.scenario_builder_help_button.setText("")
+        self.scenario_builder_help_button.setProperty("btnRole", u"icon")
+        self.frame_scenario.setProperty("cardType", u"card")
         self.label_scenario_icon.setText("")
         self.label_scenario_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SCENARIO NAME", None))
+        self.label_scenario_title.setProperty("textRole", u"section")
         self.scenario_name_help_button.setText("")
+        self.scenario_name_help_button.setProperty("btnRole", u"icon")
         self.label_scenario_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"The <b><i>Scenario Name</i></b> you provide should be unique to this <i>QuESt Planning</i> scenario, as it will be used to save the print results.", None))
+        self.label_scenario_desc.setProperty("textRole", u"body")
         self.scenario_name_box.setPlaceholderText(QCoreApplication.translate("ScenarioBuilderPage", u"Base Scenario", None))
+        self.frame_capital_cost.setProperty("cardType", u"card")
         self.label_capital_cost_icon.setText("")
         self.label_capital_cost_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"RESOURCE CAPITAL COSTS", None))
+        self.label_capital_cost_title.setProperty("textRole", u"section")
         self.capital_cost_trajectory_help_button.setText("")
+        self.capital_cost_trajectory_help_button.setProperty("btnRole", u"icon")
         self.label_capital_cost_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Select the <b><i>capital cost trajectory</i></b> that <i>QuESt Planning</i> will use for the energy storage technologies. The cost trajectories are defined in the input csv data.", None))
+        self.label_capital_cost_desc.setProperty("textRole", u"body")
         self.capital_cost_box.setItemText(0, QCoreApplication.translate("ScenarioBuilderPage", u"Baseline", None))
         self.capital_cost_box.setItemText(1, QCoreApplication.translate("ScenarioBuilderPage", u"Low", None))
         self.capital_cost_box.setItemText(2, QCoreApplication.translate("ScenarioBuilderPage", u"Moderate", None))
         self.capital_cost_box.setItemText(3, QCoreApplication.translate("ScenarioBuilderPage", u"High", None))
 
+        self.frame_load.setProperty("cardType", u"card")
         self.label_load_icon.setText("")
         self.label_load_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"LOAD FORECASTS", None))
+        self.label_load_title.setProperty("textRole", u"section")
         self.load_profile_help_button.setText("")
+        self.load_profile_help_button.setProperty("btnRole", u"icon")
         self.label_load_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Select the <b><i>load forecast</i></b> used by <i>QuESt Planning</i>. The forecasts are defined in the csv data.", None))
+        self.label_load_desc.setProperty("textRole", u"body")
         self.label_load_profile_text.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Load Forecast", None))
+        self.label_load_profile_text.setProperty("textRole", u"section")
         self.label_load_growth_text.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Annual Load Growth", None))
+        self.label_load_growth_text.setProperty("textRole", u"section")
         self.annual_load_growth_box.setText(QCoreApplication.translate("ScenarioBuilderPage", u"1.5", None))
         self.annual_load_growth_box.setPlaceholderText(QCoreApplication.translate("ScenarioBuilderPage", u"%", None))
         self.load_growth_help_button.setText("")
+        self.load_growth_help_button.setProperty("btnRole", u"icon")
+        self.frame_transmission.setProperty("cardType", u"card")
         self.label_transmission_icon.setText("")
         self.label_transmission_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"TRANSMISSION EXPANSION", None))
+        self.label_transmission_title.setProperty("textRole", u"section")
         self.trans_expansion_help_button.setText("")
+        self.trans_expansion_help_button.setProperty("btnRole", u"icon")
         self.label_transmission_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Choose whether <i>QuESt Planning</i> may expand the transmission network. Transmission expansion is a feature that will be added in a later release.", None))
+        self.label_transmission_desc.setProperty("textRole", u"body")
         self.transmission_box.setItemText(0, QCoreApplication.translate("ScenarioBuilderPage", u"Yes", None))
         self.transmission_box.setItemText(1, QCoreApplication.translate("ScenarioBuilderPage", u"No", None))
 
+        self.frame_policy.setProperty("cardType", u"card")
         self.label_policy_icon.setText("")
         self.label_policy_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"FUTURE GENERATION MIX", None))
+        self.label_policy_title.setProperty("textRole", u"section")
         self.rps_help_button.setText("")
+        self.rps_help_button.setProperty("btnRole", u"icon")
         self.label_policy_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Select the <b><i>Future Generation Mix</i></b> to be used in the scenario. The schedule can be defined in the csv data, or select <i>Create New...</i> to define custom targets.", None))
+        self.label_policy_desc.setProperty("textRole", u"body")
         self.rps_box.setItemText(0, QCoreApplication.translate("ScenarioBuilderPage", u"Default", None))
         self.rps_box.setItemText(1, QCoreApplication.translate("ScenarioBuilderPage", u"Create New...", None))
 
+        self.frame_candidates.setProperty("cardType", u"tile")
         self.label_candidates_icon.setText("")
         self.label_candidates_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"CANDIDATE TECHNOLOGIES", None))
+        self.label_candidates_title.setProperty("textRole", u"section")
         self.cand_technologies_help_button.setText("")
+        self.cand_technologies_help_button.setProperty("btnRole", u"icon")
         self.label_candidates_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Click the <b><i>Candidate Technologies</i></b> button to select the candidate technologies to be considered in the <i>QuESt Planning</i> optimization.", None))
+        self.label_candidates_desc.setProperty("textRole", u"body")
         self.cand_tech_button.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Candidate Technologies", None))
+        self.cand_tech_button.setProperty("btnRole", u"primary")
+        self.cand_tech_frame.setProperty("cardType", u"tile")
         self.label_cand_tech_list_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SELECTED CANDIDATE TECHNOLOGIES", None))
+        self.label_cand_tech_list_title.setProperty("textRole", u"section")
+        self.frame_retirements.setProperty("cardType", u"tile")
         self.label_retirements_icon.setText("")
         self.label_retirements_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"GENERATION RETIREMENTS", None))
+        self.label_retirements_title.setProperty("textRole", u"section")
         self.gen_retirement_help_button.setText("")
+        self.gen_retirement_help_button.setProperty("btnRole", u"icon")
         self.label_retirements_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Click the <b><i>Retirement Schedule</i></b> button to select the retirement schedule enforced in the <i>QuESt Planning</i> optimization. The <i>Default</i> option uses the schedule detailed in the csv data.", None))
+        self.label_retirements_desc.setProperty("textRole", u"body")
         self.gen_retirement_button.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Retirement Schedule", None))
+        self.gen_retirement_button.setProperty("btnRole", u"primary")
+        self.retirement_frame.setProperty("cardType", u"tile")
         self.label_retirement_list_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SELECTED RETIREMENT SCHEDULE", None))
+        self.label_retirement_list_title.setProperty("textRole", u"section")
         self.label_actions_hint.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Press <i>View Scenario</i> to review the complete scenario and model configuration.", None))
+        self.label_actions_hint.setProperty("textRole", u"subtitle")
         self.view_scenario_button.setText(QCoreApplication.translate("ScenarioBuilderPage", u"View Scenario", None))
+        self.view_scenario_button.setProperty("btnRole", u"primary")
     # retranslateUi
 

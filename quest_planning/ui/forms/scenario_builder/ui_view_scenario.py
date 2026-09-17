@@ -31,17 +31,6 @@ class Ui_ViewScenarioDialog(object):
         sizePolicy.setHeightForWidth(ViewScenarioDialog.sizePolicy().hasHeightForWidth())
         ViewScenarioDialog.setSizePolicy(sizePolicy)
         ViewScenarioDialog.setMinimumSize(QSize(620, 580))
-        ViewScenarioDialog.setStyleSheet(u"ViewScenarioDialog {\n"
-"    background-color: rgb(240, 240, 240);\n"
-"}\n"
-"QDialog QLineEdit, QDialog QComboBox, QDialog QTextBrowser {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 4px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"    color: rgb(0, 0, 0);\n"
-"}")
         self.verticalLayout_main = QVBoxLayout(ViewScenarioDialog)
         self.verticalLayout_main.setSpacing(18)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
@@ -69,8 +58,6 @@ class Ui_ViewScenarioDialog(object):
         font.setPointSize(18)
         font.setBold(True)
         self.label_title.setFont(font)
-        self.label_title.setStyleSheet(u"color: rgb(40, 84, 113);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_title)
 
@@ -81,8 +68,6 @@ class Ui_ViewScenarioDialog(object):
         font1.setPointSize(10)
         font1.setBold(True)
         self.system_name_label.setFont(font1)
-        self.system_name_label.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.system_name_label)
 
@@ -95,17 +80,6 @@ class Ui_ViewScenarioDialog(object):
 
         self.view_scenario_help_button = QToolButton(self.frame_header)
         self.view_scenario_help_button.setObjectName(u"view_scenario_help_button")
-        self.view_scenario_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         icon = QIcon()
         icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.view_scenario_help_button.setIcon(icon)
@@ -131,14 +105,6 @@ class Ui_ViewScenarioDialog(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.frame_planning_card.sizePolicy().hasHeightForWidth())
         self.frame_planning_card.setSizePolicy(sizePolicy2)
-        self.frame_planning_card.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_planning_card.setFrameShape(QFrame.NoFrame)
         self.frame_planning_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_planning = QVBoxLayout(self.frame_planning_card)
@@ -159,7 +125,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_planning_title = QLabel(self.frame_planning_card)
         self.label_planning_title.setObjectName(u"label_planning_title")
         self.label_planning_title.setFont(font1)
-        self.label_planning_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_planning_title.addWidget(self.label_planning_title)
 
@@ -176,7 +141,6 @@ class Ui_ViewScenarioDialog(object):
         font2.setFamilies([u"Segoe UI"])
         font2.setPointSize(9)
         self.label_planning_desc.setFont(font2)
-        self.label_planning_desc.setStyleSheet(u"color: rgb(110, 110, 110);")
         self.label_planning_desc.setWordWrap(True)
 
         self.verticalLayout_planning.addWidget(self.label_planning_desc)
@@ -190,7 +154,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_sim_years.setObjectName(u"label_sim_years")
         self.label_sim_years.setMinimumSize(QSize(120, 0))
         self.label_sim_years.setFont(font1)
-        self.label_sim_years.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_sim_years.addWidget(self.label_sim_years)
 
@@ -213,7 +176,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_trans_model.setObjectName(u"label_trans_model")
         self.label_trans_model.setMinimumSize(QSize(120, 0))
         self.label_trans_model.setFont(font1)
-        self.label_trans_model.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_trans_model.addWidget(self.label_trans_model)
 
@@ -233,7 +195,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_temporal.setObjectName(u"label_temporal")
         self.label_temporal.setMinimumSize(QSize(120, 0))
         self.label_temporal.setFont(font1)
-        self.label_temporal.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_temporal.addWidget(self.label_temporal)
 
@@ -253,7 +214,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_discount.setObjectName(u"label_discount")
         self.label_discount.setMinimumSize(QSize(120, 0))
         self.label_discount.setFont(font1)
-        self.label_discount.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_discount.addWidget(self.label_discount)
 
@@ -273,7 +233,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_base_currency.setObjectName(u"label_base_currency")
         self.label_base_currency.setMinimumSize(QSize(120, 0))
         self.label_base_currency.setFont(font1)
-        self.label_base_currency.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_base_currency.addWidget(self.label_base_currency)
 
@@ -301,14 +260,6 @@ class Ui_ViewScenarioDialog(object):
         self.frame_scenario_card.setObjectName(u"frame_scenario_card")
         sizePolicy2.setHeightForWidth(self.frame_scenario_card.sizePolicy().hasHeightForWidth())
         self.frame_scenario_card.setSizePolicy(sizePolicy2)
-        self.frame_scenario_card.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_scenario_card.setFrameShape(QFrame.NoFrame)
         self.frame_scenario_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_scenario = QVBoxLayout(self.frame_scenario_card)
@@ -329,7 +280,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_scenario_title = QLabel(self.frame_scenario_card)
         self.label_scenario_title.setObjectName(u"label_scenario_title")
         self.label_scenario_title.setFont(font1)
-        self.label_scenario_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_scenario_title.addWidget(self.label_scenario_title)
 
@@ -343,7 +293,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_scenario_desc = QLabel(self.frame_scenario_card)
         self.label_scenario_desc.setObjectName(u"label_scenario_desc")
         self.label_scenario_desc.setFont(font2)
-        self.label_scenario_desc.setStyleSheet(u"color: rgb(110, 110, 110);")
         self.label_scenario_desc.setWordWrap(True)
 
         self.verticalLayout_scenario.addWidget(self.label_scenario_desc)
@@ -357,7 +306,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_capital_cost.setObjectName(u"label_capital_cost")
         self.label_capital_cost.setMinimumSize(QSize(120, 0))
         self.label_capital_cost.setFont(font1)
-        self.label_capital_cost.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_capital_cost.addWidget(self.label_capital_cost)
 
@@ -377,7 +325,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_load_forecast.setObjectName(u"label_load_forecast")
         self.label_load_forecast.setMinimumSize(QSize(120, 0))
         self.label_load_forecast.setFont(font1)
-        self.label_load_forecast.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_load_forecast.addWidget(self.label_load_forecast)
 
@@ -397,7 +344,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_load_growth.setObjectName(u"label_load_growth")
         self.label_load_growth.setMinimumSize(QSize(120, 0))
         self.label_load_growth.setFont(font1)
-        self.label_load_growth.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_load_growth.addWidget(self.label_load_growth)
 
@@ -417,7 +363,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_rps.setObjectName(u"label_rps")
         self.label_rps.setMinimumSize(QSize(120, 0))
         self.label_rps.setFont(font1)
-        self.label_rps.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_rps.addWidget(self.label_rps)
 
@@ -437,7 +382,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_tx.setObjectName(u"label_tx")
         self.label_tx.setMinimumSize(QSize(120, 0))
         self.label_tx.setFont(font1)
-        self.label_tx.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_tx.addWidget(self.label_tx)
 
@@ -457,7 +401,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_cand.setObjectName(u"label_cand")
         self.label_cand.setMinimumSize(QSize(120, 0))
         self.label_cand.setFont(font1)
-        self.label_cand.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_cand.addWidget(self.label_cand)
 
@@ -477,7 +420,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_retirement.setObjectName(u"label_retirement")
         self.label_retirement.setMinimumSize(QSize(120, 0))
         self.label_retirement.setFont(font1)
-        self.label_retirement.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_retirement.addWidget(self.label_retirement)
 
@@ -517,8 +459,6 @@ class Ui_ViewScenarioDialog(object):
         self.label_save_hint = QLabel(self.frame_footer)
         self.label_save_hint.setObjectName(u"label_save_hint")
         self.label_save_hint.setFont(font3)
-        self.label_save_hint.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.horizontalLayout_footer.addWidget(self.label_save_hint)
 
@@ -535,19 +475,6 @@ class Ui_ViewScenarioDialog(object):
         self.close_button.setSizePolicy(sizePolicy3)
         self.close_button.setMinimumSize(QSize(110, 0))
         self.close_button.setFont(font1)
-        self.close_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    color: rgb(40, 84, 113);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(235, 244, 248);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(214, 232, 240);\n"
-"}")
 
         self.horizontalLayout_footer.addWidget(self.close_button)
 
@@ -557,19 +484,6 @@ class Ui_ViewScenarioDialog(object):
         self.save_scenario_button.setSizePolicy(sizePolicy3)
         self.save_scenario_button.setMinimumSize(QSize(180, 0))
         self.save_scenario_button.setFont(font1)
-        self.save_scenario_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_footer.addWidget(self.save_scenario_button)
 
@@ -585,37 +499,60 @@ class Ui_ViewScenarioDialog(object):
     def retranslateUi(self, ViewScenarioDialog):
         ViewScenarioDialog.setWindowTitle(QCoreApplication.translate("ViewScenarioDialog", u"View Scenario", None))
         self.label_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"Scenario Summary", None))
+        self.label_title.setProperty("textRole", u"heading")
         self.system_name_label.setText(QCoreApplication.translate("ViewScenarioDialog", u"Power System: --", None))
+        self.system_name_label.setProperty("textRole", u"subtitle")
         self.view_scenario_help_button.setText("")
+        self.view_scenario_help_button.setProperty("btnRole", u"icon")
+        self.frame_planning_card.setProperty("cardType", u"card")
         self.label_planning_icon.setText("")
         self.label_planning_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"PLANNING MODEL INFORMATION", None))
+        self.label_planning_title.setProperty("textRole", u"section")
         self.label_planning_desc.setText(QCoreApplication.translate("ViewScenarioDialog", u"Settings defined in the <i>Planning Model Setup</i> step.", None))
+        self.label_planning_desc.setProperty("textRole", u"caption")
         self.label_sim_years.setText(QCoreApplication.translate("ViewScenarioDialog", u"Simulation Years", None))
+        self.label_sim_years.setProperty("textRole", u"section")
         self.sim_years_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_trans_model.setText(QCoreApplication.translate("ViewScenarioDialog", u"Transmission Model", None))
+        self.label_trans_model.setProperty("textRole", u"section")
         self.trans_model_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_temporal.setText(QCoreApplication.translate("ViewScenarioDialog", u"Temporal Selection", None))
+        self.label_temporal.setProperty("textRole", u"section")
         self.temporal_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_discount.setText(QCoreApplication.translate("ViewScenarioDialog", u"Discount Rate", None))
+        self.label_discount.setProperty("textRole", u"section")
         self.discount_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_base_currency.setText(QCoreApplication.translate("ViewScenarioDialog", u"Base Currency Year", None))
+        self.label_base_currency.setProperty("textRole", u"section")
         self.base_currency_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
+        self.frame_scenario_card.setProperty("cardType", u"card")
         self.label_scenario_icon.setText("")
         self.label_scenario_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"SCENARIO INFORMATION", None))
+        self.label_scenario_title.setProperty("textRole", u"section")
         self.label_scenario_desc.setText(QCoreApplication.translate("ViewScenarioDialog", u"Settings defined in the <i>Scenario Builder</i> step.", None))
+        self.label_scenario_desc.setProperty("textRole", u"caption")
         self.label_capital_cost.setText(QCoreApplication.translate("ViewScenarioDialog", u"Capital Costs", None))
+        self.label_capital_cost.setProperty("textRole", u"section")
         self.capital_cost_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_load_forecast.setText(QCoreApplication.translate("ViewScenarioDialog", u"Load Forecast", None))
+        self.label_load_forecast.setProperty("textRole", u"section")
         self.load_forecast_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_load_growth.setText(QCoreApplication.translate("ViewScenarioDialog", u"Annual Load Growth", None))
+        self.label_load_growth.setProperty("textRole", u"section")
         self.annual_load_growth_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_rps.setText(QCoreApplication.translate("ViewScenarioDialog", u"Future Generation Mix", None))
+        self.label_rps.setProperty("textRole", u"section")
         self.label_tx.setText(QCoreApplication.translate("ViewScenarioDialog", u"Transmission Expansion", None))
+        self.label_tx.setProperty("textRole", u"section")
         self.transmission_expansion_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_cand.setText(QCoreApplication.translate("ViewScenarioDialog", u"Candidate Technologies", None))
+        self.label_cand.setProperty("textRole", u"section")
         self.label_retirement.setText(QCoreApplication.translate("ViewScenarioDialog", u"Retirement Schedule", None))
+        self.label_retirement.setProperty("textRole", u"section")
         self.label_save_hint.setText(QCoreApplication.translate("ViewScenarioDialog", u"Save a text summary of this <i>QuESt Planning</i> scenario.", None))
+        self.label_save_hint.setProperty("textRole", u"subtitle")
         self.close_button.setText(QCoreApplication.translate("ViewScenarioDialog", u"Close", None))
         self.save_scenario_button.setText(QCoreApplication.translate("ViewScenarioDialog", u"Save Scenario Info", None))
+        self.save_scenario_button.setProperty("btnRole", u"primary")
     # retranslateUi
 

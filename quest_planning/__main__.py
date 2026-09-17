@@ -1,43 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-Control of the main window for the Quest Planning Application.
+Control of the main window for the QuESt Planning Application.
 """
 import sys
-import ctypes
-from PySide6.QtGui import (
-    QIcon,
-    QGuiApplication,
-    QPixmap,
-    QColor,
-    QImageReader
-)
 
-from PySide6.QtWidgets import (
-    QMainWindow,
-    QApplication,
-    QPushButton,
-    QVBoxLayout,
-    QSizeGrip,
-    QSplashScreen,
-)
+from PySide6.QtCore import Qt, QSettings, QTimer
+from PySide6.QtGui import QIcon, QImageReader, QPixmap
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
 
-from PySide6.QtCore import Qt, QThread, Signal,QRect,QTimer,QSettings
-
-from quest_planning.gui.main.ui.ui_main import Ui_MainWindow
-from quest_planning.gui.start_page.start_screen import StartScreen
-from quest_planning.gui.power_system_data_page.power_system_data import PowerSystemDataPage
-from quest_planning.gui.planning_model_page.planning_model import PlanningModelPage
-from quest_planning.gui.scenario_builder_page.scenario_builder import ScenarioBuilderPage
-from quest_planning.gui.build_run_page.build_run import BuildRunPage
-from quest_planning.gui.results_page.results import ResultsPage
+from quest_planning.ui.forms.main_window.ui_main_window import Ui_MainWindow
+from quest_planning.ui.pages.start_screen import LandingPage
+from quest_planning.ui.pages.power_system_data import PowerSystemPage
+from quest_planning.ui.pages.planning_model import PlanningModelPage
+from quest_planning.ui.pages.scenario_builder import ScenarioBuilderPage
+from quest_planning.ui.pages.build_run import ExecuteModelPage
+from quest_planning.ui.pages.results import ResultsViewerPage
+from quest_planning.ui.styles import apply_stylesheet
 
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
 from quest_planning.explan.explan_optimizer import ExplanOptimizer
 from quest_planning.explan.explan_results_viewer import ExplanResultsViewer
-
-from quest_planning.gui.tools.tools import TabAnimator
-
-from quest_planning.gui.splash_screen_page.ui.ui_splash_screen import Ui_SplashScreen
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning, module="PIL.Image")
@@ -45,151 +27,200 @@ warnings.filterwarnings("ignore", category=UserWarning, module="PIL.Image")
 
 time_count = 0
 
+
 class QuestPlanning(QMainWindow):
-    """The main window that contains the tab widget for the separate pages."""
+    """The main window that contains the stacked widget for the separate pages."""
+
+    __pages__ = (
+        ("page_landing", "btn_home"),
+        ("page_large_load", "btn_large_load"),
+        ("page_power_system", "btn_power_system"),
+        ("page_planning", "btn_planning"),
+        ("page_scenario", "btn_scenario"),
+        ("page_execute", "btn_model"),
+        ("page_results", "btn_results"),
+        ("page_settings", "btn_settings"),
+        ("page_about", "btn_about"),
+    )
 
     def __init__(self, *args, **kwargs):
         """Initialize the app and load in the widgets."""
         super().__init__()
 
         self.data_handler = ExplanDataHandler()
-        self.optimizer = ExplanOptimizer(self.data_handler, solver=self.data_handler.solver)#solver will be set in build-run page
+        self.optimizer = ExplanOptimizer(
+            self.data_handler, solver=self.data_handler.solver
+        )
         self.results_viewer = ExplanResultsViewer(self.data_handler)
 
-        # Set ui and main window attributes
-        self.main_win = QMainWindow()
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)#self.main_win)
-        self.ui.tabWidget.setCurrentWidget(self.ui.start)
-
-
-        #self.ui.max_resize_button.clicked.connect(lambda: self.main_win.showFullScreen())
-        #self.ui.exit_app_button.clicked.connect(lambda: self.main_win.close())
-        #self.ui.norm_resize_button.clicked.connect(lambda: self.main_win.showNormal())
-        #self.ui.min_resize_button.clicked.connect(lambda: self.main_win.showMinimized())
-
-        # self.ui.max_resize_button.clicked.connect(self.showFullScreen)
-        # self.ui.exit_app_button.clicked.connect(self.close)
-        # self.ui.norm_resize_button.clicked.connect(self.showNormal)
-        # self.ui.min_resize_button.clicked.connect(self.showMinimized)
-        
-        self.setWindowFlag(Qt.CustomizeWindowHint,True)
-        #self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)
-        #self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
-        # self.setWindowFlag(Qt.WindowMinimizeButtonHint, False)
-        # self.setWindowFlag(Qt.WindowCloseButtonHint, False)
-        self.setWindowFlag(Qt.Window, True)
+        self.ui.setupUi(self)
 
         self.setWindowTitle("QuESt Planning")
         self.setWindowIcon(QIcon(":/logos/images/logo/Quest_App_Icon.svg"))
-        
-        
-        self.ui.home_button.clicked.connect(lambda: self.ui.tabWidget.setCurrentWidget(self.ui.start))
-        
 
+        # Apply the central application stylesheet.
+        app = QApplication.instance()
+        if app is not None:
+            apply_stylesheet(app)
 
-        # Add widgets to their respective layouts
-        self.ui.start_page_layout.addWidget(StartScreen(self.ui.tabWidget))
-        self.ui.power_system_data_page_layout.addWidget(PowerSystemDataPage(self.ui.tabWidget,self.data_handler))
-        self.ui.planning_model_page_layout.addWidget(PlanningModelPage(self.ui.tabWidget,self.data_handler))
-        self.ui.scenario_builder_page_layout.addWidget(ScenarioBuilderPage(self.ui.tabWidget,self.data_handler,self.ui.power_system_data_page_layout.itemAt(0).widget(),self.ui.planning_model_page_layout.itemAt(0).widget(), self.optimizer, self.results_viewer))
+        # Show the QuESt logo in the ribbon.
+        self.ui.label_logo.setPixmap(
+            QPixmap(":/logos/images/logo/Quest_App_Icon_50_transparent.png")
+        )
+        self.ui.label_logo.setFixedSize(48, 48)
+        self.ui.label_logo.setScaledContents(True)
 
+        # Build and place the pages into the stacked widget.
+        self.pages = {}
+        self.pages["page_landing"] = self._make_page(
+            "page_landing", LandingPage()
+        )
+        self.pages["page_power_system"] = self._make_page(
+            "page_power_system", PowerSystemPage()
+        )
+        self.pages["page_planning"] = self._make_page(
+            "page_planning", PlanningModelPage()
+        )
+        self.pages["page_scenario"] = self._make_page(
+            "page_scenario", ScenarioBuilderPage()
+        )
+        self.pages["page_execute"] = self._make_page(
+            "page_execute", ExecuteModelPage()
+        )
+        self.pages["page_results"] = self._make_page(
+            "page_results", ResultsViewerPage()
+        )
+        # Remaining pages are placeholders left as their empty widget forms.
+        for name in ("page_large_load", "page_settings", "page_about"):
+            placeholder = self.ui.stackedWidget.findChild(QWidget, name)
+            self.pages[name] = placeholder
 
-        #Making an instance of the build run to access a signal later
-        self.build_run = BuildRunPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer,self.ui.planning_model_page_layout.itemAt(0).widget(),
-                                                             self.ui.scenario_builder_page_layout.itemAt(0).widget())
-        #Collecting results in the backend
-        self.results_obj = ResultsPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer)
-        
-        self.ui.build_run_page_layout.addWidget(self.build_run)
-        # self.ui.build_run_page_layout.addWidget(BuildRunPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer,self.ui.planning_model_page_layout.itemAt(0).widget(),
-        #                                                      self.ui.scenario_builder_page_layout.itemAt(0).widget()))
-        # self.ui.results_page_layout.addWidget(ResultsPage(self.ui.tabWidget,self.data_handler, self.optimizer, self.results_viewer))
-        self.ui.results_page_layout.addWidget(self.results_obj)
+        # Land on the home page.
+        self.ui.stackedWidget.setCurrentWidget(self.pages["page_landing"])
 
-        # Set signal to load profile box when tab is opened. This could be used in other applications to improve workflow.
-        self.ui.tabWidget.currentChanged.connect(self.ui.scenario_builder_page_layout.itemAt(0).widget().on_tab_opened)
-        self.ui.tabWidget.currentChanged.connect(self.ui.planning_model_page_layout.itemAt(0).widget().on_tab_opened)
-        self.ui.tabWidget.currentChanged.connect(self.ui.build_run_page_layout.itemAt(0).widget().on_tab_opened)
-        
-        # TODO-not working, secondary feature
-        self.animator = TabAnimator(self.ui.tabWidget)
-        self.ui.tabWidget.currentChanged.connect(lambda index: self.animator.fade_in_tab_widget(index))
+        # Wire the ribbon buttons and the prev/next navigation.
+        self.page_buttons = {}
+        for page_name, button_name in self.__pages__:
+            button = getattr(self.ui, button_name)
+            button.setCheckable(True)
+            button.clicked.connect(
+                lambda _=False, name=page_name: self.show_page(name)
+            )
+            self.page_buttons[page_name] = button
 
-        self.build_run.solved_it.connect(self.results_obj.collect_results_button_clicked)
-        
-    def show(self):
-        """Show the main window."""
-        #self.showMaximized()       
-        #self.main_win.show()
-        self.showNormal()
-        # Set initial window size
-        initial_width = 750
-        initial_height = 500
-        #self.setGeometry(100, 100, initial_width, initial_height)
+        # Start button on the landing page advances to Power System Data.
+        self.pages["page_landing"].start_requested.connect(
+            lambda: self.show_page("page_power_system")
+        )
+
+        self.ui.btn_prev.clicked.connect(self.go_previous)
+        self.ui.next_prev.clicked.connect(self.go_next)
+
+        # Initial selection state for the ribbon.
+        self.select_page("page_landing")
+
+    def _make_page(self, name, widget):
+        """Replace the placeholder widget with a real page widget."""
+        placeholder = self.ui.stackedWidget.findChild(QWidget, name)
+        index = self.ui.stackedWidget.indexOf(placeholder)
+        widget.setObjectName(name)
+        self.ui.stackedWidget.removeWidget(placeholder)
+        self.ui.stackedWidget.insertWidget(index, widget)
+        self.ui.stackedWidget.setCurrentIndex(0)
+        return widget
+
+    def show_page(self, name):
+        """Switch to the given page and highlight its ribbon button."""
+        widget = self.pages.get(name)
+        if widget is None:
+            return
+        self.ui.stackedWidget.setCurrentWidget(widget)
+        self.select_page(name)
+
+    def select_page(self, name):
+        """Highlight the ribbon button matching the given page."""
+        for page_name, button in self.page_buttons.items():
+            button.setChecked(page_name == name)
+
+    def go_next(self):
+        """Advance to the next page in the wizard order."""
+        index = self.ui.stackedWidget.currentIndex()
+        count = self.ui.stackedWidget.count()
+        if index < count - 1:
+            self.ui.stackedWidget.setCurrentIndex(index + 1)
+            self._sync_ribbon()
+
+    def go_previous(self):
+        """Step back to the previous page in the wizard order."""
+        index = self.ui.stackedWidget.currentIndex()
+        if index > 0:
+            self.ui.stackedWidget.setCurrentIndex(index - 1)
+            self._sync_ribbon()
+
+    def _sync_ribbon(self):
+        """Highlight the ribbon button for the current page."""
+        current = self.ui.stackedWidget.currentWidget()
+        for page_name, button in self.page_buttons.items():
+            button.setChecked(self.pages[page_name] is current)
+
 
 class SplashScreen(QMainWindow):
+    """Splash screen that fades into the main window when ready."""
+
     def __init__(self):
         super().__init__()
+        from quest_planning.gui.splash_screen_page.ui.ui_splash_screen import (
+            Ui_SplashScreen,
+        )
+
         self.ui = Ui_SplashScreen()
         self.ui.setupUi(self)
 
-        #remove window
+        # remove window decorations
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)
 
-        
         # Start timer
         self.timer = QTimer()
         self.timer.timeout.connect(self.progress)
-        self.timer.start(15)#record every 15ms
+        self.timer.start(15)
 
         self.show()
-
 
     def progress(self):
         global time_count
         value = time_count
 
-        if time_count > 100: #Stop when reaches 100%
-            # stop timer
+        if time_count > 100:
             self.timer.stop()
-
-            # Show QuestPlanning
             self.main = QuestPlanning()
             self.main.show()
-
-            # Close Splash Screen
             self.close()
         else:
             self.load_status_graphic(value)
             time_count += 0.4
 
-
     def load_status_graphic(self, value):
         stylesheet = """
         QFrame {
             border-radius: 125px;
-            background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:{STOP_V1} rgba(0, 0, 0, 0), stop:{STOP_V2} rgba(129, 194, 64, 255));
+            background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90,
+                stop:{STOP_V1} rgba(0, 0, 0, 0),
+                stop:{STOP_V2} rgba(129, 194, 64, 255));
         }
-        """#rgb(129, 194, 64);
-
-        # Calculate load status (%) 
+        """
         progress = (100 - value) / 100.0
-
-        # Get the stop value for display
         stop_v1 = str(progress - 0.001)
         stop_v2 = str(progress)
-
-        #Update load status by changing style sheet color
-        newStyleSheet = stylesheet.replace("{STOP_V1}", stop_v1).replace("{STOP_V2}", stop_v2)
-
-        # update stylesheet
-        self.ui.load_status_graphic.setStyleSheet(newStyleSheet)
+        new_style = stylesheet.replace(
+            "{STOP_V1}", stop_v1
+        ).replace("{STOP_V2}", stop_v2)
+        self.ui.load_status_graphic.setStyleSheet(new_style)
         self.ui.label.setText(str(int(value)) + " %")
 
 
 def main():
-    print('Opening QuESt Planning Tool')
+    print("Opening QuESt Planning Tool")
     # Suppress Qt warnings
     Settings = QSettings()
     Settings.clear()
@@ -197,58 +228,12 @@ def main():
 
     app = QApplication(sys.argv)
 
-    # Apply dark theme
-    windows_default_stylesheet = """
-        * {
-            background-color: #f0f0f0;
-            color: #000000;
-        }
-        
-    """
-    app.setStyleSheet(windows_default_stylesheet)
-
-    # Print the current stylesheet
-    #print("Current Stylesheet:")
-    #print(app.styleSheet())
+    # Apply the central consolidated stylesheet.
+    apply_stylesheet(app)
 
     window = SplashScreen()
     sys.exit(app.exec_())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-
-    '''
-    QMainWindow {
-        background-color: rgb(200,200,200);
-    }
-    QTabWidget::pane {
-        border: 1px solid rgb(255,255,255);
-    }
-    QTabBar::tab {
-        background: rgb(255,255,255);
-        border: 1px solid rgb(255,255,255);
-        padding: 10px;
-    }
-    QTabBar::tab:selected {
-        background: rgb(255,255,255);
-        border-bottom: 2px solid rgb(255,255,255);
-    }
-    QPushButton {
-        background-color: rgb(255,255,255);
-        border: 1px solid ;
-        padding: 5px;
-    }
-    QPushButton:hover {
-        background-color: #555555;
-    }
-    QPushButton:pressed {
-        background-color: #666666;
-    }
-
-    #label_5 {
-            background-color: rgb(129, 194, 64);
-        }
-        #top_right_frame{
-            background-color: rgb(129, 194, 64);
-        }
-    '''

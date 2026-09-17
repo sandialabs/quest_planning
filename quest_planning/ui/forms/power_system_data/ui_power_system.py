@@ -27,7 +27,7 @@ class Ui_PowerSystemPage(object):
     def setupUi(self, PowerSystemPage):
         if not PowerSystemPage.objectName():
             PowerSystemPage.setObjectName(u"PowerSystemPage")
-        PowerSystemPage.resize(1118, 928)
+        PowerSystemPage.resize(739, 761)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,8 +62,6 @@ class Ui_PowerSystemPage(object):
         font.setPointSize(18)
         font.setBold(True)
         self.label_title.setFont(font)
-        self.label_title.setStyleSheet(u"color: rgb(40, 84, 113);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_title)
 
@@ -73,8 +71,6 @@ class Ui_PowerSystemPage(object):
         font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(10)
         self.label_subtitle.setFont(font1)
-        self.label_subtitle.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text.addWidget(self.label_subtitle)
 
@@ -87,17 +83,6 @@ class Ui_PowerSystemPage(object):
 
         self.power_system_help_button = QToolButton(self.frame_header)
         self.power_system_help_button.setObjectName(u"power_system_help_button")
-        self.power_system_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         icon = QIcon()
         icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.power_system_help_button.setIcon(icon)
@@ -117,21 +102,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy2.setHeightForWidth(self.frame_source.sizePolicy().hasHeightForWidth())
         self.frame_source.setSizePolicy(sizePolicy2)
         self.frame_source.setMaximumSize(QSize(16777215, 180))
-        self.frame_source.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 7px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"}")
         self.frame_source.setFrameShape(QFrame.NoFrame)
         self.frame_source.setFrameShadow(QFrame.Raised)
         self.verticalLayout_source = QVBoxLayout(self.frame_source)
@@ -156,7 +126,6 @@ class Ui_PowerSystemPage(object):
         font2.setPointSize(10)
         font2.setBold(True)
         self.label_source_title.setFont(font2)
-        self.label_source_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_source_title.addWidget(self.label_source_title)
 
@@ -218,19 +187,6 @@ class Ui_PowerSystemPage(object):
         self.file_button.setSizePolicy(sizePolicy4)
         self.file_button.setMinimumSize(QSize(110, 0))
         self.file_button.setFont(font2)
-        self.file_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    color: rgb(40, 84, 113);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(235, 244, 248);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(214, 232, 240);\n"
-"}")
 
         self.horizontalLayout_folder.addWidget(self.file_button)
 
@@ -240,19 +196,6 @@ class Ui_PowerSystemPage(object):
         self.open_file_button.setSizePolicy(sizePolicy4)
         self.open_file_button.setMinimumSize(QSize(110, 0))
         self.open_file_button.setFont(font2)
-        self.open_file_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_folder.addWidget(self.open_file_button)
 
@@ -271,19 +214,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy2.setHeightForWidth(self.frame_overview.sizePolicy().hasHeightForWidth())
         self.frame_overview.setSizePolicy(sizePolicy2)
         self.frame_overview.setMaximumSize(QSize(16777215, 180))
-        self.frame_overview.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame#frame_tile_bus, QFrame#frame_tile_line, QFrame#frame_tile_gen, QFrame#frame_tile_sys {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}")
         self.frame_overview.setFrameShape(QFrame.NoFrame)
         self.frame_overview.setFrameShadow(QFrame.Raised)
         self.verticalLayout_overview = QVBoxLayout(self.frame_overview)
@@ -304,7 +234,6 @@ class Ui_PowerSystemPage(object):
         self.label_overview_title = QLabel(self.frame_overview)
         self.label_overview_title.setObjectName(u"label_overview_title")
         self.label_overview_title.setFont(font2)
-        self.label_overview_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_overview_title.addWidget(self.label_overview_title)
 
@@ -342,7 +271,6 @@ class Ui_PowerSystemPage(object):
         font3.setFamilies([u"Segoe UI"])
         font3.setPointSize(9)
         self.label_bus_title.setFont(font3)
-        self.label_bus_title.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_bus.addWidget(self.label_bus_title)
 
@@ -353,7 +281,6 @@ class Ui_PowerSystemPage(object):
         font4.setPointSize(14)
         font4.setBold(True)
         self.bus_label.setFont(font4)
-        self.bus_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_bus.addWidget(self.bus_label)
 
@@ -384,14 +311,12 @@ class Ui_PowerSystemPage(object):
         self.label_line_title = QLabel(self.frame_tile_line)
         self.label_line_title.setObjectName(u"label_line_title")
         self.label_line_title.setFont(font3)
-        self.label_line_title.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_line.addWidget(self.label_line_title)
 
         self.line_label = QLabel(self.frame_tile_line)
         self.line_label.setObjectName(u"line_label")
         self.line_label.setFont(font4)
-        self.line_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_line.addWidget(self.line_label)
 
@@ -422,14 +347,12 @@ class Ui_PowerSystemPage(object):
         self.label_gen_title = QLabel(self.frame_tile_gen)
         self.label_gen_title.setObjectName(u"label_gen_title")
         self.label_gen_title.setFont(font3)
-        self.label_gen_title.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_gen.addWidget(self.label_gen_title)
 
         self.gen_label = QLabel(self.frame_tile_gen)
         self.gen_label.setObjectName(u"gen_label")
         self.gen_label.setFont(font4)
-        self.gen_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_gen.addWidget(self.gen_label)
 
@@ -460,14 +383,12 @@ class Ui_PowerSystemPage(object):
         self.label_sys_title = QLabel(self.frame_tile_sys)
         self.label_sys_title.setObjectName(u"label_sys_title")
         self.label_sys_title.setFont(font3)
-        self.label_sys_title.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_sys.addWidget(self.label_sys_title)
 
         self.sys_label = QLabel(self.frame_tile_sys)
         self.sys_label.setObjectName(u"sys_label")
         self.sys_label.setFont(font4)
-        self.sys_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_sys.addWidget(self.sys_label)
 
@@ -500,14 +421,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.frame_map_card.sizePolicy().hasHeightForWidth())
         self.frame_map_card.setSizePolicy(sizePolicy5)
-        self.frame_map_card.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_map_card.setFrameShape(QFrame.NoFrame)
         self.frame_map_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_map_card = QVBoxLayout(self.frame_map_card)
@@ -528,7 +441,6 @@ class Ui_PowerSystemPage(object):
         self.label_map_title = QLabel(self.frame_map_card)
         self.label_map_title.setObjectName(u"label_map_title")
         self.label_map_title.setFont(font2)
-        self.label_map_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_map_title.addWidget(self.label_map_title)
 
@@ -544,7 +456,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy.setHeightForWidth(self.network_map_widget.sizePolicy().hasHeightForWidth())
         self.network_map_widget.setSizePolicy(sizePolicy)
         self.network_map_widget.setMinimumSize(QSize(0, 0))
-        self.network_map_widget.setStyleSheet(u"background-color: rgb(255, 255, 255);")
 
         self.verticalLayout_map_card.addWidget(self.network_map_widget)
 
@@ -558,14 +469,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.frame_genmix_card.sizePolicy().hasHeightForWidth())
         self.frame_genmix_card.setSizePolicy(sizePolicy6)
-        self.frame_genmix_card.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_genmix_card.setFrameShape(QFrame.NoFrame)
         self.frame_genmix_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_genmix_card = QVBoxLayout(self.frame_genmix_card)
@@ -586,7 +489,6 @@ class Ui_PowerSystemPage(object):
         self.label_genmix_title = QLabel(self.frame_genmix_card)
         self.label_genmix_title.setObjectName(u"label_genmix_title")
         self.label_genmix_title.setFont(font2)
-        self.label_genmix_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_genmix_title.addWidget(self.label_genmix_title)
 
@@ -602,7 +504,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy.setHeightForWidth(self.generation_mix.sizePolicy().hasHeightForWidth())
         self.generation_mix.setSizePolicy(sizePolicy)
         self.generation_mix.setMinimumSize(QSize(0, 0))
-        self.generation_mix.setStyleSheet(u"background-color: rgb(255, 255, 255);")
 
         self.verticalLayout_genmix_card.addWidget(self.generation_mix)
 
@@ -612,7 +513,6 @@ class Ui_PowerSystemPage(object):
 
         self.verticalLayout_main.addWidget(self.frame_plots)
 
-        self.verticalLayout_main.setStretch(4, 1)
         PowerSystemPage.addWidget(self.page_standard)
         self.power_system_data_w_load = QWidget()
         self.power_system_data_w_load.setObjectName(u"power_system_data_w_load")
@@ -636,16 +536,12 @@ class Ui_PowerSystemPage(object):
         self.label_title_load = QLabel(self.frame_header_load)
         self.label_title_load.setObjectName(u"label_title_load")
         self.label_title_load.setFont(font)
-        self.label_title_load.setStyleSheet(u"color: rgb(40, 84, 113);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text_load.addWidget(self.label_title_load)
 
         self.label_subtitle_load = QLabel(self.frame_header_load)
         self.label_subtitle_load.setObjectName(u"label_subtitle_load")
         self.label_subtitle_load.setFont(font1)
-        self.label_subtitle_load.setStyleSheet(u"color: rgb(100, 100, 100);\n"
-"background-color: transparent;")
 
         self.verticalLayout_header_text_load.addWidget(self.label_subtitle_load)
 
@@ -658,17 +554,6 @@ class Ui_PowerSystemPage(object):
 
         self.load_help_button = QToolButton(self.frame_header_load)
         self.load_help_button.setObjectName(u"load_help_button")
-        self.load_help_button.setStyleSheet(u"QToolButton {\n"
-"    border: none;\n"
-"    border-radius: 5px;\n"
-"    background-color: transparent;\n"
-"}\n"
-"QToolButton:hover {\n"
-"    background-color: rgb(230, 235, 240);\n"
-"}\n"
-"QToolButton:pressed {\n"
-"    background-color: rgb(210, 218, 225);\n"
-"}")
         self.load_help_button.setIcon(icon)
         self.load_help_button.setIconSize(QSize(24, 24))
         self.load_help_button.setAutoRaise(True)
@@ -683,21 +568,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy2.setHeightForWidth(self.frame_source_load.sizePolicy().hasHeightForWidth())
         self.frame_source_load.setSizePolicy(sizePolicy2)
         self.frame_source_load.setMaximumSize(QSize(16777215, 180))
-        self.frame_source_load.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame QLineEdit, QFrame QComboBox {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(204, 204, 204);\n"
-"    border-radius: 6px;\n"
-"    padding: 7px 8px;\n"
-"    selection-background-color: rgb(40, 84, 113);\n"
-"}")
         self.frame_source_load.setFrameShape(QFrame.NoFrame)
         self.frame_source_load.setFrameShadow(QFrame.Raised)
         self.verticalLayout_source_load = QVBoxLayout(self.frame_source_load)
@@ -718,7 +588,6 @@ class Ui_PowerSystemPage(object):
         self.label_source_title_load = QLabel(self.frame_source_load)
         self.label_source_title_load.setObjectName(u"label_source_title_load")
         self.label_source_title_load.setFont(font2)
-        self.label_source_title_load.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_source_title_load.addWidget(self.label_source_title_load)
 
@@ -774,19 +643,6 @@ class Ui_PowerSystemPage(object):
         self.load_file_button.setSizePolicy(sizePolicy4)
         self.load_file_button.setMinimumSize(QSize(110, 0))
         self.load_file_button.setFont(font2)
-        self.load_file_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    color: rgb(40, 84, 113);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(235, 244, 248);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(214, 232, 240);\n"
-"}")
 
         self.horizontalLayout_folder_load.addWidget(self.load_file_button)
 
@@ -796,19 +652,6 @@ class Ui_PowerSystemPage(object):
         self.load_open_file_button.setSizePolicy(sizePolicy4)
         self.load_open_file_button.setMinimumSize(QSize(110, 0))
         self.load_open_file_button.setFont(font2)
-        self.load_open_file_button.setStyleSheet(u"QPushButton {\n"
-"    border: 1px solid rgb(40, 84, 113);\n"
-"    border-radius: 7px;\n"
-"    background-color: rgb(40, 84, 113);\n"
-"    color: rgb(255, 255, 255);\n"
-"    padding: 7px 16px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: rgb(60, 120, 150);\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: rgb(20, 60, 80);\n"
-"}")
 
         self.horizontalLayout_folder_load.addWidget(self.load_open_file_button)
 
@@ -827,19 +670,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy2.setHeightForWidth(self.frame_overview_load.sizePolicy().hasHeightForWidth())
         self.frame_overview_load.setSizePolicy(sizePolicy2)
         self.frame_overview_load.setMaximumSize(QSize(16777215, 180))
-        self.frame_overview_load.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}\n"
-"QFrame#frame_tile_bus_load, QFrame#frame_tile_line_load, QFrame#frame_tile_gen_load, QFrame#frame_tile_sys_load {\n"
-"    background-color: rgb(247, 247, 247);\n"
-"    border: 1px solid rgb(232, 232, 232);\n"
-"    border-radius: 8px;\n"
-"}")
         self.frame_overview_load.setFrameShape(QFrame.NoFrame)
         self.frame_overview_load.setFrameShadow(QFrame.Raised)
         self.verticalLayout_overview_load = QVBoxLayout(self.frame_overview_load)
@@ -860,7 +690,6 @@ class Ui_PowerSystemPage(object):
         self.label_overview_title_load = QLabel(self.frame_overview_load)
         self.label_overview_title_load.setObjectName(u"label_overview_title_load")
         self.label_overview_title_load.setFont(font2)
-        self.label_overview_title_load.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_overview_title_load.addWidget(self.label_overview_title_load)
 
@@ -895,14 +724,12 @@ class Ui_PowerSystemPage(object):
         self.label_bus_title_load = QLabel(self.frame_tile_bus_load)
         self.label_bus_title_load.setObjectName(u"label_bus_title_load")
         self.label_bus_title_load.setFont(font3)
-        self.label_bus_title_load.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_bus_load.addWidget(self.label_bus_title_load)
 
         self.load_bus_label = QLabel(self.frame_tile_bus_load)
         self.load_bus_label.setObjectName(u"load_bus_label")
         self.load_bus_label.setFont(font4)
-        self.load_bus_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_bus_load.addWidget(self.load_bus_label)
 
@@ -933,14 +760,12 @@ class Ui_PowerSystemPage(object):
         self.label_line_title_load = QLabel(self.frame_tile_line_load)
         self.label_line_title_load.setObjectName(u"label_line_title_load")
         self.label_line_title_load.setFont(font3)
-        self.label_line_title_load.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_line_load.addWidget(self.label_line_title_load)
 
         self.load_line_label = QLabel(self.frame_tile_line_load)
         self.load_line_label.setObjectName(u"load_line_label")
         self.load_line_label.setFont(font4)
-        self.load_line_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_line_load.addWidget(self.load_line_label)
 
@@ -971,14 +796,12 @@ class Ui_PowerSystemPage(object):
         self.label_gen_title_load = QLabel(self.frame_tile_gen_load)
         self.label_gen_title_load.setObjectName(u"label_gen_title_load")
         self.label_gen_title_load.setFont(font3)
-        self.label_gen_title_load.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_gen_load.addWidget(self.label_gen_title_load)
 
         self.load_gen_label = QLabel(self.frame_tile_gen_load)
         self.load_gen_label.setObjectName(u"load_gen_label")
         self.load_gen_label.setFont(font4)
-        self.load_gen_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_gen_load.addWidget(self.load_gen_label)
 
@@ -1009,14 +832,12 @@ class Ui_PowerSystemPage(object):
         self.label_sys_title_load = QLabel(self.frame_tile_sys_load)
         self.label_sys_title_load.setObjectName(u"label_sys_title_load")
         self.label_sys_title_load.setFont(font3)
-        self.label_sys_title_load.setStyleSheet(u"color: rgb(110, 110, 110);")
 
         self.verticalLayout_tile_sys_load.addWidget(self.label_sys_title_load)
 
         self.load_sys_label = QLabel(self.frame_tile_sys_load)
         self.load_sys_label.setObjectName(u"load_sys_label")
         self.load_sys_label.setFont(font4)
-        self.load_sys_label.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.verticalLayout_tile_sys_load.addWidget(self.load_sys_label)
 
@@ -1046,14 +867,6 @@ class Ui_PowerSystemPage(object):
         self.frame_map_card_load.setObjectName(u"frame_map_card_load")
         sizePolicy5.setHeightForWidth(self.frame_map_card_load.sizePolicy().hasHeightForWidth())
         self.frame_map_card_load.setSizePolicy(sizePolicy5)
-        self.frame_map_card_load.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_map_card_load.setFrameShape(QFrame.NoFrame)
         self.frame_map_card_load.setFrameShadow(QFrame.Raised)
         self.verticalLayout_map_card_load = QVBoxLayout(self.frame_map_card_load)
@@ -1074,7 +887,6 @@ class Ui_PowerSystemPage(object):
         self.label_map_title_load = QLabel(self.frame_map_card_load)
         self.label_map_title_load.setObjectName(u"label_map_title_load")
         self.label_map_title_load.setFont(font2)
-        self.label_map_title_load.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_map_title_load.addWidget(self.label_map_title_load)
 
@@ -1090,7 +902,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy.setHeightForWidth(self.load_network_map_widget.sizePolicy().hasHeightForWidth())
         self.load_network_map_widget.setSizePolicy(sizePolicy)
         self.load_network_map_widget.setMinimumSize(QSize(0, 0))
-        self.load_network_map_widget.setStyleSheet(u"background-color: rgb(255, 255, 255);")
 
         self.verticalLayout_map_card_load.addWidget(self.load_network_map_widget)
 
@@ -1104,14 +915,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy7.setVerticalStretch(1)
         sizePolicy7.setHeightForWidth(self.frame_load_card.sizePolicy().hasHeightForWidth())
         self.frame_load_card.setSizePolicy(sizePolicy7)
-        self.frame_load_card.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_load_card.setFrameShape(QFrame.NoFrame)
         self.frame_load_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_load_card = QVBoxLayout(self.frame_load_card)
@@ -1132,7 +935,6 @@ class Ui_PowerSystemPage(object):
         self.label_load_title = QLabel(self.frame_load_card)
         self.label_load_title.setObjectName(u"label_load_title")
         self.label_load_title.setFont(font2)
-        self.label_load_title.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_load_title.addWidget(self.label_load_title)
 
@@ -1148,7 +950,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy.setHeightForWidth(self.load_profile_widget.sizePolicy().hasHeightForWidth())
         self.load_profile_widget.setSizePolicy(sizePolicy)
         self.load_profile_widget.setMinimumSize(QSize(0, 150))
-        self.load_profile_widget.setStyleSheet(u"background-color: rgb(255, 255, 255);")
 
         self.verticalLayout_load_card.addWidget(self.load_profile_widget)
 
@@ -1159,14 +960,6 @@ class Ui_PowerSystemPage(object):
         self.frame_genmix_card_load.setObjectName(u"frame_genmix_card_load")
         sizePolicy7.setHeightForWidth(self.frame_genmix_card_load.sizePolicy().hasHeightForWidth())
         self.frame_genmix_card_load.setSizePolicy(sizePolicy7)
-        self.frame_genmix_card_load.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(255, 255, 255);\n"
-"    border: 1px solid rgb(216, 216, 216);\n"
-"    border-radius: 12px;\n"
-"}\n"
-"QFrame QLabel {\n"
-"    background-color: transparent;\n"
-"}")
         self.frame_genmix_card_load.setFrameShape(QFrame.NoFrame)
         self.frame_genmix_card_load.setFrameShadow(QFrame.Raised)
         self.verticalLayout_genmix_card_load = QVBoxLayout(self.frame_genmix_card_load)
@@ -1187,7 +980,6 @@ class Ui_PowerSystemPage(object):
         self.label_genmix_title_load = QLabel(self.frame_genmix_card_load)
         self.label_genmix_title_load.setObjectName(u"label_genmix_title_load")
         self.label_genmix_title_load.setFont(font2)
-        self.label_genmix_title_load.setStyleSheet(u"color: rgb(40, 84, 113);")
 
         self.horizontalLayout_genmix_title_load.addWidget(self.label_genmix_title_load)
 
@@ -1203,7 +995,6 @@ class Ui_PowerSystemPage(object):
         sizePolicy.setHeightForWidth(self.load_generation_mix.sizePolicy().hasHeightForWidth())
         self.load_generation_mix.setSizePolicy(sizePolicy)
         self.load_generation_mix.setMinimumSize(QSize(0, 150))
-        self.load_generation_mix.setStyleSheet(u"background-color: rgb(255, 255, 255);")
 
         self.verticalLayout_genmix_card_load.addWidget(self.load_generation_mix)
 
@@ -1213,7 +1004,6 @@ class Ui_PowerSystemPage(object):
 
         self.verticalLayout_load.addWidget(self.frame_plots_load)
 
-        self.verticalLayout_load.setStretch(4, 1)
         PowerSystemPage.addWidget(self.power_system_data_w_load)
 
         self.retranslateUi(PowerSystemPage)
@@ -1227,62 +1017,112 @@ class Ui_PowerSystemPage(object):
     def retranslateUi(self, PowerSystemPage):
         PowerSystemPage.setWindowTitle(QCoreApplication.translate("PowerSystemPage", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("PowerSystemPage", u"Power System Data", None))
+        self.label_title.setProperty("textRole", u"heading")
         self.label_subtitle.setText(QCoreApplication.translate("PowerSystemPage", u"Select the folder containing your power system input data.", None))
+        self.label_subtitle.setProperty("textRole", u"subtitle")
         self.power_system_help_button.setText("")
+        self.power_system_help_button.setProperty("btnRole", u"icon")
+        self.frame_source.setProperty("cardType", u"card")
         self.label_source_icon.setText("")
         self.label_source_title.setText(QCoreApplication.translate("PowerSystemPage", u"DATA SOURCE", None))
+        self.label_source_title.setProperty("textRole", u"section")
         self.label_system_name.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
         self.system_name_input.setText(QCoreApplication.translate("PowerSystemPage", u"Default System Name", None))
         self.label_data_folder.setText(QCoreApplication.translate("PowerSystemPage", u"Data Folder", None))
         self.file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Browse", None))
         self.open_file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Open", None))
+        self.open_file_button.setProperty("btnRole", u"primary")
+        self.frame_overview.setProperty("cardType", u"tile")
         self.label_overview_icon.setText("")
         self.label_overview_title.setText(QCoreApplication.translate("PowerSystemPage", u"SYSTEM OVERVIEW", None))
+        self.label_overview_title.setProperty("textRole", u"section")
+        self.frame_tile_bus.setProperty("cardType", u"tile")
         self.label_bus_icon.setText("")
         self.label_bus_title.setText(QCoreApplication.translate("PowerSystemPage", u"Buses (Zones)", None))
+        self.label_bus_title.setProperty("textRole", u"caption")
         self.bus_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.bus_label.setProperty("textRole", u"section")
+        self.frame_tile_line.setProperty("cardType", u"tile")
         self.label_line_icon.setText("")
         self.label_line_title.setText(QCoreApplication.translate("PowerSystemPage", u"Branches", None))
+        self.label_line_title.setProperty("textRole", u"caption")
         self.line_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.line_label.setProperty("textRole", u"section")
+        self.frame_tile_gen.setProperty("cardType", u"tile")
         self.label_gen_icon.setText("")
         self.label_gen_title.setText(QCoreApplication.translate("PowerSystemPage", u"Generators", None))
+        self.label_gen_title.setProperty("textRole", u"caption")
         self.gen_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.gen_label.setProperty("textRole", u"section")
+        self.frame_tile_sys.setProperty("cardType", u"tile")
         self.label_sys_icon.setText("")
         self.label_sys_title.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
+        self.label_sys_title.setProperty("textRole", u"caption")
         self.sys_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.sys_label.setProperty("textRole", u"section")
+        self.frame_map_card.setProperty("cardType", u"card")
         self.label_map_icon.setText("")
         self.label_map_title.setText(QCoreApplication.translate("PowerSystemPage", u"NETWORK MAP", None))
+        self.label_map_title.setProperty("textRole", u"section")
+        self.frame_genmix_card.setProperty("cardType", u"card")
         self.label_genmix_icon.setText("")
         self.label_genmix_title.setText(QCoreApplication.translate("PowerSystemPage", u"GENERATION MIX", None))
+        self.label_genmix_title.setProperty("textRole", u"section")
         self.label_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Power System Data", None))
+        self.label_title_load.setProperty("textRole", u"heading")
         self.label_subtitle_load.setText(QCoreApplication.translate("PowerSystemPage", u"Select the folder containing your power system input data (includes load profile).", None))
+        self.label_subtitle_load.setProperty("textRole", u"subtitle")
         self.load_help_button.setText("")
+        self.load_help_button.setProperty("btnRole", u"icon")
+        self.frame_source_load.setProperty("cardType", u"card")
         self.label_source_icon_load.setText("")
         self.label_source_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"DATA SOURCE", None))
+        self.label_source_title_load.setProperty("textRole", u"section")
         self.label_system_name_load.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
         self.load_system_name_input.setText(QCoreApplication.translate("PowerSystemPage", u"Default System Name", None))
         self.label_data_folder_load.setText(QCoreApplication.translate("PowerSystemPage", u"Data Folder", None))
         self.load_file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Browse", None))
         self.load_open_file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Open", None))
+        self.load_open_file_button.setProperty("btnRole", u"primary")
+        self.frame_overview_load.setProperty("cardType", u"tile")
         self.label_overview_icon_load.setText("")
         self.label_overview_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"SYSTEM OVERVIEW", None))
+        self.label_overview_title_load.setProperty("textRole", u"section")
+        self.frame_tile_bus_load.setProperty("cardType", u"tile")
         self.label_bus_icon_load.setText("")
         self.label_bus_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Buses (Zones)", None))
+        self.label_bus_title_load.setProperty("textRole", u"caption")
         self.load_bus_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.load_bus_label.setProperty("textRole", u"section")
+        self.frame_tile_line_load.setProperty("cardType", u"tile")
         self.label_line_icon_load.setText("")
         self.label_line_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Branches", None))
+        self.label_line_title_load.setProperty("textRole", u"caption")
         self.load_line_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.load_line_label.setProperty("textRole", u"section")
+        self.frame_tile_gen_load.setProperty("cardType", u"tile")
         self.label_gen_icon_load.setText("")
         self.label_gen_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Generators", None))
+        self.label_gen_title_load.setProperty("textRole", u"caption")
         self.load_gen_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.load_gen_label.setProperty("textRole", u"section")
+        self.frame_tile_sys_load.setProperty("cardType", u"tile")
         self.label_sys_icon_load.setText("")
         self.label_sys_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
+        self.label_sys_title_load.setProperty("textRole", u"caption")
         self.load_sys_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
+        self.load_sys_label.setProperty("textRole", u"section")
+        self.frame_map_card_load.setProperty("cardType", u"card")
         self.label_map_icon_load.setText("")
         self.label_map_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"NETWORK MAP", None))
+        self.label_map_title_load.setProperty("textRole", u"section")
+        self.frame_load_card.setProperty("cardType", u"card")
         self.label_load_icon.setText("")
         self.label_load_title.setText(QCoreApplication.translate("PowerSystemPage", u"LOAD PROFILE", None))
+        self.label_load_title.setProperty("textRole", u"section")
+        self.frame_genmix_card_load.setProperty("cardType", u"card")
         self.label_genmix_icon_load.setText("")
         self.label_genmix_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"GENERATION MIX", None))
+        self.label_genmix_title_load.setProperty("textRole", u"section")
     # retranslateUi
 

@@ -12,9 +12,7 @@ Two views are provided (switchable via setShowWithLoad()):
   * power_system_data_w_load -- adds the load profile plot (load_* names)
 """
 
-import sys
-
-from PySide6.QtWidgets import QApplication, QStackedWidget
+from PySide6.QtWidgets import QStackedWidget
 
 from quest_planning.ui.forms.power_system_data.ui_power_system import Ui_PowerSystemPage
 
@@ -93,17 +91,3 @@ class PowerSystemPage(QStackedWidget):
     def open_file_button_clicked(self):
         """Placeholder: load data from the selected folder."""
         pass
-
-
-def main():
-    app = QApplication(sys.argv)
-
-    page = PowerSystemPage()
-    page.resize(1118, 928)
-    page.show()
-
-    sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()

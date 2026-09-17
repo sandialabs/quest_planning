@@ -1,6 +1,4 @@
-import sys
-
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import QDate, Qt
 
 from quest_planning.ui.forms.planning_model_setup.ui_planning_model import (
@@ -118,51 +116,3 @@ class PlanningModelPage(QWidget):
 
     def display_help_message(self, topic):
         pass
-
-
-def main():
-    app = QApplication(sys.argv)
-    app.setStyleSheet("* { background-color: #f0f0f0; color: #000000; }")
-    page = PlanningModelPage()
-    page.setGeometry(0, 0, 1118, 928)
-    page.show()
-    for name in (
-        "begin_date",
-        "end_date",
-        "select_years_button",
-        "select_simulation_years_help_button",
-        "transmission_box",
-        "transmission_model_help_button",
-        "temporal_box",
-        "temporal_selection_help_button",
-        "annual_discount_factor",
-        "discount_rate_help_button",
-        "base_currency_year",
-        "base_currency_help_button",
-        "advanced_settings_button",
-        "planning_model_info_frame",
-        "sim_years_label",
-        "trans_model_label",
-        "temporal_selection_label",
-    ):
-        print("has {}: {}".format(name, hasattr(page.ui, name)))
-    print("info frame hidden:", page.ui.planning_model_info_frame.isHidden())
-    print("begin:", page.ui.begin_date.date().year())
-    print("end:", page.ui.end_date.date().year())
-    print(
-        "annual_discount_factor:",
-        page.ui.annual_discount_factor.value(),
-    )
-    print("base_currency_year:", page.ui.base_currency_year.text())
-    print("sim_years_label:", page.ui.sim_years_label.text())
-    print("trans_model_label:", page.ui.trans_model_label.text())
-    print("temporal_selection_label:", page.ui.temporal_selection_label.text())
-    page.ui.temporal_box.setCurrentIndex(1)
-    print("after temporal change -> visible:", not page.ui.planning_model_info_frame.isHidden())
-    page.ui.begin_date.setDate(QDate(2030, 1, 1))
-    print("after year change  -> sim_years_label:", page.ui.sim_years_label.text())
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
