@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Updated 3/24 - C.J. Newlun
+QuESt Planning - explan results viewer to process and visualize the results from the QuESt Planning model
+Authors: C. Newlun and W. Olis
 """
 
 import os
