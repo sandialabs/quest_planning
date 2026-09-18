@@ -87,7 +87,7 @@ class Explan:
         d.set_reserves_option(config['reserves_option'])
         d.set_tax_credits_option(config['tax_credits_option'])
         d.set_es_lifetime_cost_option(config['es_lifetime_cost_option'])
-        d.set_large_load_option(config['large_load_option'])
+        d.set_large_load_option(config.get('large_load_option', False))
         d.set_solver(config['solver'])
         d.set_system_name(config['system'])
         d.set_mva_base(config['mva_base'])
