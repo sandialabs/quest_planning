@@ -7,7 +7,6 @@ Created on Fri Jul 12 11:06:12 2024
 import os.path
 import yaml
 import argparse
-import logging
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
 from quest_planning.explan.explan_optimizer import ExplanOptimizer
 from quest_planning.explan.explan_results_viewer import ExplanResultsViewer
@@ -60,7 +59,7 @@ class Explan:
         if config.get('regional_load_growth_option', False):
             # Regional growth
             d.set_load_growth(
-                load_growth_value=config.get('load_growth', 0),
+                load_growth_value=config.get('system-wide_load_growth', 0),
                 regional_load_growth_option=True,
                 regional_growth_list=config.get('regional_load_growth', [])
             )
@@ -69,7 +68,7 @@ class Explan:
         else:
             # System-wide growth
             d.set_load_growth(
-                load_growth_value=config.get('load_growth', 0),
+                load_growth_value=config.get('system-wide_load_growth', 0),
                 regional_load_growth_option=False
             )
 
@@ -99,7 +98,7 @@ class Explan:
         d.set_system_wide_gas_max(config['system_wide_gas_max'])
         
         #set reserve parameters
-        d.set_reserve_params(config['prm'],config['reg_res_req'],config['spin_res_req'],config['flex_res_w_req'],config['flex_res_s_req'])
+        d.set_reserve_params(config['prm'],config['reg_res_req'],config['spin_res_req'],config['flex_res_req'])
         d.set_prm(config['prm'], regional_load_growth_option=config.get('regional_load_growth_option', False))
         
         #ES min and max SOC %
@@ -144,23 +143,14 @@ class Explan:
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
             self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
-        if self.config.get("run_reliability_assessment", True):
-            if self.config.get("rel_evaluation_years"):
-                try:
-                    prg = ProGRESS_Exporter(exp)
-                    prg.export_data(self.config["rel_evaluation_years"])
-                    prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
-                except FileNotFoundError as e:
-                    logging.warning(f"ProGRESS executable not found: {e}")
-                    logging.warning("Skipping reliability assessment. Set 'run_reliability_assessment: false' in config to disable this warning.")
-                except Exception as e:
-                    logging.error(f"ProGRESS reliability assessment failed: {e}")
-                    logging.error("Continuing with capacity planning results only.")
-            else:
-                logging.info("run_reliability_assessment is true but rel_evaluation_years is not specified. Skipping ProGRESS.")
-        else:
-            logging.info("Skipping reliability assessment (run_reliability_assessment: false or not specified)")
-        
+        prg = ProGRESS_Exporter(exp)
+        if self.config["rel_evaluation_years"]:
+            prg.export_data(self.config["rel_evaluation_years"])
+            prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
+        pcm = PCM_Exporter(exp, self.config)
+        if self.config["pcm_evaluation_years"]:
+            pcm.export_data(self.config["pcm_evaluation_years"])
+            
 def read_input_yaml(yaml_file):
     '''
     Read input YAML file
@@ -181,12 +171,12 @@ def read_input_yaml(yaml_file):
 
 if __name__ == '__main__':
     
-    parser = argparse.ArgumentParser(description='Run Explan simulation with specified YAML configuration file.')
-    parser.add_argument('yaml_file', type=str, help='Path to the input YAML file.')
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(description='Run Explan simulation with specified YAML configuration file.')
+    # parser.add_argument('yaml_file', type=str, help='Path to the input YAML file.')
+    # args = parser.parse_args()
 
     current_dir = os.getcwd()
-    input_dict = read_input_yaml(args.yaml_file)
+    input_dict = read_input_yaml("./quest_planning/config/input_rts_nodal_base.yaml")  # Replace with the actual path to your input YAML file
 
     data_file = os.path.join(current_dir, 'quest_planning','data_explan', input_dict['data_folder'])
     input_dict['data_dir'] = data_file

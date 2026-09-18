@@ -4,14 +4,14 @@ invoke ProGRESS site-data generation and simulations.
 
 This module provides a ProGRESS_Exporter class that converts an experiment
 object (with data_handler, results, and config) into a directory structure
-and CSV/YAML files consumable by the ProGRESS tools (solar and wind data
+and CSV/YAML files consumable by the ProGRESS tool (solar and wind data
 generators and the Monte Carlo simulation). It also supports copying or
 reusing pre-generated site data and launching ProGRESS simulation runs.
 
 Typical usage:
     exporter = ProGRESS_Exporter(exp_obj)
     exporter.export_data([2030, 2040])
-    exporter.run_ProgRESS_simulation(exporter.main_path, [2030, 2040])
+    exporter.run_ProGRESS_simulation(exporter.main_path, [2030, 2040])
 """
 
 import pandas as pd

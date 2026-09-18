@@ -755,10 +755,11 @@ class ExplanResultsViewer():
                 'Oil_ST': 'lightslategrey',
                 'Hydro': 'steelblue',
                 'Gas': 'darkgrey',
-                'Gas_CC': 'silver',
-                'Gas_CT': 'dimgray',
-                'Gas_CT (New)': 'lightgrey',     
-                'Gas_CC (New)': 'darkgrey',
+                'Gas_CC': 'dimgray',
+                'Gas_CT':  'silver',
+                'Gas_CC (New)': 'gray',
+                'Gas_CT (New)': 'lightgrey',
+                'Gas (New)': '#D9D9D9',
                 'Geothermal': 'rosybrown',
                 'Wind PPA': 'darkgreen',
                 'Wind_PPA': 'darkgreen',
@@ -2024,7 +2025,7 @@ class ExplanResultsViewer():
             results_y = results_y[results_y['Value'] > 0]
 
             duration = results_y['energy'] / results_y['Value']
-            max_d_t = int(duration.max())
+            max_d_t = np.ceil(duration.max())
 
             for tech in np.unique(results_y['Tech_Name']):
                 results_y_t = results_y[results_y['Tech_Name'] == tech]

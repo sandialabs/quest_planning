@@ -125,8 +125,8 @@ def uninstall_ProGRESS(*, missing_ok: bool = True) -> None:
         )
 
     env_dir_resolved = ProGRESS_env_dir.resolve()
-    expected_parent = (root_dir / "env_progress").resolve()
-
+    expected_parent = (root_dir/ "progress").resolve()
+    
     if env_dir_resolved.name != "env_progress" or env_dir_resolved.parent != expected_parent:
         raise ProGRESSInstallerError(
             f"Refusing to delete unexpected path:\n{env_dir_resolved}"

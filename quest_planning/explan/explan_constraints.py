@@ -741,7 +741,8 @@ class ExplanConstraints:
         if s == 5:#Peak block
             return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) == 0
         else:
-            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_wind) * float(self.data_handler.flex_res_w_req) + sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_pv) * float(self.data_handler.flex_res_s_req)
+            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.flex_res_req)
+            #return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_wind) * float(self.data_handler.flex_res_w_req) + sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_pv) * float(self.data_handler.flex_res_s_req)
             # self.data_handler.scalars.loc['Flex_Res_W_Req']['Value'])/100
             # self.data_handler.scalars.loc['Flex_Res_S_Req']['Value'])/100
         
