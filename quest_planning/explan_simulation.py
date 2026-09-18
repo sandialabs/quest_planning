@@ -59,7 +59,7 @@ class Explan:
         if config.get('regional_load_growth_option', False):
             # Regional growth
             d.set_load_growth(
-                load_growth_value=config.get('system-wide_load_growth', 0),
+                load_growth_value=config.get('load_growth', 0),
                 regional_load_growth_option=True,
                 regional_growth_list=config.get('regional_load_growth', [])
             )
@@ -68,7 +68,7 @@ class Explan:
         else:
             # System-wide growth
             d.set_load_growth(
-                load_growth_value=config.get('system-wide_load_growth', 0),
+                load_growth_value=config.get('load_growth', 0),
                 regional_load_growth_option=False
             )
 
