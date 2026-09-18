@@ -904,9 +904,8 @@ class ExplanConstraints:
         fb = model.from_bus[l]
         tb = model.to_bus[l]
         theta_diff = model.theta[fb, y, s, i] - model.theta[tb, y, s, i]
-        return ( (1e-3/self.mva_base) * model.PF[l, y, s, i]
-            - (1e-3/model.line_X[l]) * theta_diff
-            == 0 )
+        # Normalize by mva_base for numerical stability
+        return (1/self.mva_base) * model.PF[l, y, s, i] - (1/model.line_X[l]) * theta_diff == 0
         
     def cThetaDiffMax(self,model, l, y, s, i):
         theta_diff = model.theta[model.from_bus[l], y, s, i] - model.theta[model.to_bus[l], y, s, i]
