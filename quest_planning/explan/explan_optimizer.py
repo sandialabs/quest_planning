@@ -970,6 +970,12 @@ class ExplanOptimizer(Optimizer):
         )
         par_index_labels['LL_Curt_MaxFrac'] = ['i']
 
+        model.ll_self_sufficiency = pm.Param(
+            initialize=self.data_handler.ll_self_sufficiency,
+            mutable=True
+        )
+        par_index_labels['ll_self_sufficiency'] = ['i']
+
         self.par_index_labels = par_index_labels
 
 

@@ -969,10 +969,10 @@ class ExplanConstraints:
                 list(model.G_LL_NG)
             )
 
-            ll_ren = np.intersect1d(
-                gen_ren_nums,
-                list(model.G_LL_NG)
-            )
+            # Note: Large load renewables (Solar_LL_Cand, Wind_LL_Cand) exist in tech data
+            # but are not currently used in configs. If needed in future, create G_LL_REN set
+            # similar to G_LL_NG and G_LL_BESS, then add logic here to exclude from grid.
+            # For now, all renewables are treated as grid resources.
 
             ll_bess = np.intersect1d(
                 gen_sto_nums,
@@ -984,10 +984,8 @@ class ExplanConstraints:
                 ll_ng
             )
 
-            grid_ren_nums = np.setdiff1d(
-                gen_ren_nums,
-                ll_ren
-            )
+            # All renewables treated as grid resources (no large load renewables currently)
+            grid_ren_nums = gen_ren_nums
 
             grid_sto_nums = np.setdiff1d(
                 gen_sto_nums,
@@ -1139,7 +1137,7 @@ class ExplanConstraints:
            #     for (s,i) in model.S_I
            # )
         #)
-        return btm_energy >= 0 * ll_energy
+        return btm_energy >= model.ll_self_sufficiency*ll_energy
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     7.) Investment Constraints
@@ -1317,37 +1315,24 @@ class ExplanConstraints:
         else:
             return pm.Constraint.Skip
     
-    def cResourceByBus_y(self, model, b, g, y):
-        '''Custom constraint'''
-        if (b, g) in self.wind_can_tuple:
-            return model.G_inv[b, g, y] <= model.wind_max
-        elif (b, g) in self.solar_can_tuple:
-            return model.G_inv[b, g, y] <= model.solar_max
-        elif (b, g) in model.B_G_sto_cand:
-            return model.G_inv[b, g, y] <= model.sto_max
-        elif (b, g) in model.B_G_ng_can:
-            return model.G_inv[b, g, y] <= model.gas_max
-        else:
-            return pm.Constraint.Skip
+    
     '''
     7b.) Cumulative  transmission capacity
     '''
 
     
-    def cTxCapTotalnoDelay(self,model, l, y, y1):
-        '''
-        Transmission total invested capacity calculation
-        '''
-        if self.data_handler.trans_expansion is True:
-            
-            if y1 <= y:
-                return model.L_cap_total[l, y] == sum(model.LineCap[l, y1] for y1 in model.Y1)
-            elif y==self.data_handler.years[0]:
-                return model.L_cap_total[l, y] == model.LineCap[l, y]
-            else:
-                return pm.Constraint.Skip
-        else:
-            return model.L_cap_total[l, y] == 0
+    def cTxCapTotalnoDelay(self, model, l, y, y1):
+      '''
+      Transmission total invested capacity calculation without delays
+      '''
+      if self.data_handler.trans_expansion is True:
+          return model.L_cap_total[l, y] == sum(
+              model.LineCap[l, y1]
+              for y1 in model.Y1  
+              if y1 <= y                          # Filters years <= current year
+          )
+      else:
+          return model.L_cap_total[l, y] == 0
     
 
     def cTxCapTotalwDelay(self, model, l, y):

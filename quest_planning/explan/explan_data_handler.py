@@ -110,6 +110,7 @@ class ExplanDataHandler():
         self.large_load_option = False
         self.large_load_flex = False
         self.ll_load_growth = 0.0 #Default for now
+        self.ll_self_sufficiency = 0.0 #Default: no self-sufficiency requirement
         
         self.mva_base = 100
         
@@ -407,16 +408,20 @@ class ExplanDataHandler():
 
     def set_large_load_flex(self,value):
         self.large_load_flex = value
-    
+
+    def set_ll_self_sufficiency(self,value):
+        self.ll_self_sufficiency = value
 
     def read_large_loads_config(self,cfg):
         loads = cfg.get("large_loads", [])
         self.large_load_option= cfg.get("large_load_option", False)
         self.large_load_flex = cfg.get("large_load_flex", False)
+        self.ll_self_sufficiency = cfg.get("ll_self_sufficiency", 0.0)
         self.processed_ll = []
         for l in loads:
             # validate required fields
-            assert "id" in l and "bus" in l and "profile_file" in l
+            assert "id" in l and "bus" in l and "profile_file" in l and "deploy_year" in l and "capacity_mw" in l, \
+                f"Large load configuration missing required fields. Required: id, bus, profile_file, deploy_year, capacity_mw. Got: {list(l.keys())}"
             current_dir = os.getcwd()
             pfile = os.path.join(current_dir, 'quest_planning','data_explan',cfg['data_folder'], 'large_loads', l['profile_file'])
             df = pd.read_csv(pfile)#, parse_dates=['datetime'])
