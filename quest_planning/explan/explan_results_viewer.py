@@ -22,6 +22,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from quest_planning.paths import get_path
 base_dir = get_path()
+geo_path = os.path.join(base_dir, "gui", "tools", "usa_110m.json")
+import json
+
 
 class ExplanResultsViewer():
 
@@ -30,17 +33,17 @@ class ExplanResultsViewer():
         #TODO: Fix this
         self.system = None#self.data_handler.system#'PNM'#self.data_handler.scalars.loc['System']['Value']#TODO: change this
         self.rd = None
-        
+
         # Plotting options - FALSE by default
         self.stacked_bar_by_bus_option = False
         self.policy_plot_option = False
-    
+
     def create_lookup_info(self):
         self.gen_map_info = self.data_handler.load_data[self.data_handler.data_ls.index('gen')][[
             'Gen_num', 'Bus_num', 'Bus', 'Tech', 'Tech_Num']]
-        
+
         self.tech_map_info = self.data_handler.load_data[self.data_handler.data_ls.index('tech')][['Tech', 'Tech_Name', 'Tech_Num']]
-        
+
         self.bus_list = self.data_handler.load_data[self.data_handler.data_ls.index('bus')]['Bus_number'].values
         self.bus_names = self.data_handler.load_data[self.data_handler.data_ls.index('bus')][[
             'Bus_number', 'Bus_name']]
@@ -48,31 +51,31 @@ class ExplanResultsViewer():
         """
         Plot stacked bar chart of installed capacity by year for multiple scenarios.
         """
-        
+
         # Define the desired order of scenarios
         scenario_order = [
             "Baseline",
             "Baseline + High Load",
             #"Baseline + High ES Costs",
-            
+
             #"Moderate Technology",
             "Advanced Tech + Low Econ. Growth",
             #"Baseline + Tx. Exp",
             "Advanced Tech + Tx. Exp. + High Load",
             "RPS80",
         ]
-        
+
         # Filter and reorder the scenarios based on the desired order
         ordered_scenarios = {name: scenarios[name] for name in scenario_order if name in scenarios}
-        
+
         num_scenarios = len(ordered_scenarios)
-        
+
         fig, axes = plt.subplots(1, num_scenarios, figsize=figsize, sharey=True)
-        
+
         all_handles = []
         all_labels = []
         seen_labels = set()
-        
+
         for i, (scenario_name, scenario) in enumerate(ordered_scenarios.items()):
             # Load results for the scenario
             results = scenario['P_cap_total']
@@ -81,76 +84,76 @@ class ExplanResultsViewer():
                 results.reset_index(inplace=True)
             if np.size(results_en1.index.names) > 1:
                 results_en1.reset_index(inplace=True)
-        
+
             # Add tech name
             translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
             tech_num = [translate.get(x, x) for x in results['g']]
             results['Technology'] = tech_num
             tech_num = [translate.get(x, x) for x in results_en1['g']]
             results_en1['Technology'] = tech_num
-        
+
             # Filter for ES tech
             results_es = results[results['Technology'].isin(np.unique(
                 self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num']))]
             results_es['Energy'] = results_en1['Value'].values
             results_es['Duration'] = results_es['Energy'] / results_es['Value']
-        
+
             # Define duration bins and labels
             bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
             labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-        
+
             # Create a new column for binned durations
             results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-        
+
             # Ensure Duration_Bin includes all categories
             results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-            
+
             # Combine Technology and Duration_Bin into a new column
             results_es['Tech_Name'] = results_es.apply(
                 lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-            
+
             # Replace entries in results with those in results_es based on generator number (g)
             results['Duration'] = 0
-            
+
             results.update(results_es)
-        
+
             # Pivot table based on the new Tech_Category column
             results_pivot = results[results['Value'] != 0].pivot_table(
                 index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-          
+
             results_pivot = results_pivot / 1000
-            
+
             # Rename columns
             translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
             cols = [translate1.get(x, x) for x in results_pivot.columns]
             results_pivot.columns = cols
-            
+
             # Define the order of technologies: thermal, renewables, storage
             thermal_techs = ['Coal','Nuclear','Oil_CT','Oil_ST','Gas_CT','Gas_CC','Hydro','Gas (New)']
             renewable_techs = ['Wind','Solar','Solar_RT','CSP','Wind (New)','Solar (New)']
             other_techs = sorted([tech for tech in cols if tech not in thermal_techs + renewable_techs])
             ordered_cols = [tech for tech in thermal_techs + renewable_techs + other_techs if tech in cols]
-            
+
             results_pivot = results_pivot[ordered_cols]
-            
+
             # Assign colors
             color_array = [self.color_tech(c) for c in ordered_cols]
-        
+
             ax = axes[i]
-                   
+
             results_pivot.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, linewidth=0.75,edgecolor="black", width=0.5)
             ax.set_ylabel('Capacity (GW)', fontsize=12)
             #ax.set_title(f'{scenario_name}', fontsize=14)
             ax.margins(x=0, y=0)
             ax.set_xlabel('')
             ax.tick_params(axis='y', labelsize=12)
-            
+
             if i > 0:
                 ax.set_facecolor('#f0f0f0')  # Light shade background color
             # Wrap and set the subplot title
             wrapped_title = "\n".join(textwrap.wrap(scenario_name, width=16))
             ax.set_title(wrapped_title, fontsize=14, fontweight='bold')
-            
+
             # Collect handles and labels for the legend
             handles, labels = ax.get_legend_handles_labels()
             for handle, label in zip(handles, labels):
@@ -158,112 +161,112 @@ class ExplanResultsViewer():
                     all_handles.append(handle)
                     all_labels.append(label)
                     seen_labels.add(label)
-            
+
             # Set x-axis labels to be integers, larger font, and diagonal
             ax.set_xticklabels(results_pivot.index.astype(int), rotation=45, ha='right', fontsize=12)
             # Add faint separator line between scenarios
             if i < num_scenarios - 1:
                 ax.axvline(x=ax.get_xlim()[1], color='gray', linestyle='--', linewidth=0.5)
-            
+
         # Create a single legend for the entire figure
         fig.legend(all_handles, all_labels, loc='lower center', bbox_to_anchor=(0.5, -0.25), fontsize=12, ncol=5)
-        
+
         plt.tight_layout()
         plt.show()
-    
+
     def stacked_resource_es_duration_bar_gen_diff(self, scenarios, figsize):
         """
         Plot stacked bar chart of installed capacity by year for multiple scenarios.
         """
         baseline_scenario_name = "Baseline"
-        
+
         # Define the desired order of scenarios
         scenario_order = [
             "Baseline",
             "Baseline + High Load",
             #"Baseline + High ES Costs",
-            
+
             #"Moderate Technology",
             "Advanced Tech + Low Econ. Growth",
             #"Baseline + Tx. Exp",
             "Advanced Tech + Tx. Exp. + High Load",
             "RPS80",
         ]
-        
+
         # Filter and reorder the scenarios based on the desired order
         ordered_scenarios = {name: scenarios[name] for name in scenario_order if name in scenarios}
-        
+
         num_scenarios = len(ordered_scenarios)
-        
+
         # Create subplots: one for the baseline and a grid for the rest
         fig = plt.figure(figsize=figsize)
         gs = fig.add_gridspec(1, num_scenarios, width_ratios=[1] + [1] * (num_scenarios - 1))
-        
+
         ax_baseline = fig.add_subplot(gs[0, 0])
         ax_deltas = [fig.add_subplot(gs[0, i + 1], sharey=ax_baseline) for i in range(num_scenarios - 1)]
-        
+
         all_handles = []
         all_labels = []
         seen_labels = set()
-        
+
         baseline_results_pivot = None
-        
+
         color_mapping = {}
-        
+
         for i, (scenario_name, scenario) in enumerate(ordered_scenarios.items()):
             # Load results for the scenario
-            
-            
+
+
             results = scenario['P_cap_total']
             results_en1 = scenario['Store']
             if np.size(results.index.names) > 1:
                 results.reset_index(inplace=True)
             if np.size(results_en1.index.names) > 1:
                 results_en1.reset_index(inplace=True)
-        
+
             # Add tech name
             translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
             tech_num = [translate.get(x, x) for x in results['g']]
             results['Technology'] = tech_num
             tech_num = [translate.get(x, x) for x in results_en1['g']]
             results_en1['Technology'] = tech_num
-        
+
             # Filter for ES tech
             results_es = results[results['Technology'].isin(np.unique(
                 self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num']))]
             results_es['Energy'] = results_en1['Value'].values
             results_es['Duration'] = results_es['Energy'] / results_es['Value']
-        
+
             # Define duration bins and labels
             bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
             labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-        
+
             # Create a new column for binned durations
             results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-        
+
             # Ensure Duration_Bin includes all categories
             results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-            
+
             # Combine Technology and Duration_Bin into a new column
             results_es['Tech_Name'] = results_es.apply(
                 lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-            
+
             # Replace entries in results with those in results_es based on generator number (g)
             results['Duration'] = 0
-            
+
             results.update(results_es)
-        
+
             # Pivot table based on the new Tech_Category column
             results_pivot = results[results['Value'] != 0].pivot_table(
                 index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-          
+
             results_pivot = results_pivot / 1000
-            
+
             # Rename columns
             translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
             cols = [translate1.get(x, x) for x in results_pivot.columns]
             results_pivot.columns = cols
-            
+
             # Define the order of technologies: thermal, renewables, storage
             thermal_techs = ['Coal','Nuclear','Oil_CT','Oil_ST','Gas_CT','Gas_CC','Hydro','Gas (New)']
             renewable_techs = ['Wind','Solar','Solar_RT','CSP','Wind (New)','Solar (New)']
@@ -272,9 +275,9 @@ class ExplanResultsViewer():
             # Ensure ordered_cols are in cols
             ordered_cols = [tech for tech in thermal_techs + renewable_techs + other_techs if tech in cols]
             #ordered_cols = thermal_techs + renewable_techs + other_techs #+ storage_techs
-            
+
             results_pivot = results_pivot[ordered_cols]
-            
+
             # Assign colors# Assign colors
             for tech in ordered_cols:
                 if tech not in color_mapping:
@@ -282,7 +285,7 @@ class ExplanResultsViewer():
             #print(color_mapping)
             color_array = [color_mapping[tech] for tech in ordered_cols]
             #color_array = [self.color_tech(c) for c in ordered_cols]
-        
+
             if scenario_name == baseline_scenario_name:
                 baseline_results_pivot = results_pivot.copy()
                 results_pivot.plot.bar(stacked=True, color=color_array, ax=ax_baseline, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
@@ -291,22 +294,22 @@ class ExplanResultsViewer():
                 ax_baseline.axhline(y=0, color='k', linewidth=0.5)
                 ax_baseline.set_xlabel('')
                 ax_baseline.set_xticklabels(baseline_results_pivot.index.astype(int), rotation=45, ha='right', fontsize=15)
-                
+
             else:
                 results_pivot1 = results_pivot.fillna(0)
                 baseline_results_pivot = baseline_results_pivot.fillna(0)
-                
+
                 # Calculate the change in energy storage investment compared to the baseline
                 results_pivot1 = results_pivot1.subtract(baseline_results_pivot, fill_value=0)
                 color_array = [self.color_tech(c) for c in results_pivot1.columns]
                 ax=ax_deltas[i-1]
                 results_pivot1.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
-                
+
                 # Wrap and set the subplot title
                 wrapped_title = "\n".join(textwrap.wrap(scenario_name, width=20))
                 ax.set_title(wrapped_title, fontsize=15, fontweight='bold')
                 #ax.set_ylabel('Change from Baseline (GW)', fontsize=15)
-                
+
                 y_min, y_max = ax.get_ylim()
                 if i == 1:
                     y_min, y_max = ax.get_ylim()
@@ -320,7 +323,7 @@ class ExplanResultsViewer():
                     decrease_text = mtext.Text(0.5, -37, "Decrease", color='red', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     increase_text = mtext.Text(0.5, 37, "Increase", color='blue', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     #combined_text = mtext.Text(0, 0, " / ", fontsize=15, rotation=90, va='center', ha='center')
-                    
+
                     # Combine the texts
                     ax.annotate('', xy=(0, 0.25), xytext=(-0.06, 1 / 2),
                                 textcoords='axes fraction', va='center', ha='center', rotation=90, fontsize=15)
@@ -328,11 +331,11 @@ class ExplanResultsViewer():
                     #decrease_text.set_position((-0.06, 0.25))
                     #combined_text.set_position((-0.06, 0.5))
                     #increase_text.set_position((-0.06, 0.5))
-                    
+
                     ax.add_artist(decrease_text)
                     #ax.add_artist(combined_text)
                     ax.add_artist(increase_text)
-                
+
                 # Collect handles and labels for the legend
                 handles, labels = ax.get_legend_handles_labels()
                 for handle, label in zip(handles, labels):
@@ -340,7 +343,7 @@ class ExplanResultsViewer():
                         all_handles.append(handle)
                         all_labels.append(label)
                         seen_labels.add(label)
-                
+
                 # Set x-axis labels to be integers, larger font, and diagonal
                 ax.set_xticklabels(results_pivot.index.astype(int), rotation=45, ha='right', fontsize=15)
                 ax.axhline(y=0, color='k', linewidth=0.5)
@@ -352,22 +355,22 @@ class ExplanResultsViewer():
          # Set y-axis label for the delta subplots
         for ax in ax_deltas:
             ax.set_ylabel('Delta Baseline', fontsize=15)
-            
+
         # Ensure all plots have the same y-axis scale
         y_limits = [ax.get_ylim() for ax in [ax_baseline] + ax_deltas]
         min_y, max_y = min(y[0] for y in y_limits), max(y[1] for y in y_limits)
         for ax in [ax_baseline] + ax_deltas:
             ax.set_ylim(-max_y, max_y)
-            
+
         for ax in ax_deltas:
             # Fill the positive and negative areas with light colors
             ax.fill_between(ax.get_xlim(), 0, max_y, color='lightblue', alpha=0.15)
             ax.fill_between(ax.get_xlim(), -max_y, 0, color='lightcoral', alpha=0.15)
-        
-        
+
+
         # Create a single legend for the entire figure
         fig.legend(all_handles, all_labels, loc='lower center', bbox_to_anchor=(0.5, -0.25), fontsize=14, ncol=5)
-        
+
         plt.tight_layout()
         plt.show()
 
@@ -376,41 +379,41 @@ class ExplanResultsViewer():
         Plot stacked bar chart of installed energy storage capacity by year for multiple scenarios.
         """
         baseline_scenario_name = "Baseline"
-        
+
         # Define the desired order of scenarios
         scenario_order = [
             "Baseline",
             "Baseline + High Load",
             #"Baseline + High ES Costs",
-            
+
             #"Moderate Technology",
             "Advanced Tech + Low Econ. Growth",
             #"Baseline + Tx. Exp",
             "Advanced Tech + Tx. Exp. + High Load",
             "RPS80",
         ]
-        
+
         # Filter and reorder the scenarios based on the desired order
         ordered_scenarios = {name: scenarios[name] for name in scenario_order if name in scenarios}
-        
+
         num_scenarios = len(ordered_scenarios)
-        
+
         # Create subplots: one for the baseline and a grid for the rest
         fig = plt.figure(figsize=figsize)
         #gs = fig.add_gridspec(1, num_scenarios, width_ratios=[1, 0.1] + [1] * (num_scenarios - 1))
         gs = fig.add_gridspec(1, num_scenarios, width_ratios=[1] + [1] * (num_scenarios - 1))
-        
+
         ax_baseline = fig.add_subplot(gs[0, 0])
         ax_deltas = [fig.add_subplot(gs[0, i + 1], sharey=ax_baseline) for i in range(num_scenarios - 1)]
-        
+
         all_handles = []
         all_labels = []
         seen_labels = set()
-        
+
         baseline_results_pivot = None
-        
+
         color_mapping = {}
-        
+
         for i, (scenario_name, scenario) in enumerate(ordered_scenarios.items()):
             # Load results for the scenario
             results = scenario['P_cap_total']
@@ -419,58 +422,58 @@ class ExplanResultsViewer():
                 results.reset_index(inplace=True)
             if np.size(results_en1.index.names) > 1:
                 results_en1.reset_index(inplace=True)
-        
+
             # Add tech name
             translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
             tech_num = [translate.get(x, x) for x in results['g']]
             results['Technology'] = tech_num
             tech_num = [translate.get(x, x) for x in results_en1['g']]
             results_en1['Technology'] = tech_num
-        
+
             # Filter for ES tech
             es_techs = np.unique(self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num'])
             results_es = results[results['Technology'].isin(es_techs)]
             results_es['Energy'] = results_en1['Value'].values
             results_es['Duration'] = results_es['Energy'] / results_es['Value']
-        
+
             # Define duration bins and labels
             bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
             labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-        
+
             # Create a new column for binned durations
             results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-        
+
             # Ensure Duration_Bin includes all categories
             results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-            
+
             # Combine Technology and Duration_Bin into a new column
             results_es['Tech_Name'] = results_es.apply(
                 lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-            
+
             # Replace entries in results with those in results_es based on generator number (g)
             results['Duration'] = 0
-            
+
             results.update(results_es)
-            
+
             results_es1 = results[results['Technology'].isin(es_techs)]
-        
+
             # Pivot table based on the new Tech_Category column
             results_pivot = results_es1[results_es1['Value'] != 0].pivot_table(
                 index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-          
+
             results_pivot = results_pivot / 1000
-            
+
             # Rename columns
             translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
             cols = [translate1.get(x, x) for x in results_pivot.columns]
             results_pivot.columns = cols
-            
+
             # Assign colors
             for tech in cols:
                 if tech not in color_mapping:
                     color_mapping[tech] = self.color_tech(tech)
             color_array = [color_mapping[tech] for tech in cols]
-        
+
             if scenario_name == baseline_scenario_name:
                 baseline_results_pivot = results_pivot.copy()
                 results_pivot.plot.bar(stacked=True, color=color_array, ax=ax_baseline, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
@@ -482,21 +485,21 @@ class ExplanResultsViewer():
             else:
                 results_pivot1 = results_pivot.fillna(0)
                 baseline_results_pivot = baseline_results_pivot.fillna(0)
-                
+
                 # Calculate the change in energy storage investment compared to the baseline
                 results_pivot1 = results_pivot1.subtract(baseline_results_pivot, fill_value=0)
                 #color_array = [self.color_tech[tech] for tech in results_pivot1.columns]
                 color_array = [self.color_tech(c) for c in results_pivot1.columns]
                 ax = ax_deltas[i - 1]
                 results_pivot1.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
-                
+
                 # Wrap and set the subplot title
                 wrapped_title = "\n".join(textwrap.wrap(scenario_name, width=20))
                 ax.set_title(wrapped_title, fontsize=14, fontweight='bold')
                 #ax.set_ylabel('Change from Baseline (GW)', fontsize=5)
-                
+
                 # Add y-axis labels for positive and negative values
-                
+
                 y_min, y_max = ax.get_ylim()
                 if i == 1:
                     y_min, y_max = ax.get_ylim()
@@ -510,7 +513,7 @@ class ExplanResultsViewer():
                     decrease_text = mtext.Text(0.5, -15, "Decrease", color='red', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     increase_text = mtext.Text(0.5, 15, "Increase", color='blue', fontsize=15, rotation=0, va='center', ha='center',weight = 'bold')
                     #combined_text = mtext.Text(0, 0, " / ", fontsize=15, rotation=90, va='center', ha='center')
-                    
+
                     # Combine the texts
                     ax.annotate('', xy=(0, 0.25), xytext=(-0.06, 1 / 2),
                                 textcoords='axes fraction', va='center', ha='center', rotation=90, fontsize=15)
@@ -518,14 +521,14 @@ class ExplanResultsViewer():
                     #decrease_text.set_position((-0.06, 0.25))
                     #combined_text.set_position((-0.06, 0.5))
                     #increase_text.set_position((-0.06, 0.5))
-                    
+
                     ax.add_artist(decrease_text)
                     #ax.add_artist(combined_text)
                     ax.add_artist(increase_text)
-                    
-                    
-                    
-                    
+
+
+
+
                 # Collect handles and labels for the legend
                 handles, labels = ax.get_legend_handles_labels()
                 for handle, label in zip(handles, labels):
@@ -533,32 +536,32 @@ class ExplanResultsViewer():
                         all_handles.append(handle)
                         all_labels.append(label)
                         seen_labels.add(label)
-                
+
                 # Set x-axis labels to be integers, larger font, and diagonal
                 ax.set_xticklabels(results_pivot.index.astype(int), rotation=45, ha='right', fontsize=15)
                 ax.axhline(y=0, color='k', linewidth=0.5)
                 ax.set_xlabel('')
-                
+
                 ax.set_facecolor('#f0f0f0')  # Light shade background color
                 for spine in ax.spines.values():
                     spine.set_edgecolor('black')
                     spine.set_linewidth(1.5)
-        
+
         # Ensure all plots have the same y-axis scale
         y_limits = [ax.get_ylim() for ax in [ax_baseline] + ax_deltas]
         min_y, max_y = min(y[0] for y in y_limits), max(y[1] for y in y_limits)
         for ax in [ax_baseline] + ax_deltas:
             ax.set_ylim(-max_y, max_y)
-            
+
         for ax in ax_deltas:
             # Fill the positive and negative areas with light colors
             ax.fill_between(ax.get_xlim(), 0, max_y, color='lightblue', alpha=0.15)
             ax.fill_between(ax.get_xlim(), -max_y, 0, color='lightcoral', alpha=0.15)
-        
-        
+
+
         # Create a single legend for the entire figure
         fig.legend(all_handles, all_labels, loc='lower center', bbox_to_anchor=(0.5, -0.2), fontsize=14, ncol=3)
-        
+
         plt.tight_layout()
         plt.show()
         #del results_es,results
@@ -582,13 +585,13 @@ class ExplanResultsViewer():
 
         if not os.path.exists(results_folder_path):
             os.mkdir(results_subfolder_path)
-        
+
         # all results
         folder_name = str(self.timestamp)+'_'+str(self.data_handler.system)
         self.folder_path = os.path.join(results_folder_path, folder_name)
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
-            
+
         # bus expansion results folder
         self.bus_folder_path = os.path.join(
             self.folder_path, 'bus_exp_results')
@@ -627,23 +630,23 @@ class ExplanResultsViewer():
 
         #print model stats to txt file
         txt_file = self.folder_path+'/model_stats.txt'
-        
+
         with open(txt_file, "w") as text_file:
             print(self.report, file=text_file)
 
     def process_results_gui(self, rd, pd, timestamp, report,filepath):
         """Process the output of the optimizer - GUI only - filepath is provided as an option"""
-        print('Process Results')
+        # print('Process Results')
         self.rd = rd
         self.pd = pd
         self.timestamp = timestamp
         self.report = report
-        
+
         self.create_results_folder(filepath=filepath)
-        print('Create lookup info')
+        # print('Create lookup info')
         self.create_lookup_info()
         print("Model has solved to optimality and results have been processed. Please proceed to the Results page.")
-        
+
     def process_results(self, rd, pd, timestamp, report):
         """Process the output of the optimizer - Command line only"""
         self.system = self.data_handler.system
@@ -663,34 +666,34 @@ class ExplanResultsViewer():
         '''
         Create results plots and save in apprpriate folders
         '''
-        
+
         fig, ax = plt.subplots(1, 1)
         self.stacked_resource_bar(fig,ax,figsize=[6,6])
         #self.stacked_resource_es_duration_bar(fig,ax,figsize=[6,6])
         self.stacked_resource_area()
-        
+
         if self.stacked_bar_by_bus_option:
             for b in self.bus_list:
                 self.stacked_resource_bar_by_bus(b)
                 self.stacked_resource_area_by_bus(b)
         else:
             print('Too many buses/zones for detailed buildout plots')
-        
+
         self.plot_cost_bar()
-        
+
         if self.data_handler.block_selection.lower() != 'Seasonal_Blocks'.lower():
             for y in self.data_handler.years:
                 self.stacked_resource_dispatch(y)
 
             self.plot_tx_flow()
-        
+
         if self.policy_plot_option:
             self.policy_plot()
-            
+
         fig, ax = plt.subplots(1, 1)
         self.plot_es_system(fig,ax,figsize = [6,6])
 
-        
+
     def create_map(self):
         '''
         Create map visualizations
@@ -703,7 +706,7 @@ class ExplanResultsViewer():
         self.map_results()
 
         self.map_es_results()
-        
+
     def export_results(self):
         """
         Writes Excel file of optimizer's results
@@ -724,12 +727,12 @@ class ExplanResultsViewer():
                 df.to_excel(writer, sheet_name=key)
         writer.close()
         # writer.save()
-        print('Pyomo results exported to Excel')
+        # print('Pyomo results exported to Excel')
 
 
     def color_tech(self,tech):#self,
         """
-        
+
         Parameters
         ----------
         tech : technology
@@ -747,135 +750,123 @@ class ExplanResultsViewer():
 
         global color
         #global fg
-        
+
         tech_colors = {
-                'Nuclear': 'darkred',
-                'Coal': 'black',
-                'Oil_CT': 'slategrey',
-                'Oil_ST': 'lightslategrey',
-                'Hydro': 'steelblue',
-                'Gas': 'darkgrey',
-                'Gas_CC': 'silver',
-                'Gas_CT': 'dimgray',
-                'Gas_CT (New)': 'lightgrey',     
-                'Gas_CC (New)': 'darkgrey',
-                'Geothermal': 'rosybrown',
-                'Wind PPA': 'darkgreen',
-                'Wind_PPA': 'darkgreen',
-                'Wind': 'darkgreen',
-                'Solar': 'yellow',
-                'Solar_PPA': 'yellow',
-                'Solar_RT': 'khaki',
-                'CSP': 'darkgoldenrod',
-                'Solar PPA': 'goldenrod',
-                'ES PPA': 'lightsteelblue',
-                'ES_PPA': 'lightsteelblue',
-                'ES': 'lightsteelblue',
-                'Wind (New)': 'lime',
-                'Solar (New)': 'gold',
-                'ES 4hr (New)': 'royalblue',
-                'ES 6hr (New)': 'blue',
-                'ES 8hr (New)': 'slateblue',
-                'ES 10hr (New)': 'darkviolet',
-                'ES 100hr (New)': 'deeppink',
-                'ES (2-4 hrs.)': 'royalblue',
-                'ES 6hr (New)': 'blue',
-                'ES 8hr (New)': 'slateblue',
-                'ES 10hr (New)': 'darkviolet',
-                'ES 100hr (New)': 'deeppink',
-                'Li-Ion Battery (New)': 'royalblue',
-                'Li-Ion Battery (New) (0-2 hrs.)': '#add8e6',
-                'Li-Ion Battery (New) (2-4 hrs.)': '#87ceeb',
-                'Li-Ion Battery (New) (4-6 hrs.)': '#4682b4',
-                'Li-Ion Battery (New) (6-8 hrs.)': '#4169e1',
-                'Li-Ion Battery (New) (8-10 hrs.)': '#0000ff',
-                'Li-Ion Battery (New) (10-15 hrs.)': '#0000cd',
-                'Li-Ion Battery (New) (15-24 hrs.)': '#00008b',
-                'Li-Ion Battery (New) (24+ hrs.)': '#000080',
-                'Flow Battery (New)': 'darkviolet',
-                'Flow Battery (New) (0-2 hrs.)': '#f8bbee',  # LightPink
-                'Flow Battery (New) (2-4 hrs.)': '#ee82ee',  # Violet
-                'Flow Battery (New) (4-6 hrs.)': '#dda0dd',  # Plum
-                'Flow Battery (New) (6-8 hrs.)': '#da70d6',  # Orchid
-                'Flow Battery (New) (8-10 hrs.)': '#ba55d3', # MediumOrchid
-                'Flow Battery (New) (10-15 hrs.)': '#9370db',# MediumPurple
-                'Flow Battery (New) (15-24 hrs.)': '#8a2be2',# BlueViolet
-                'Flow Battery (New) (24+ hrs.)': '#4b0082',  # Indigo
-                'Grav (New)': 'orangered',
-                'PSH (New)': 'darkblue',
-                'Therm (New)': 'salmon',
-                'Therm (New) (0-2 hrs.)': '#ffe4e1', # MistyRose
-                'Therm (New) (2-4 hrs.)': '#ffb6c1',# LightPink
-                'Therm (New) (4-6 hrs.)': '#ffa07a',# LightSalmon
-                'Therm (New) (6-8 hrs.)': '#fa8072', # Salmon
-                'Therm (New) (8-10 hrs.)': '#e9967a',  # DarkSalmon
-                'Therm (New) (10-15 hrs.)': '#cd5c5c',  # IndianRed
-                'Therm (New) (15-24 hrs.)': '#b22222',  # FireBrick
-                'Therm (New) (24+ hrs.)': '#8b0000',  # DarkRed
-                'CAES (New)': 'chocolate',
-                'Demand Response (New)': 'cyan',
-                'LDES (New)': 'deeppink',
-                'Zinc (New)': 'darkturquoise',
-                'Hydrogen (New)': 'pink',
-                'Iron Air (New)': 'white',
-                'ES PPA-charge': 'lightblue',
-                'ES-discharge': 'lightblue',
-                'ES 4hr (New)-charge': 'lightskyblue',
-                'ES 6hr (New)-charge': 'deepskyblue',
-                'ES 8hr (New)-charge': 'steelblue',
-                'ES 10hr (New)-charge': 'darkslateblue',
-                'ES 100hr (New)-charge': 'darkblue',
-                'Li-Ion Battery (New)-charge': 'royalblue',
-                'Li-Ion Battery 1 (New)-charge': 'royalblue',
-                'Li-Ion Battery 2 (New)-charge': 'royalblue',
-                'Li-Ion Battery 3 (New)-charge': 'royalblue',
-                'Li-Ion Battery 4 (New)-charge': 'royalblue',
-                'Li-Ion Battery 5 (New)-charge': 'royalblue',
-                'Li-Ion Battery 6 (New)-charge': 'royalblue',
-                'Li-Ion Battery 7 (New)-charge': 'royalblue',
-                'Li-Ion Battery 8 (New)-charge': 'royalblue',
-                'Li-Ion Battery 9 (New)-charge': 'royalblue',
-                'Li-Ion Battery 10 (New)-charge': 'royalblue',
-                'Flow Battery (New)-charge': 'darkviolet',
-                'Grav (New)-charge': 'orangered',
-                'PSH (New)-charge': 'darkblue',
-                'Therm (New)-charge': 'salmon',
-                'CAES (New)-charge': 'chocolate',
-                'LDES (New)-charge': 'darkblue',
-                'Zinc (New)-charge': 'darkturquoise',
-                'Hydrogen (New)-charge': 'pink',
-                'ES PPA-discharge': 'lightpink',
-                'ES-charge': 'lightpink',
-                'ES 4hr (New)-discharge': 'hotpink',
-                'ES 6hr (New)-discharge': 'deeppink',
-                'ES 8hr (New)-discharge': 'mediumvioletred',
-                'ES 10hr (New)-discharge': 'mediumorchid',
-                'ES 100hr (New)-discharge': 'purple',
-                'Li-Ion Battery (New)-discharge': 'hotpink',
-                'Li-Ion Battery 1 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 2 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 3 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 4 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 5 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 6 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 7 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 8 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 9 (New)-discharge': 'hotpink',
-                'Li-Ion Battery 10 (New)-discharge': 'hotpink',
-                'Flow Battery (New)-discharge': 'mediumorchid',
-                'Grav (New)-discharge': 'lightsalmon',
-                'PSH (New)-discharge': 'lightblue',
-                'Therm (New)-discharge': 'salmon',
-                'CAES (New)-discharge': 'sandybrown',
-                'LDES (New)-discharge': 'purple',
-                'Zinc (New)-discharge': 'aquamarine',
-                'Hydrogen (New)-discharge': 'plum',
-                'Curtailment': 'moccasin',
-                'SMR (New)': 'mediumseagreen'
-                }
+        'Nuclear': 'darkred',
+        'Coal': 'black',
+        'Oil_CT': 'slategrey',
+        'Oil_ST': 'lightslategrey',
+        'Hydro': 'steelblue',
+        'Gas': 'darkgrey',
+        'Gas_CC': 'silver',
+        'Gas_CT': 'dimgray',
+        'Gas (New)': 'silver',
+        'Co-Located NG':  'darkgrey',
+        'Geothermal': 'rosybrown',
+        'Wind PPA': 'darkgreen',
+        'Wind_PPA': 'darkgreen',
+        'Wind': 'darkgreen',
+        'Solar': 'yellow',
+        'Solar_PPA': 'yellow',
+        'Solar_RT': 'khaki',
+        'CSP': 'darkgoldenrod',
+        'Solar PPA': 'goldenrod',
+        'ES PPA': 'lightsteelblue',
+        'ES_PPA': 'lightsteelblue',
+        'ES': 'lightsteelblue',
+        'Nat. Gas H2 Conv. (New)': 'lightgrey',
+        'Wind (New)': 'lime',
+        'Solar (New)': 'gold',
+        'ES 4hr (New)': 'royalblue',
+        'ES 6hr (New)': 'blue',
+        'ES 8hr (New)': 'slateblue',
+        'ES 10hr (New)': 'darkviolet',
+        'ES 100hr (New)': 'deeppink',
+        'ES (2-4 hrs.)': 'royalblue',
+        'ES 6hr (New)': 'blue',
+        'ES 8hr (New)': 'slateblue',
+        'ES 10hr (New)': 'darkviolet',
+        'ES 100hr (New)': 'deeppink',
+        'Li-Ion Battery (New)': 'royalblue',
+        'Co-Located ESS': '#add8e6',
+        'Li-Ion Battery (New) (0-2 hrs.)': '#add8e6',
+        'Li-Ion Battery (New) (2-4 hrs.)': '#87ceeb',
+        'Li-Ion Battery (New) (4-6 hrs.)': '#4682b4',
+        'Li-Ion Battery (New) (6-8 hrs.)': '#4169e1',
+        'Li-Ion Battery (New) (8-10 hrs.)': '#0000ff',
+        'Li-Ion Battery (New) (10-15 hrs.)': '#0000cd',
+        'Li-Ion Battery (New) (15-24 hrs.)': '#00008b',
+        'Li-Ion Battery (New) (24+ hrs.)': '#000080',
+        'Flow Battery (New)': 'darkviolet',
+        'Grav (New)': 'orangered',
+        'PSH (New)': 'darkblue',
+        'Therm (New)': 'salmon',
+        'CAES (New)': 'chocolate',
+        'Demand Response (New)': 'cyan',
+        'LDES (New)': 'deeppink',
+        'Zinc (New)': 'darkturquoise',
+        'Hydrogen (New)': 'pink',
+        'Iron Air (New)': 'white',
+        'ES PPA-charge': 'lightblue',
+        'ES-discharge': 'lightblue',
+        'ES 4hr (New)-charge': 'lightskyblue',
+        'ES 6hr (New)-charge': 'deepskyblue',
+        'ES 8hr (New)-charge': 'steelblue',
+        'ES 10hr (New)-charge': 'darkslateblue',
+        'ES 100hr (New)-charge': 'darkblue',
+        'Li-Ion Battery (New)-charge': 'royalblue',
+        'Co-Located ESS-charge': 'royalblue',
+        'Li-Ion Battery 1 (New)-charge': 'royalblue',
+        'Li-Ion Battery 2 (New)-charge': 'royalblue',
+        'Li-Ion Battery 3 (New)-charge': 'royalblue',
+        'Li-Ion Battery 4 (New)-charge': 'royalblue',
+        'Li-Ion Battery 5 (New)-charge': 'royalblue',
+        'Li-Ion Battery 6 (New)-charge': 'royalblue',
+        'Li-Ion Battery 7 (New)-charge': 'royalblue',
+        'Li-Ion Battery 8 (New)-charge': 'royalblue',
+        'Li-Ion Battery 9 (New)-charge': 'royalblue',
+        'Li-Ion Battery 10 (New)-charge': 'royalblue',
+        'Flow Battery (New)-charge': 'darkviolet',
+        'Grav (New)-charge': 'orangered',
+        'PSH (New)-charge': 'darkblue',
+        'Therm (New)-charge': 'salmon',
+        'CAES (New)-charge': 'chocolate',
+        'LDES (New)-charge': 'darkblue',
+        'Zinc (New)-charge': 'darkturquoise',
+        'Hydrogen (New)-charge': 'pink',
+        'ES PPA-discharge': 'lightpink',
+        'ES-charge': 'lightpink',
+        'ES 4hr (New)-discharge': 'hotpink',
+        'ES 6hr (New)-discharge': 'deeppink',
+        'ES 8hr (New)-discharge': 'mediumvioletred',
+        'ES 10hr (New)-discharge': 'mediumorchid',
+        'ES 100hr (New)-discharge': 'purple',
+        'Li-Ion Battery (New)-discharge': 'hotpink',
+        'Co-Located ESS-discharge': 'hotpink',
+        'Li-Ion Battery 1 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 2 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 3 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 4 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 5 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 6 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 7 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 8 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 9 (New)-discharge': 'hotpink',
+        'Li-Ion Battery 10 (New)-discharge': 'hotpink',
+        'Flow Battery (New)-discharge': 'mediumorchid',
+        'Grav (New)-discharge': 'lightsalmon',
+        'PSH (New)-discharge': 'lightblue',
+        'Therm (New)-discharge': 'salmon',
+        'CAES (New)-discharge': 'sandybrown',
+        'LDES (New)-discharge': 'purple',
+        'Zinc (New)-discharge': 'aquamarine',
+        'Hydrogen (New)-discharge': 'plum',
+        'Curtailment': 'moccasin'
+         'SMR (New)': 'mediumseagreen'
+        }
         if tech not in tech_colors:
             raise TypeError(f"{tech} is not valid")
-    
+
         return tech_colors[tech]
 
     def stacked_resource_bar(self,fig,ax,figsize):
@@ -910,7 +901,7 @@ class ExplanResultsViewer():
                 for x in results_pivot.columns]
 
         results_pivot.columns = cols
-        
+
         # assign colors
         color_array = [self.color_tech(c) for c in cols]
 
@@ -936,11 +927,12 @@ class ExplanResultsViewer():
             fig.savefig(self.folder_path+'/'+str(self.data_handler.scenario) +
                         '_stacked_bar.png', bbox_inches='tight')
         # save legend as png for input into folium
-    
+
     def stacked_resource_es_duration_bar(self,fig,ax,figsize):
         """
         Plot staked bar chart of installed capacity by year
         """
+        
 
         results = self.rd['P_cap_total']
         results_en1 = self.rd['Store']
@@ -948,64 +940,64 @@ class ExplanResultsViewer():
             results.reset_index(inplace=True)
         if np.size(results_en1.index.names) > 1:
             results_en1.reset_index(inplace=True)
-    
+
         # Add tech name
         translate = {x: y for x, y in self.gen_map_info[['Gen_num', 'Tech_Num']].values}
         tech_num = [translate.get(x, x) for x in results['g']]
         results['Technology'] = tech_num
         tech_num = [translate.get(x, x) for x in results_en1['g']]
         results_en1['Technology'] = tech_num
-    
+
         # Filter for ES tech
         results_es = results[results['Technology'].isin(np.unique(
             self.data_handler.load_data[self.data_handler.data_ls.index('storage')]['Tech_Num']))]
         results_es['Energy'] = results_en1['Value'].values
         results_es['Duration'] = results_es['Energy'] / results_es['Value']
-    
+
         # Define duration bins and labels
         bins = [0, 2, 4, 6, 8, 10, 15, 24, np.inf]
         labels = ['0-2 hrs.', '2-4 hrs.', '4-6 hrs.', '6-8 hrs.', '8-10 hrs.', '10-15 hrs.','15-24 hrs.','24+ hrs.']
-    
+
         # Create a new column for binned durations
         results_es['Duration_Bin'] = pd.cut(results_es['Duration'], bins=bins, labels=labels, right=False)
-    
+
         # Ensure Duration_Bin includes all categories
         results_es['Duration_Bin'] = results_es['Duration_Bin'].cat.set_categories(labels)
-        
+
         # Combine Technology and Duration_Bin into a new column
         results_es['Tech_Name'] = results_es.apply(
             lambda row: f"{row['Tech_Name']} ({row['Duration_Bin']})" if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-        
+
         # Replace entries in results with those in results_es based on generator number (g)
         results['Duration'] = 0
-        
+
         results.update(results_es)
-    
+
         # Pivot table based on the new Tech_Category column
         results_pivot = results[results['Value'] != 0].pivot_table(
             index=['y'], columns='Tech_Name', values='Value', aggfunc='sum')
-        
+
         '''
         # Combine results and results_es
         combined_results = pd.concat([results, results_es], ignore_index=True)
-    
+
         # Create a new column that merges Duration_Bin and Technology
         combined_results['Tech_Category'] = combined_results.apply(
             lambda row: row['Duration_Bin'] if pd.notnull(row['Duration_Bin']) else row['Technology'], axis=1)
-    
+
         # Pivot table based on the new Tech_Category column
         results_pivot = combined_results[combined_results['Value'] != 0].pivot_table(
             index=['y'], columns='Tech_Category', values='Value', aggfunc='sum')
         '''
-        
+
         # Rename columns
         translate1 = {x: y for x, y in self.tech_map_info[['Tech_Num', 'Tech_Name']].values}
         cols = [translate1.get(x, x) for x in results_pivot.columns]
         results_pivot.columns = cols
-    
+
         # Assign colors
         color_array = [self.color_tech(c) for c in cols]
-    
+
         if figsize is None:
             results_pivot.plot.bar(stacked=True, color=color_array, ax=ax, legend=False, edgecolor="black", linewidth=0.75, width=0.5)
             ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=7)
@@ -1024,7 +1016,7 @@ class ExplanResultsViewer():
             ax.margins(x=0, y=0)
             plt.close(fig)
             fig.savefig(self.folder_path + '/' + str(self.data_handler.scenario) + '_stacked_es_duration_bar.png', bbox_inches='tight')
-            
+
     def stacked_resource_area(self):
         """
 
@@ -1077,7 +1069,7 @@ class ExplanResultsViewer():
             10, 8], legend=False, linewidth=0, ax=ax).figure
         ax.legend(loc="center left",
                   bbox_to_anchor=(1, 0.5), fontsize=15)
-       
+
         ax.set_ylabel('Capacity (MW)', fontsize=20)
         ax.set_xlabel('Years', fontsize=20)
         ax.set_title('Installed capacity', fontsize=25)
@@ -1416,20 +1408,20 @@ class ExplanResultsViewer():
             max_all= max([max(results_pivot.sum(axis=1)),max(results_en_pivot.sum(axis=1))])
             ax.set_ylim(0,max_all)
             h,l = ax.get_legend_handles_labels()
-         
-            
+
+
             l1 = ax.legend(loc="center left",
                       bbox_to_anchor=(1.2, 0.3), fontsize=7, ncol=1)
-            
-            
+
+
             patch_hatched = mpatches.Patch(facecolor='beige', hatch=' ', edgecolor="darkgrey", label='Power')
             patch_unhatched = mpatches.Patch(facecolor='beige', hatch='///', edgecolor="darkgrey", label='Energy')
-            
+
             l2=fig.legend(handles=[patch_hatched, patch_unhatched], loc='center left', bbox_to_anchor=(1.06, 0.5))
-    
+
             # as soon as a second legend is made, the first disappears and needs to be added back again
-            fig.add_artist(l1) 
-            
+            fig.add_artist(l1)
+
             ax.set_ylabel('Power Capacity (MW)')
             ax.right_ax.set_ylabel('Energy Capacity (MWh)')
             ax.set_xticklabels(results_pivot.index, rotation=75)
@@ -1443,7 +1435,7 @@ class ExplanResultsViewer():
                 'Installed ES capacity')
             ax.margins(x=0, y=0)
             #plt.yticks(14)
-            
+
         else:
             results_pivot.plot(kind='bar',stacked=True, align='edge', width=-0.4, color=color_array, legend=True, linewidth=0.3,ax=ax,edgecolor='black',figsize=figsize)
             results_en_pivot.plot(kind='bar',stacked=True, align='edge', width=0.4, color=color_array, legend=True, secondary_y=True,linewidth=0.3,ax=ax,edgecolor='black', hatch='///')
@@ -1451,19 +1443,19 @@ class ExplanResultsViewer():
             max_all= max([max(results_pivot.sum(axis=1)),max(results_en_pivot.sum(axis=1))])
             ax.set_ylim(0,max_all)
             h,l = ax.get_legend_handles_labels()
-         
-            
+
+
             l1 = ax.legend(loc="center left",
                       bbox_to_anchor=(1.2, 0.3), fontsize=12, ncol=1)
-            
+
             patch_hatched = mpatches.Patch(facecolor='beige', hatch=' ', edgecolor="darkgrey", label='Power')
             patch_unhatched = mpatches.Patch(facecolor='beige', hatch='///', edgecolor="darkgrey", label='Energy')
-            
+
             l2=fig.legend(handles=[patch_hatched, patch_unhatched], loc='center left', bbox_to_anchor=(1.06, 0.5), fontsize=12)
 
             # as soon as a second legend is made, the first disappears and needs to be added back again
-            fig.add_artist(l1) 
-            
+            fig.add_artist(l1)
+
             ax.set_ylabel('Power Capacity (MW)', fontsize=20)
             ax.right_ax.set_ylabel('Energy Capacity (MWh)', fontsize=20)
             ax.set_xticklabels(results_pivot.index, rotation=75)
@@ -1555,9 +1547,9 @@ class ExplanResultsViewer():
         """
         policy = self.data_handler.load_data[self.data_handler.data_ls.index('policy')]#['RPS']
         #CO2 = exp.data_handler.load_data['POLICY']#['CO2']
-        
+
         gen = self.data_handler.load_data[self.data_handler.data_ls.index('gen')]
-        
+
         gen_mx = pd.DataFrame(index = range(2021,2041),columns = ['Nuclear','Coal','Gas','Geothermal'])#'Solar','Wind_PPA','ES_PPA'
         gen_mx = gen_mx.fillna(0)
         for y in  gen_mx.index:
@@ -1570,25 +1562,25 @@ class ExplanResultsViewer():
                         gen_mx[tech][y] = gen_mx[tech][y]+gen_i['Cap']
                     elif y>=gen_i['RetYr']:
                         gen_mx[tech][y] = gen_mx[tech][y]+gen_i['Cap']-gen_i['RetCap']
-        
+
         #make plot
         fig, ax = plt.subplots(1, 1)
-       
+
         ax3 = ax.twinx()
         rspine = ax3.spines['right']
         rspine.set_position(('axes', 1.15))
         ax3.set_frame_on(True)
         ax3.patch.set_visible(False)
         fig.subplots_adjust(right=0.7)
-        
+
         #df.A.plot(ax=ax, style='b-')
         gen_mx.plot.bar(stacked=True,ax=ax,color = ['darkred','black','darkgrey','rosybrown'],figsize=[12, 6])
-        
+
         # same ax as above since it's automatically added on the right
         #df.B.plot(ax=ax, style='r-', secondary_y=True)
         #df.C.plot(ax=ax3, style='g-')
         policy['RPS'].plot(ax=ax,secondary_y=True,legend =False,color='green', linestyle='--',linewidth=4)
-        policy['CO2_intensity'].plot(ax=ax3,legend =False,color='blue', linestyle='-.',linewidth=4)            
+        policy['CO2_intensity'].plot(ax=ax3,legend =False,color='blue', linestyle='-.',linewidth=4)
         ax.set_ylabel('Capacity (MW)', fontsize=12,fontweight='bold')
         ax.set_xlabel('Year',fontsize=12,fontweight='bold')
         ax.right_ax.set_ylabel('RPS (%)', fontsize=12,fontweight='bold',color='green')
@@ -1597,11 +1589,11 @@ class ExplanResultsViewer():
         #plt.tight_layout()
         ax.right_ax.tick_params(axis='y', colors='green')
         ax.right_ax.spines['right'].set_color('green')
-        
+
         ax3.tick_params(axis='y', colors='blue')
         ax3.spines['right'].set_color('blue')
         plt.grid(True)
-        
+
         #lns = ax+ax3#lns1+lns2+lns3
         #labs = [l.get_label() for l in lns]
         #ax.legend([ax.get_label(),ax3.get_label()], labs, loc=0)
@@ -1610,12 +1602,12 @@ class ExplanResultsViewer():
         labels1 = ['RPS']
         lines2, labels2 = ax3.get_legend_handles_labels()
         ax.legend(lines + lines1+lines2, labels+labels1 + labels2, loc=1,bbox_to_anchor=(1.2, -0.152),ncol=6,fontsize=12)
-        
+
         # add legend --> take advantage of pandas providing us access
         # to the line associated with the right part of the axis
         #ax3.legend([ax.get_lines()[0], ax.right_ax.get_lines()[0], ax3.get_lines()[0]],\
          #          ['A','B','C'], bbox_to_anchor=(1.5, 0.5))
-        
+
     def stacked_resource_dispatch(self, select_year):
         """
 
