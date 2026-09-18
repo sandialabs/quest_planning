@@ -1,0 +1,97 @@
+Num,Tech,Tech_Name,ID,Tech_Num,Year,Cap_Cred
+1,Nuclear,Nuclear,1_Nuclear,1,2030,0.95
+1,Nuclear,Nuclear,1_Nuclear,1,2040,0.95
+1,Nuclear,Nuclear,1_Nuclear,1,2050,0.95
+2,Coal,Coal,2_Coal,2,2030,0.95
+2,Coal,Coal,2_Coal,2,2040,0.95
+2,Coal,Coal,2_Coal,2,2050,0.95
+3,Gas_CT,Gas_CT,3_Gas_CT,3,2030,0.95
+3,Gas_CT,Gas_CT,3_Gas_CT,3,2040,0.95
+3,Gas_CT,Gas_CT,3_Gas_CT,3,2050,0.95
+4,Gas_CC,Gas_CC,4_Gas_CC,4,2030,0.95
+4,Gas_CC,Gas_CC,4_Gas_CC,4,2040,0.95
+4,Gas_CC,Gas_CC,4_Gas_CC,4,2050,0.95
+5,Oil_CT,Oil_CT,5_Oil_CT,5,2030,0.95
+5,Oil_CT,Oil_CT,5_Oil_CT,5,2040,0.95
+5,Oil_CT,Oil_CT,5_Oil_CT,5,2050,0.95
+6,Oil_ST,Oil_ST,6_Oil_ST,6,2030,0.95
+6,Oil_ST,Oil_ST,6_Oil_ST,6,2040,0.95
+6,Oil_ST,Oil_ST,6_Oil_ST,6,2050,0.95
+7,Wind,Wind,7_Wind,7,2030,0.39
+7,Wind,Wind,7_Wind,7,2040,0.39
+7,Wind,Wind,7_Wind,7,2050,0.39
+8,Solar,Solar,8_Solar,8,2030,0.28
+8,Solar,Solar,8_Solar,8,2040,0.25
+8,Solar,Solar,8_Solar,8,2050,0.2
+9,Solar_RT,Solar_RT,9_Solar_RT,9,2030,0.28
+9,Solar_RT,Solar_RT,9_Solar_RT,9,2040,0.25
+9,Solar_RT,Solar_RT,9_Solar_RT,9,2050,0.2
+10,ES,ES,10_ES,10,2030,0.95
+10,ES,ES,10_ES,10,2040,0.95
+10,ES,ES,10_ES,10,2050,0.95
+11,Hydro,Hydro,11_Hydro,11,2030,0.95
+11,Hydro,Hydro,11_Hydro,11,2040,0.95
+11,Hydro,Hydro,11_Hydro,11,2050,0.95
+12,CSP,CSP,12_CSP,12,2030,0.95
+12,CSP,CSP,12_CSP,12,2040,0.95
+12,CSP,CSP,12_CSP,12,2050,0.95
+13,Gas_CT_Cand,Gas_CT (New),13_Gas_CT_Cand,13,2030,0.95
+13,Gas_CT_Cand,Gas_CT (New),13_Gas_CT_Cand,13,2040,0.95
+13,Gas_CT_Cand,Gas_CT (New),13_Gas_CT_Cand,13,2050,0.95
+14,Gas_CC_Cand,Gas_CC (New),14_Gas_CC_Cand,14,2030,0.95
+14,Gas_CC_Cand,Gas_CC (New),14_Gas_CC_Cand,14,2040,0.95
+14,Gas_CC_Cand,Gas_CC (New),14_Gas_CC_Cand,14,2050,0.95
+15,Wind_Cand,Wind (New),15_Wind_Cand,15,2030,0.39
+15,Wind_Cand,Wind (New),15_Wind_Cand,15,2040,0.39
+15,Wind_Cand,Wind (New),15_Wind_Cand,15,2050,0.39
+16,Solar_Cand,Solar (New),16_Solar_Cand,16,2030,0.28
+16,Solar_Cand,Solar (New),16_Solar_Cand,16,2040,0.25
+16,Solar_Cand,Solar (New),16_Solar_Cand,16,2050,0.2
+17,ES_4hr_Cand,ES 4hr (New),17_ES_4hr_Cand,17,2030,0.55
+17,ES_4hr_Cand,ES 4hr (New),17_ES_4hr_Cand,17,2040,0.55
+17,ES_4hr_Cand,ES 4hr (New),17_ES_4hr_Cand,17,2050,0.55
+18,ES_6hr_Cand,ES 6hr (New),18_ES_6hr_Cand,18,2030,0.55
+18,ES_6hr_Cand,ES 6hr (New),18_ES_6hr_Cand,18,2040,0.55
+18,ES_6hr_Cand,ES 6hr (New),18_ES_6hr_Cand,18,2050,0.55
+19,ES_8hr_Cand,ES 8hr (New),19_ES_8hr_Cand,19,2030,0.55
+19,ES_8hr_Cand,ES 8hr (New),19_ES_8hr_Cand,19,2040,0.55
+19,ES_8hr_Cand,ES 8hr (New),19_ES_8hr_Cand,19,2050,0.55
+20,ES_10hr_Cand,ES 10hr (New),20_ES_10hr_Cand,20,2030,0.55
+20,ES_10hr_Cand,ES 10hr (New),20_ES_10hr_Cand,20,2040,0.55
+20,ES_10hr_Cand,ES 10hr (New),20_ES_10hr_Cand,20,2050,0.55
+21,ES_100hr_Cand,ES 100hr (New),21_ES_100hr_Cand,21,2030,0.55
+21,ES_100hr_Cand,ES 100hr (New),21_ES_100hr_Cand,21,2040,0.55
+21,ES_100hr_Cand,ES 100hr (New),21_ES_100hr_Cand,21,2050,0.55
+22,Li_Ion_Cand,Li-Ion Battery (New),22_Li_Ion_Cand,22,2030,0.55
+22,Li_Ion_Cand,Li-Ion Battery (New),22_Li_Ion_Cand,22,2040,0.55
+22,Li_Ion_Cand,Li-Ion Battery (New),22_Li_Ion_Cand,22,2050,0.55
+23,Flow_Cand,Flow Battery (New),23_Flow_Cand,23,2030,0.55
+23,Flow_Cand,Flow Battery (New),23_Flow_Cand,23,2040,0.55
+23,Flow_Cand,Flow Battery (New),23_Flow_Cand,23,2050,0.55
+24,Grav_Cand,Grav (New),24_Grav_Cand,24,2030,0.55
+24,Grav_Cand,Grav (New),24_Grav_Cand,24,2040,0.55
+24,Grav_Cand,Grav (New),24_Grav_Cand,24,2050,0.55
+25,PSH_Cand,PSH (New),25_PSH_Cand,25,2030,0.55
+25,PSH_Cand,PSH (New),25_PSH_Cand,25,2040,0.55
+25,PSH_Cand,PSH (New),25_PSH_Cand,25,2050,0.55
+26,Therm_Cand,Therm (New),26_Therm_Cand,26,2030,0.55
+26,Therm_Cand,Therm (New),26_Therm_Cand,26,2040,0.55
+26,Therm_Cand,Therm (New),26_Therm_Cand,26,2050,0.55
+27,CAES_Cand,CAES (New),27_CAES_Cand,27,2030,0.55
+27,CAES_Cand,CAES (New),27_CAES_Cand,27,2040,0.55
+27,CAES_Cand,CAES (New),27_CAES_Cand,27,2050,0.55
+28,Zinc_Cand,Zinc (New),28_Zinc_Cand,28,2030,0.55
+28,Zinc_Cand,Zinc (New),28_Zinc_Cand,28,2040,0.55
+28,Zinc_Cand,Zinc (New),28_Zinc_Cand,28,2050,0.55
+29,Hydrogen_Cand,Hydrogen (New),29_Hydrogen_Cand,29,2030,0.55
+29,Hydrogen_Cand,Hydrogen (New),29_Hydrogen_Cand,29,2040,0.55
+29,Hydrogen_Cand,Hydrogen (New),29_Hydrogen_Cand,29,2050,0.55
+30,DR_Cand,Demand Response (New),30_DR_Cand,30,2030,0
+30,DR_Cand,Demand Response (New),30_DR_Cand,30,2040,0
+30,DR_Cand,Demand Response (New),30_DR_Cand,30,2050,0
+31,Iron_Air_Cand,Iron Air (New),31_Iron_Air_Cand,31,2030,0.55
+31,Iron_Air_Cand,Iron Air (New),31_Iron_Air_Cand,31,2040,0.55
+31,Iron_Air_Cand,Iron Air (New),31_Iron_Air_Cand,31,2050,0.55
+32,SMR_Cand,SMR (New),32_SMR_Cand,32,2030,0.95
+32,SMR_Cand,SMR (New),32_SMR_Cand,32,2040,0.95
+32,SMR_Cand,SMR (New),32_SMR_Cand,32,2050,0.95

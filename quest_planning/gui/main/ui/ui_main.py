@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainOXMQyg.ui'
+## Form generated from reading UI file 'mainzxLMsp.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(931, 517)
+        MainWindow.resize(1220, 632)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

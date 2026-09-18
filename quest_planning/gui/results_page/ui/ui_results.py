@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'resultspSmkks.ui'
+## Form generated from reading UI file 'resultsVpEsYO.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -108,6 +108,8 @@ class Ui_results(object):
         icon2.addFile(u":/results_icons/images/results_icons/data_check_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png", QSize(), QIcon.Normal, QIcon.Off)
         self.scenario_view_button.setIcon(icon2)
         self.scenario_view_button.setIconSize(QSize(32, 32))
+        self.scenario_view_button.setCheckable(True)
+        self.scenario_view_button.setAutoExclusive(True)
 
         self.verticalLayout.addWidget(self.scenario_view_button)
 

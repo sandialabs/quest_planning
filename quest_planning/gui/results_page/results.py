@@ -32,7 +32,8 @@ from PySide6.QtGui import QDesktopServices,QFont,QColor, QPixmap, QPainter, QReg
 from quest_planning.gui.results_page.ui.ui_results import Ui_results
 from quest_planning.gui.tools.tools import LoadingSplashScreen
 from quest_planning.gui.results_page.drag_widget import FileBrowser, ImageGrid, WebEngineView
-from quest_planning.gui.results_page.scenario_view import CSVScenarioSelector
+#from quest_planning.gui.results_page.scenario_view import CSVScenarioSelector
+from quest_planning.gui.scenario_viewer_page.scenario import GraphBuilder, ScenarioSelectionWidget
 
 
 class ResultsPage(QWidget, Ui_results):
@@ -56,7 +57,7 @@ class ResultsPage(QWidget, Ui_results):
         self.collect_results_button.clicked.connect(self.collect_results_button_clicked)
         self.gen_plots_button.clicked.connect(self.gen_plots_button_clicked)
         self.open_results_folder_button.clicked.connect(self.on_open_results_folder_button_clicked)
-        #self.open_maps_button.clicked.connect(self.open_map_button_clicked)
+        self.open_maps_button.clicked.connect(self.open_map_button_clicked)
         self.save_results_button.clicked.connect(self.save_results_button_clicked)
 
         self.results_help_button.clicked.connect(self.results_help)
@@ -104,11 +105,14 @@ class ResultsPage(QWidget, Ui_results):
        # self.collect_splash_screen = LoadingSplashScreen(self,title = "Collecting Results")
 
        ## scenario viewer
-        self.scenario_view_button.setEnabled(False)
-        self.open_maps_button.setEnabled(False)
-       # self.scenario_view_button.clicked.connect(self.scen_view)
-        self.scenario_widget = CSVScenarioSelector()
-        self.verticalLayout_5.addWidget(self.scenario_widget)
+        #self.scenario_view_button.setEnabled(False)
+        self.graph_build = GraphBuilder()
+        self.scenario_widg = ScenarioSelectionWidget(self.graph_build)
+        self.verticalLayout_5.addWidget(self.scenario_widg)
+        self.scenario_view_button.clicked.connect(self.scen_view)
+       # self.scenario_widget = CSVScenarioSelector()
+
+        #self.open_maps_button.setEnabled(False)
 
     def scen_view(self):
         self.stackedWidget.setCurrentWidget(self.scenario_viewer_page)

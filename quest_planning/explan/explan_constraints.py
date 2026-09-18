@@ -231,7 +231,7 @@ class ExplanConstraints:
                 model.cDCPF = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cDCPF)
                 model.cThetaDiffMax = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMax)
                 model.cThetaDiffMin = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMin)
-                #model.cSlackBus =pm.Constraint(model.Y, model.S_I, rule=self.cSlackBus)
+                model.cSlackBus =pm.Constraint(model.Y, model.S_I, rule=self.cSlackBus)
         
         #if self.data_handler.tx_model == 'copper_sheet':
             #fix PF to 0
@@ -298,8 +298,10 @@ class ExplanConstraints:
         '''
         Define the reliability and resilience constraints of the optimization model
         '''
-        model.cPRM = pm.Constraint(
-            model.Y, rule=self.cPRM)
+        if self.data_handler.regional_load_growth is not None:
+            model.cPRM = pm.Constraint(model.R, model.Y, rule=self.cPRM)
+        else:
+            model.cPRM = pm.Constraint(model.Y, rule=self.cPRM)
         
 
     def dr_and_ee_constraints(self, model):
@@ -910,10 +912,9 @@ class ExplanConstraints:
         fb = model.from_bus[l]
         tb = model.to_bus[l]
         theta_diff = model.theta[fb, y, s, i] - model.theta[tb, y, s, i]
-        return ( (1e-3/self.mva_base) * model.PF[l, y, s, i]
-            - (1e-3/model.line_X[l]) * theta_diff
-            == 0 )
-        
+        # Normalize by mva_base for numerical stability
+        return model.PF[l, y, s, i] - (self.mva_base/model.line_X[l]) * theta_diff == 0
+    
     def cThetaDiffMax(self,model, l, y, s, i):
         theta_diff = model.theta[model.from_bus[l], y, s, i] - model.theta[model.to_bus[l], y, s, i]
         return theta_diff <= np.pi/6
@@ -922,6 +923,15 @@ class ExplanConstraints:
         theta_diff = model.theta[model.from_bus[l], y, s, i] - model.theta[model.to_bus[l], y, s, i]
         return theta_diff >= -np.pi/6
 
+    def cSlackBus(self, model,b,y,s,i):
+        '''
+        Define slack bus
+        **TODO: define in data_handler**
+        '''
+        if  self.system == 'RTS_GMLC_Nodal' and b == 113:
+            return model.theta[b,y,s,i] == 0
+        else:
+            return pm.Constraint.Skip
     
                                             
     '''
@@ -1138,12 +1148,19 @@ class ExplanConstraints:
 
     def cPCapTotal(self, model, b, g, y):
         '''
-        Cumulative  generation capacity
-        TODO: address with lead times for technologies
+        Cumulative generation capacity.
+
+        Candidate capacity equals existing/base capacity plus all investments
+        whose lead time has elapsed by year y.
         '''
         if (b, g) in self.candidate_tuple:
-            if self.data_handler.block_selection.lower() == 'Full_Year'.lower() or self.data_handler.block_selection.lower() == 'Full_Year_MY'.lower():
+
+            if (
+                self.data_handler.block_selection.lower() == 'full_year'
+                or self.data_handler.block_selection.lower() == 'full_year_my'
+            ):
                 return model.P_cap_total[b, g, y] == model.P_cap[g] + model.G_inv[b, g, y]
+
             else:
                 if np.size(self.data_handler.years) >= 20:
                     if y == model.Y.at(1):
@@ -1173,13 +1190,23 @@ class ExplanConstraints:
         '''
         if (b, g) in self.es_can_tuple:
 
-            if self.data_handler.block_selection.lower() == 'Full_Year'.lower():#TODO: fix this!!
-                return model.Store[b, g, y] == model.P_cap[g]*model.es_min_duration[g]+model.Sto_inv[b, g, y]
+            base_storage = model.P_cap[g] * model.es_min_duration[g]
+
+            if (
+                self.data_handler.block_selection.lower() == 'full_year'
+                or self.data_handler.block_selection.lower() == 'full_year_my'
+            ):
+                return model.Store[b, g, y] == base_storage + model.Sto_inv[b, g, y]
+
             else:
-                if model.year_gap_array[y] <= 1 and y != model.Y.at(-1):
-                    return model.Store[b, g, y] == model.P_cap[g]*model.es_min_duration[g]+sum(model.Sto_inv[b, g, y1] for y1 in range(model.Y.at(1), y-model.G_lt[g]))
-                else:
-                    return model.Store[b, g, y] == model.P_cap[g]*model.es_min_duration[g]+sum(model.Sto_inv[b, g, y1] for y1 in self.data_handler.years[0:np.where(np.array(self.data_handler.years) == y)[0][0]])
+                online_storage_investment = sum(
+                    model.Sto_inv[b, g, y1]
+                    for y1 in self.data_handler.years
+                    if y1 + model.G_lt[g] <= y
+                )
+
+                return model.Store[b, g, y] == base_storage + online_storage_investment
+
         else:
             return pm.Constraint.Skip
 
@@ -1379,13 +1406,29 @@ class ExplanConstraints:
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     '''
 
-    def cPRM(self, model, y):
+    def cPRM(self, model, *args):
         """
         Planning reserve margin constraint
         TODO: Add piecewise ELCC or dynamic elcc curves for PRM calculations OR Seasonal ELCC 
         """
         scale = 1000.0
-        return sum(model.G_cc[g]*model.P_cap_total[b, g, y]/scale for (b, g) in model.B_G) >= (1+float(self.data_handler.prm)) * model.PEAK[y]/scale
+
+        if self.data_handler.regional_load_growth is not None:
+            r, y = args
+
+            return sum(
+                model.G_cc[g, y] * model.P_cap_total[b, g, y] / scale
+                for (b, g) in model.B_G
+                if int(pm.value(model.bus_region[b])) == int(r)
+            ) >= ((1 + model.PRM[r, y]) * model.PEAK_REG[r, y]) / scale
+
+        else:
+            y = args[0]
+
+            return sum(
+                model.G_cc[g, y] * model.P_cap_total[b, g, y] / scale
+                for (b, g) in model.B_G
+            ) >= ((1 + float(self.data_handler.prm)) * model.PEAK[y]) / scale
         # self.data_handler.scalars.loc['PRM']['Value'])/100
     
     '''

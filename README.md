@@ -639,10 +639,6 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 
 - [**Form No. 714**](<https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual-electric/data>): provides balancing authority and planning area generation, actual and scheduled power transfers, and load. (Provided by the Federal Energy Regulatory Commission)
 
-#### Renewable & Energy Storage Policies
-
-- [**Database of State Incentives for Renewables & Efficiency**](<https://www.dsireusa.org/>): comprehensive set of renewable policies and incentives in the United States (developed by North Carolina State University)
-
 Additional test cases are under further development and will be included in future releases.
 
 [Back to Top](#top)
