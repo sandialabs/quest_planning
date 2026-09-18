@@ -76,13 +76,15 @@ nuclear_retirement_year: None
 oil_retirement_year: None
 
 #********************Solver********************
-solver: cplex
+solver: gurobi
 
 #********************Plotting Options********************
 stacked_bar_by_bus: False
 policy_plot_option: False
 
 #********Reliability_assessment using ProGRESS tool***************
+run_reliability_assessment: false 
+
 rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
  #- 2024
  - 2032

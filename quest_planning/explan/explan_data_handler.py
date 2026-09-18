@@ -1400,7 +1400,10 @@ class ExplanDataHandler():
                                 continue  # skip to next season
 
                         # Final safety: ensure exactly 3 reps
-                        if len(reps) > 3:
+                        if len(reps) == 0:
+                            logging.error(f"No representative days found for season {s}")
+                            raise ValueError(f"Insufficient data for season {s}: need at least 1 full day with 24 hours")
+                        elif len(reps) > 3:
                             reps = reps[:3]
                         elif len(reps) < 3:
                             reps = (reps * 3)[:3]

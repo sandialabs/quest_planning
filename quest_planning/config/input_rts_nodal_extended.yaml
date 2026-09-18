@@ -13,7 +13,7 @@ ldes_switch: False
 
 #******************** Load Growth********************
 #If System-wide load growth is used:
-system-wide_load_growth: 1.5
+load_growth: 1.5
 load_forecast: system_wide
 
 #If Regional load growth is used:
@@ -124,6 +124,8 @@ stacked_bar_by_bus: False
 policy_plot_option: False
 
 #********Reliability_assessment using ProGRESS tool (Optional)***************
+run_reliability_assessment: false 
+
 rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
 # - 2030
 # - 2040
