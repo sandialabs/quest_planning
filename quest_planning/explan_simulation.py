@@ -7,6 +7,7 @@ Created on Fri Jul 12 11:06:12 2024
 import os.path
 import yaml
 import argparse
+import logging
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
 from quest_planning.explan.explan_optimizer import ExplanOptimizer
 from quest_planning.explan.explan_results_viewer import ExplanResultsViewer
@@ -142,11 +143,23 @@ class Explan:
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
             self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
-        prg = ProGRESS_Exporter(exp)
-        if self.config["rel_evaluation_years"]:
-            prg.export_data(self.config["rel_evaluation_years"])
-            prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
-
+        if self.config.get("run_reliability_assessment", True):
+            if self.config.get("rel_evaluation_years"):
+                try:
+                    prg = ProGRESS_Exporter(exp)
+                    prg.export_data(self.config["rel_evaluation_years"])
+                    prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
+                except FileNotFoundError as e:
+                    logging.warning(f"ProGRESS executable not found: {e}")
+                    logging.warning("Skipping reliability assessment. Set 'run_reliability_assessment: false' in config to disable this warning.")
+                except Exception as e:
+                    logging.error(f"ProGRESS reliability assessment failed: {e}")
+                    logging.error("Continuing with capacity planning results only.")
+            else:
+                logging.info("run_reliability_assessment is true but rel_evaluation_years is not specified. Skipping ProGRESS.")
+        else:
+            logging.info("Skipping reliability assessment (run_reliability_assessment: false or not specified)")
+        
 def read_input_yaml(yaml_file):
     '''
     Read input YAML file
