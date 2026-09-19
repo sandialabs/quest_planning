@@ -57,6 +57,7 @@ block_selection: seasonal_blocks #Repr_3Days_Season
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
+large_load_option: False
 rps_policy: False
 co2_policy: False
 co2_intensity_policy: False

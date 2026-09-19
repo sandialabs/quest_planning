@@ -14,8 +14,9 @@ from pyomo.contrib.appsi.solvers.highs import Highs
 
 from pyomo.util.infeasible import log_infeasible_constraints
 from pyomo.contrib.iis import write_iis
+from pyomo.core.expr import identify_variables
 
-logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.INFO)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.WARNING)
 
 class Optimizer(with_metaclass(ABCMeta)):
     """Abstract base class for Pyomo ConcreteModel optimization framework."""
@@ -97,12 +98,80 @@ class Optimizer(with_metaclass(ABCMeta)):
         """Logs infeasible constraints from the model."""
         logging.error("Optimizer: Logging infeasible constraints.")
         log_infeasible_constraints(self.model, log_expression=True, log_variables=True)
+    
+    def quick_feasibility_scan(self,model, log_file="feas_scan.log"):
+        """
+        Light-weight check for infeasible constraints and suspicious variable bounds.
+        """
+        
+        logging.basicConfig(filename=log_file, level=logging.INFO)
+        
+        logging.info("=== Quick Feasibility Scan ===")
+        
+        # Check constraints that are infeasible under current variable values (if initialized)
+        logging.info("Checking infeasible constraints...")
+        log_infeasible_constraints(model, log_expression=True, log_variables=True)
+        
+        # Check variable bounds for suspicious ranges (e.g., lb > ub)
+        logging.info("Checking variable bounds...")
+        for v in model.component_objects(Var, active=True):
+            for idx in v:
+                var = v[idx]
+                if var.lb is not None and var.ub is not None and var.lb > var.ub:
+                    logging.warning(f"Variable {var.name} has lb > ub ({var.lb} > {var.ub})")
+        
+        logging.info("Feasibility scan complete.")
+
+    def log_large_coefficients(self, threshold=1e6, log_file="large_coeffs.log"):
+        """
+        Logs all constraint coefficients with magnitude above threshold.
+        """
+        print(f"Logging coefficients or RHS > {threshold} to {log_file}")
+        import logging
+        logging.basicConfig(filename=log_file, level=logging.INFO)
+        logging.info("=== Checking Large Coefficients/RHS ===")
+
+        for c in self.model.component_objects(Constraint, active=True):
+            constr = getattr(self.model, c.name)
+            for idx in constr:
+                con = constr[idx]
+                expr = con.body
+                if expr is None:
+                    continue
+                # Check variable values (linear coefficients may not exist)
+                for v in identify_variables(expr):
+                    # Evaluate the coefficient numerically if possible
+                    try:
+                        coef_val = value(expr.coeff(v))
+                        if abs(coef_val) > threshold:
+                            logging.info(f"Constraint {c.name}[{idx}] variable {v} coefficient = {coef_val}")
+                            print(f"Constraint {c.name}[{idx}] variable {v} coefficient = {coef_val}")
+                    except Exception:
+                        pass  # skip if non-linear or can't extract coefficient
+
+                # Check bounds (RHS)
+                if con.has_lb() and abs(con.lb) > threshold:
+                    logging.info(f"Constraint {c.name}[{idx}] lower bound = {con.lb}")
+                    print(f"Constraint {c.name}[{idx}] lower bound = {con.lb}")
+                if con.has_ub() and abs(con.ub) > threshold:
+                    logging.info(f"Constraint {c.name}[{idx}] upper bound = {con.ub}")
+                    print(f"Constraint {c.name}[{idx}] upper bound = {con.ub}")
 
     def run(self):
         """Instantiates, creates, and solves the optimizer model based on supplied information. Use if no steps are needed between constructing the model and solving it."""
 
         self.instantiate_model()
         self.populate_model()
+        
+        #self.log_large_coefficients(threshold=1e4, log_file="large_coeffs.log")
+
+        # 🔹 Write the LP file before solving
+        #self.model.write("model_dump.lp", io_options={"symbolic_solver_labels": True})
+        #print("Model written to model_dump.lp")
+        #input("⏸ Press Enter to continue solving after inspecting LP...")
+
+        # Run a quick feasibility scan before full solve
+        #self.quick_feasibility_scan(self.model)
         
         if self.solver == "neos":
             opt = SolverFactory("cbc")
@@ -119,9 +188,12 @@ class Optimizer(with_metaclass(ABCMeta)):
                 logging.error(
                     "Optimizer: {error}".format(error=e))
             else:
-                solver.options["NumericFocus"]= 0#cjn add
+                #pass
+                solver.options["NumericFocus"]= 3#cjn add
                 solver.options["BarHomogeneous"]= 1#cjn add
                 solver.options["ScaleFlag"]= 2#cjn add
+                solver.options['Threads'] = 8
+                #solver.options['ThreadLimit'] = 8
                 
                 results = solver.solve(
                     self.model, tee=True, keepfiles=True)

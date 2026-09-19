@@ -1,0 +1,241 @@
+# ***QuESt Planning Configuration File***
+# Large loads example configuration
+
+
+#********************Data Folder********************
+data_folder: 'rts_csv_data_large_loads'
+
+#********************Scenario Configuration********************
+scenario: LL_Aggr_ESS_Flex_no_btm_enforced
+system: RTS_GMLC
+tx_model: Transportation
+trans_expansion: False
+load_growth: 3
+load_forecast: system_wide
+es_cost: Base
+ldes_switch: False
+
+#********************Regional Load Growth********************
+regional_load_growth_option: False
+regional_load_growth:   
+  - region: 0
+    growth: 0.5
+  - region: 1
+    growth: 2.5
+  - region: 2
+    growth: 5.0
+
+#***************Large Load Nodal Adjustment********************
+large_load_option: True
+ll_resource_option: False
+large_load_flex: True
+large_load_growth: 0
+ll_self_sufficiency: 0.0  # Fraction of large load energy that must be met by onsite resources (0.0-1.0)
+large_loads:
+  - id: LL_1
+    bus: 111
+    capacity_mw: 500
+    deploy_year: 2040
+    profile_file: data_center_profile_normalized.csv
+    profile_type: normalized
+
+    onsite_resources:
+      ng:
+        candidate: true
+        max_capacity_mw: 200
+
+      bess:
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+  
+  - id: LL_2
+    bus: 211
+    capacity_mw: 500
+    deploy_year: 2024
+    profile_file: data_center_profile_normalized-2.csv
+    profile_type: normalized
+
+    onsite_resources:
+      ng:
+        candidate: true
+        max_capacity_mw: 200
+
+      bess:
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+  
+  - id: LL_3
+    bus: 311
+    capacity_mw: 500
+    deploy_year: 2032
+    profile_file: data_center_profile_normalized-3.csv
+    profile_type: normalized
+
+    onsite_resources:
+      ng:
+        candidate: true
+        max_capacity_mw: 200
+
+      bess:
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+
+  - id: LL_4
+    bus: 107
+    capacity_mw: 500
+    deploy_year: 2024
+    profile_file: data_center_profile_normalized-2.csv
+    profile_type: normalized
+
+    onsite_resources:
+      ng:
+        candidate: true
+        max_capacity_mw: 200
+
+      bess:
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+  
+  - id: LL_5
+    bus: 207
+    capacity_mw: 500
+    deploy_year: 2032
+    profile_file: data_center_profile_normalized-3.csv
+    profile_type: normalized
+
+    onsite_resources:
+      ng:
+        candidate: true
+        max_capacity_mw: 200
+
+      bess:
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+
+  - id: LL_6
+    bus: 307
+    capacity_mw: 1000
+    deploy_year: 2040
+    profile_file: data_center_profile_normalized.csv
+    profile_type: normalized
+
+    onsite_resources:
+      ng:
+        candidate: true
+        max_capacity_mw: 200
+
+      bess:
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+
+#********************Time Horizon********************
+start_year: 2024
+end_year: 2040
+#year_gap: 16
+years:
+  - 2024
+  #- 2028
+  - 2032
+  #- 2036
+  - 2040
+  #- 2028
+  #- 2032
+  #- 2036
+  #- 2040
+
+#********************Economic Parameters********************
+discount_rate: 5
+base_curr_year: 2021
+end_effects: 10
+voll: 100000
+tax_credit_end_year: 2032
+
+#********************Energy Storage Options********************
+soc_max: 80
+soc_min: 20
+ini_level: 50
+es_lifetime_extension: 50
+
+#********************Modeling Options:********************
+block_selection: Repr_3Days_Season # Seasonal_blocks #Repr_3Days_Season #repr_weeks
+reserves_option: True
+tax_credits_option: False
+es_lifetime_cost_option: True
+rps_policy: False
+co2_policy: False
+co2_intensity_policy: False
+mva_base: 100
+
+#********************Candidate Technologies - NOT ACTIVE********************
+candidate_techs:
+  - Num: 9
+    Tech: Gas_Cand
+    CandCap: 0
+    SystCap: 0
+  - Num: 10
+    Tech: Wind_Cand
+    CandCap: 200
+    SystCap: 1500
+  - Num: 11
+    Tech: Solar_Cand
+    CandCap: 200
+    SystCap: 1500
+  - Num: 17
+    Tech: Li_Ion_Cand
+    CandCap: 100
+    SystCap: 1000
+  - Num: 18
+    Tech: Flow_Cand
+    CandCap: 100
+    SystCap: 1000
+  - Num: 21
+    Tech: Therm_Cand
+    CandCap: 100
+    SystCap: 1000
+
+
+#********************Limit by Buses Annually********************
+limit_by_buses:
+solar: 50
+wind: 50
+storage: 50
+gas: 100
+
+
+#********************System-wide resource limits********************
+system_wide_wind_max: 2500
+system_wide_solar_max: 1500000
+system_wide_gas_max: 100000
+system_wide_tx_expansion_max: 10000000
+
+#********************Reserves Parameters********************
+prm: 20
+reg_res_req: 1
+spin_res_req: 3
+flex_res_w_req: 10
+flex_res_s_req: 4
+
+#********************Custom Retirements********************
+custom_retirement: True
+ng_retirement_year: 2060
+coal_retirement_year: 2032
+nuclear_retirement_year: 2060
+oil_retirement_year: 2035
+
+#********************Solver********************
+solver: gurobi
+
+#********************Plotting Options********************
+stacked_bar_by_bus: False
+policy_plot_option: False
+
+
+
+
+
