@@ -1080,59 +1080,6 @@ class ExplanOptimizer(Optimizer):
 
         
 
-    def add_large_loads_to_model_OLD(self,model, processed_profiles: Dict[str, Dict[int, object]], cfg: Dict):
-        """
-        Add large load sets/params/variables/constraints to the provided Pyomo model.
-    
-        Parameters
-        ----------
-        m
-            Pyomo model instance (or block) to extend.
-        processed_profiles
-            Mapping: { load_id: { year: pd.DataFrame with 'datetime' and 'Facility_MW' } }
-        cfg
-            Scenario configuration dict (contains curtail cost defaults, flags).
-        """
-        # Build set of large-load IDs and mapping to years/hours
-        load_ids: List[str] = list(processed_profiles.keys())
-        years: List[int] = sorted(next(iter(processed_profiles.values())).keys())
-    
-        # Sets
-        model.LARGEL = pm.Set(initialize=load_ids, dimen=1)
-        model.LARGEL_YEARS = pm.Set(initialize=years, dimen=1)
-
-        #Planned years of large loads
-        def ll_planned_yr_init(model, g):
-            ll_yr = GEN[['id', 'deploy_year']
-                         ].set_index('id')
-            ret_yr.index = ret_yr.index.map(
-                int)
-            ret_yr = ret_yr.to_dict()['PlannedYr']
-            return ret_yr[g]
-
-        model.ll_planned_yr = pm.Param(
-            model.G, initialize=ll_planned_yr_init)
-        self.par_index_labels['ll_planned_yr'] = ['g']
-
-        ll_load_dict = self.data_handler.load_dict_ll
-        
-        #large load parameters and variables
-        model.CostScale = pm.Param(initialize=1e-6)
-        
-        model.large_load = pm.Param(
-            model.B, model.Y, model.S_I, initialize=ll_load_dict)
-        self.par_index_labels['large_load'] = ['b', 'y', 's', 'i']
-
-        model.large_load_net = pm.Var(
-            model.B, model.Y, model.S_I, domain=pm.NonNegativeReals)
-        self.var_index_labels['large_load_net'] = ['b', 'y', 's', 'i']
-
-        
-
-
-
-
-
     def _set_model_var(self):
         """A method for initializing model decision variables for the model."""
         #print("Set up variables")
