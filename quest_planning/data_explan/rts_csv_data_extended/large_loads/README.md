@@ -1,10 +1,10 @@
 # Large Loads Directory
 
-This directory contains profile data for large loads (e.g., data centers, industrial facilities) that can be modeled in QuESt Planning capacity expansion studies.
+This directory contains profile data for large loads (e.g., data centers, industrial facilities) that can be modeled in QuESt Planning.
 
 ## What are Large Loads?
 
-Large loads are significant electrical consumers that can be modeled with:
+Large loads can be modeled with:
 - **Behind-the-meter (BTM) generation**: Natural gas generators and battery storage
 - **Flexible demand**: Optional curtailment capability
 - **Custom load profiles**: Hourly load data for the entire year
@@ -116,7 +116,3 @@ When large loads are enabled:
 - **Main README**: `/projects/README.md`
 - **Configuration Guide**: See example config files in `quest_planning/config/`
 - **Code Documentation**: `quest_planning/explan/explan_data_handler.py` (see `read_large_loads_config()` method)
-
-## Questions?
-
-For more information about QuESt Planning and large load modeling, refer to the main project documentation or contact the development team.
