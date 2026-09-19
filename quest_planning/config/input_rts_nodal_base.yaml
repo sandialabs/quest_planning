@@ -8,7 +8,7 @@ scenario: RTS_GMLC_Base
 system: RTS_GMLC_Base
 tx_model: Transportation
 trans_expansion: False
-load_growth: 5
+load_growth: 2.5
 load_forecast: system_wide
 es_cost: Low
 ldes_switch: True
@@ -38,7 +38,7 @@ ini_level: 50
 es_lifetime_extension: 50
 
 #********************Modeling Options:********************
-block_selection: seasonal_blocks #Repr_3Days_Season #Options are: "seasonal_blocks", "Repr_3Days_Season", "Repr_Weeks"
+block_selection: Repr_3Days_Season #Options are: "seasonal_blocks", "Repr_3Days_Season", "Repr_Weeks"
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
@@ -110,6 +110,8 @@ stacked_bar_by_bus: False
 policy_plot_option: False
 
 #********Reliability_assessment using ProGRESS tool***************
+run_reliability_assessment: false 
+
 rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
  #- 2024
  #- 2028
