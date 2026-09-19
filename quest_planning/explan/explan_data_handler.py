@@ -1032,26 +1032,12 @@ class ExplanDataHandler():
 
         ll_bus_load = df_final.to_dict()[0]
 
-        print("\n========================")
-        print("Large Load Dictionary Sample")
-        print("Load ID:", ll['id'])
-        print("Deploy Year:", ll['deploy_year'])
-        print("Bus:", bus_num)
-
-        for k,v in list(ll_bus_load.items())[:2000]:
-            print(k, v)
-
-        print("Max LL MW:", max(ll_bus_load.values()))
-        print("Min LL MW:", min(ll_bus_load.values()))
-        #print("========================\n")
-
         return ll_bus_load
 
 
     def process_large_loads(self):
         '''Process large loads if applicable'''
         if self.large_load_option == True:
-            print("Processing large loads")
             self.load_blocks_ll = {}
             self.load_dict_ll = {}
             for ll in self.processed_ll:

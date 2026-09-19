@@ -1566,18 +1566,6 @@ class ExplanOptimizer(Optimizer):
         self._set_model_param()
         print('Define Variables')
         self._set_model_var()
-        print("B_LL =", list(self.model.B_LL))
-        print("G_LL_NG =", list(self.model.G_LL_NG))
-        print("G_LL_BESS =", list(self.model.G_LL_BESS))
-        for y in self.model.Y:
-            for b in self.model.B_LL:
-                print(
-                    b,
-                    value(
-                        sum(self.model.large_load[b,y,s,i]
-                            for (s,i) in self.model.S_I)
-                    )
-                )
         #Define constraints and build
         self.constraints = ExplanConstraints(
             self.data_handler)
