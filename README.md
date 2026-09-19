@@ -16,6 +16,7 @@ Current release version: 1.0.0
     - [Data Preparation](#data_prep)
     - [Graphical User Interface](#gui_workflow)
     - [Advanced Simulations](#advanced)
+    - [Large Load Modeling](#large-loads)
 - [Examples](#examples)
 - [Post-planning Reliability Assessment using ProGRESS](#progress)
 - [Tips for Running the QuESt Planning Tool](#tips)
@@ -49,7 +50,9 @@ Key features of the QuESt Planning tool include:
 
 - **User-Friendly Interface:** Simplifies the process of input data upload, planning model setup, scenario construction, model execution, and results interpretation.
 
-- **Enhanced Visualizations:** The QuESt Planning tool provides several visualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps. 
+- **Enhanced Visualizations:** The QuESt Planning tool provides several visualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps.
+
+- **Large Load Modeling:** Model large electrical consumers (e.g., data centers, industrial facilities) with behind-the-meter generation (natural gas, battery storage), flexible demand curtailment, and custom hourly load profiles. Users can specify self-sufficiency requirements and deployment timelines.
 
 [Back to Top](#top)
 ## Getting started
@@ -568,6 +571,96 @@ The progress of the model build and the optimization solve will be provided in t
 
 ##### 6. Access Results:
 Once the model has solved, navigate to the `Results` directory to access results and visualizations. 
+
+[Back to Top](#top)
+
+### Large Load Modeling
+<a id="large-loads"></a>
+
+QuESt Planning includes advanced capabilities for modeling large electrical loads such as data centers, industrial facilities, or other significant consumers. This feature enables detailed analysis of how large loads interact with the grid and their onsite generation resources.
+
+#### Feature Overview
+
+Large loads can be configured with:
+
+- **Custom Load Profiles**: Hourly electrical demand data (8760 hours per year)
+- **Behind-the-Meter Generation**: 
+  - Natural gas generators
+  - Battery energy storage systems (BESS)
+- **Flexible Demand**: Optional load curtailment capability (up to 25% by default)
+- **Self-Sufficiency Requirements**: Minimum fraction of energy that must be met by onsite resources
+- **Deployment Timeline**: Specify when large loads come online during the planning horizon
+
+#### Configuration Example
+
+Enable large load modeling in your YAML configuration file:
+
+```yaml
+#***************Large Load Configuration********************
+large_load_option: True           # Enable the feature
+large_load_flex: True             # Allow demand curtailment
+ll_self_sufficiency: 0.0          # Min fraction from onsite (0.0-1.0)
+large_load_growth: 0              # Annual load growth rate
+
+large_loads:
+  - id: LL_1                      # Unique identifier
+    bus: 111                      # Bus number for connection
+    capacity_mw: 500              # Peak capacity in MW
+    deploy_year: 2040             # Year load comes online
+    profile_file: datacenter.csv  # Hourly profile (see format below)
+    profile_type: normalized      # "normalized" (0-1) or "absolute" (MW)
+    
+    onsite_resources:
+      ng:                         # Natural gas generation
+        candidate: true
+        max_capacity_mw: 200
+      
+      bess:                       # Battery storage
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+```
+
+#### Load Profile CSV Format
+
+Profile files must be placed in `quest_planning/data_explan/{data_folder}/large_loads/`
+
+**Requirements:**
+- **Exactly 8760 rows** (one per hour of the year)
+- **Required column**: `normalized` (for normalized profiles)
+- Values must be between 0.0 and 1.0 for normalized profiles
+
+**Example format:**
+```csv
+datetime,year,month,day,hour,normalized
+1/1/2020 0:00,2020,1,1,1,0.578199
+1/1/2020 1:00,2020,1,1,2,0.578187
+1/1/2020 2:00,2020,1,1,3,0.578176
+...
+(8760 total rows)
+```
+
+#### Self-Sufficiency Parameter
+
+The `ll_self_sufficiency` parameter (0.0 - 1.0) controls how much energy must be provided by onsite resources:
+
+- **0.0**: No requirement (default) - Load can be 100% grid-supplied
+- **0.5**: At least 50% of annual energy from onsite generation
+- **0.8**: At least 80% of annual energy from onsite generation  
+- **1.0**: 100% self-sufficient (all energy from onsite resources)
+
+#### Working Example
+
+A complete working example is provided:
+- **Config**: `quest_planning/config/input_rts_nodal_base_large_loads.yaml`
+- **Data**: `quest_planning/data_explan/rts_csv_data_large_loads/large_loads/`
+
+To run the example:
+```bash
+python -m quest_planning.explan_simulation quest_planning/config/input_rts_nodal_base_large_loads.yaml
+```
+
+For detailed documentation including troubleshooting, advanced options, and CSV specifications, see: `quest_planning/data_explan/*/large_loads/README.md`
 
 [Back to Top](#top)
 

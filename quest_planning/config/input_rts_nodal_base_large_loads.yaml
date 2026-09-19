@@ -1,9 +1,9 @@
 # ***QuESt Planning Configuration File***
-# Data center adjustment...
+# Large loads example configuration
 
 
 #********************Data Folder********************
-data_folder: 'rts_csv_data_cjn'
+data_folder: 'rts_csv_data_large_loads'
 
 #********************Scenario Configuration********************
 scenario: LL_Aggr_ESS_Flex_no_btm_enforced
