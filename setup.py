@@ -33,7 +33,7 @@ setup(
         "folium==0.16.0",
         "fonttools==4.50.0",
         "geopandas==1.0.1",
-        "gurobipy==11.0.1",
+        "gurobipy>=11.0.1",
         "idna==3.6",
         "Jinja2==3.1.3",
         "kiwisolver==1.4.5",
