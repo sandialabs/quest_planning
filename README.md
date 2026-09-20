@@ -6,7 +6,7 @@
 
 # **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
 
-Current release version: 1.0.0
+Current release version: 2.0.0
 
 ## Table of Contents
 - [Introduction](#intro)
