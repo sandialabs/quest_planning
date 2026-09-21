@@ -27,7 +27,7 @@ Current release version: 2.0.0
 ## Introduction 
 <a id="intro"></a>
 
-QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of [QuESt 2.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
+QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of the [QuESt Grid Planning Toolbox](https://www.sandia.gov/ess/tools-resources/quest/quest-grid-planning-toolbox), which is a suite of open source software tools including the Probabilistic Grid Reliability Analysis with Energy Storage Systems ([ProGRESS](https://github.com/sandialabs/snl-progress)) and the QuESt Production Cost Model [QuESt PCM](https://github.com/sandialabs/quest_pcm) tools. This tool is also availabile in [QuESt 3.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics developed by Sandia National Laboratories. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
 <div style="text-align: center;">
 <img src = "quest_planning/images/readme/qp_overview.png" width="650" height="300" alt="overview" />
 </div>
@@ -775,10 +775,11 @@ Project team:
 - Cody Newlun (cjnewlu@sandia.gov)
 - Atri Bera
 - Dilip Pandit
-- Walker Olis
+- Gustavo Cuello-Polo
 - Andres Lopez Ramirez
 - Yung-Jai Pomeroy
 - Tu Nguyen
+- Walker Olis
 
 This material is based upon work supported by the **U.S. Department of Energy, Office of Electricity (OE), Energy Storage Division**.
 
