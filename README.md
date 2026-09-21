@@ -723,7 +723,7 @@ python -m quest_planning.pcm.pcm_installer install
 |--------------|-----------------------------------|
 |`run_production_cost`| Set to True to run the post-processing PCM simulation; set to False to skip it.|
 |`pcm_evaluation_years`| Investment years for which you want to perform PCM on.|
-|`detailed_pcm_gen_data`| If set to True, users ned to populate ``pcm_gen.csv`` in ``Data`` folder with detailed heat rates, startup fuel, etc. Else, default generator data are populated.|
+|`detailed_pcm_gen_data`| If set to True, users need to populate ``pcm_gen.csv`` in ``Data`` folder with detailed heat rates, startup fuel, etc. Else, default generator data are populated.|
 |`mipgap`| Select the MIP gap for QuESt PCM's MILP simulation, default is 1%.|
 |`pcm_hours`| Select the number of simulation hours, default is 8760 hours.|
 |`pcm_start_date`| Select the start mm/dd for PCM siluation, default is 01/01.|
