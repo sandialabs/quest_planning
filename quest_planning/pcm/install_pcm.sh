@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Set the path to the virtual environment and requirements file using the updated paths
-VENV_PATH="$(dirname "$0")/progress/env_pcm"
-SETUP_PATH="$(dirname "$0")/progress/env_pcm/snl_quest_pcm"
+VENV_PATH="$(dirname "$0")/env_pcm"
+SETUP_PATH="$(dirname "$0")/env_pcm/snl_quest_pcm"
 
 # Set the equity directory name
 pcm_dir="snl_quest_pcm"
@@ -23,7 +23,7 @@ sudo apt-get install -y python3-dev libblas-dev liblapack-dev gfortran
 mkdir -p "$VENV_PATH/$pcm_dir"
 
 # Clone the GitHub repository
-git clone --b progress_integration --single-branch  https://github.com/sandialabs/quest_PCM "$VENV_PATH/snl_quest_pcm"
+git clone -b progress_integration --single-branch  https://github.com/sandialabs/quest_PCM "$VENV_PATH/snl_quest_pcm"
 
 # Install using setup.py
 pip install -e "$SETUP_PATH"
