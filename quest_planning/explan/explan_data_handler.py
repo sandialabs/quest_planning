@@ -86,8 +86,7 @@ class ExplanDataHandler():
         self.prm = 0.2
         self.reg_res_req = 0.01
         self.spin_res_req = 0.03
-        self.flex_res_w_req = 0.1
-        self.flex_res_s_req = 0.04
+        self.flex_res_req = 0.04
         self.soc_min = 0.2
         self.soc_max = 0.8
         self.ini_level = 0.5
@@ -315,12 +314,11 @@ class ExplanDataHandler():
     def set_reserves_option(self,value):
         self.reserves_option = value
     
-    def set_reserve_params(self,prm,reg_res_req,spin_res_req,flex_res_w_req,flex_res_s_req):
+    def set_reserve_params(self,prm,reg_res_req,spin_res_req,flex_res_req):
         '''Set reserves requirements (Convert to percent)'''
         self.reg_res_req = float(reg_res_req)/100
         self.spin_res_req = float(spin_res_req)/100
-        self.flex_res_w_req = float(flex_res_w_req)/100
-        self.flex_res_s_req = float(flex_res_s_req)/100
+        self.flex_res_w_req = float(flex_res_req)/100
 
     def set_prm(self, prm_value, regional_load_growth_option=False):
         '''Configure PRM using system-wide or regional method'''
@@ -1092,14 +1090,14 @@ class ExplanDataHandler():
             'wind_ex': ['Wind', 'Wind_PPA'],
             'upv_can': ['Solar_Cand','Solar_LL_Cand'],
             'wind_can': ['Wind_Cand','Wind_LL_Cand'],
-            'ng': ['Gas', 'Gas_CC', 'Gas_CT', 'Gas_Cand','Gas_LL_Cand'],
+            'ng': ['Gas', 'Gas_CC', 'Gas_CT', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'Gas_LL_Cand'],
             'storage': ['ES', 'ES_PPA', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand','Li_Ion_Cand_LL_Cand'],
             'storage_cand': ['ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Iron_Air_Cand','Li_Ion_Cand_LL_Cand'],
             #'storage_cand_year': ['Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10'],
             'ldes': ['ES_100hr_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'Flow_Cand', 'Iron_Air_Cand'],
             'dr': ['DR_Cand'],
             'renewables': ['Solar', 'Solar_RT', 'CSP', 'Solar_PPA', 'Hydro', 'Wind', 'Wind_PPA', 'Solar_Cand', 'Wind_Cand','Solar_LL_Cand','Wind_LL_Cand'],
-            'candidates': ['Solar_Cand', 'Wind_Cand', 'Gas_Cand', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'DR_Cand', 'Iron_Air_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand','Solar_LL_Cand','Wind_LL_Cand'],
+            'candidates': ['Solar_Cand', 'Wind_Cand', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'ES_4hr_Cand', 'ES_6hr_Cand', 'ES_8hr_Cand', 'ES_10hr_Cand', 'ES_100hr_Cand', 'Li_Ion_Cand', 'Li_Ion_Cand_1', 'Li_Ion_Cand_2', 'Li_Ion_Cand_3', 'Li_Ion_Cand_4', 'Li_Ion_Cand_5', 'Li_Ion_Cand_6', 'Li_Ion_Cand_7', 'Li_Ion_Cand_8', 'Li_Ion_Cand_9', 'Li_Ion_Cand_10', 'Flow_Cand', 'Grav_Cand', 'PSH_Cand', 'Therm_Cand', 'CAES_Cand', 'Hydrogen_Cand', 'Zinc_Cand', 'DR_Cand', 'Iron_Air_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand','Solar_LL_Cand','Wind_LL_Cand'],
             'exist': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Wind_PPA', 'Wind', 'Solar_PPA', 'ES_PPA', 'Solar', 'Solar_RT', 'CSP', 'ES'],
             'large_load_gen': ['Solar_LL_Cand','Wind_LL_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand'],
             'large_load_sto': ['Li_Ion_Cand_LL_Cand'],

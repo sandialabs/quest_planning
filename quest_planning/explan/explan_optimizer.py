@@ -1368,7 +1368,7 @@ class ExplanOptimizer(Optimizer):
         model.B_i = pm.Set(initialize=list(
             BUS['Bus_number'].values))
         
-        print(self.data_handler.large_load_buses)
+        #print(self.data_handler.large_load_buses)
         if self.data_handler.large_load_option:
             model.B_LL = pm.Set(
                 initialize=self.data_handler.large_load_buses
@@ -1661,7 +1661,8 @@ class ExplanOptimizer(Optimizer):
         """A method for computing derived quantities of interest and creating the results DataFrame."""
         print('Unpack and process results')
         for b,y in [(211,2024),(107,2024)]:
-
+            if not self.data_handler.large_load_option:
+                break
             c = self.model.cLLResourceRequirement[b,y]
 
             print("\nConstraint", b, y)
@@ -1670,6 +1671,8 @@ class ExplanOptimizer(Optimizer):
             print("Upper:", c.upper)
         
         for b,y in [(211,2024),(107,2024)]:
+            if not self.data_handler.large_load_option:
+                break
 
             gen_nums = self.data_handler.bus_gen_num.loc[
                 self.data_handler.bus_gen_num['Bus_num'] == b
@@ -1702,8 +1705,9 @@ class ExplanOptimizer(Optimizer):
                 f" CURT={curt_energy:.2f}"
             )
         for y in self.model.Y:
+            if not self.data_handler.large_load_option:
+                break
             for b in self.model.B_LL:
-
                 gen_nums = self.data_handler.bus_gen_num.loc[
                     self.data_handler.bus_gen_num['Bus_num'] == b
                 ]['Gen_num'].values.astype(int)

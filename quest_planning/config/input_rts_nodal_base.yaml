@@ -38,7 +38,7 @@ ini_level: 50
 es_lifetime_extension: 50
 
 #********************Modeling Options:********************
-block_selection: Repr_3Days_Season #Options are: "seasonal_blocks", "Repr_3Days_Season", "Repr_Weeks"
+block_selection: seasonal_blocks #Options are: "seasonal_blocks", "Repr_3Days_Season", "Repr_Weeks"
 reserves_option: True
 tax_credits_option: False
 es_lifetime_cost_option: True
@@ -86,15 +86,14 @@ limit_by_buses: null
 #********************System-wide resource limits********************
 system_wide_wind_max: 10000
 system_wide_solar_max: 150000000
-system_wide_gas_max: 0
+system_wide_gas_max: 10000
 system_wide_tx_expansion_max: 3000
 
 #********************Reserves Parameters********************
 prm: 20
 reg_res_req: 1
 spin_res_req: 3
-flex_res_w_req: 10
-flex_res_s_req: 4
+flex_res_req: 3
 
 #********************Custom Retirements********************
 custom_retirement: False
@@ -111,23 +110,30 @@ stacked_bar_by_bus: False
 policy_plot_option: False
 
 #********Reliability_assessment using ProGRESS tool***************
-run_reliability_assessment: false 
-
+run_reliability_assessment: False 
 rel_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
- #- 2024
+ - 2024
  #- 2028
  - 2032
  #- 2036
- #- 2040
-
+ - 2040
 progress_sim_mode: "Nodal" #Choices are: "Zonal" or "Nodal" or  "Copper Sheet"
-
 #If you want to reuse previously downloaded and renewable data, set the full renewable path. Leave empty to download data, must have the cdsapi key present.
 ren_data_dir: "./quest_planning/data_explan/data_for_ProGRESS/Nodal"  
-
 num_sample_paths: 1 # How many sample years to simulate
-num_hours: 100 # How many hours to simulate within each sample, default is 8760 hours
+num_hours: 168 # How many hours to simulate within each sample, default is 8760 hours
 num_mpi_processes: 0 # Provide a value to use MPI for ProGRESS. If 0, MPI is not used. (number of samples becomes num_mpi_process*num_sample_paths)
 
-
+#********Production Cost Modeling using QuESt PCM tool***************
+run_production_cost: False #If set to True, QuESt will simulate PCM for the investment years specified in pcm_evaluation_years.
+pcm_evaluation_years: #Investment years for which you want to evaluate reliability. Leave empty if you do not want to run ProGRESS simulations.
+ - 2024
+ #- 2028
+ - 2032
+ #- 2036
+ - 2040
+detailed_pcm_gen_data: True #If set to True, users ned to populate pcm_gen.csv, else default generator data are populated
+mipgap: 0.01 #MIP gap for PCM MILP optimization, default is 0.01
+pcm_hours: 48 #Starting in January, how many hours to simulate within each investment year, default is 8760 hours
+pcm_start_date: 01/01 #Optional: mm/dd to start PCM simulation, default is 01/01
 

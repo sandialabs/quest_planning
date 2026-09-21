@@ -749,7 +749,8 @@ class ExplanConstraints:
         if s == 5:#Peak block
             return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) == 0
         else:
-            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_wind) * float(self.data_handler.flex_res_w_req) + sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_pv) * float(self.data_handler.flex_res_s_req)
+            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.flex_res_req)
+            #return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_wind) * float(self.data_handler.flex_res_w_req) + sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_pv) * float(self.data_handler.flex_res_s_req)
             # self.data_handler.scalars.loc['Flex_Res_W_Req']['Value'])/100
             # self.data_handler.scalars.loc['Flex_Res_S_Req']['Value'])/100
         
@@ -1601,6 +1602,8 @@ class ExplanConstraints:
         '''
         Define large load curtailment costs
         '''
+        if not self.data_handler.large_load_option:
+            return model.annual_ll_curt_cost[y] == 0.0
         return model.annual_ll_curt_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LL_Curt[b, y, s, i]*200 for b in model.B_LL for (s, i) in model.S_I)#10000*
 
     def cTotalCostAnnual(self, model, y):

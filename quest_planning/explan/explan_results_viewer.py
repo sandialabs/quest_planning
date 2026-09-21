@@ -861,8 +861,8 @@ class ExplanResultsViewer():
         'LDES (New)-discharge': 'purple',
         'Zinc (New)-discharge': 'aquamarine',
         'Hydrogen (New)-discharge': 'plum',
-        'Curtailment': 'moccasin'
-         'SMR (New)': 'mediumseagreen'
+        'Curtailment': 'moccasin',
+        'SMR (New)': 'mediumseagreen'
         }
         if tech not in tech_colors:
             raise TypeError(f"{tech} is not valid")

@@ -1,5 +1,6 @@
 __pycache__/
 */__pycache__/
+**/.vscode/
 *_Results/
 .DS_Store
 input.txt
@@ -19,3 +20,5 @@ example.log
 images/readme/old
 images/readme/archive/
 images/pics/old
+**/env_pcm/
+**/env_progress/
