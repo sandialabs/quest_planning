@@ -33,7 +33,6 @@ QuESt Planning is a capacity expansion planning model that identifies cost-optim
 </div>
 Long-term capacity expansion planning models are complex optimization models that require careful consideration of modeling assumptions and input data. Model build and solve times can vary significantly, from minutes to days, based on assumptions made while configuring the model inputs and the selection of solver. For more guidance, please refer to the Tips section.
 
-<!--QuESt Planning documentation is under development and will be available [here](https://github.com/sandialabs/snl-quest).-->
 
 [Back to Top](#top)
 ## Key Features of QuESt Planning
