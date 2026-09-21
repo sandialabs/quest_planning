@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icon">
+    <file>images/icons/about.png</file>
     <file>images/icons/ainfo_24dp_5F6368_FILL0_wght200_GRAD0_opsz24.png</file>
     <file>images/icons/info_help1.png</file>
     <file>images/icons/info_help.png</file>

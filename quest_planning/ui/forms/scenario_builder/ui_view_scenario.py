@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'view_scenario.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.1
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,33 +15,25 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QTextBrowser, QToolButton, QVBoxLayout, QWidget)
-import quest_planning.resources_rc
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
+    QVBoxLayout, QWidget)
+import resources_rc
 
 class Ui_ViewScenarioDialog(object):
     def setupUi(self, ViewScenarioDialog):
         if not ViewScenarioDialog.objectName():
             ViewScenarioDialog.setObjectName(u"ViewScenarioDialog")
-        ViewScenarioDialog.resize(660, 640)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(ViewScenarioDialog.sizePolicy().hasHeightForWidth())
-        ViewScenarioDialog.setSizePolicy(sizePolicy)
-        ViewScenarioDialog.setMinimumSize(QSize(620, 580))
-        self.verticalLayout_main = QVBoxLayout(ViewScenarioDialog)
-        self.verticalLayout_main.setSpacing(18)
-        self.verticalLayout_main.setObjectName(u"verticalLayout_main")
-        self.verticalLayout_main.setContentsMargins(24, 24, 24, 20)
+        ViewScenarioDialog.resize(780, 781)
+        self.verticalLayout = QVBoxLayout(ViewScenarioDialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.frame_header = QFrame(ViewScenarioDialog)
         self.frame_header.setObjectName(u"frame_header")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.frame_header.sizePolicy().hasHeightForWidth())
-        self.frame_header.setSizePolicy(sizePolicy1)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_header.sizePolicy().hasHeightForWidth())
+        self.frame_header.setSizePolicy(sizePolicy)
         self.frame_header.setMaximumSize(QSize(16777215, 70))
         self.frame_header.setFrameShape(QFrame.NoFrame)
         self.frame_header.setFrameShadow(QFrame.Raised)
@@ -74,22 +66,22 @@ class Ui_ViewScenarioDialog(object):
 
         self.horizontalLayout_header.addLayout(self.verticalLayout_header_text)
 
-        self.horizontalSpacer_header = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_header = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_header.addItem(self.horizontalSpacer_header)
 
-        self.view_scenario_help_button = QToolButton(self.frame_header)
-        self.view_scenario_help_button.setObjectName(u"view_scenario_help_button")
+        self.pushButton = QPushButton(self.frame_header)
+        self.pushButton.setObjectName(u"pushButton")
         icon = QIcon()
-        icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.view_scenario_help_button.setIcon(icon)
-        self.view_scenario_help_button.setIconSize(QSize(24, 24))
-        self.view_scenario_help_button.setAutoRaise(True)
+        icon.addFile(u":/icon/images/icons/about.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.pushButton.setIcon(icon)
+        self.pushButton.setIconSize(QSize(30, 30))
+        self.pushButton.setFlat(True)
 
-        self.horizontalLayout_header.addWidget(self.view_scenario_help_button)
+        self.horizontalLayout_header.addWidget(self.pushButton)
 
 
-        self.verticalLayout_main.addWidget(self.frame_header)
+        self.verticalLayout.addWidget(self.frame_header)
 
         self.frame_cards = QFrame(ViewScenarioDialog)
         self.frame_cards.setObjectName(u"frame_cards")
@@ -100,11 +92,11 @@ class Ui_ViewScenarioDialog(object):
         self.horizontalLayout_cards.setObjectName(u"horizontalLayout_cards")
         self.frame_planning_card = QFrame(self.frame_cards)
         self.frame_planning_card.setObjectName(u"frame_planning_card")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy2.setHorizontalStretch(1)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.frame_planning_card.sizePolicy().hasHeightForWidth())
-        self.frame_planning_card.setSizePolicy(sizePolicy2)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1.setHorizontalStretch(1)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.frame_planning_card.sizePolicy().hasHeightForWidth())
+        self.frame_planning_card.setSizePolicy(sizePolicy1)
         self.frame_planning_card.setFrameShape(QFrame.NoFrame)
         self.frame_planning_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_planning = QVBoxLayout(self.frame_planning_card)
@@ -114,21 +106,13 @@ class Ui_ViewScenarioDialog(object):
         self.horizontalLayout_planning_title = QHBoxLayout()
         self.horizontalLayout_planning_title.setSpacing(8)
         self.horizontalLayout_planning_title.setObjectName(u"horizontalLayout_planning_title")
-        self.label_planning_icon = QLabel(self.frame_planning_card)
-        self.label_planning_icon.setObjectName(u"label_planning_icon")
-        self.label_planning_icon.setMaximumSize(QSize(20, 20))
-        self.label_planning_icon.setPixmap(QPixmap(u":/icon/images/icons/token_FILL0_wght200_GRAD0_opsz48.png"))
-        self.label_planning_icon.setScaledContents(True)
-
-        self.horizontalLayout_planning_title.addWidget(self.label_planning_icon)
-
         self.label_planning_title = QLabel(self.frame_planning_card)
         self.label_planning_title.setObjectName(u"label_planning_title")
         self.label_planning_title.setFont(font1)
 
         self.horizontalLayout_planning_title.addWidget(self.label_planning_title)
 
-        self.horizontalSpacer_planning_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_planning_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_planning_title.addItem(self.horizontalSpacer_planning_title)
 
@@ -249,7 +233,7 @@ class Ui_ViewScenarioDialog(object):
 
         self.verticalLayout_planning.addLayout(self.verticalLayout_planning_rows)
 
-        self.verticalSpacer_planning = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalSpacer_planning = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_planning.addItem(self.verticalSpacer_planning)
 
@@ -258,8 +242,8 @@ class Ui_ViewScenarioDialog(object):
 
         self.frame_scenario_card = QFrame(self.frame_cards)
         self.frame_scenario_card.setObjectName(u"frame_scenario_card")
-        sizePolicy2.setHeightForWidth(self.frame_scenario_card.sizePolicy().hasHeightForWidth())
-        self.frame_scenario_card.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.frame_scenario_card.sizePolicy().hasHeightForWidth())
+        self.frame_scenario_card.setSizePolicy(sizePolicy1)
         self.frame_scenario_card.setFrameShape(QFrame.NoFrame)
         self.frame_scenario_card.setFrameShadow(QFrame.Raised)
         self.verticalLayout_scenario = QVBoxLayout(self.frame_scenario_card)
@@ -269,21 +253,13 @@ class Ui_ViewScenarioDialog(object):
         self.horizontalLayout_scenario_title = QHBoxLayout()
         self.horizontalLayout_scenario_title.setSpacing(8)
         self.horizontalLayout_scenario_title.setObjectName(u"horizontalLayout_scenario_title")
-        self.label_scenario_icon = QLabel(self.frame_scenario_card)
-        self.label_scenario_icon.setObjectName(u"label_scenario_icon")
-        self.label_scenario_icon.setMaximumSize(QSize(20, 20))
-        self.label_scenario_icon.setPixmap(QPixmap(u":/icon/images/icons/cil-layers.png"))
-        self.label_scenario_icon.setScaledContents(True)
-
-        self.horizontalLayout_scenario_title.addWidget(self.label_scenario_icon)
-
         self.label_scenario_title = QLabel(self.frame_scenario_card)
         self.label_scenario_title.setObjectName(u"label_scenario_title")
         self.label_scenario_title.setFont(font1)
 
         self.horizontalLayout_scenario_title.addWidget(self.label_scenario_title)
 
-        self.horizontalSpacer_scenario_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_scenario_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_scenario_title.addItem(self.horizontalSpacer_scenario_title)
 
@@ -436,7 +412,7 @@ class Ui_ViewScenarioDialog(object):
 
         self.verticalLayout_scenario.addLayout(self.verticalLayout_scenario_rows)
 
-        self.verticalSpacer_scenario = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalSpacer_scenario = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_scenario.addItem(self.verticalSpacer_scenario)
 
@@ -444,12 +420,12 @@ class Ui_ViewScenarioDialog(object):
         self.horizontalLayout_cards.addWidget(self.frame_scenario_card)
 
 
-        self.verticalLayout_main.addWidget(self.frame_cards)
+        self.verticalLayout.addWidget(self.frame_cards)
 
         self.frame_footer = QFrame(ViewScenarioDialog)
         self.frame_footer.setObjectName(u"frame_footer")
-        sizePolicy1.setHeightForWidth(self.frame_footer.sizePolicy().hasHeightForWidth())
-        self.frame_footer.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.frame_footer.sizePolicy().hasHeightForWidth())
+        self.frame_footer.setSizePolicy(sizePolicy)
         self.frame_footer.setMaximumSize(QSize(16777215, 52))
         self.frame_footer.setFrameShape(QFrame.NoFrame)
         self.frame_footer.setFrameShadow(QFrame.Raised)
@@ -462,17 +438,17 @@ class Ui_ViewScenarioDialog(object):
 
         self.horizontalLayout_footer.addWidget(self.label_save_hint)
 
-        self.horizontalSpacer_footer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_footer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_footer.addItem(self.horizontalSpacer_footer)
 
         self.close_button = QPushButton(self.frame_footer)
         self.close_button.setObjectName(u"close_button")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.close_button.sizePolicy().hasHeightForWidth())
-        self.close_button.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.close_button.sizePolicy().hasHeightForWidth())
+        self.close_button.setSizePolicy(sizePolicy2)
         self.close_button.setMinimumSize(QSize(110, 0))
         self.close_button.setFont(font1)
 
@@ -480,15 +456,15 @@ class Ui_ViewScenarioDialog(object):
 
         self.save_scenario_button = QPushButton(self.frame_footer)
         self.save_scenario_button.setObjectName(u"save_scenario_button")
-        sizePolicy3.setHeightForWidth(self.save_scenario_button.sizePolicy().hasHeightForWidth())
-        self.save_scenario_button.setSizePolicy(sizePolicy3)
+        sizePolicy2.setHeightForWidth(self.save_scenario_button.sizePolicy().hasHeightForWidth())
+        self.save_scenario_button.setSizePolicy(sizePolicy2)
         self.save_scenario_button.setMinimumSize(QSize(180, 0))
         self.save_scenario_button.setFont(font1)
 
         self.horizontalLayout_footer.addWidget(self.save_scenario_button)
 
 
-        self.verticalLayout_main.addWidget(self.frame_footer)
+        self.verticalLayout.addWidget(self.frame_footer)
 
 
         self.retranslateUi(ViewScenarioDialog)
@@ -497,62 +473,59 @@ class Ui_ViewScenarioDialog(object):
     # setupUi
 
     def retranslateUi(self, ViewScenarioDialog):
-        ViewScenarioDialog.setWindowTitle(QCoreApplication.translate("ViewScenarioDialog", u"View Scenario", None))
+        ViewScenarioDialog.setWindowTitle(QCoreApplication.translate("ViewScenarioDialog", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"Scenario Summary", None))
-        self.label_title.setProperty("textRole", u"heading")
+        self.label_title.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"heading", None))
         self.system_name_label.setText(QCoreApplication.translate("ViewScenarioDialog", u"Power System: --", None))
-        self.system_name_label.setProperty("textRole", u"subtitle")
-        self.view_scenario_help_button.setText("")
-        self.view_scenario_help_button.setProperty("btnRole", u"icon")
-        self.frame_planning_card.setProperty("cardType", u"card")
-        self.label_planning_icon.setText("")
+        self.system_name_label.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"subtitle", None))
+        self.pushButton.setText("")
+        self.frame_planning_card.setProperty("cardType", QCoreApplication.translate("ViewScenarioDialog", u"card", None))
         self.label_planning_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"PLANNING MODEL INFORMATION", None))
-        self.label_planning_title.setProperty("textRole", u"section")
+        self.label_planning_title.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.label_planning_desc.setText(QCoreApplication.translate("ViewScenarioDialog", u"Settings defined in the <i>Planning Model Setup</i> step.", None))
-        self.label_planning_desc.setProperty("textRole", u"caption")
+        self.label_planning_desc.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"caption", None))
         self.label_sim_years.setText(QCoreApplication.translate("ViewScenarioDialog", u"Simulation Years", None))
-        self.label_sim_years.setProperty("textRole", u"section")
+        self.label_sim_years.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.sim_years_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_trans_model.setText(QCoreApplication.translate("ViewScenarioDialog", u"Transmission Model", None))
-        self.label_trans_model.setProperty("textRole", u"section")
+        self.label_trans_model.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.trans_model_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_temporal.setText(QCoreApplication.translate("ViewScenarioDialog", u"Temporal Selection", None))
-        self.label_temporal.setProperty("textRole", u"section")
+        self.label_temporal.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.temporal_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_discount.setText(QCoreApplication.translate("ViewScenarioDialog", u"Discount Rate", None))
-        self.label_discount.setProperty("textRole", u"section")
+        self.label_discount.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.discount_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_base_currency.setText(QCoreApplication.translate("ViewScenarioDialog", u"Base Currency Year", None))
-        self.label_base_currency.setProperty("textRole", u"section")
+        self.label_base_currency.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.base_currency_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
-        self.frame_scenario_card.setProperty("cardType", u"card")
-        self.label_scenario_icon.setText("")
+        self.frame_scenario_card.setProperty("cardType", QCoreApplication.translate("ViewScenarioDialog", u"card", None))
         self.label_scenario_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"SCENARIO INFORMATION", None))
-        self.label_scenario_title.setProperty("textRole", u"section")
+        self.label_scenario_title.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.label_scenario_desc.setText(QCoreApplication.translate("ViewScenarioDialog", u"Settings defined in the <i>Scenario Builder</i> step.", None))
-        self.label_scenario_desc.setProperty("textRole", u"caption")
+        self.label_scenario_desc.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"caption", None))
         self.label_capital_cost.setText(QCoreApplication.translate("ViewScenarioDialog", u"Capital Costs", None))
-        self.label_capital_cost.setProperty("textRole", u"section")
+        self.label_capital_cost.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.capital_cost_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_load_forecast.setText(QCoreApplication.translate("ViewScenarioDialog", u"Load Forecast", None))
-        self.label_load_forecast.setProperty("textRole", u"section")
+        self.label_load_forecast.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.load_forecast_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_load_growth.setText(QCoreApplication.translate("ViewScenarioDialog", u"Annual Load Growth", None))
-        self.label_load_growth.setProperty("textRole", u"section")
+        self.label_load_growth.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.annual_load_growth_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_rps.setText(QCoreApplication.translate("ViewScenarioDialog", u"Future Generation Mix", None))
-        self.label_rps.setProperty("textRole", u"section")
+        self.label_rps.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.label_tx.setText(QCoreApplication.translate("ViewScenarioDialog", u"Transmission Expansion", None))
-        self.label_tx.setProperty("textRole", u"section")
+        self.label_tx.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.transmission_expansion_value.setText(QCoreApplication.translate("ViewScenarioDialog", u"--", None))
         self.label_cand.setText(QCoreApplication.translate("ViewScenarioDialog", u"Candidate Technologies", None))
-        self.label_cand.setProperty("textRole", u"section")
+        self.label_cand.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.label_retirement.setText(QCoreApplication.translate("ViewScenarioDialog", u"Retirement Schedule", None))
-        self.label_retirement.setProperty("textRole", u"section")
+        self.label_retirement.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.label_save_hint.setText(QCoreApplication.translate("ViewScenarioDialog", u"Save a text summary of this <i>QuESt Planning</i> scenario.", None))
-        self.label_save_hint.setProperty("textRole", u"subtitle")
+        self.label_save_hint.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"subtitle", None))
         self.close_button.setText(QCoreApplication.translate("ViewScenarioDialog", u"Close", None))
         self.save_scenario_button.setText(QCoreApplication.translate("ViewScenarioDialog", u"Save Scenario Info", None))
-        self.save_scenario_button.setProperty("btnRole", u"primary")
+        self.save_scenario_button.setProperty("btnRole", QCoreApplication.translate("ViewScenarioDialog", u"primary", None))
     # retranslateUi
 
