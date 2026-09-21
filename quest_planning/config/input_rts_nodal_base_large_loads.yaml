@@ -144,11 +144,7 @@ years:
   - 2032
   #- 2036
   - 2040
-  #- 2028
-  #- 2032
-  #- 2036
-  #- 2040
-
+  
 #********************Economic Parameters********************
 discount_rate: 5
 base_curr_year: 2021
@@ -218,8 +214,7 @@ system_wide_tx_expansion_max: 10000000
 prm: 20
 reg_res_req: 1
 spin_res_req: 3
-flex_res_w_req: 10
-flex_res_s_req: 4
+flex_res_req: 3
 
 #********************Custom Retirements********************
 custom_retirement: True
