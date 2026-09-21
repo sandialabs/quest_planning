@@ -571,9 +571,13 @@ class PCM_Exporter:
 
             for _, row in gen_df_pcm.iterrows():
                 gen_num_pcm = row["Gen_num"]
-                
+
+                if gen_num_pcm not in gen_num_to_idx:
+                    print(f"Warning: Gen_num {gen_num_pcm} ({row.get('Gen_name', 'unknown')}) not found in generator data, skipping")
+                    continue
+
                 this_gen_idx = gen_num_to_idx[gen_num_pcm]
-                gen_dict["HR_avg_0"][this_gen_idx] = row["HR_avg_0"]
+                
                 gen_dict["HR_avg_0"][this_gen_idx] = row["HR_avg_0"]
                 gen_dict["HR_incr_1"][this_gen_idx] = row["HR_incr_1"]
                 gen_dict["HR_incr_2"][this_gen_idx] = row["HR_incr_2"]
@@ -601,7 +605,7 @@ class PCM_Exporter:
                     gen_dict["Start Heat Hot MBTU"][this_gen_idx] = row["Start Heat Hot MBTU"]
 
                 gen_dict["AGC capable"][this_gen_idx] = row["AGC capable"]
-                gen_dict["Fast start"][this_gen_idx] = row["AGC capable"]
+                gen_dict["Fast start"][this_gen_idx] = row["Fast start"]
         else:
             #If detailed data is not provided use linear heat curves based on heat rates
             gen_dict["HR_avg_0"]= gen_df["HR"].values*1000
@@ -612,8 +616,8 @@ class PCM_Exporter:
             gen_dict["Output_pct_1"] = np.ones(n_gen)*0.6
             gen_dict["Output_pct_2"] = np.ones(n_gen)*0.8
             gen_dict["Output_pct_3"] = np.ones(n_gen)*1.0
-            gen_dict["Min Up Time Hr"] = np.array([self.technology_mapper.get(tech, {}).get("min_down_time", 0) for tech in gen_df["Tech"].values])
-            gen_dict["Min Down Time Hr"] = np.array([self.technology_mapper.get(tech, {}).get("min_up_time", 1) for tech in gen_df["Tech"].values])
+            gen_dict["Min Up Time Hr"] = np.array([self.technology_mapper.get(tech, {}).get("min_up_time", 0) for tech in gen_df["Tech"].values])
+            gen_dict["Min Down Time Hr"] = np.array([self.technology_mapper.get(tech, {}).get("min_down_time", 1) for tech in gen_df["Tech"].values])
             gen_dict["AGC capable"] = np.array([self.technology_mapper.get(tech, {}).get("agc", False) for tech in gen_df["Tech"].values])
             gen_dict["Fast start"] = np.array([self.technology_mapper.get(tech, {}).get("fast_start", False) for tech in gen_df["Tech"].values])
 

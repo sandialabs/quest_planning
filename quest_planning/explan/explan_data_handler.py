@@ -318,7 +318,7 @@ class ExplanDataHandler():
         '''Set reserves requirements (Convert to percent)'''
         self.reg_res_req = float(reg_res_req)/100
         self.spin_res_req = float(spin_res_req)/100
-        self.flex_res_w_req = float(flex_res_req)/100
+        self.flex_res_req = float(flex_res_req)/100
 
     def set_prm(self, prm_value, regional_load_growth_option=False):
         '''Configure PRM using system-wide or regional method'''

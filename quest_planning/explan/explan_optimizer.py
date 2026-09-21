@@ -1575,7 +1575,7 @@ class ExplanOptimizer(Optimizer):
         #Report out model size and stats (used for informational purposes - prints to txt file)
         self.report = build_model_size_report(self.model)
         print("Pyomo Model Successfully Built")
-        print("Press the Solve Button")
+        print("Model will begin solving. If using the GUI, press the Solve Button")
         
         #self.log_report_timing(self.model)# - only used for testing and model setup time logging; let's keep for now
     

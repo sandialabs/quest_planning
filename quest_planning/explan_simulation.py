@@ -154,45 +154,17 @@ class Explan:
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
             self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
+    
+    def run_post_process(self):
         if self.config.get("run_reliability_assessment", False):
-            if self.config.get('large_load_option', False):
-                logging.info("Reliability assessment is not supported with large_load_option.")
-            else:
-                if self.config.get("rel_evaluation_years"):
-                    try:
-                        prg = ProGRESS_Exporter(exp)
-                        prg.export_data(self.config["rel_evaluation_years"])
-                        prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
-                    except FileNotFoundError as e:
-                        logging.warning(f"ProGRESS executable not found: {e}")
-                        logging.warning("Skipping reliability assessment. Set 'run_reliability_assessment: false' in config to disable this warning.")
-                    except Exception as e:
-                        logging.error(f"ProGRESS reliability assessment failed: {e}")
-                        logging.error("Continuing with capacity planning results only.")
-                else:
-                    logging.info("run_reliability_assessment is true but rel_evaluation_years is not specified. Skipping ProGRESS.")
-        else:
-            logging.info("Skipping reliability assessment (run_reliability_assessment: false or not specified)")
+            prg = ProGRESS_Exporter(self)
+            prg.export_data(self.config["rel_evaluation_years"])
+            prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
 
         if self.config.get("run_production_cost", False):
-            if self.config.get('large_load_option', False):
-                logging.info("PCM is not supported with large_load_option.")
-            else:
-                if self.config.get("pcm_evaluation_years"):
-                    try:
-                        pcm = PCM_Exporter(exp, self.config)
-                        pcm.execute_pcm(self.config["pcm_evaluation_years"])
-                    except FileNotFoundError as e:
-                        logging.warning(f"PCM executable not found: {e}")
-                        logging.warning("Skipping PCM. Set 'run_production_cost: false' in config to disable this warning.")
-                    except Exception as e:
-                        logging.error(f"PCM simulation failed: {e}")
-                        logging.error("Continuing with capacity planning results only.")
-                else:
-                    logging.info("run_production_cost is true but pcm_evaluation_years is not specified. Skipping PCM.")
-        else:
-            logging.info("Skipping PCM simulation (run_production_cost: false or not specified)")
-        
+            pcm = PCM_Exporter(self, self.config)
+            pcm.execute_pcm(self.config["pcm_evaluation_years"])
+            
 def read_input_yaml(yaml_file):
     '''
     Read input YAML file
@@ -240,6 +212,7 @@ if __name__ == '__main__':
     exp.process_large_loads()  # Process large load data if enabled
     exp.run_optimizer()
     exp.view_results()
+    exp.run_post_process()
     
     # to write the model.lp files...
     #exp.optimizer._model.write('model.lp', io_options={'symbolic_solver_labels': True})
