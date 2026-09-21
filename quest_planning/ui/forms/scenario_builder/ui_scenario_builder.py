@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
     QSpacerItem, QTextBrowser, QTextEdit, QVBoxLayout,
     QWidget)
-import resources_rc
+import quest_planning.resources_rc
 
 class Ui_ScenarioBuilderPage(object):
     def setupUi(self, ScenarioBuilderPage):

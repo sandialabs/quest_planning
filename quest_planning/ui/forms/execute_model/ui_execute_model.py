@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'execute_model.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.1
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLabel, QPlainTextEdit, QPushButton, QSizePolicy,
-    QSpacerItem, QToolButton, QVBoxLayout, QWidget)
+    QSpacerItem, QVBoxLayout, QWidget)
 import quest_planning.resources_rc
 
 class Ui_ExecuteModelPage(object):
@@ -25,7 +25,7 @@ class Ui_ExecuteModelPage(object):
         if not ExecuteModelPage.objectName():
             ExecuteModelPage.setObjectName(u"ExecuteModelPage")
         ExecuteModelPage.resize(1118, 928)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ExecuteModelPage.sizePolicy().hasHeightForWidth())
@@ -36,7 +36,7 @@ class Ui_ExecuteModelPage(object):
         self.verticalLayout_main.setContentsMargins(24, 24, 24, 24)
         self.frame_header = QFrame(ExecuteModelPage)
         self.frame_header.setObjectName(u"frame_header")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.frame_header.sizePolicy().hasHeightForWidth())
@@ -72,26 +72,26 @@ class Ui_ExecuteModelPage(object):
 
         self.horizontalLayout_header.addLayout(self.verticalLayout_header_text)
 
-        self.horizontalSpacer_header = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_header = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_header.addItem(self.horizontalSpacer_header)
 
-        self.build_run_help_button = QToolButton(self.frame_header)
-        self.build_run_help_button.setObjectName(u"build_run_help_button")
+        self.pushButton = QPushButton(self.frame_header)
+        self.pushButton.setObjectName(u"pushButton")
         icon = QIcon()
-        icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.build_run_help_button.setIcon(icon)
-        self.build_run_help_button.setIconSize(QSize(24, 24))
-        self.build_run_help_button.setAutoRaise(True)
+        icon.addFile(u":/icon/images/icons/about.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.pushButton.setIcon(icon)
+        self.pushButton.setIconSize(QSize(30, 30))
+        self.pushButton.setFlat(True)
 
-        self.horizontalLayout_header.addWidget(self.build_run_help_button)
+        self.horizontalLayout_header.addWidget(self.pushButton)
 
 
         self.verticalLayout_main.addWidget(self.frame_header)
 
         self.frame_execution = QFrame(ExecuteModelPage)
         self.frame_execution.setObjectName(u"frame_execution")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.frame_execution.sizePolicy().hasHeightForWidth())
@@ -106,14 +106,6 @@ class Ui_ExecuteModelPage(object):
         self.horizontalLayout_execution_title = QHBoxLayout()
         self.horizontalLayout_execution_title.setSpacing(8)
         self.horizontalLayout_execution_title.setObjectName(u"horizontalLayout_execution_title")
-        self.label_execution_icon = QLabel(self.frame_execution)
-        self.label_execution_icon.setObjectName(u"label_execution_icon")
-        self.label_execution_icon.setMaximumSize(QSize(22, 22))
-        self.label_execution_icon.setPixmap(QPixmap(u":/icon/images/icons/cil-paper-plane.png"))
-        self.label_execution_icon.setScaledContents(True)
-
-        self.horizontalLayout_execution_title.addWidget(self.label_execution_icon)
-
         self.label_execution_title = QLabel(self.frame_execution)
         self.label_execution_title.setObjectName(u"label_execution_title")
         font2 = QFont()
@@ -124,7 +116,7 @@ class Ui_ExecuteModelPage(object):
 
         self.horizontalLayout_execution_title.addWidget(self.label_execution_title)
 
-        self.horizontalSpacer_execution_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_execution_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_execution_title.addItem(self.horizontalSpacer_execution_title)
 
@@ -151,7 +143,7 @@ class Ui_ExecuteModelPage(object):
 
         self.results_file_box = QComboBox(self.frame_execution)
         self.results_file_box.setObjectName(u"results_file_box")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.results_file_box.sizePolicy().hasHeightForWidth())
@@ -164,7 +156,7 @@ class Ui_ExecuteModelPage(object):
 
         self.browse_folder_button = QPushButton(self.frame_execution)
         self.browse_folder_button.setObjectName(u"browse_folder_button")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.browse_folder_button.sizePolicy().hasHeightForWidth())
@@ -174,7 +166,7 @@ class Ui_ExecuteModelPage(object):
 
         self.horizontalLayout_results_folder.addWidget(self.browse_folder_button)
 
-        self.horizontalSpacer_results_folder = QSpacerItem(20, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_results_folder = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_results_folder.addItem(self.horizontalSpacer_results_folder)
 
@@ -216,7 +208,7 @@ class Ui_ExecuteModelPage(object):
 
         self.horizontalLayout_solver.addWidget(self.label_solver_hint)
 
-        self.horizontalSpacer_solver = QSpacerItem(20, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_solver = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_solver.addItem(self.horizontalSpacer_solver)
 
@@ -226,8 +218,8 @@ class Ui_ExecuteModelPage(object):
         self.line_divider = QFrame(self.frame_execution)
         self.line_divider.setObjectName(u"line_divider")
         self.line_divider.setMaximumSize(QSize(16777215, 1))
-        self.line_divider.setFrameShape(QFrame.Shape.HLine)
-        self.line_divider.setFrameShadow(QFrame.Shadow.Sunken)
+        self.line_divider.setFrameShape(QFrame.HLine)
+        self.line_divider.setFrameShadow(QFrame.Sunken)
 
         self.verticalLayout_execution.addWidget(self.line_divider)
 
@@ -258,7 +250,7 @@ class Ui_ExecuteModelPage(object):
 
         self.horizontalLayout_actions.addWidget(self.label_actions_hint)
 
-        self.horizontalSpacer_actions = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_actions = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_actions.addItem(self.horizontalSpacer_actions)
 
@@ -281,21 +273,13 @@ class Ui_ExecuteModelPage(object):
         self.horizontalLayout_status_title = QHBoxLayout()
         self.horizontalLayout_status_title.setSpacing(8)
         self.horizontalLayout_status_title.setObjectName(u"horizontalLayout_status_title")
-        self.label_status_icon = QLabel(self.model_status_frame)
-        self.label_status_icon.setObjectName(u"label_status_icon")
-        self.label_status_icon.setMaximumSize(QSize(22, 22))
-        self.label_status_icon.setPixmap(QPixmap(u":/icon/images/icons/cil-terminal.png"))
-        self.label_status_icon.setScaledContents(True)
-
-        self.horizontalLayout_status_title.addWidget(self.label_status_icon)
-
         self.label_status_title = QLabel(self.model_status_frame)
         self.label_status_title.setObjectName(u"label_status_title")
         self.label_status_title.setFont(font2)
 
         self.horizontalLayout_status_title.addWidget(self.label_status_title)
 
-        self.horizontalSpacer_status_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_status_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_status_title.addItem(self.horizontalSpacer_status_title)
 
@@ -321,7 +305,6 @@ class Ui_ExecuteModelPage(object):
 
         self.verticalLayout_main.addWidget(self.model_status_frame)
 
-        self.verticalLayout_main.setStretch(3, 1)
 
         self.retranslateUi(ExecuteModelPage)
 
@@ -331,22 +314,20 @@ class Ui_ExecuteModelPage(object):
     def retranslateUi(self, ExecuteModelPage):
         ExecuteModelPage.setWindowTitle(QCoreApplication.translate("ExecuteModelPage", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("ExecuteModelPage", u"Execute Model", None))
-        self.label_title.setProperty("textRole", u"heading")
+        self.label_title.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"heading", None))
         self.label_subtitle.setText(QCoreApplication.translate("ExecuteModelPage", u"The Execute Model step builds the QuESt Planning optimization model and solves it with your selected solver.", None))
-        self.label_subtitle.setProperty("textRole", u"subtitle")
-        self.build_run_help_button.setText("")
-        self.build_run_help_button.setProperty("btnRole", u"icon")
-        self.frame_execution.setProperty("cardType", u"card")
-        self.label_execution_icon.setText("")
+        self.label_subtitle.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"subtitle", None))
+        self.pushButton.setText("")
+        self.frame_execution.setProperty("cardType", QCoreApplication.translate("ExecuteModelPage", u"card", None))
         self.label_execution_title.setText(QCoreApplication.translate("ExecuteModelPage", u"MODEL EXECUTION", None))
-        self.label_execution_title.setProperty("textRole", u"section")
+        self.label_execution_title.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"section", None))
         self.label_execution_desc.setText(QCoreApplication.translate("ExecuteModelPage", u"The <b><i>QuESt Planning</i></b> optimization model is built and solved in this step. Choose where the results will be saved, select the solver, then press <i>Build Model</i> followed by <i>Solve Model</i>.", None))
-        self.label_execution_desc.setProperty("textRole", u"body")
+        self.label_execution_desc.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"body", None))
         self.label_results_folder.setText(QCoreApplication.translate("ExecuteModelPage", u"Results Folder", None))
-        self.label_results_folder.setProperty("textRole", u"section")
+        self.label_results_folder.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"section", None))
         self.browse_folder_button.setText(QCoreApplication.translate("ExecuteModelPage", u"Browse", None))
         self.label_solver.setText(QCoreApplication.translate("ExecuteModelPage", u"Solver", None))
-        self.label_solver.setProperty("textRole", u"section")
+        self.label_solver.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"section", None))
         self.solver_select_box.setItemText(0, QCoreApplication.translate("ExecuteModelPage", u"Clp", None))
         self.solver_select_box.setItemText(1, QCoreApplication.translate("ExecuteModelPage", u"GLPK", None))
         self.solver_select_box.setItemText(2, QCoreApplication.translate("ExecuteModelPage", u"Gurobi", None))
@@ -354,19 +335,18 @@ class Ui_ExecuteModelPage(object):
         self.solver_select_box.setItemText(4, QCoreApplication.translate("ExecuteModelPage", u"Other (Upcoming)", None))
 
         self.label_solver_hint.setText(QCoreApplication.translate("ExecuteModelPage", u"The solver and any required licenses must be installed and accessible.", None))
-        self.label_solver_hint.setProperty("textRole", u"caption")
+        self.label_solver_hint.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"caption", None))
         self.build_button.setText(QCoreApplication.translate("ExecuteModelPage", u"Build Model", None))
-        self.build_button.setProperty("btnRole", u"primary")
+        self.build_button.setProperty("btnRole", QCoreApplication.translate("ExecuteModelPage", u"primary", None))
         self.run_button.setText(QCoreApplication.translate("ExecuteModelPage", u"Solve Model", None))
-        self.run_button.setProperty("btnRole", u"primary")
+        self.run_button.setProperty("btnRole", QCoreApplication.translate("ExecuteModelPage", u"primary", None))
         self.label_actions_hint.setText(QCoreApplication.translate("ExecuteModelPage", u"Build the model first, then solve it. Progress appears in the Model Status panel.", None))
-        self.label_actions_hint.setProperty("textRole", u"caption")
-        self.model_status_frame.setProperty("cardType", u"card")
-        self.label_status_icon.setText("")
+        self.label_actions_hint.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"caption", None))
+        self.model_status_frame.setProperty("cardType", QCoreApplication.translate("ExecuteModelPage", u"card", None))
         self.label_status_title.setText(QCoreApplication.translate("ExecuteModelPage", u"MODEL STATUS", None))
-        self.label_status_title.setProperty("textRole", u"section")
+        self.label_status_title.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"section", None))
         self.label_status_desc.setText(QCoreApplication.translate("ExecuteModelPage", u"Optimization Model Solve Status:", None))
-        self.label_status_desc.setProperty("textRole", u"caption")
+        self.label_status_desc.setProperty("textRole", QCoreApplication.translate("ExecuteModelPage", u"caption", None))
         self.report_progress_box.setPlainText(QCoreApplication.translate("ExecuteModelPage", u"Ready to build the model.", None))
     # retranslateUi
 

@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
     QVBoxLayout, QWidget)
-import resources_rc
+import quest_planning.resources_rc
 
 class Ui_ViewScenarioDialog(object):
     def setupUi(self, ViewScenarioDialog):
