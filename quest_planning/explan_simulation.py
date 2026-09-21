@@ -154,7 +154,7 @@ class Explan:
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
             self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
-    
+
     def run_post_process(self):
         if self.config.get("run_reliability_assessment", False):
             prg = ProGRESS_Exporter(self)

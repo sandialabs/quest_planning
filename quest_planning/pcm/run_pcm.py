@@ -376,7 +376,7 @@ class PCM_Exporter:
             current_folder_path = os.path.join(pcm_folder_path, str(year))
             os.makedirs(current_folder_path, exist_ok=True)
             #Make the system folder
-            syst_folder_path = os.path.join(current_folder_path, "Input Data")
+            syst_folder_path = os.path.join(current_folder_path, "Input_Data")
             input_data_path = syst_folder_path
             os.makedirs(syst_folder_path, exist_ok=True)
             #export bus data
@@ -904,12 +904,14 @@ class PCM_Exporter:
         """
         code = textwrap.dedent(f"""
         import os
+        import glob
+        import shutil
         import json
         import logging
         from egret.common.log import logger as egret_logger
         from pcm.data_manager.data_main import DataManager
         from pcm.market_manager.market_main import MarketSimulator
-        from pcm.result_manager.result_main import ResultManager# %%
+        from pcm.result_manager.result_main import ResultManager
 
         egret_logger.setLevel(logging.ERROR)
 
@@ -920,10 +922,21 @@ class PCM_Exporter:
         input_manager = DataManager(main_data_path, yaml_path, optional_json_dir = output_dir)
         simulator = MarketSimulator(input_manager)
         simulator.create_DA_RT_models()
-        simulator.simulate_market() 
+        simulator.simulate_market()
 
         result_processor = ResultManager(simulator, output_dir)
         result_processor.export_results()
+
+        # Rename the auto-generated PCM output folder to PCM_Results
+        pcm_folders = glob.glob(os.path.join(output_dir, "PCM_*"))
+        if pcm_folders:
+            latest_folder = max(pcm_folders, key=os.path.getctime)
+            new_name = os.path.join(output_dir, "PCM_Results")
+            # Remove old results folder if it exists
+            if os.path.exists(new_name):
+                shutil.rmtree(new_name)
+            os.rename(latest_folder, new_name)
+            print(f"Folder renamed and results saved to: PCM_Results")
         """)
 
         with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as f:
