@@ -25,7 +25,7 @@ class Ui_ScenarioBuilderPage(object):
     def setupUi(self, ScenarioBuilderPage):
         if not ScenarioBuilderPage.objectName():
             ScenarioBuilderPage.setObjectName(u"ScenarioBuilderPage")
-        ScenarioBuilderPage.resize(780, 781)
+        ScenarioBuilderPage.resize(780, 960)
         self.verticalLayout = QVBoxLayout(ScenarioBuilderPage)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.frame_title = QFrame(ScenarioBuilderPage)
@@ -375,21 +375,7 @@ class Ui_ScenarioBuilderPage(object):
 
         self.verticalLayout_3.addWidget(self.frame_transmission)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_3.addItem(self.verticalSpacer)
-
-
-        self.horizontalLayout.addWidget(self.frame_panel_1)
-
-        self.frame_panel_2 = QFrame(self.frame_options)
-        self.frame_panel_2.setObjectName(u"frame_panel_2")
-        self.frame_panel_2.setFrameShape(QFrame.NoFrame)
-        self.frame_panel_2.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_4 = QVBoxLayout(self.frame_panel_2)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.frame_policy = QFrame(self.frame_panel_2)
+        self.frame_policy = QFrame(self.frame_panel_1)
         self.frame_policy.setObjectName(u"frame_policy")
         sizePolicy.setHeightForWidth(self.frame_policy.sizePolicy().hasHeightForWidth())
         self.frame_policy.setSizePolicy(sizePolicy)
@@ -443,8 +429,18 @@ class Ui_ScenarioBuilderPage(object):
         self.verticalLayout_policy.addWidget(self.rps_box)
 
 
-        self.verticalLayout_4.addWidget(self.frame_policy)
+        self.verticalLayout_3.addWidget(self.frame_policy)
 
+
+        self.horizontalLayout.addWidget(self.frame_panel_1)
+
+        self.frame_panel_2 = QFrame(self.frame_options)
+        self.frame_panel_2.setObjectName(u"frame_panel_2")
+        self.frame_panel_2.setFrameShape(QFrame.NoFrame)
+        self.frame_panel_2.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_4 = QVBoxLayout(self.frame_panel_2)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.frame_candidates = QFrame(self.frame_panel_2)
         self.frame_candidates.setObjectName(u"frame_candidates")
         sizePolicy.setHeightForWidth(self.frame_candidates.sizePolicy().hasHeightForWidth())
@@ -541,31 +537,31 @@ class Ui_ScenarioBuilderPage(object):
 
         self.verticalLayout_4.addWidget(self.frame_candidates)
 
-        self.frame_candidates_2 = QFrame(self.frame_panel_2)
-        self.frame_candidates_2.setObjectName(u"frame_candidates_2")
-        sizePolicy.setHeightForWidth(self.frame_candidates_2.sizePolicy().hasHeightForWidth())
-        self.frame_candidates_2.setSizePolicy(sizePolicy)
-        self.frame_candidates_2.setMaximumSize(QSize(16777215, 230))
-        self.frame_candidates_2.setFrameShape(QFrame.NoFrame)
-        self.frame_candidates_2.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_candidates_2 = QVBoxLayout(self.frame_candidates_2)
+        self.frame_large_load = QFrame(self.frame_panel_2)
+        self.frame_large_load.setObjectName(u"frame_large_load")
+        sizePolicy.setHeightForWidth(self.frame_large_load.sizePolicy().hasHeightForWidth())
+        self.frame_large_load.setSizePolicy(sizePolicy)
+        self.frame_large_load.setMaximumSize(QSize(16777215, 230))
+        self.frame_large_load.setFrameShape(QFrame.NoFrame)
+        self.frame_large_load.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_candidates_2 = QVBoxLayout(self.frame_large_load)
         self.verticalLayout_candidates_2.setSpacing(10)
         self.verticalLayout_candidates_2.setObjectName(u"verticalLayout_candidates_2")
         self.verticalLayout_candidates_2.setContentsMargins(20, 14, 20, 14)
         self.horizontalLayout_candidates_title_2 = QHBoxLayout()
         self.horizontalLayout_candidates_title_2.setSpacing(8)
         self.horizontalLayout_candidates_title_2.setObjectName(u"horizontalLayout_candidates_title_2")
-        self.label_candidates_title_2 = QLabel(self.frame_candidates_2)
-        self.label_candidates_title_2.setObjectName(u"label_candidates_title_2")
-        self.label_candidates_title_2.setFont(font1)
+        self.label_model = QLabel(self.frame_large_load)
+        self.label_model.setObjectName(u"label_model")
+        self.label_model.setFont(font1)
 
-        self.horizontalLayout_candidates_title_2.addWidget(self.label_candidates_title_2)
+        self.horizontalLayout_candidates_title_2.addWidget(self.label_model)
 
         self.horizontalSpacer_candidates_title_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_candidates_title_2.addItem(self.horizontalSpacer_candidates_title_2)
 
-        self.btn_model_help = QPushButton(self.frame_candidates_2)
+        self.btn_model_help = QPushButton(self.frame_large_load)
         self.btn_model_help.setObjectName(u"btn_model_help")
         sizePolicy2.setHeightForWidth(self.btn_model_help.sizePolicy().hasHeightForWidth())
         self.btn_model_help.setSizePolicy(sizePolicy2)
@@ -578,24 +574,24 @@ class Ui_ScenarioBuilderPage(object):
 
         self.verticalLayout_candidates_2.addLayout(self.horizontalLayout_candidates_title_2)
 
-        self.label_candidates_desc_2 = QLabel(self.frame_candidates_2)
-        self.label_candidates_desc_2.setObjectName(u"label_candidates_desc_2")
-        self.label_candidates_desc_2.setFont(font2)
-        self.label_candidates_desc_2.setWordWrap(True)
+        self.label_large_load_desc = QLabel(self.frame_large_load)
+        self.label_large_load_desc.setObjectName(u"label_large_load_desc")
+        self.label_large_load_desc.setFont(font2)
+        self.label_large_load_desc.setWordWrap(True)
 
-        self.verticalLayout_candidates_2.addWidget(self.label_candidates_desc_2)
+        self.verticalLayout_candidates_2.addWidget(self.label_large_load_desc)
 
         self.horizontalLayout_cand_button_2 = QHBoxLayout()
         self.horizontalLayout_cand_button_2.setSpacing(10)
         self.horizontalLayout_cand_button_2.setObjectName(u"horizontalLayout_cand_button_2")
-        self.cand_tech_button_2 = QPushButton(self.frame_candidates_2)
-        self.cand_tech_button_2.setObjectName(u"cand_tech_button_2")
-        sizePolicy2.setHeightForWidth(self.cand_tech_button_2.sizePolicy().hasHeightForWidth())
-        self.cand_tech_button_2.setSizePolicy(sizePolicy2)
-        self.cand_tech_button_2.setMinimumSize(QSize(220, 0))
-        self.cand_tech_button_2.setFont(font3)
+        self.btn_large_load = QPushButton(self.frame_large_load)
+        self.btn_large_load.setObjectName(u"btn_large_load")
+        sizePolicy2.setHeightForWidth(self.btn_large_load.sizePolicy().hasHeightForWidth())
+        self.btn_large_load.setSizePolicy(sizePolicy2)
+        self.btn_large_load.setMinimumSize(QSize(220, 0))
+        self.btn_large_load.setFont(font3)
 
-        self.horizontalLayout_cand_button_2.addWidget(self.cand_tech_button_2)
+        self.horizontalLayout_cand_button_2.addWidget(self.btn_large_load)
 
         self.horizontalSpacer_cand_button_2 = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -604,36 +600,36 @@ class Ui_ScenarioBuilderPage(object):
 
         self.verticalLayout_candidates_2.addLayout(self.horizontalLayout_cand_button_2)
 
-        self.cand_tech_frame_2 = QFrame(self.frame_candidates_2)
-        self.cand_tech_frame_2.setObjectName(u"cand_tech_frame_2")
-        sizePolicy.setHeightForWidth(self.cand_tech_frame_2.sizePolicy().hasHeightForWidth())
-        self.cand_tech_frame_2.setSizePolicy(sizePolicy)
-        self.cand_tech_frame_2.setMaximumSize(QSize(16777215, 150))
-        self.cand_tech_frame_2.setFrameShape(QFrame.NoFrame)
-        self.cand_tech_frame_2.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_cand_tech_2 = QVBoxLayout(self.cand_tech_frame_2)
+        self.frame_large_load_selection = QFrame(self.frame_large_load)
+        self.frame_large_load_selection.setObjectName(u"frame_large_load_selection")
+        sizePolicy.setHeightForWidth(self.frame_large_load_selection.sizePolicy().hasHeightForWidth())
+        self.frame_large_load_selection.setSizePolicy(sizePolicy)
+        self.frame_large_load_selection.setMaximumSize(QSize(16777215, 150))
+        self.frame_large_load_selection.setFrameShape(QFrame.NoFrame)
+        self.frame_large_load_selection.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_cand_tech_2 = QVBoxLayout(self.frame_large_load_selection)
         self.verticalLayout_cand_tech_2.setSpacing(6)
         self.verticalLayout_cand_tech_2.setObjectName(u"verticalLayout_cand_tech_2")
         self.verticalLayout_cand_tech_2.setContentsMargins(12, 10, 12, 10)
-        self.label_cand_tech_list_title_2 = QLabel(self.cand_tech_frame_2)
-        self.label_cand_tech_list_title_2.setObjectName(u"label_cand_tech_list_title_2")
-        self.label_cand_tech_list_title_2.setFont(font4)
+        self.label_large_load_select = QLabel(self.frame_large_load_selection)
+        self.label_large_load_select.setObjectName(u"label_large_load_select")
+        self.label_large_load_select.setFont(font4)
 
-        self.verticalLayout_cand_tech_2.addWidget(self.label_cand_tech_list_title_2)
+        self.verticalLayout_cand_tech_2.addWidget(self.label_large_load_select)
 
-        self.candidate_tech_box_2 = QTextBrowser(self.cand_tech_frame_2)
-        self.candidate_tech_box_2.setObjectName(u"candidate_tech_box_2")
-        self.candidate_tech_box_2.setMinimumSize(QSize(0, 70))
-        self.candidate_tech_box_2.setFont(font2)
-        self.candidate_tech_box_2.setLineWrapMode(QTextEdit.NoWrap)
+        self.box_large_load_select = QTextBrowser(self.frame_large_load_selection)
+        self.box_large_load_select.setObjectName(u"box_large_load_select")
+        self.box_large_load_select.setMinimumSize(QSize(0, 70))
+        self.box_large_load_select.setFont(font2)
+        self.box_large_load_select.setLineWrapMode(QTextEdit.NoWrap)
 
-        self.verticalLayout_cand_tech_2.addWidget(self.candidate_tech_box_2)
-
-
-        self.verticalLayout_candidates_2.addWidget(self.cand_tech_frame_2)
+        self.verticalLayout_cand_tech_2.addWidget(self.box_large_load_select)
 
 
-        self.verticalLayout_4.addWidget(self.frame_candidates_2)
+        self.verticalLayout_candidates_2.addWidget(self.frame_large_load_selection)
+
+
+        self.verticalLayout_4.addWidget(self.frame_large_load)
 
         self.frame_retirements = QFrame(self.frame_panel_2)
         self.frame_retirements.setObjectName(u"frame_retirements")
@@ -727,6 +723,15 @@ class Ui_ScenarioBuilderPage(object):
 
         self.verticalLayout_4.addWidget(self.frame_retirements)
 
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer)
+
+        self.btn_view_scenario = QPushButton(self.frame_panel_2)
+        self.btn_view_scenario.setObjectName(u"btn_view_scenario")
+
+        self.verticalLayout_4.addWidget(self.btn_view_scenario)
+
 
         self.horizontalLayout.addWidget(self.frame_panel_2)
 
@@ -804,17 +809,17 @@ class Ui_ScenarioBuilderPage(object):
         self.cand_tech_frame.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
         self.label_cand_tech_list_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SELECTED CANDIDATE TECHNOLOGIES", None))
         self.label_cand_tech_list_title.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
-        self.frame_candidates_2.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
-        self.label_candidates_title_2.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Large Load Model", None))
-        self.label_candidates_title_2.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
+        self.frame_large_load.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
+        self.label_model.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Large Load Model", None))
+        self.label_model.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
         self.btn_model_help.setText("")
-        self.label_candidates_desc_2.setText(QCoreApplication.translate("ScenarioBuilderPage", u"<html><head/><body><p>Click the <span style=\" font-weight:600; font-style:italic;\">Large Load Model</span> button to select the large load model to be considered in the <span style=\" font-style:italic;\">QuESt Planning</span> optimization.</p></body></html>", None))
-        self.label_candidates_desc_2.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"body", None))
-        self.cand_tech_button_2.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Large Load Model", None))
-        self.cand_tech_button_2.setProperty("btnRole", QCoreApplication.translate("ScenarioBuilderPage", u"primary", None))
-        self.cand_tech_frame_2.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
-        self.label_cand_tech_list_title_2.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SELECTED CANDIDATE TECHNOLOGIES", None))
-        self.label_cand_tech_list_title_2.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
+        self.label_large_load_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"<html><head/><body><p>Click the <span style=\" font-weight:600; font-style:italic;\">Large Load Model</span> button to select the large load model to be considered in the <span style=\" font-style:italic;\">QuESt Planning</span> optimization.</p></body></html>", None))
+        self.label_large_load_desc.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"body", None))
+        self.btn_large_load.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Large Load Model", None))
+        self.btn_large_load.setProperty("btnRole", QCoreApplication.translate("ScenarioBuilderPage", u"primary", None))
+        self.frame_large_load_selection.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
+        self.label_large_load_select.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SELECTED CANDIDATE TECHNOLOGIES", None))
+        self.label_large_load_select.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
         self.frame_retirements.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
         self.label_retirements_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"GENERATION RETIREMENTS", None))
         self.label_retirements_title.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
@@ -826,5 +831,6 @@ class Ui_ScenarioBuilderPage(object):
         self.retirement_frame.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"tile", None))
         self.label_retirement_list_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SELECTED RETIREMENT SCHEDULE", None))
         self.label_retirement_list_title.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
+        self.btn_view_scenario.setText(QCoreApplication.translate("ScenarioBuilderPage", u"View Scenario", None))
     # retranslateUi
 

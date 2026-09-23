@@ -33,7 +33,6 @@ class QuestPlanning(QMainWindow):
 
     __pages__ = (
         ("page_landing", "btn_home"),
-        ("page_large_load", "btn_large_load"),
         ("page_power_system", "btn_power_system"),
         ("page_planning", "btn_planning"),
         ("page_scenario", "btn_scenario"),

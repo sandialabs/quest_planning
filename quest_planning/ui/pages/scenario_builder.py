@@ -45,10 +45,10 @@ class ScenarioBuilderPage(QWidget):
         self.ui.gen_retirement_button.setToolTip(
             "Select the generation retirement schedule."
         )
-        self.ui.view_scenario_button.setToolTip(
+        self.ui.btn_view_scenario.setToolTip(
             "Review the complete scenario before running the optimizer."
         )
-        self.ui.scenario_builder_help_button.setToolTip(
+        self.ui.btn_title_help.setToolTip(
             "Help: build a scenario in QuESt Planning."
         )
 
@@ -56,35 +56,35 @@ class ScenarioBuilderPage(QWidget):
         self.ui.gen_retirement_button.clicked.connect(
             self.on_gen_retirement_button_clicked
         )
-        self.ui.view_scenario_button.clicked.connect(self.open_view_scenario)
+        self.ui.btn_view_scenario.clicked.connect(self.open_view_scenario)
 
-        self.ui.scenario_builder_help_button.clicked.connect(
+        self.ui.btn_title_help.clicked.connect(
             lambda: self.display_help_message("Scenario Builder")
         )
-        self.ui.scenario_name_help_button.clicked.connect(
+        self.ui.btn_scenario_help.clicked.connect(
             lambda: self.display_help_message("Select Scenario Name")
         )
-        self.ui.capital_cost_trajectory_help_button.clicked.connect(
+        self.ui.btn_capita_help.clicked.connect(
             lambda: self.display_help_message("Select Capital Costs")
         )
-        self.ui.load_profile_help_button.clicked.connect(
+        self.ui.btn_load_help.clicked.connect(
             lambda: self.display_help_message("Select Load Forecasts")
         )
-        self.ui.load_growth_help_button.clicked.connect(
+        self.ui.btn_growth_help.clicked.connect(
             lambda: self.display_help_message("Select Annual Load Growth")
         )
-        self.ui.rps_help_button.clicked.connect(
+        self.ui.btn_generation_help.clicked.connect(
             lambda: self.display_help_message(
                 "Select Renewable Portfolio Standard Goals"
             )
         )
-        self.ui.trans_expansion_help_button.clicked.connect(
+        self.ui.btn_trans_help.clicked.connect(
             lambda: self.display_help_message("Select Transmission Expansion Option")
         )
-        self.ui.cand_technologies_help_button.clicked.connect(
+        self.ui.btn_candidates_help.clicked.connect(
             lambda: self.display_help_message("Candidate Technologies Selection")
         )
-        self.ui.gen_retirement_help_button.clicked.connect(
+        self.ui.btn_generatio_help.clicked.connect(
             lambda: self.display_help_message("Generation Retirements Selection")
         )
 
@@ -114,7 +114,7 @@ class ScenarioBuilderPage(QWidget):
                 "Base Currency Year": "--",
             }
         return {
-            "Simulation Years": page.ui.sim_years_label.text(),
+            "Simulation Years": page.ui.label_years_input.text(),
             "Transmission Model": page.ui.transmission_box.currentText(),
             "Temporal Selection": page.ui.temporal_box.currentText(),
             "Discount Factor": "{:.2f}".format(

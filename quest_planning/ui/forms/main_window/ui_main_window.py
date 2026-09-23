@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.1
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -54,11 +54,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.btn_home)
 
-        self.btn_large_load = QPushButton(self.frame_ribbon)
-        self.btn_large_load.setObjectName(u"btn_large_load")
-
-        self.verticalLayout_2.addWidget(self.btn_large_load)
-
         self.btn_power_system = QPushButton(self.frame_ribbon)
         self.btn_power_system.setObjectName(u"btn_power_system")
 
@@ -84,7 +79,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.btn_results)
 
-        self.spacer_ribbon = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.spacer_ribbon = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_2.addItem(self.spacer_ribbon)
 
@@ -112,9 +107,6 @@ class Ui_MainWindow(object):
         self.page_landing = QWidget()
         self.page_landing.setObjectName(u"page_landing")
         self.stackedWidget.addWidget(self.page_landing)
-        self.page_large_load = QWidget()
-        self.page_large_load.setObjectName(u"page_large_load")
-        self.stackedWidget.addWidget(self.page_large_load)
         self.page_power_system = QWidget()
         self.page_power_system.setObjectName(u"page_power_system")
         self.stackedWidget.addWidget(self.page_power_system)
@@ -145,7 +137,7 @@ class Ui_MainWindow(object):
         self.frame_nav_btns.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_2 = QHBoxLayout(self.frame_nav_btns)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.spacer_nav_btns = QSpacerItem(248, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.spacer_nav_btns = QSpacerItem(248, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_2.addItem(self.spacer_nav_btns)
 
@@ -169,6 +161,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+        self.stackedWidget.setCurrentIndex(2)
+
+
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
@@ -176,7 +171,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"QuESt Planning", None))
         self.label_logo.setText("")
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
-        self.btn_large_load.setText(QCoreApplication.translate("MainWindow", u"Large Load Model", None))
         self.btn_power_system.setText(QCoreApplication.translate("MainWindow", u"Power System Data", None))
         self.btn_planning.setText(QCoreApplication.translate("MainWindow", u"Planning Model Setup", None))
         self.btn_scenario.setText(QCoreApplication.translate("MainWindow", u"Scenario Builder", None))

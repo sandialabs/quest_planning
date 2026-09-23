@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>780</width>
-    <height>781</height>
+    <height>960</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -854,43 +854,6 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame_panel_2">
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
           <widget class="QFrame" name="frame_policy">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -1044,6 +1007,30 @@
            </layout>
           </widget>
          </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_panel_2">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QFrame" name="frame_candidates">
            <property name="sizePolicy">
@@ -1296,7 +1283,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frame_candidates_2">
+          <widget class="QFrame" name="frame_large_load">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -1340,7 +1327,7 @@
                <number>8</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_candidates_title_2">
+               <widget class="QLabel" name="label_model">
                 <property name="font">
                  <font>
                   <family>Segoe UI</family>
@@ -1402,7 +1389,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_candidates_desc_2">
+             <widget class="QLabel" name="label_large_load_desc">
               <property name="font">
                <font>
                 <family>Segoe UI</family>
@@ -1426,7 +1413,7 @@
                <number>10</number>
               </property>
               <item>
-               <widget class="QPushButton" name="cand_tech_button_2">
+               <widget class="QPushButton" name="btn_large_load">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1471,7 +1458,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QFrame" name="cand_tech_frame_2">
+             <widget class="QFrame" name="frame_large_load_selection">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                 <horstretch>0</horstretch>
@@ -1510,7 +1497,7 @@
                 <number>10</number>
                </property>
                <item>
-                <widget class="QLabel" name="label_cand_tech_list_title_2">
+                <widget class="QLabel" name="label_large_load_select">
                  <property name="font">
                   <font>
                    <family>Segoe UI</family>
@@ -1528,7 +1515,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTextBrowser" name="candidate_tech_box_2">
+                <widget class="QTextBrowser" name="box_large_load_select">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -1801,6 +1788,26 @@
              </widget>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_view_scenario">
+           <property name="text">
+            <string>View Scenario</string>
+           </property>
           </widget>
          </item>
         </layout>

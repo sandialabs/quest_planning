@@ -20,7 +20,7 @@ class ExecuteModelPage(QWidget):
         )
         self.ui.build_button.setToolTip("Build the optimization model.")
         self.ui.run_button.setToolTip("Solve the optimization model.")
-        self.ui.build_run_help_button.setToolTip("Help: build and solve the model.")
+        self.ui.btn_model_help.setToolTip("Help: build and solve the model.")
         self.ui.solver_select_box.setToolTip(
             "Select the solver installed on this machine."
         )
@@ -28,7 +28,7 @@ class ExecuteModelPage(QWidget):
         self.ui.browse_folder_button.clicked.connect(self.select_file)
         self.ui.build_button.clicked.connect(self.on_build_button_clicked)
         self.ui.run_button.clicked.connect(self.on_run_button_clicked)
-        self.ui.build_run_help_button.clicked.connect(
+        self.ui.btn_model_help.clicked.connect(
             lambda: self.display_help_message("Build & Solve Optimization Model")
         )
 

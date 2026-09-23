@@ -51,13 +51,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_large_load">
-         <property name="text">
-          <string>Large Load Model</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="btn_power_system">
          <property name="text">
           <string>Power System Data</string>
@@ -133,8 +126,10 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
+         <property name="currentIndex">
+          <number>2</number>
+         </property>
          <widget class="QWidget" name="page_landing"/>
-         <widget class="QWidget" name="page_large_load"/>
          <widget class="QWidget" name="page_power_system"/>
          <widget class="QWidget" name="page_planning"/>
          <widget class="QWidget" name="page_scenario"/>
