@@ -15,6 +15,7 @@ from quest_planning.ui.pages.planning_model import PlanningModelPage
 from quest_planning.ui.pages.scenario_builder import ScenarioBuilderPage
 from quest_planning.ui.pages.build_run import ExecuteModelPage
 from quest_planning.ui.pages.results import ResultsViewerPage
+from quest_planning.ui.pages.about import AboutPage
 from quest_planning.ui.styles import apply_stylesheet
 
 from quest_planning.explan.explan_data_handler import ExplanDataHandler
@@ -90,8 +91,11 @@ class QuestPlanning(QMainWindow):
         self.pages["page_results"] = self._make_page(
             "page_results", ResultsViewerPage()
         )
+        self.pages["page_about"] = self._make_page(
+            "page_about", AboutPage()
+        )
         # Remaining pages are placeholders left as their empty widget forms.
-        for name in ("page_large_load", "page_settings", "page_about"):
+        for name in ("page_large_load", "page_settings"):
             placeholder = self.ui.stackedWidget.findChild(QWidget, name)
             self.pages[name] = placeholder
 
@@ -111,6 +115,10 @@ class QuestPlanning(QMainWindow):
         # Start button on the landing page advances to Power System Data.
         self.pages["page_landing"].start_requested.connect(
             lambda: self.show_page("page_power_system")
+        )
+        # Documentation button on the landing page goes to the About page.
+        self.pages["page_landing"].about_requested.connect(
+            lambda: self.show_page("page_about")
         )
 
         self.ui.btn_prev.clicked.connect(self.go_previous)
@@ -231,7 +239,7 @@ def main():
     apply_stylesheet(app)
 
     window = SplashScreen()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":

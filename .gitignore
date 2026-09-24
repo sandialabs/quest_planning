@@ -2,6 +2,7 @@ __pycache__/
 */__pycache__/
 *_Results/
 .DS_Store
+.ua/
 input.txt
 Archive
 Results
