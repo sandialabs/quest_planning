@@ -1,0 +1,2281 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+  <class>PowerSystemPage</class>
+  <widget class="QStackedWidget" name="PowerSystemPage">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>739</width>
+        <height>761</height>
+      </rect>
+    </property>
+    <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+      </sizepolicy>
+    </property>
+    <property name="windowTitle">
+      <string>Form</string>
+    </property>
+    <property name="currentIndex">
+      <number>0</number>
+    </property>
+    <widget class="QWidget" name="page_standard">
+      <layout class="QVBoxLayout" name="verticalLayout_main" stretch="0,0,0,0">
+        <property name="spacing">
+          <number>18</number>
+        </property>
+        <property name="leftMargin">
+          <number>24</number>
+        </property>
+        <property name="topMargin">
+          <number>24</number>
+        </property>
+        <property name="rightMargin">
+          <number>24</number>
+        </property>
+        <property name="bottomMargin">
+          <number>24</number>
+        </property>
+        <item>
+          <widget class="QFrame" name="frame_header">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>16777215</width>
+                <height>80</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_header">
+              <property name="leftMargin">
+                <number>0</number>
+              </property>
+              <property name="topMargin">
+                <number>0</number>
+              </property>
+              <property name="rightMargin">
+                <number>0</number>
+              </property>
+              <property name="bottomMargin">
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" name="verticalLayout_header_text">
+                  <property name="spacing">
+                    <number>2</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="label_title">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>18</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Power System Data</string>
+                      </property>
+                      <property name="textRole">
+                        <string>heading</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="label_subtitle">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Select the folder containing your power system input data.</string>
+                      </property>
+                      <property name="textRole">
+                        <string>subtitle</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="horizontalSpacer_header">
+                  <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                    <enum>QSizePolicy::Expanding</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                    <size>
+                      <width>40</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <widget class="QToolButton" name="power_system_help_button">
+                  <property name="text">
+                    <string />
+                  </property>
+                  <property name="icon">
+                    <iconset resource="../../../resources.qrc">
+                      <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                    <size>
+                      <width>24</width>
+                      <height>24</height>
+                    </size>
+                  </property>
+                  <property name="autoRaise">
+                    <bool>true</bool>
+                  </property>
+                  <property name="btnRole">
+                    <string>icon</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </item>
+        <item>
+          <widget class="QFrame" name="frame_source">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>16777215</width>
+                <height>180</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_source">
+              <property name="spacing">
+                <number>10</number>
+              </property>
+              <property name="leftMargin">
+                <number>20</number>
+              </property>
+              <property name="topMargin">
+                <number>14</number>
+              </property>
+              <property name="rightMargin">
+                <number>20</number>
+              </property>
+              <property name="bottomMargin">
+                <number>14</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_source_title">
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="label_source_icon">
+                      <property name="maximumSize">
+                        <size>
+                          <width>22</width>
+                          <height>22</height>
+                        </size>
+                      </property>
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="pixmap">
+                        <pixmap resource="../../../resources.qrc">:/icon/images/icons/dataset_FILL0_wght200_GRAD0_opsz48.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="label_source_title">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>DATA SOURCE</string>
+                      </property>
+                      <property name="textRole">
+                        <string>section</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="horizontalSpacer_source_title">
+                      <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                        <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                        <size>
+                          <width>40</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QGridLayout" name="gridLayout_source">
+                  <property name="horizontalSpacing">
+                    <number>14</number>
+                  </property>
+                  <property name="verticalSpacing">
+                    <number>10</number>
+                  </property>
+                  <item row="0" column="0">
+                    <widget class="QLabel" name="label_system_name">
+                      <property name="minimumSize">
+                        <size>
+                          <width>100</width>
+                          <height>0</height>
+                        </size>
+                      </property>
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>System Name</string>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="1">
+                    <widget class="QLineEdit" name="system_name_input">
+                      <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                        <size>
+                          <width>500</width>
+                          <height>16777215</height>
+                        </size>
+                      </property>
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Default System Name</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="0">
+                    <widget class="QLabel" name="label_data_folder">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Data Folder</string>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="1">
+                    <layout class="QHBoxLayout" name="horizontalLayout_folder" stretch="1,0,0">
+                      <property name="spacing">
+                        <number>10</number>
+                      </property>
+                      <item>
+                        <widget class="QComboBox" name="file_combo_box">
+                          <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                            </sizepolicy>
+                          </property>
+                          <property name="font">
+                            <font>
+                              <family>Segoe UI</family>
+                              <pointsize>10</pointsize>
+                            </font>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="file_button">
+                          <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                            </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                            <size>
+                              <width>110</width>
+                              <height>0</height>
+                            </size>
+                          </property>
+                          <property name="font">
+                            <font>
+                              <family>Segoe UI</family>
+                              <pointsize>10</pointsize>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="text">
+                            <string>Browse</string>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="open_file_button">
+                          <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                            </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                            <size>
+                              <width>110</width>
+                              <height>0</height>
+                            </size>
+                          </property>
+                          <property name="font">
+                            <font>
+                              <family>Segoe UI</family>
+                              <pointsize>10</pointsize>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="text">
+                            <string>Open</string>
+                          </property>
+                          <property name="btnRole">
+                            <string>primary</string>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+            <property name="cardType">
+              <string>card</string>
+            </property>
+          </widget>
+        </item>
+        <item>
+          <widget class="QFrame" name="frame_overview">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>16777215</width>
+                <height>180</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_overview">
+              <property name="spacing">
+                <number>10</number>
+              </property>
+              <property name="leftMargin">
+                <number>20</number>
+              </property>
+              <property name="topMargin">
+                <number>14</number>
+              </property>
+              <property name="rightMargin">
+                <number>20</number>
+              </property>
+              <property name="bottomMargin">
+                <number>14</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_overview_title">
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="label_overview_icon">
+                      <property name="maximumSize">
+                        <size>
+                          <width>22</width>
+                          <height>22</height>
+                        </size>
+                      </property>
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="pixmap">
+                        <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-view-module.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="label_overview_title">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>SYSTEM OVERVIEW</string>
+                      </property>
+                      <property name="textRole">
+                        <string>section</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="horizontalSpacer_overview_title">
+                      <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                        <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                        <size>
+                          <width>40</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_stats">
+                  <property name="spacing">
+                    <number>14</number>
+                  </property>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_bus">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_bus">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_bus_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-location-pin.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_bus">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_bus_title">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>Buses (Zones)</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="bus_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_line">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_line">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_line_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-layers.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_line">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_line_title">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>Branches</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="line_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_gen">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_gen">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_gen_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-lightbulb.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_gen">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_gen_title">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>Generators</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="gen_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_sys">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_sys">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_sys_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-house.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_sys">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_sys_title">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>System Name</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="sys_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+            <property name="cardType">
+              <string>tile</string>
+            </property>
+          </widget>
+        </item>
+        <item>
+          <widget class="QFrame" name="frame_plots">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+              <size>
+                <width>0</width>
+                <height>300</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_plots">
+              <property name="spacing">
+                <number>18</number>
+              </property>
+              <item>
+                <widget class="QFrame" name="frame_map_card">
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>2</horstretch>
+                      <verstretch>0</verstretch>
+                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_map_card">
+                    <property name="spacing">
+                      <number>8</number>
+                    </property>
+                    <property name="leftMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>12</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>16</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_map_title">
+                        <property name="spacing">
+                          <number>8</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_map_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>20</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-map.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="label_map_title">
+                            <property name="font">
+                              <font>
+                                <family>Segoe UI</family>
+                                <pointsize>10</pointsize>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                              </font>
+                            </property>
+                            <property name="text">
+                              <string>NETWORK MAP</string>
+                            </property>
+                            <property name="textRole">
+                              <string>section</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <spacer name="horizontalSpacer_map_title">
+                            <property name="orientation">
+                              <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                              <enum>QSizePolicy::Expanding</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                              <size>
+                                <width>40</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                          </spacer>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <widget class="MatplotlibWidget" name="network_map_widget">
+                        <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                          <size>
+                            <width>0</width>
+                            <height>0</height>
+                          </size>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                  <property name="cardType">
+                    <string>card</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QFrame" name="frame_genmix_card">
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>3</horstretch>
+                      <verstretch>0</verstretch>
+                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_genmix_card">
+                    <property name="spacing">
+                      <number>8</number>
+                    </property>
+                    <property name="leftMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>12</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>16</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_genmix_title">
+                        <property name="spacing">
+                          <number>8</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_genmix_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>20</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-chart-pie.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="label_genmix_title">
+                            <property name="font">
+                              <font>
+                                <family>Segoe UI</family>
+                                <pointsize>10</pointsize>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                              </font>
+                            </property>
+                            <property name="text">
+                              <string>GENERATION MIX</string>
+                            </property>
+                            <property name="textRole">
+                              <string>section</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <spacer name="horizontalSpacer_genmix_title">
+                            <property name="orientation">
+                              <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                              <enum>QSizePolicy::Expanding</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                              <size>
+                                <width>40</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                          </spacer>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <widget class="MatplotlibWidget" name="generation_mix">
+                        <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                          <size>
+                            <width>0</width>
+                            <height>0</height>
+                          </size>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                  <property name="cardType">
+                    <string>card</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </item>
+      </layout>
+    </widget>
+    <widget class="QWidget" name="power_system_data_w_load">
+      <layout class="QVBoxLayout" name="verticalLayout_load" stretch="0,0,0,0">
+        <property name="spacing">
+          <number>18</number>
+        </property>
+        <property name="leftMargin">
+          <number>24</number>
+        </property>
+        <property name="topMargin">
+          <number>24</number>
+        </property>
+        <property name="rightMargin">
+          <number>24</number>
+        </property>
+        <property name="bottomMargin">
+          <number>24</number>
+        </property>
+        <item>
+          <widget class="QFrame" name="frame_header_load">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>16777215</width>
+                <height>80</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_header_load">
+              <property name="leftMargin">
+                <number>0</number>
+              </property>
+              <property name="topMargin">
+                <number>0</number>
+              </property>
+              <property name="rightMargin">
+                <number>0</number>
+              </property>
+              <property name="bottomMargin">
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" name="verticalLayout_header_text_load">
+                  <property name="spacing">
+                    <number>2</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="label_title_load">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>18</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Power System Data</string>
+                      </property>
+                      <property name="textRole">
+                        <string>heading</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="label_subtitle_load">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Select the folder containing your power system input data (includes load profile).</string>
+                      </property>
+                      <property name="textRole">
+                        <string>subtitle</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="horizontalSpacer_header_load">
+                  <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                    <enum>QSizePolicy::Expanding</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                    <size>
+                      <width>40</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <widget class="QToolButton" name="load_help_button">
+                  <property name="text">
+                    <string />
+                  </property>
+                  <property name="icon">
+                    <iconset resource="../../../resources.qrc">
+                      <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                    <size>
+                      <width>24</width>
+                      <height>24</height>
+                    </size>
+                  </property>
+                  <property name="autoRaise">
+                    <bool>true</bool>
+                  </property>
+                  <property name="btnRole">
+                    <string>icon</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </item>
+        <item>
+          <widget class="QFrame" name="frame_source_load">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>16777215</width>
+                <height>180</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_source_load">
+              <property name="spacing">
+                <number>10</number>
+              </property>
+              <property name="leftMargin">
+                <number>20</number>
+              </property>
+              <property name="topMargin">
+                <number>14</number>
+              </property>
+              <property name="rightMargin">
+                <number>20</number>
+              </property>
+              <property name="bottomMargin">
+                <number>14</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_source_title_load">
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="label_source_icon_load">
+                      <property name="maximumSize">
+                        <size>
+                          <width>22</width>
+                          <height>22</height>
+                        </size>
+                      </property>
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="pixmap">
+                        <pixmap resource="../../../resources.qrc">:/icon/images/icons/dataset_FILL0_wght200_GRAD0_opsz48.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="label_source_title_load">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>DATA SOURCE</string>
+                      </property>
+                      <property name="textRole">
+                        <string>section</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="horizontalSpacer_source_title_load">
+                      <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                        <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                        <size>
+                          <width>40</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QGridLayout" name="gridLayout_source_load">
+                  <property name="horizontalSpacing">
+                    <number>14</number>
+                  </property>
+                  <property name="verticalSpacing">
+                    <number>10</number>
+                  </property>
+                  <item row="0" column="0">
+                    <widget class="QLabel" name="label_system_name_load">
+                      <property name="minimumSize">
+                        <size>
+                          <width>100</width>
+                          <height>0</height>
+                        </size>
+                      </property>
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>System Name</string>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="1">
+                    <widget class="QLineEdit" name="load_system_name_input">
+                      <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                        <size>
+                          <width>500</width>
+                          <height>16777215</height>
+                        </size>
+                      </property>
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Default System Name</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="0">
+                    <widget class="QLabel" name="label_data_folder_load">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>Data Folder</string>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="1">
+                    <layout class="QHBoxLayout" name="horizontalLayout_folder_load" stretch="1,0,0">
+                      <property name="spacing">
+                        <number>10</number>
+                      </property>
+                      <item>
+                        <widget class="QComboBox" name="load_file_combo_box">
+                          <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                            </sizepolicy>
+                          </property>
+                          <property name="font">
+                            <font>
+                              <family>Segoe UI</family>
+                              <pointsize>10</pointsize>
+                            </font>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="load_file_button">
+                          <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                            </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                            <size>
+                              <width>110</width>
+                              <height>0</height>
+                            </size>
+                          </property>
+                          <property name="font">
+                            <font>
+                              <family>Segoe UI</family>
+                              <pointsize>10</pointsize>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="text">
+                            <string>Browse</string>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="load_open_file_button">
+                          <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                            </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                            <size>
+                              <width>110</width>
+                              <height>0</height>
+                            </size>
+                          </property>
+                          <property name="font">
+                            <font>
+                              <family>Segoe UI</family>
+                              <pointsize>10</pointsize>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="text">
+                            <string>Open</string>
+                          </property>
+                          <property name="btnRole">
+                            <string>primary</string>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+            <property name="cardType">
+              <string>card</string>
+            </property>
+          </widget>
+        </item>
+        <item>
+          <widget class="QFrame" name="frame_overview_load">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+              <size>
+                <width>16777215</width>
+                <height>180</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_overview_load">
+              <property name="spacing">
+                <number>10</number>
+              </property>
+              <property name="leftMargin">
+                <number>20</number>
+              </property>
+              <property name="topMargin">
+                <number>14</number>
+              </property>
+              <property name="rightMargin">
+                <number>20</number>
+              </property>
+              <property name="bottomMargin">
+                <number>14</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_overview_title_load">
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="label_overview_icon_load">
+                      <property name="maximumSize">
+                        <size>
+                          <width>22</width>
+                          <height>22</height>
+                        </size>
+                      </property>
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="pixmap">
+                        <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-view-module.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="label_overview_title_load">
+                      <property name="font">
+                        <font>
+                          <family>Segoe UI</family>
+                          <pointsize>10</pointsize>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                        </font>
+                      </property>
+                      <property name="text">
+                        <string>SYSTEM OVERVIEW</string>
+                      </property>
+                      <property name="textRole">
+                        <string>section</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="horizontalSpacer_overview_title_load">
+                      <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                        <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                        <size>
+                          <width>40</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_stats_load">
+                  <property name="spacing">
+                    <number>14</number>
+                  </property>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_bus_load">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_bus_load">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_bus_icon_load">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-location-pin.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_bus_load">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_bus_title_load">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>Buses (Zones)</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="load_bus_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_line_load">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_line_load">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_line_icon_load">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-layers.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_line_load">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_line_title_load">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>Branches</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="load_line_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_gen_load">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_gen_load">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_gen_icon_load">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-lightbulb.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_gen_load">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_gen_title_load">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>Generators</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="load_gen_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QFrame" name="frame_tile_sys_load">
+                      <property name="frameShape">
+                        <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_tile_sys_load">
+                        <property name="spacing">
+                          <number>10</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_sys_icon_load">
+                            <property name="maximumSize">
+                              <size>
+                                <width>26</width>
+                                <height>26</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-house.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" name="verticalLayout_tile_sys_load">
+                            <property name="spacing">
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="label_sys_title_load">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>9</pointsize>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>System Name</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>caption</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QLabel" name="load_sys_label">
+                                <property name="font">
+                                  <font>
+                                    <family>Segoe UI</family>
+                                    <pointsize>14</pointsize>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                  </font>
+                                </property>
+                                <property name="text">
+                                  <string>--</string>
+                                </property>
+                                <property name="textRole">
+                                  <string>section</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                      <property name="cardType">
+                        <string>tile</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+            <property name="cardType">
+              <string>tile</string>
+            </property>
+          </widget>
+        </item>
+        <item>
+          <widget class="QFrame" name="frame_plots_load">
+            <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+              <size>
+                <width>0</width>
+                <height>300</height>
+              </size>
+            </property>
+            <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_plots_load">
+              <property name="spacing">
+                <number>18</number>
+              </property>
+              <item>
+                <widget class="QFrame" name="frame_map_card_load">
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>2</horstretch>
+                      <verstretch>0</verstretch>
+                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_map_card_load">
+                    <property name="spacing">
+                      <number>8</number>
+                    </property>
+                    <property name="leftMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>12</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>16</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_map_title_load">
+                        <property name="spacing">
+                          <number>8</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_map_icon_load">
+                            <property name="maximumSize">
+                              <size>
+                                <width>20</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-map.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="label_map_title_load">
+                            <property name="font">
+                              <font>
+                                <family>Segoe UI</family>
+                                <pointsize>10</pointsize>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                              </font>
+                            </property>
+                            <property name="text">
+                              <string>NETWORK MAP</string>
+                            </property>
+                            <property name="textRole">
+                              <string>section</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <spacer name="horizontalSpacer_map_title_load">
+                            <property name="orientation">
+                              <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                              <enum>QSizePolicy::Expanding</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                              <size>
+                                <width>40</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                          </spacer>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <widget class="MatplotlibWidget" name="load_network_map_widget">
+                        <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                          <size>
+                            <width>0</width>
+                            <height>0</height>
+                          </size>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                  <property name="cardType">
+                    <string>card</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QFrame" name="frame_load_card">
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>3</horstretch>
+                      <verstretch>1</verstretch>
+                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_load_card">
+                    <property name="spacing">
+                      <number>8</number>
+                    </property>
+                    <property name="leftMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>12</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>16</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_load_title">
+                        <property name="spacing">
+                          <number>8</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_load_icon">
+                            <property name="maximumSize">
+                              <size>
+                                <width>20</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-chart-line.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="label_load_title">
+                            <property name="font">
+                              <font>
+                                <family>Segoe UI</family>
+                                <pointsize>10</pointsize>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                              </font>
+                            </property>
+                            <property name="text">
+                              <string>LOAD PROFILE</string>
+                            </property>
+                            <property name="textRole">
+                              <string>section</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <spacer name="horizontalSpacer_load_title">
+                            <property name="orientation">
+                              <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                              <enum>QSizePolicy::Expanding</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                              <size>
+                                <width>40</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                          </spacer>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <widget class="MatplotlibWidget" name="load_profile_widget">
+                        <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                          <size>
+                            <width>0</width>
+                            <height>150</height>
+                          </size>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                  <property name="cardType">
+                    <string>card</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QFrame" name="frame_genmix_card_load">
+                  <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>3</horstretch>
+                      <verstretch>1</verstretch>
+                    </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_genmix_card_load">
+                    <property name="spacing">
+                      <number>8</number>
+                    </property>
+                    <property name="leftMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>12</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>16</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>16</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_genmix_title_load">
+                        <property name="spacing">
+                          <number>8</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="label_genmix_icon_load">
+                            <property name="maximumSize">
+                              <size>
+                                <width>20</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                            <property name="text">
+                              <string />
+                            </property>
+                            <property name="pixmap">
+                              <pixmap resource="../../../resources.qrc">:/icon/images/icons/cil-chart-pie.png</pixmap>
+                            </property>
+                            <property name="scaledContents">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="label_genmix_title_load">
+                            <property name="font">
+                              <font>
+                                <family>Segoe UI</family>
+                                <pointsize>10</pointsize>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                              </font>
+                            </property>
+                            <property name="text">
+                              <string>GENERATION MIX</string>
+                            </property>
+                            <property name="textRole">
+                              <string>section</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <spacer name="horizontalSpacer_genmix_title_load">
+                            <property name="orientation">
+                              <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                              <enum>QSizePolicy::Expanding</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                              <size>
+                                <width>40</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                          </spacer>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <widget class="MatplotlibWidget" name="load_generation_mix">
+                        <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                          <size>
+                            <width>0</width>
+                            <height>150</height>
+                          </size>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                  <property name="cardType">
+                    <string>card</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <customwidgets>
+    <customwidget>
+      <class>MatplotlibWidget</class>
+      <extends>QGraphicsView</extends>
+      <header location="global">matplotlibwidget.h</header>
+    </customwidget>
+  </customwidgets>
+  <resources>
+    <include location="../../../resources.qrc" />
+  </resources>
+  <connections />
+</ui>
