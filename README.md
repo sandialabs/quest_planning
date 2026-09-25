@@ -22,6 +22,7 @@ Current release version: 2.0.0
 - [Post-planning Production Cost Assessment using QuESt PCM](#pcm)
 - [Tips for Running the QuESt Planning Tool](#tips)
 - [Feedback](#feedback)
+- [Citing QuESt Planning](#citation)
 - [Development Status](#development-status)
 - [Acknowledgements](#acknowledgement)
 
@@ -781,6 +782,22 @@ The advanced simulations could be exceptionally difficult to solve based on the 
 - ***Adjust Solver Settings:*** Adjust the solver parameters to explore different methods to improve the solver's performance. Alternatively, explore different solvers with varying capabilities based on the model formulation. Please refer to the corresponding solver documentation for more information and guidance. 
 
 - ***Review Model Formulation:*** Carefully review the model formulation to identify logical errors or constraints that are too restrictive.
+[Back to Top](#top)
+
+## Citing QuESt Planning
+If you use QuESt Planning in your research, please cite the following paper:
+
+C. J. Newlun, A. Bera, D. Pandit, G. Cuello-Polo, W. Olis, A. Lopez, "QuESt Planning: A Long-term Capacity Expansion Planning Tool for Energy Storage Systems & Modeling Flexibility," 2026 IEEE Electrical Energy Storage Applications and Technologies Conference (EESAT), Tucson, AZ, USA, 2026, pp. 1-5, doi: 10.1109/EESAT65054.2026.11404097.
+
+@INPROCEEDINGS{11404097,
+  author={Newlun, Cody J. and Bera, Atri and Pandit, Dilip and Cuello-Polo, Gustavo and Olis, Walker and Lopez, Andres and Pomeroy, Yung-Jai and Nguyen, Tu},
+  booktitle={2026 IEEE Electrical Energy Storage Applications and Technologies Conference (EESAT)}, 
+  title={QuESt Planning: A Long-term Capacity Expansion Planning Tool for Energy Storage Systems & Modeling Flexibility}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={1-5},
+  doi={10.1109/EESAT65054.2026.11404097}}
 
 [Back to Top](#top)
 ## Feedback
