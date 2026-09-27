@@ -6,6 +6,7 @@ from quest_planning.ui.forms.scenario_builder.ui_scenario_builder import (
 from quest_planning.ui.forms.scenario_builder.ui_view_scenario import (
     Ui_ViewScenarioDialog,
 )
+from quest_planning.ui.utils.help_topics import show_help
 
 
 class ScenarioBuilderPage(QWidget):
@@ -59,33 +60,31 @@ class ScenarioBuilderPage(QWidget):
         self.ui.btn_view_scenario.clicked.connect(self.open_view_scenario)
 
         self.ui.btn_title_help.clicked.connect(
-            lambda: self.display_help_message("Scenario Builder")
+            lambda: show_help(self, "Scenario Builder")
         )
         self.ui.btn_scenario_help.clicked.connect(
-            lambda: self.display_help_message("Select Scenario Name")
+            lambda: show_help(self, "Select Scenario Name")
         )
         self.ui.btn_capita_help.clicked.connect(
-            lambda: self.display_help_message("Select Capital Costs")
+            lambda: show_help(self, "Select Capital Costs")
         )
         self.ui.btn_load_help.clicked.connect(
-            lambda: self.display_help_message("Select Load Forecasts")
+            lambda: show_help(self, "Select Load Forecasts")
         )
         self.ui.btn_growth_help.clicked.connect(
-            lambda: self.display_help_message("Select Annual Load Growth")
+            lambda: show_help(self, "Select Annual Load Growth")
         )
         self.ui.btn_generation_help.clicked.connect(
-            lambda: self.display_help_message(
-                "Select Renewable Portfolio Standard Goals"
-            )
+            lambda: show_help(self, "Select Renewable Portfolio Standard Goals")
         )
         self.ui.btn_trans_help.clicked.connect(
-            lambda: self.display_help_message("Select Transmission Expansion Option")
+            lambda: show_help(self, "Select Transmission Expansion Option")
         )
         self.ui.btn_candidates_help.clicked.connect(
-            lambda: self.display_help_message("Candidate Technologies Selection")
+            lambda: show_help(self, "Candidate Technologies Selection")
         )
         self.ui.btn_generatio_help.clicked.connect(
-            lambda: self.display_help_message("Generation Retirements Selection")
+            lambda: show_help(self, "Generation Retirements Selection")
         )
 
     def set_planning_model_page(self, page):
@@ -208,6 +207,3 @@ class ScenarioBuilderPage(QWidget):
         with open(file_name, "w") as file:
             for key, value in info.items():
                 file.write("{}: {}\n".format(key, value))
-
-    def display_help_message(self, topic):
-        pass

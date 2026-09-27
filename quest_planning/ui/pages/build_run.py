@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QWidget
 from quest_planning.ui.forms.execute_model.ui_execute_model import (
     Ui_ExecuteModelPage,
 )
+from quest_planning.ui.utils.help_topics import show_help
 
 
 class ExecuteModelPage(QWidget):
@@ -29,7 +30,7 @@ class ExecuteModelPage(QWidget):
         self.ui.build_button.clicked.connect(self.on_build_button_clicked)
         self.ui.run_button.clicked.connect(self.on_run_button_clicked)
         self.ui.btn_model_help.clicked.connect(
-            lambda: self.display_help_message("Build & Solve Optimization Model")
+            lambda: show_help(self, "Build & Solve Optimization Model")
         )
 
     def select_file(self):
@@ -44,7 +45,4 @@ class ExecuteModelPage(QWidget):
         pass
 
     def on_run_button_clicked(self):
-        pass
-
-    def display_help_message(self, topic):
         pass

@@ -4,6 +4,7 @@ from PySide6.QtCore import QDate, Qt
 from quest_planning.ui.forms.planning_model_setup.ui_planning_model import (
     Ui_PlanningModelPage,
 )
+from quest_planning.ui.utils.help_topics import show_help
 
 
 class PlanningModelPage(QWidget):
@@ -60,19 +61,19 @@ class PlanningModelPage(QWidget):
             self.on_advanced_settings_button_clicked
         )
         self.ui.button_sim_help.clicked.connect(
-            lambda: self.display_help_message("Select Simulation Years")
+            lambda: show_help(self, "Select Simulation Years")
         )
         self.ui.button_trans_help.clicked.connect(
-            lambda: self.display_help_message("Transmission Model")
+            lambda: show_help(self, "Transmission Model")
         )
         self.ui.button_temporal_help.clicked.connect(
-            lambda: self.display_help_message("Temporal Selection")
+            lambda: show_help(self, "Temporal Selection")
         )
         self.ui.button_discount_help.clicked.connect(
-            lambda: self.display_help_message("Annual Discount Rate")
+            lambda: show_help(self, "Annual Discount Rate")
         )
         self.ui.button_base_help.clicked.connect(
-            lambda: self.display_help_message("Base Currency Year")
+            lambda: show_help(self, "Base Currency Year")
         )
 
     def on_year_box_activated(self):
@@ -99,7 +100,4 @@ class PlanningModelPage(QWidget):
         self.ui.label_currency_input.setText(self.ui.base_currency_year.text())
 
     def on_advanced_settings_button_clicked(self):
-        pass
-
-    def display_help_message(self, topic):
         pass

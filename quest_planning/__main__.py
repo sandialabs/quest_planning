@@ -77,7 +77,7 @@ class QuestPlanning(QMainWindow):
             "page_landing", LandingPage()
         )
         self.pages["page_power_system"] = self._make_page(
-            "page_power_system", PowerSystemPage()
+            "page_power_system", PowerSystemPage(data_handler=self.data_handler)
         )
         self.pages["page_planning"] = self._make_page(
             "page_planning", PlanningModelPage()

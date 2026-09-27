@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'power_system.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.1
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-    QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QSpacerItem, QStackedWidget, QToolButton,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QSpacerItem, QStackedWidget,
+    QToolButton, QVBoxLayout, QWidget)
 
 from quest_planning.matplotlibwidget import MatplotlibWidget
 import quest_planning.resources_rc
@@ -27,8 +27,8 @@ class Ui_PowerSystemPage(object):
     def setupUi(self, PowerSystemPage):
         if not PowerSystemPage.objectName():
             PowerSystemPage.setObjectName(u"PowerSystemPage")
-        PowerSystemPage.resize(739, 761)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        PowerSystemPage.resize(900, 781)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(PowerSystemPage.sizePolicy().hasHeightForWidth())
@@ -41,7 +41,7 @@ class Ui_PowerSystemPage(object):
         self.verticalLayout_main.setContentsMargins(24, 24, 24, 24)
         self.frame_header = QFrame(self.page_standard)
         self.frame_header.setObjectName(u"frame_header")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.frame_header.sizePolicy().hasHeightForWidth())
@@ -77,26 +77,21 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_header.addLayout(self.verticalLayout_header_text)
 
-        self.horizontalSpacer_header = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_header = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_header.addItem(self.horizontalSpacer_header)
 
-        self.power_system_help_button = QToolButton(self.frame_header)
-        self.power_system_help_button.setObjectName(u"power_system_help_button")
-        icon = QIcon()
-        icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.power_system_help_button.setIcon(icon)
-        self.power_system_help_button.setIconSize(QSize(24, 24))
-        self.power_system_help_button.setAutoRaise(True)
+        self.checkBox_no_load = QCheckBox(self.frame_header)
+        self.checkBox_no_load.setObjectName(u"checkBox_no_load")
 
-        self.horizontalLayout_header.addWidget(self.power_system_help_button)
+        self.horizontalLayout_header.addWidget(self.checkBox_no_load)
 
 
         self.verticalLayout_main.addWidget(self.frame_header)
 
         self.frame_source = QFrame(self.page_standard)
         self.frame_source.setObjectName(u"frame_source")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.frame_source.sizePolicy().hasHeightForWidth())
@@ -129,7 +124,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_source_title.addWidget(self.label_source_title)
 
-        self.horizontalSpacer_source_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_source_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_source_title.addItem(self.horizontalSpacer_source_title)
 
@@ -150,7 +145,7 @@ class Ui_PowerSystemPage(object):
 
         self.system_name_input = QLineEdit(self.frame_source)
         self.system_name_input.setObjectName(u"system_name_input")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.system_name_input.sizePolicy().hasHeightForWidth())
@@ -180,7 +175,7 @@ class Ui_PowerSystemPage(object):
 
         self.file_button = QPushButton(self.frame_source)
         self.file_button.setObjectName(u"file_button")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.file_button.sizePolicy().hasHeightForWidth())
@@ -198,6 +193,16 @@ class Ui_PowerSystemPage(object):
         self.open_file_button.setFont(font2)
 
         self.horizontalLayout_folder.addWidget(self.open_file_button)
+
+        self.power_system_help_button = QToolButton(self.frame_source)
+        self.power_system_help_button.setObjectName(u"power_system_help_button")
+        icon = QIcon()
+        icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.power_system_help_button.setIcon(icon)
+        self.power_system_help_button.setIconSize(QSize(24, 24))
+        self.power_system_help_button.setAutoRaise(True)
+
+        self.horizontalLayout_folder.addWidget(self.power_system_help_button)
 
         self.horizontalLayout_folder.setStretch(0, 1)
 
@@ -237,7 +242,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_overview_title.addWidget(self.label_overview_title)
 
-        self.horizontalSpacer_overview_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_overview_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_overview_title.addItem(self.horizontalSpacer_overview_title)
 
@@ -416,7 +421,7 @@ class Ui_PowerSystemPage(object):
         self.horizontalLayout_plots.setObjectName(u"horizontalLayout_plots")
         self.frame_map_card = QFrame(self.frame_plots)
         self.frame_map_card.setObjectName(u"frame_map_card")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy5.setHorizontalStretch(2)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.frame_map_card.sizePolicy().hasHeightForWidth())
@@ -444,7 +449,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_map_title.addWidget(self.label_map_title)
 
-        self.horizontalSpacer_map_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_map_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_map_title.addItem(self.horizontalSpacer_map_title)
 
@@ -464,7 +469,7 @@ class Ui_PowerSystemPage(object):
 
         self.frame_genmix_card = QFrame(self.frame_plots)
         self.frame_genmix_card.setObjectName(u"frame_genmix_card")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy6.setHorizontalStretch(3)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.frame_genmix_card.sizePolicy().hasHeightForWidth())
@@ -492,7 +497,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_genmix_title.addWidget(self.label_genmix_title)
 
-        self.horizontalSpacer_genmix_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_genmix_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_genmix_title.addItem(self.horizontalSpacer_genmix_title)
 
@@ -548,17 +553,14 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_header_load.addLayout(self.verticalLayout_header_text_load)
 
-        self.horizontalSpacer_header_load = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_header_load = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_header_load.addItem(self.horizontalSpacer_header_load)
 
-        self.load_help_button = QToolButton(self.frame_header_load)
-        self.load_help_button.setObjectName(u"load_help_button")
-        self.load_help_button.setIcon(icon)
-        self.load_help_button.setIconSize(QSize(24, 24))
-        self.load_help_button.setAutoRaise(True)
+        self.load_checkBox = QCheckBox(self.frame_header_load)
+        self.load_checkBox.setObjectName(u"load_checkBox")
 
-        self.horizontalLayout_header_load.addWidget(self.load_help_button)
+        self.horizontalLayout_header_load.addWidget(self.load_checkBox)
 
 
         self.verticalLayout_load.addWidget(self.frame_header_load)
@@ -591,7 +593,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_source_title_load.addWidget(self.label_source_title_load)
 
-        self.horizontalSpacer_source_title_load = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_source_title_load = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_source_title_load.addItem(self.horizontalSpacer_source_title_load)
 
@@ -602,14 +604,6 @@ class Ui_PowerSystemPage(object):
         self.gridLayout_source_load.setObjectName(u"gridLayout_source_load")
         self.gridLayout_source_load.setHorizontalSpacing(14)
         self.gridLayout_source_load.setVerticalSpacing(10)
-        self.label_system_name_load = QLabel(self.frame_source_load)
-        self.label_system_name_load.setObjectName(u"label_system_name_load")
-        self.label_system_name_load.setMinimumSize(QSize(100, 0))
-        self.label_system_name_load.setFont(font2)
-        self.label_system_name_load.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.gridLayout_source_load.addWidget(self.label_system_name_load, 0, 0, 1, 1)
-
         self.load_system_name_input = QLineEdit(self.frame_source_load)
         self.load_system_name_input.setObjectName(u"load_system_name_input")
         sizePolicy3.setHeightForWidth(self.load_system_name_input.sizePolicy().hasHeightForWidth())
@@ -618,6 +612,14 @@ class Ui_PowerSystemPage(object):
         self.load_system_name_input.setFont(font1)
 
         self.gridLayout_source_load.addWidget(self.load_system_name_input, 0, 1, 1, 1)
+
+        self.label_system_name_load = QLabel(self.frame_source_load)
+        self.label_system_name_load.setObjectName(u"label_system_name_load")
+        self.label_system_name_load.setMinimumSize(QSize(100, 0))
+        self.label_system_name_load.setFont(font2)
+        self.label_system_name_load.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.gridLayout_source_load.addWidget(self.label_system_name_load, 0, 0, 1, 1)
 
         self.label_data_folder_load = QLabel(self.frame_source_load)
         self.label_data_folder_load.setObjectName(u"label_data_folder_load")
@@ -654,6 +656,14 @@ class Ui_PowerSystemPage(object):
         self.load_open_file_button.setFont(font2)
 
         self.horizontalLayout_folder_load.addWidget(self.load_open_file_button)
+
+        self.load_help_button = QToolButton(self.frame_source_load)
+        self.load_help_button.setObjectName(u"load_help_button")
+        self.load_help_button.setIcon(icon)
+        self.load_help_button.setIconSize(QSize(24, 24))
+        self.load_help_button.setAutoRaise(True)
+
+        self.horizontalLayout_folder_load.addWidget(self.load_help_button)
 
         self.horizontalLayout_folder_load.setStretch(0, 1)
 
@@ -693,7 +703,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_overview_title_load.addWidget(self.label_overview_title_load)
 
-        self.horizontalSpacer_overview_title_load = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_overview_title_load = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_overview_title_load.addItem(self.horizontalSpacer_overview_title_load)
 
@@ -890,7 +900,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_map_title_load.addWidget(self.label_map_title_load)
 
-        self.horizontalSpacer_map_title_load = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_map_title_load = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_map_title_load.addItem(self.horizontalSpacer_map_title_load)
 
@@ -910,7 +920,7 @@ class Ui_PowerSystemPage(object):
 
         self.frame_load_card = QFrame(self.frame_plots_load)
         self.frame_load_card.setObjectName(u"frame_load_card")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy7.setHorizontalStretch(3)
         sizePolicy7.setVerticalStretch(1)
         sizePolicy7.setHeightForWidth(self.frame_load_card.sizePolicy().hasHeightForWidth())
@@ -938,7 +948,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_load_title.addWidget(self.label_load_title)
 
-        self.horizontalSpacer_load_title = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_load_title = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_load_title.addItem(self.horizontalSpacer_load_title)
 
@@ -983,7 +993,7 @@ class Ui_PowerSystemPage(object):
 
         self.horizontalLayout_genmix_title_load.addWidget(self.label_genmix_title_load)
 
-        self.horizontalSpacer_genmix_title_load = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_genmix_title_load = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_genmix_title_load.addItem(self.horizontalSpacer_genmix_title_load)
 
@@ -1017,112 +1027,114 @@ class Ui_PowerSystemPage(object):
     def retranslateUi(self, PowerSystemPage):
         PowerSystemPage.setWindowTitle(QCoreApplication.translate("PowerSystemPage", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("PowerSystemPage", u"Power System Data", None))
-        self.label_title.setProperty("textRole", u"heading")
+        self.label_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"heading", None))
         self.label_subtitle.setText(QCoreApplication.translate("PowerSystemPage", u"Select the folder containing your power system input data.", None))
-        self.label_subtitle.setProperty("textRole", u"subtitle")
-        self.power_system_help_button.setText("")
-        self.power_system_help_button.setProperty("btnRole", u"icon")
-        self.frame_source.setProperty("cardType", u"card")
+        self.label_subtitle.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"subtitle", None))
+        self.checkBox_no_load.setText(QCoreApplication.translate("PowerSystemPage", u"Load", None))
+        self.frame_source.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_source_icon.setText("")
         self.label_source_title.setText(QCoreApplication.translate("PowerSystemPage", u"DATA SOURCE", None))
-        self.label_source_title.setProperty("textRole", u"section")
+        self.label_source_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
         self.label_system_name.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
         self.system_name_input.setText(QCoreApplication.translate("PowerSystemPage", u"Default System Name", None))
         self.label_data_folder.setText(QCoreApplication.translate("PowerSystemPage", u"Data Folder", None))
         self.file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Browse", None))
         self.open_file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Open", None))
-        self.open_file_button.setProperty("btnRole", u"primary")
-        self.frame_overview.setProperty("cardType", u"tile")
+        self.open_file_button.setProperty("btnRole", QCoreApplication.translate("PowerSystemPage", u"primary", None))
+        self.power_system_help_button.setText("")
+        self.power_system_help_button.setProperty("btnRole", QCoreApplication.translate("PowerSystemPage", u"icon", None))
+        self.frame_overview.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_overview_icon.setText("")
         self.label_overview_title.setText(QCoreApplication.translate("PowerSystemPage", u"SYSTEM OVERVIEW", None))
-        self.label_overview_title.setProperty("textRole", u"section")
-        self.frame_tile_bus.setProperty("cardType", u"tile")
+        self.label_overview_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_bus.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_bus_icon.setText("")
         self.label_bus_title.setText(QCoreApplication.translate("PowerSystemPage", u"Buses (Zones)", None))
-        self.label_bus_title.setProperty("textRole", u"caption")
+        self.label_bus_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.bus_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.bus_label.setProperty("textRole", u"section")
-        self.frame_tile_line.setProperty("cardType", u"tile")
+        self.bus_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_line.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_line_icon.setText("")
         self.label_line_title.setText(QCoreApplication.translate("PowerSystemPage", u"Branches", None))
-        self.label_line_title.setProperty("textRole", u"caption")
+        self.label_line_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.line_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.line_label.setProperty("textRole", u"section")
-        self.frame_tile_gen.setProperty("cardType", u"tile")
+        self.line_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_gen.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_gen_icon.setText("")
         self.label_gen_title.setText(QCoreApplication.translate("PowerSystemPage", u"Generators", None))
-        self.label_gen_title.setProperty("textRole", u"caption")
+        self.label_gen_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.gen_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.gen_label.setProperty("textRole", u"section")
-        self.frame_tile_sys.setProperty("cardType", u"tile")
+        self.gen_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_sys.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_sys_icon.setText("")
         self.label_sys_title.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
-        self.label_sys_title.setProperty("textRole", u"caption")
+        self.label_sys_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.sys_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.sys_label.setProperty("textRole", u"section")
-        self.frame_map_card.setProperty("cardType", u"card")
+        self.sys_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_map_card.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_map_icon.setText("")
         self.label_map_title.setText(QCoreApplication.translate("PowerSystemPage", u"NETWORK MAP", None))
-        self.label_map_title.setProperty("textRole", u"section")
-        self.frame_genmix_card.setProperty("cardType", u"card")
+        self.label_map_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_genmix_card.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_genmix_icon.setText("")
         self.label_genmix_title.setText(QCoreApplication.translate("PowerSystemPage", u"GENERATION MIX", None))
-        self.label_genmix_title.setProperty("textRole", u"section")
+        self.label_genmix_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
         self.label_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Power System Data", None))
-        self.label_title_load.setProperty("textRole", u"heading")
+        self.label_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"heading", None))
         self.label_subtitle_load.setText(QCoreApplication.translate("PowerSystemPage", u"Select the folder containing your power system input data (includes load profile).", None))
-        self.label_subtitle_load.setProperty("textRole", u"subtitle")
-        self.load_help_button.setText("")
-        self.load_help_button.setProperty("btnRole", u"icon")
-        self.frame_source_load.setProperty("cardType", u"card")
+        self.label_subtitle_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"subtitle", None))
+        self.load_checkBox.setText(QCoreApplication.translate("PowerSystemPage", u"Load", None))
+        self.frame_source_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_source_icon_load.setText("")
         self.label_source_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"DATA SOURCE", None))
-        self.label_source_title_load.setProperty("textRole", u"section")
-        self.label_system_name_load.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
+        self.label_source_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
         self.load_system_name_input.setText(QCoreApplication.translate("PowerSystemPage", u"Default System Name", None))
+        self.label_system_name_load.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
         self.label_data_folder_load.setText(QCoreApplication.translate("PowerSystemPage", u"Data Folder", None))
         self.load_file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Browse", None))
         self.load_open_file_button.setText(QCoreApplication.translate("PowerSystemPage", u"Open", None))
-        self.load_open_file_button.setProperty("btnRole", u"primary")
-        self.frame_overview_load.setProperty("cardType", u"tile")
+        self.load_open_file_button.setProperty("btnRole", QCoreApplication.translate("PowerSystemPage", u"primary", None))
+        self.load_help_button.setText("")
+        self.load_help_button.setProperty("btnRole", QCoreApplication.translate("PowerSystemPage", u"icon", None))
+        self.frame_overview_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_overview_icon_load.setText("")
         self.label_overview_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"SYSTEM OVERVIEW", None))
-        self.label_overview_title_load.setProperty("textRole", u"section")
-        self.frame_tile_bus_load.setProperty("cardType", u"tile")
+        self.label_overview_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_bus_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_bus_icon_load.setText("")
         self.label_bus_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Buses (Zones)", None))
-        self.label_bus_title_load.setProperty("textRole", u"caption")
+        self.label_bus_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.load_bus_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.load_bus_label.setProperty("textRole", u"section")
-        self.frame_tile_line_load.setProperty("cardType", u"tile")
+        self.load_bus_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_line_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_line_icon_load.setText("")
         self.label_line_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Branches", None))
-        self.label_line_title_load.setProperty("textRole", u"caption")
+        self.label_line_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.load_line_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.load_line_label.setProperty("textRole", u"section")
-        self.frame_tile_gen_load.setProperty("cardType", u"tile")
+        self.load_line_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_gen_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_gen_icon_load.setText("")
         self.label_gen_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"Generators", None))
-        self.label_gen_title_load.setProperty("textRole", u"caption")
+        self.label_gen_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.load_gen_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.load_gen_label.setProperty("textRole", u"section")
-        self.frame_tile_sys_load.setProperty("cardType", u"tile")
+        self.load_gen_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_tile_sys_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"tile", None))
         self.label_sys_icon_load.setText("")
         self.label_sys_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"System Name", None))
-        self.label_sys_title_load.setProperty("textRole", u"caption")
+        self.label_sys_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"caption", None))
         self.load_sys_label.setText(QCoreApplication.translate("PowerSystemPage", u"--", None))
-        self.load_sys_label.setProperty("textRole", u"section")
-        self.frame_map_card_load.setProperty("cardType", u"card")
+        self.load_sys_label.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_map_card_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_map_icon_load.setText("")
         self.label_map_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"NETWORK MAP", None))
-        self.label_map_title_load.setProperty("textRole", u"section")
-        self.frame_load_card.setProperty("cardType", u"card")
+        self.label_map_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_load_card.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_load_icon.setText("")
         self.label_load_title.setText(QCoreApplication.translate("PowerSystemPage", u"LOAD PROFILE", None))
-        self.label_load_title.setProperty("textRole", u"section")
-        self.frame_genmix_card_load.setProperty("cardType", u"card")
+        self.label_load_title.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
+        self.frame_genmix_card_load.setProperty("cardType", QCoreApplication.translate("PowerSystemPage", u"card", None))
         self.label_genmix_icon_load.setText("")
         self.label_genmix_title_load.setText(QCoreApplication.translate("PowerSystemPage", u"GENERATION MIX", None))
-        self.label_genmix_title_load.setProperty("textRole", u"section")
+        self.label_genmix_title_load.setProperty("textRole", QCoreApplication.translate("PowerSystemPage", u"section", None))
     # retranslateUi
 
