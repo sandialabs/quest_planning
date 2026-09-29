@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Advanced Planning Model Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -58,7 +58,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-146</y>
+        <y>0</y>
         <width>457</width>
         <height>398</height>
        </rect>
