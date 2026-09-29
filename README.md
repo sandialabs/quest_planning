@@ -809,7 +809,7 @@ Please submit feedback, issues, and suggestions, through the [Issues](<https://g
 ## Development Status & Future Updates
 <a id="development-status"></a>
 
-The QuESt Planning tool is under active development and more features will be included in future releases. the QuESt Planning tool will be integrated into the [QuESt 2.0](https://github.com/sandialabs/snl-quest), an open-source platform for energy storage analytics, where it will be available to be installed and integrated with other tools available in the QuESt platform. 
+The QuESt Planning tool is under active development and more features will be included in future releases. the QuESt Planning tool will be integrated into the [QuESt 3.0](https://github.com/sandialabs/snl-quest), an open-source platform for energy storage analytics, where it will be available to be installed and integrated with other tools available in the QuESt platform. 
 
 Future updates to QuESt Planning that are being considered include:
 
