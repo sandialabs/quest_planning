@@ -16,8 +16,8 @@ ADVANCED_SETTINGS_DEFAULTS = {
     "Planning Reserve Margin": 20,
     "Regulating Reserve Requirement": 1.0,
     "Spinning Reserve Requirement": 3,
-    "Flexibility Reserve Requirement (Solar)": 10,
-    "Flexibility Reserve Requirement (Wind)": 4,
+    "Flexibility Reserve Requirement (Solar)": 4,
+    "Flexibility Reserve Requirement (Wind)": 10,
     "System-wide Wind Maximum Investment": "Default",
     "System-wide Solar Maximum Investment": "Default",
     "System-wide Gas Maximum Investment": "Default",
@@ -48,11 +48,12 @@ YEAR_GRID_COLUMNS = 5
 
 
 class PlanningModelPage(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, data_handler):
         super().__init__(parent)
         self.ui = Ui_PlanningModelPage()
         self.ui.setupUi(self)
 
+        self.data_handler = data_handler
         self.advanced_settings_pane = None
         self.simulation_years_pane = None
         self.year_checkboxes = []
@@ -129,6 +130,8 @@ class PlanningModelPage(QWidget):
         end_year = self.ui.dateEdit_end.date().year()
         if end_year < begin_year:
             return []
+        self.data_handler.set_start_year(begin_year)
+        self.data_handler.set_start_year(end_year)
         return list(range(begin_year, end_year + 1))
 
     def update_years_label(self):

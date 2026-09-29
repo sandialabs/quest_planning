@@ -14,3 +14,9 @@ def data_path() -> Path:
 
 BASE_DIR = get_path()
 DATA_DIR = data_path()
+#
+# def load_config() -> dict[str, Any]:
+#     config_path = get_path() / config "input.yaml"
+#
+#     with open(config_path, encoding="utf-8") as f:
+#         return yaml.safe_load(f) or {}
