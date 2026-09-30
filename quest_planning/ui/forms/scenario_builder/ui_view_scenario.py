@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
-    QVBoxLayout, QWidget)
-import quest_planning.resources_rc
+    QToolButton, QVBoxLayout, QWidget)
+import resources_rc
 
 class Ui_ViewScenarioDialog(object):
     def setupUi(self, ViewScenarioDialog):
@@ -70,15 +70,14 @@ class Ui_ViewScenarioDialog(object):
 
         self.horizontalLayout_header.addItem(self.horizontalSpacer_header)
 
-        self.pushButton = QPushButton(self.frame_header)
-        self.pushButton.setObjectName(u"pushButton")
+        self.toolButton_help = QToolButton(self.frame_header)
+        self.toolButton_help.setObjectName(u"toolButton_help")
         icon = QIcon()
-        icon.addFile(u":/icon/images/icons/about.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.pushButton.setIcon(icon)
-        self.pushButton.setIconSize(QSize(30, 30))
-        self.pushButton.setFlat(True)
+        icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.toolButton_help.setIcon(icon)
+        self.toolButton_help.setIconSize(QSize(24, 24))
 
-        self.horizontalLayout_header.addWidget(self.pushButton)
+        self.horizontalLayout_header.addWidget(self.toolButton_help)
 
 
         self.verticalLayout.addWidget(self.frame_header)
@@ -478,7 +477,7 @@ class Ui_ViewScenarioDialog(object):
         self.label_title.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"heading", None))
         self.system_name_label.setText(QCoreApplication.translate("ViewScenarioDialog", u"Power System: --", None))
         self.system_name_label.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"subtitle", None))
-        self.pushButton.setText("")
+        self.toolButton_help.setText(QCoreApplication.translate("ViewScenarioDialog", u"...", None))
         self.frame_planning_card.setProperty("cardType", QCoreApplication.translate("ViewScenarioDialog", u"card", None))
         self.label_planning_title.setText(QCoreApplication.translate("ViewScenarioDialog", u"PLANNING MODEL INFORMATION", None))
         self.label_planning_title.setProperty("textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))

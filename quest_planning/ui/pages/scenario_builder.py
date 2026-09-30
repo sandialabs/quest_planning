@@ -38,7 +38,7 @@ class ScenarioBuilderPage(QWidget):
         )
         self.ui.rps_box.setToolTip("Select the Future Generation Mix for the scenario.")
         self.ui.transmission_box.setToolTip(
-            "Choose whether transmission expansion is allowed."
+            "Choose whether transmission expansin is allowed."
         )
         self.ui.cand_tech_button.setToolTip(
             "Select the candidate technologies for the optimization."

@@ -10,7 +10,7 @@ from quest_planning.ui.forms.planning_model_setup.ui_advanced_settings import (
 from quest_planning.ui.forms.planning_model_setup.ui_simulation_years import (
     Ui_SimulationYearsPage
 )
-from quest_planning.ui.utils.help_topics import show_help
+from quest_planning.ui.utils.help_topics import show_error, show_help
 
 ADVANCED_SETTINGS_DEFAULTS = {
     "Planning Reserve Margin": 20,
@@ -46,9 +46,16 @@ ADVANCED_SETTINGS_FIELDS = (
 # Checkboxes in the simulation years dialog are laid out in fixed-width columns.
 YEAR_GRID_COLUMNS = 5
 
+# Temporal combo label -> the value the optimizer compares against. Labels
+# missing from this map are not supported yet and are disabled at startup.
+TEMPORAL_SELECTION_MAP = {
+    "Representative Weeks": "Repr_Weeks",
+    "Seasonal Blocks": "Seasonal_blocks",
+}
+
 
 class PlanningModelPage(QWidget):
-    def __init__(self, parent=None, data_handler):
+    def __init__(self, data_handler, parent=None):
         super().__init__(parent)
         self.ui = Ui_PlanningModelPage()
         self.ui.setupUi(self)
@@ -65,6 +72,11 @@ class PlanningModelPage(QWidget):
         self.ui.annual_discount_factor.setDecimals(2)
         self.ui.annual_discount_factor.setValue(5)
         self.ui.base_currency_year.setText("2021")
+
+        # Options the optimizer understands but this page has no control for.
+        # Explicit so they are not at the mercy of the data handler defaults
+        self.data_handler.set_reserves_option(True)
+        self.data_handler.set_es_lifetime_cost_option(False)
 
         self.setObjectName("planning_model_page")
 
@@ -120,9 +132,22 @@ class PlanningModelPage(QWidget):
             lambda: show_help(self, "Base Currency Year")
         )
 
-        # The default dates are set above the signal connections, so seed the
-        # simulation years once here.
+        # The default dates and widget values are set above the signal
+        # connections, so seed the handler from them once here.
+        self.disable_unsupported_temporal_options()
         self.on_year_box_activated()
+        self.on_transmission_box_activated()
+        self.on_temporal_box_activated()
+        self.on_discount_factor_changed(self.ui.annual_discount_factor.value())
+        self.on_base_currency_year_edited()
+        self.apply_advanced_settings_to_handler()
+
+    def disable_unsupported_temporal_options(self):
+        """Grey out temporal options the optimizer does not implement yet."""
+        model = self.ui.temporal_box.model()
+        for index in range(self.ui.temporal_box.count()):
+            if self.ui.temporal_box.itemText(index) not in TEMPORAL_SELECTION_MAP:
+                model.item(index).setEnabled(False)
 
     def planning_year_range(self):
         """Return every year between the start and end date edits."""
@@ -130,8 +155,6 @@ class PlanningModelPage(QWidget):
         end_year = self.ui.dateEdit_end.date().year()
         if end_year < begin_year:
             return []
-        self.data_handler.set_start_year(begin_year)
-        self.data_handler.set_start_year(end_year)
         return list(range(begin_year, end_year + 1))
 
     def update_years_label(self):
@@ -154,6 +177,11 @@ class PlanningModelPage(QWidget):
         # simulating every year in the new range.
         self.years = self.planning_year_range()
         self.update_years_label()
+        # start_year/end_year only label the results output, but leaving them
+        # None makes the results workbook name itself "..._None-None_...".
+        self.data_handler.set_start_year(self.ui.dateEdit_start.date().year())
+        self.data_handler.set_end_year(self.ui.dateEdit_end.date().year())
+        self.data_handler.set_years_hours(self.years)
 
     def build_year_checkboxes(self):
         """(Re)create the year checkboxes, keeping any years still in range."""
@@ -214,18 +242,41 @@ class PlanningModelPage(QWidget):
             if selected:
                 self.years = selected
                 self.update_years_label()
+                self.data_handler.set_years_hours(self.years)
 
     def on_transmission_box_activated(self):
         self.ui.label_trans_input.setText(self.ui.transmission_box.currentText())
+        # set_tx_model maps the combo label onto the optimizer's own spelling.
+        self.data_handler.set_tx_model(self.ui.transmission_box.currentText())
 
     def on_temporal_box_activated(self):
-        self.ui.label_temp_input.setText(self.ui.temporal_box.currentText())
+        label = self.ui.temporal_box.currentText()
+        self.ui.label_temp_input.setText(label)
+        selection = TEMPORAL_SELECTION_MAP.get(label)
+        if selection is None:
+            show_error(
+                self,
+                "Temporal Selection",
+                "{} is not supported yet.".format(label),
+            )
+            return
+        self.data_handler.set_block_selection(selection)
 
     def on_discount_factor_changed(self, value):
         self.ui.label_discount_input.setText("{:.2f}".format(value))
+        self.data_handler.set_discount_rate(value)
 
     def on_base_currency_year_edited(self):
-        self.ui.label_currency_input.setText(self.ui.base_currency_year.text())
+        text = self.ui.base_currency_year.text()
+        self.ui.label_currency_input.setText(text)
+        try:
+            self.data_handler.set_base_currency_year(int(text))
+        except ValueError:
+            show_error(
+                self,
+                "Base Currency Year",
+                "Enter a four digit year, not {!r}.".format(text),
+            )
 
     def on_advanced_settings_button_clicked(self):
         if self.advanced_settings_pane is None:
@@ -248,6 +299,35 @@ class PlanningModelPage(QWidget):
                 self.advanced_settings[name] = self.convert_setting_value(
                     line_edit.text()
                 )
+            self.apply_advanced_settings_to_handler()
+
+    def apply_advanced_settings_to_handler(self):
+        """Push the accepted advanced settings onto the data handler."""
+        s = self.advanced_settings
+        # Keywords, not positional: the last two are same-typed and a swapped
+        # call would silently set the wrong resource's requirement.
+        self.data_handler.set_reserve_params(
+            prm=s["Planning Reserve Margin"],
+            reg_res_req=s["Regulating Reserve Requirement"],
+            spin_res_req=s["Spinning Reserve Requirement"],
+            flex_res_s_req=s["Flexibility Reserve Requirement (Solar)"],
+            flex_res_w_req=s["Flexibility Reserve Requirement (Wind)"],
+        )
+        self.data_handler.set_system_wide_wind_max(
+            s["System-wide Wind Maximum Investment"]
+        )
+        self.data_handler.set_system_wide_solar_max(
+            s["System-wide Solar Maximum Investment"]
+        )
+        self.data_handler.set_system_wide_gas_max(
+            s["System-wide Gas Maximum Investment"]
+        )
+        self.data_handler.set_system_wide_tx_expansion_max(
+            s["System-wide Transmission Maximum Investment"]
+        )
+        self.data_handler.set_tax_credits_option(s["Tax Credits Option"])
+        self.data_handler.set_tax_credit_end_year(s["Tax Credits End Year"])
+        self.data_handler.set_end_effects(s["End Effects"])
 
     @staticmethod
     def convert_setting_value(value):
@@ -260,4 +340,3 @@ class PlanningModelPage(QWidget):
             return float(value)
         except ValueError:
             return value
-
