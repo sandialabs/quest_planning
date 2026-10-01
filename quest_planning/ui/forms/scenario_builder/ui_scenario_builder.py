@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QSizePolicy,
     QSpacerItem, QTextBrowser, QTextEdit, QToolButton,
     QVBoxLayout, QWidget)
-import resources_rc
+import quest_planning.resources_rc
 
 class Ui_ScenarioBuilderPage(object):
     def setupUi(self, ScenarioBuilderPage):
@@ -58,14 +58,14 @@ class Ui_ScenarioBuilderPage(object):
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.toolButton = QToolButton(self.frame_title)
-        self.toolButton.setObjectName(u"toolButton")
+        self.btn_title_help = QToolButton(self.frame_title)
+        self.btn_title_help.setObjectName(u"btn_title_help")
         icon = QIcon()
         icon.addFile(u":/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.toolButton.setIcon(icon)
-        self.toolButton.setIconSize(QSize(24, 24))
+        self.btn_title_help.setIcon(icon)
+        self.btn_title_help.setIconSize(QSize(24, 24))
 
-        self.horizontalLayout_2.addWidget(self.toolButton)
+        self.horizontalLayout_2.addWidget(self.btn_title_help)
 
 
         self.verticalLayout.addWidget(self.frame_title)
@@ -287,12 +287,12 @@ class Ui_ScenarioBuilderPage(object):
 
         self.annual_load_growth_box = QLineEdit(self.frame_load)
         self.annual_load_growth_box.setObjectName(u"annual_load_growth_box")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.MinimumExpanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.annual_load_growth_box.sizePolicy().hasHeightForWidth())
         self.annual_load_growth_box.setSizePolicy(sizePolicy2)
-        self.annual_load_growth_box.setMaximumSize(QSize(140, 16777215))
+        self.annual_load_growth_box.setMaximumSize(QSize(140, 30))
         self.annual_load_growth_box.setFont(font2)
 
         self.horizontalLayout_load_growth.addWidget(self.annual_load_growth_box)
@@ -338,12 +338,12 @@ class Ui_ScenarioBuilderPage(object):
 
         self.horizontalLayout_transmission_title.addItem(self.horizontalSpacer_transmission_title)
 
-        self.toolButton_2 = QToolButton(self.frame_transmission)
-        self.toolButton_2.setObjectName(u"toolButton_2")
-        self.toolButton_2.setIcon(icon)
-        self.toolButton_2.setIconSize(QSize(24, 24))
+        self.btn_trans_help = QToolButton(self.frame_transmission)
+        self.btn_trans_help.setObjectName(u"btn_trans_help")
+        self.btn_trans_help.setIcon(icon)
+        self.btn_trans_help.setIconSize(QSize(24, 24))
 
-        self.horizontalLayout_transmission_title.addWidget(self.toolButton_2)
+        self.horizontalLayout_transmission_title.addWidget(self.btn_trans_help)
 
 
         self.verticalLayout_transmission.addLayout(self.horizontalLayout_transmission_title)
@@ -395,6 +395,8 @@ class Ui_ScenarioBuilderPage(object):
 
         self.btn_generation_help = QToolButton(self.frame_policy)
         self.btn_generation_help.setObjectName(u"btn_generation_help")
+        self.btn_generation_help.setIcon(icon)
+        self.btn_generation_help.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_policy_title.addWidget(self.btn_generation_help)
 
@@ -478,8 +480,11 @@ class Ui_ScenarioBuilderPage(object):
         self.horizontalLayout_cand_button.setObjectName(u"horizontalLayout_cand_button")
         self.cand_tech_button = QPushButton(self.frame_candidates)
         self.cand_tech_button.setObjectName(u"cand_tech_button")
-        sizePolicy2.setHeightForWidth(self.cand_tech_button.sizePolicy().hasHeightForWidth())
-        self.cand_tech_button.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.cand_tech_button.sizePolicy().hasHeightForWidth())
+        self.cand_tech_button.setSizePolicy(sizePolicy3)
         self.cand_tech_button.setMinimumSize(QSize(220, 0))
         self.cand_tech_button.setFont(font3)
 
@@ -573,8 +578,8 @@ class Ui_ScenarioBuilderPage(object):
         self.horizontalLayout_cand_button_2.setObjectName(u"horizontalLayout_cand_button_2")
         self.btn_large_load = QPushButton(self.frame_large_load)
         self.btn_large_load.setObjectName(u"btn_large_load")
-        sizePolicy2.setHeightForWidth(self.btn_large_load.sizePolicy().hasHeightForWidth())
-        self.btn_large_load.setSizePolicy(sizePolicy2)
+        sizePolicy3.setHeightForWidth(self.btn_large_load.sizePolicy().hasHeightForWidth())
+        self.btn_large_load.setSizePolicy(sizePolicy3)
         self.btn_large_load.setMinimumSize(QSize(220, 0))
         self.btn_large_load.setFont(font3)
 
@@ -664,8 +669,8 @@ class Ui_ScenarioBuilderPage(object):
         self.horizontalLayout_retirement_button.setObjectName(u"horizontalLayout_retirement_button")
         self.gen_retirement_button = QPushButton(self.frame_retirements)
         self.gen_retirement_button.setObjectName(u"gen_retirement_button")
-        sizePolicy2.setHeightForWidth(self.gen_retirement_button.sizePolicy().hasHeightForWidth())
-        self.gen_retirement_button.setSizePolicy(sizePolicy2)
+        sizePolicy3.setHeightForWidth(self.gen_retirement_button.sizePolicy().hasHeightForWidth())
+        self.gen_retirement_button.setSizePolicy(sizePolicy3)
         self.gen_retirement_button.setMinimumSize(QSize(200, 0))
         self.gen_retirement_button.setFont(font3)
 
@@ -734,7 +739,7 @@ class Ui_ScenarioBuilderPage(object):
         ScenarioBuilderPage.setWindowTitle(QCoreApplication.translate("ScenarioBuilderPage", u"Form", None))
         self.label_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Scenario Builder", None))
         self.label_subtitle.setText(QCoreApplication.translate("ScenarioBuilderPage", u"The QuESt Planning scenario builder turns your model configuration into a runnable scenario.", None))
-        self.toolButton.setText(QCoreApplication.translate("ScenarioBuilderPage", u"...", None))
+        self.btn_title_help.setText(QCoreApplication.translate("ScenarioBuilderPage", u"...", None))
         self.frame_scenario.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"card", None))
         self.label_scenario_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"SCENARIO NAME", None))
         self.label_scenario_title.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
@@ -769,7 +774,7 @@ class Ui_ScenarioBuilderPage(object):
         self.frame_transmission.setProperty("cardType", QCoreApplication.translate("ScenarioBuilderPage", u"card", None))
         self.label_transmission_title.setText(QCoreApplication.translate("ScenarioBuilderPage", u"TRANSMISSION EXPANSION", None))
         self.label_transmission_title.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"section", None))
-        self.toolButton_2.setText(QCoreApplication.translate("ScenarioBuilderPage", u"...", None))
+        self.btn_trans_help.setText(QCoreApplication.translate("ScenarioBuilderPage", u"...", None))
         self.label_transmission_desc.setText(QCoreApplication.translate("ScenarioBuilderPage", u"Choose whether <i>QuESt Planning</i> may expand the transmission network. Transmission expansion is a feature that will be added in a later release.", None))
         self.label_transmission_desc.setProperty("textRole", QCoreApplication.translate("ScenarioBuilderPage", u"body", None))
         self.transmission_box.setItemText(0, QCoreApplication.translate("ScenarioBuilderPage", u"Yes", None))

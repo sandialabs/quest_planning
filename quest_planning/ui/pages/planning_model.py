@@ -223,6 +223,7 @@ class PlanningModelPage(QWidget):
             dialog = QDialog(self)
             dialog.ui = Ui_SimulationYearsPage()
             dialog.ui.setupUi(dialog)
+            dialog.setWindowTitle("Simulation Years Selection")
             dialog.ui.btn_ok.clicked.connect(self.accept_simulation_years)
             dialog.ui.btn_years.clicked.connect(self.toggle_all_years)
             self.simulation_years_pane = dialog

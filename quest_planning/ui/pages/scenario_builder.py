@@ -6,6 +6,9 @@ from quest_planning.ui.forms.scenario_builder.ui_scenario_builder import (
 from quest_planning.ui.forms.scenario_builder.ui_view_scenario import (
     Ui_ViewScenarioDialog,
 )
+from quest_planning.ui.forms.scenario_builder.ui_candidate_technologies import (
+    Ui_CandidateTechnologiesPage
+)
 from quest_planning.ui.utils.help_topics import show_help
 
 
@@ -20,6 +23,7 @@ class ScenarioBuilderPage(QWidget):
         self._planning_model_page = None
         self._power_system_page = None
         self._view_dialog = None
+        self._candidate_technologies = None
 
         self.ui.cand_tech_frame.setHidden(True)
         self.ui.retirement_frame.setHidden(True)
@@ -86,6 +90,9 @@ class ScenarioBuilderPage(QWidget):
         self.ui.btn_generatio_help.clicked.connect(
             lambda: show_help(self, "Generation Retirements Selection")
         )
+        self.ui.btn_model_help.clicked.connect(
+            lambda: show_help(self, "Large Load Model Selection")
+        )
 
     def set_planning_model_page(self, page):
         """Supply the Planning Model page so selections can be summarized."""
@@ -96,7 +103,16 @@ class ScenarioBuilderPage(QWidget):
         self._power_system_page = page
 
     def on_cand_tech_button_clicked(self):
-        pass
+        if self._candidate_technologies is None:
+            dialog = QDialog(self)
+            dialog.ui = Ui_CandidateTechnologiesPage()
+            dialog.ui.setupUi(dialog)
+            dialog.ui.btn_ok.clicked.connect(dialog.accept)
+            dialog.ui.btn_cancel.clicked.connect(dialog.reject)
+            self._candidate_technologies = dialog
+
+        self._candidate_technologies.exec()
+            
 
     def on_gen_retirement_button_clicked(self):
         pass
@@ -147,10 +163,10 @@ class ScenarioBuilderPage(QWidget):
             "Retirement Schedule": retirement,
         }
 
-    def open_view_scenario(self, blocking=True):
+    def open_view_scenario(self):
         """Populate and show the View Scenario dialog."""
         if self._view_dialog is None:
-            self._view_dialog = QDialog()
+            self._view_dialog = QDialog(self)
             self._view_dialog.ui = Ui_ViewScenarioDialog()
             self._view_dialog.ui.setupUi(self._view_dialog)
             self._view_dialog.ui.save_scenario_button.clicked.connect(
@@ -187,8 +203,7 @@ class ScenarioBuilderPage(QWidget):
         )
         self._view_dialog.ui.retirement_value.setPlainText(sc["Retirement Schedule"])
 
-        if blocking:
-            self._view_dialog.exec()
+        self._view_dialog.exec()
 
     def save_info_to_file(self):
         """Write a text summary of the scenario to a user-chosen file."""

@@ -63,6 +63,9 @@ HELP_TOPICS = {
     "Generation Retirements Selection": (
         "Click the <b><i>Retirement Schedule</i></b> to select the retirement schedule to be enforced in the QuESt Planning optimization.The <b><i>Default</i></b> option is the retirement schedule detailed in the csv data."
     ),
+    "Large Load Model Selection": (
+        "Click the <b><i>Large Load Model</i></b> button to select the large load model to be considered in the QuESt Planning optimization."
+    ),
     # -- build_run_page
     "Build & Solve Optimization Model": (
         "Click the <b><i>Browse</i></b> button to select a Results folder to save the results. By default, a results folder will be created after an optimal solve.<br><br>"
