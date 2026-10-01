@@ -21,8 +21,9 @@ Current release version: 2.0.0
 - [Post-planning Reliability Assessment using ProGRESS](#progress)
 - [Post-planning Production Cost Assessment using QuESt PCM](#pcm)
 - [Tips for Running the QuESt Planning Tool](#tips)
-- [Feedback](#feedback)
+- [Running Tests](#running-tests)
 - [Citing QuESt Planning](#citation)
+- [Feedback](#feedback)
 - [Development Status](#development-status)
 - [Acknowledgements](#acknowledgement)
 
@@ -115,6 +116,7 @@ Ensure an optimization solver is installed on your machine. For best performance
     ```bash
     python -m quest_planning
     ```
+
 
 [Back to Top](#top)
 ## Workflow of QuESt Planning Tool<a id="workflow"></a>
@@ -783,6 +785,14 @@ The advanced simulations could be exceptionally difficult to solve based on the 
 
 - ***Review Model Formulation:*** Carefully review the model formulation to identify logical errors or constraints that are too restrictive.
 [Back to Top](#top)
+
+### Running Tests
+To run the unit tests, install `pytest` and run from the project root:
+
+```bash
+pip install pytest
+python -m pytest tests/
+```
 
 ## Citing QuESt Planning
 If you use QuESt Planning in your research, please cite the following paper:
