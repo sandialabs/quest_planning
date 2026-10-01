@@ -1062,7 +1062,7 @@ class ExplanDataHandler():
         """
         print("Import data from Excel")
         #Load csv data
-        self.load_data = {self.index(key): pd.read_csv(self.data_dir + f"/{key}.csv") for key in self.data_ls}
+        self.load_data = {self.index(key): pd.read_csv(os.path.join(self.data_dir, f"{key}.csv")) for key in self.data_ls}
        
         #Set scalars and index        
         self.scalars = self.load_data[self.index('scalars')].set_index('Scalar')
