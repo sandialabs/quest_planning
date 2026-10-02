@@ -1059,12 +1059,32 @@ class ExplanDataHandler():
     def get_data(self):
         """
         Load all data from csv files for input into the model.
+
+        Only files that are actually present in data_dir are loaded.
+        This allows datasets with different subsets of CSVs (e.g. zonal vs
+        nodal) to load without crashing on missing optional files such as
+        cap_cred.csv or prm.csv.
         """
+        import os
         print("Import data from Excel")
-        #Load csv data
-        self.load_data = {self.index(key): pd.read_csv(self.data_dir + f"/{key}.csv") for key in self.data_ls}
+
+        # Filter data_ls to only the CSVs that exist in the chosen folder.
+        available = [key for key in self.data_ls
+                     if os.path.isfile(os.path.join(self.data_dir, f"{key}.csv"))]
+        missing = [key for key in self.data_ls if key not in available]
+        if missing:
+            print(f"Note: the following optional CSV files were not found and will be skipped: {missing}")
+
+        # Update data_ls BEFORE building load_data so that self.index()
+        # returns positions consistent with the new (filtered) list.
+        self.data_ls = available
+        self.index = self.data_ls.index
+
+        #Load csv data (only available files)
+        self.load_data = {self.index(key): pd.read_csv(self.data_dir + f'/{key}.csv') for key in available}
        
-        #Set scalars and index        
+       
+        #Set scalars and index
         self.scalars = self.load_data[self.index('scalars')].set_index('Scalar')
         # Get tech_nums and bus nums
         self.get_tech_nums()
