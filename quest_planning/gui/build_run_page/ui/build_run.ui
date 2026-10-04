@@ -166,7 +166,7 @@ border-radius: 10px;</string>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0">
+        <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0">
          <property name="leftMargin">
           <number>0</number>
          </property>

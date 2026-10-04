@@ -70,10 +70,10 @@ class ImageGrid(QWidget):
         self.containerWidget.setStyleSheet("background-color:  rgb(208, 208, 208); border-radius: 25px;")
         self.scrollArea.setWidget(self.containerWidget)
         self.scrollArea.setWidgetResizable(True)
-        
+
         mainLayout = QVBoxLayout(self)
         mainLayout.addWidget(self.scrollArea)
-        
+
         self.setAcceptDrops(True)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -83,7 +83,7 @@ class ImageGrid(QWidget):
     def dropEvent(self, event: QDropEvent):
         position = event.position().toPoint()
         widget_position = self.containerWidget.mapFrom(self, position)
-        
+
         for url in event.mimeData().urls():
             file_path = url.toLocalFile()
             if file_path.endswith(('.png', '.jpeg', '.jpg', '.svg')):
@@ -104,6 +104,9 @@ class FileBrowser(QTreeView):
         self.setModel(self.model)
         self.setDragEnabled(True)
         self.setAcceptDrops(True)
+        self.hideColumn(1)
+        self.hideColumn(2)
+        self.hideColumn(3)
 
     def setRootPath(self, path):
         self.model.setRootPath(path)

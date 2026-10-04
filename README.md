@@ -6,7 +6,7 @@
 
 # **QuESt Planning**: A Long-term Power System Capacity Expansion Planning Tool Focused on Energy Storage Systems
 
-Current release version: 1.0.0
+Current release version: 2.0.0
 
 ## Table of Contents
 - [Introduction](#intro)
@@ -16,22 +16,25 @@ Current release version: 1.0.0
     - [Data Preparation](#data_prep)
     - [Graphical User Interface](#gui_workflow)
     - [Advanced Simulations](#advanced)
+    - [Large Load Modeling](#large-loads)
 - [Examples](#examples)
+- [Post-planning Reliability Assessment using ProGRESS](#progress)
+- [Post-planning Production Cost Assessment using QuESt PCM](#pcm)
 - [Tips for Running the QuESt Planning Tool](#tips)
 - [Feedback](#feedback)
+- [Citing QuESt Planning](#citation)
 - [Development Status](#development-status)
 - [Acknowledgements](#acknowledgement)
 
 ## Introduction 
 <a id="intro"></a>
 
-QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of [QuESt 2.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
+QuESt Planning is a capacity expansion planning model that identifies cost-optimal energy storage, resource, and transmission investments. This tool is part of the [QuESt Grid Planning Toolbox](https://www.sandia.gov/ess/tools-resources/quest/quest-grid-planning-toolbox), which is a suite of open source software tools including the Probabilistic Grid Reliability Analysis with Energy Storage Systems ([ProGRESS](https://github.com/sandialabs/snl-progress)) and the QuESt Production Cost Model [QuESt PCM](https://github.com/sandialabs/quest_pcm) tools. This tool is also availabile in [QuESt 3.0](https://github.com/sandialabs/snl-quest): Open-source Platform for Energy Storage Analytics developed by Sandia National Laboratories. Below is a high-level overview of the inputs and outputs of the QuESt Planning tool.
 <div style="text-align: center;">
 <img src = "quest_planning/images/readme/qp_overview.png" width="650" height="300" alt="overview" />
 </div>
 Long-term capacity expansion planning models are complex optimization models that require careful consideration of modeling assumptions and input data. Model build and solve times can vary significantly, from minutes to days, based on assumptions made while configuring the model inputs and the selection of solver. For more guidance, please refer to the Tips section.
 
-<!--QuESt Planning documentation is under development and will be available [here](https://github.com/sandialabs/snl-quest).-->
 
 [Back to Top](#top)
 ## Key Features of QuESt Planning
@@ -48,7 +51,9 @@ Key features of the QuESt Planning tool include:
 
 - **User-Friendly Interface:** Simplifies the process of input data upload, planning model setup, scenario construction, model execution, and results interpretation.
 
-- **Enhanced Visualizations:** The QuESt Planning tool provides several visualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps. 
+- **Enhanced Visualizations:** The QuESt Planning tool provides several visualizations of the optimization model results, including optimal resource expansion plots, costs breakdowns, and interactive maps.
+
+- **Large Load Modeling:** Model large electrical consumers (e.g., data centers, industrial facilities) with behind-the-meter generation (natural gas, battery storage), flexible demand curtailment, and custom hourly load profiles. Users can specify self-sufficiency requirements and deployment timelines.
 
 [Back to Top](#top)
 ## Getting started
@@ -570,6 +575,96 @@ Once the model has solved, navigate to the `Results` directory to access results
 
 [Back to Top](#top)
 
+### Large Load Modeling
+<a id="large-loads"></a>
+
+QuESt Planning includes advanced capabilities for modeling large electrical loads such as data centers, industrial facilities, or other significant consumers. This feature enables detailed analysis of how large loads interact with the grid and their onsite generation resources.
+
+#### Feature Overview
+
+Large loads can be configured with:
+
+- **Custom Load Profiles**: Hourly electrical demand data (8760 hours per year)
+- **Behind-the-Meter Generation**: 
+  - Natural gas generators
+  - Battery energy storage systems (BESS)
+- **Flexible Demand**: Optional load curtailment capability (up to 25% by default)
+- **Self-Sufficiency Requirements**: Minimum fraction of energy that must be met by onsite resources
+- **Deployment Timeline**: Specify when large loads come online during the planning horizon
+
+#### Configuration Example
+
+Enable large load modeling in your YAML configuration file:
+
+```yaml
+#***************Large Load Configuration********************
+large_load_option: True           # Enable the feature
+large_load_flex: True             # Allow demand curtailment
+ll_self_sufficiency: 0.0          # Min fraction from onsite (0.0-1.0)
+large_load_growth: 0              # Annual load growth rate
+
+large_loads:
+  - id: LL_1                      # Unique identifier
+    bus: 111                      # Bus number for connection
+    capacity_mw: 500              # Peak capacity in MW
+    deploy_year: 2040             # Year load comes online
+    profile_file: datacenter.csv  # Hourly profile (see format below)
+    profile_type: normalized      # "normalized" (0-1) or "absolute" (MW)
+    
+    onsite_resources:
+      ng:                         # Natural gas generation
+        candidate: true
+        max_capacity_mw: 200
+      
+      bess:                       # Battery storage
+        candidate: true
+        max_energy_mwh: 800
+        max_power_mw: 200
+```
+
+#### Load Profile CSV Format
+
+Profile files must be placed in `quest_planning/data_explan/{data_folder}/large_loads/`
+
+**Requirements:**
+- **Exactly 8760 rows** (one per hour of the year)
+- **Required column**: `normalized` (for normalized profiles)
+- Values must be between 0.0 and 1.0 for normalized profiles
+
+**Example format:**
+```csv
+datetime,year,month,day,hour,normalized
+1/1/2020 0:00,2020,1,1,1,0.578199
+1/1/2020 1:00,2020,1,1,2,0.578187
+1/1/2020 2:00,2020,1,1,3,0.578176
+...
+(8760 total rows)
+```
+
+#### Self-Sufficiency Parameter
+
+The `ll_self_sufficiency` parameter (0.0 - 1.0) controls how much energy must be provided by onsite resources:
+
+- **0.0**: No requirement (default) - Load can be 100% grid-supplied
+- **0.5**: At least 50% of annual energy from onsite generation
+- **0.8**: At least 80% of annual energy from onsite generation  
+- **1.0**: 100% self-sufficient (all energy from onsite resources)
+
+#### Working Example
+
+A complete working example is provided:
+- **Config**: `quest_planning/config/input_rts_nodal_base_large_loads.yaml`
+- **Data**: `quest_planning/data_explan/rts_csv_data_large_loads/large_loads/`
+
+To run the example:
+```bash
+python -m quest_planning.explan_simulation quest_planning/config/input_rts_nodal_base_large_loads.yaml
+```
+
+For detailed documentation including troubleshooting, advanced options, and CSV specifications, see: `quest_planning/data_explan/*/large_loads/README.md`
+
+[Back to Top](#top)
+
 ## Examples<a id="examples"></a>
 
 A test case is included with the initial release of QuESt Planning. The test case includes the [**IEEE RTS-GMLC synthetic grid**](<https://github.com/GridMod/RTS-GMLC>) which is a publicly available test system that is derived from IEEE RTS-96 test system. Figure 1 displays the nodal model of the RTS-GMLC test case that can be used for advanced simulations. Figure 2 provides a highly aggregated zonal RTS GMLC system that can be used for simple and quick simulations. 
@@ -583,6 +678,71 @@ A test case is included with the initial release of QuESt Planning. The test cas
 **Figure 2:** IEEE RTS-GMLC Test Case zonal model
 
 The `data_explan` folder contains the RTS-GMLC test cases in the required format to run the QuESt Planning simulations. The nodal system is in the `rts_csv_data` folder and the zonal model is in the `rts_csv_data_zonal`. For Option A, which deploys the graphical user interface, follow the instructions detailed in the [**User-Interface Workflow**](#gui_workflow) section. For Option B, the advanced simulation option, follow the instructions detailed in the [**Advanced Simulations**](#advanced) section. The configuration files for a base case simulation of the nodal and zonal models are called `input_rts_nodal_base.yaml` and `input_rts_zonal_base.yaml`, respectively. These files are located in the `config` folder.  
+
+## Post-Planning Reliability Assessment Using PRoGRESS<a id="progress"></a>
+
+<img src = "quest_planning/images/readme/ProGRESS_exporter_outline.png" width="700" alt="RTS-GMLC-zonal" />
+
+
+QuESt Planning now features a direct pipeline to the [ProGRESS](<https://github.com/sandialabs/snl-progress/>) tool, a probabilistic reliability assessment framework. This feature enables users to evaluate reliability indices for selected investment years once the generation and transmission investment decisions have been obtained from QuESt Planning. The module translates QuESt Planning’s investment decision variables into the CSV and configuration files required by ProGRESS, and then executes ProGRESS simulations according to user-defined settings. This feature is currently available only for command line simulations in [explan_simulation.py](./quest_planning/explan_simulation.py). Follow the following steps to evaluate reliability using the ProGRESS tool:
+- **Run the ProGRESS installer:** From the project root directory, run the following command to install ProGRESS within Quest Planning repo.  
+```bash
+python -m quest_planning.progress.progress_installer install
+```
+
+- **Populate required parameters in the config file:** The config `input.yaml` file must contain the following parameters:
+
+| Parameter      | Comments                   |
+|--------------|-----------------------------------|
+|`run_reliability_assessment`| Set to True to run the post-processing reliability assessment; set to False to skip it.|
+|`rel_evaluation_years`| Investment years for which you want to evaluate reliability.|
+|`progress_sim_mode`| Select spatial fidelity for the ProGRESS tool ("Copper Sheet", "Nodal", or "Zonal").|
+|`ren_data_dir`| (Optional) Downloading wind and solar data every run can get very expensive computationally. Use this option to provide path to processed solar and wind data from previous runs. Leave empty if data download is necessary. Example "C:/quest_planning/data_explan/data_for_PRoGRESS/Nodal".
+|`num_sample_paths`| Select the number of sample years to obtain reliability indices.|
+|`num_hours`| Select the number of simulation hours within each sample.|
+|`num_mpi_processes`| Leverage message passing interface to simulate sample years in parallel. Leave as 0 to use sequential simulation.|
+
+- **Run explan_simulation.py**: Run the simulation with the configuration above via the command line:
+```bash
+python -m quest_planning.explan_simulation /path/to/input.yaml
+```
+
+- **Navigate to the `Reliability_Assessment` subfolder for results:** Users can access reliability indices, within the `Reliability_Assessment` subfolder inside the main `Results` folder generated by QuESt Planning. 
+
+<img src = "quest_planning/images/readme/ProGRESS_exporter.png" width="600" alt="RTS-GMLC-zonal" />
+
+[Back to Top](#top)
+
+## Post-Planning Production Cost Assessment Using QuESt PCM<a id="pcm"></a>
+
+QuESt Planning also features a direct pipeline to the [QuESt PCM](<https://github.com/sandialabs/quest_PCM/>) tool, a production cost modeling (PCM) framework. This feature enables users to perform detailed operational simulations for selected investment years once the generation and transmission investment decisions have been obtained from QuESt Planning. The module translates QuESt Planning’s investment decision variables into the files required by QuESt PCM, and then executes PCM simulations according to user-defined settings. This feature is currently available only for command line simulations in [explan_simulation.py](./quest_planning/explan_simulation.py). Follow the following steps:
+
+- **Run the PCM installer:** From the project root directory, run the following command to install QuESt PCM within Quest Planning repo.  
+```bash
+python -m quest_planning.pcm.pcm_installer install
+```
+
+- **Populate required parameters in the config file:** The config `input.yaml` file must contain the following parameters:
+
+| Parameter      | Comments                   |
+|--------------|-----------------------------------|
+|`run_production_cost`| Set to True to run the post-processing PCM simulation; set to False to skip it.|
+|`pcm_evaluation_years`| Investment years for which you want to perform PCM on.|
+|`detailed_pcm_gen_data`| If set to True, users need to populate ``pcm_gen.csv`` in ``Data`` folder with detailed heat rates, startup fuel, etc. Else, default generator data are populated.|
+|`mipgap`| Select the MIP gap for QuESt PCM's MILP simulation, default is 1%.|
+|`pcm_hours`| Select the number of simulation hours, default is 8760 hours.|
+|`pcm_start_date`| Select the start mm/dd for PCM siluation, default is 01/01.|
+
+- **Run explan_simulation.py**: Run the simulation with the configuration above via the command line:
+```bash
+python -m quest_planning.explan_simulation /path/to/input.yaml
+```
+
+- **Navigate to the `Production_Cost` subfolder for results:** Users can access PCM results, within the `Production_Cost` subfolder inside the main `Results` folder generated by QuESt Planning. 
+
+<img src = "quest_planning/images/readme/pcm.png" width="600" alt="RTS-GMLC-zonal" />
+
+[Back to Top](#top)
 
 ### Data Sources & Data Preparation Tools
 
@@ -610,7 +770,6 @@ The QuESt Planning tool requires several data to run simulations. Listed below a
 
 - [**Form No. 714**](<https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual-electric/data>): provides balancing authority and planning area generation, actual and scheduled power transfers, and load. (Provided by the Federal Energy Regulatory Commission)
 
-
 Additional test cases are under further development and will be included in future releases.
 
 [Back to Top](#top)
@@ -623,6 +782,22 @@ The advanced simulations could be exceptionally difficult to solve based on the 
 - ***Adjust Solver Settings:*** Adjust the solver parameters to explore different methods to improve the solver's performance. Alternatively, explore different solvers with varying capabilities based on the model formulation. Please refer to the corresponding solver documentation for more information and guidance. 
 
 - ***Review Model Formulation:*** Carefully review the model formulation to identify logical errors or constraints that are too restrictive.
+[Back to Top](#top)
+
+## Citing QuESt Planning
+If you use QuESt Planning in your research, please cite the following paper:
+
+C. J. Newlun, A. Bera, D. Pandit, G. Cuello-Polo, W. Olis, A. Lopez, "QuESt Planning: A Long-term Capacity Expansion Planning Tool for Energy Storage Systems & Modeling Flexibility," 2026 IEEE Electrical Energy Storage Applications and Technologies Conference (EESAT), Tucson, AZ, USA, 2026, pp. 1-5, doi: 10.1109/EESAT65054.2026.11404097.
+
+@INPROCEEDINGS{11404097,
+  author={Newlun, Cody J. and Bera, Atri and Pandit, Dilip and Cuello-Polo, Gustavo and Olis, Walker and Lopez, Andres and Pomeroy, Yung-Jai and Nguyen, Tu},
+  booktitle={2026 IEEE Electrical Energy Storage Applications and Technologies Conference (EESAT)}, 
+  title={QuESt Planning: A Long-term Capacity Expansion Planning Tool for Energy Storage Systems & Modeling Flexibility}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={1-5},
+  doi={10.1109/EESAT65054.2026.11404097}}
 
 [Back to Top](#top)
 ## Feedback
@@ -630,10 +805,11 @@ The advanced simulations could be exceptionally difficult to solve based on the 
 Please submit feedback, issues, and suggestions, through the [Issues](<https://github.com/codynewlun/quest_planning/issues>) page. For more information, please reach out to the project developer Cody Newlun (cjnewlu@sandia.gov).
 
 [Back to Top](#top)
+
 ## Development Status & Future Updates
 <a id="development-status"></a>
 
-The QuESt Planning tool is under active development and more features will be included in future releases. the QuESt Planning tool will be integrated into the [QuESt 2.0](https://github.com/sandialabs/snl-quest), an open-source platform for energy storage analytics, where it will be available to be installed and integrated with other tools available in the QuESt platform. 
+The QuESt Planning tool is under active development and more features will be included in future releases. the QuESt Planning tool will be integrated into the [QuESt 3.0](https://github.com/sandialabs/snl-quest), an open-source platform for energy storage analytics, where it will be available to be installed and integrated with other tools available in the QuESt platform. 
 
 Future updates to QuESt Planning that are being considered include:
 
@@ -653,10 +829,11 @@ Project team:
 - Cody Newlun (cjnewlu@sandia.gov)
 - Atri Bera
 - Dilip Pandit
-- Walker Olis
+- Gustavo Cuello-Polo
 - Andres Lopez Ramirez
 - Yung-Jai Pomeroy
 - Tu Nguyen
+- Walker Olis
 
 This material is based upon work supported by the **U.S. Department of Energy, Office of Electricity (OE), Energy Storage Division**.
 

@@ -2,6 +2,7 @@
 """
 Control of the main window for the QuESt Planning Application.
 """
+import os
 import sys
 
 from PySide6.QtCore import Qt, QSettings, QTimer
@@ -229,6 +230,7 @@ class SplashScreen(QMainWindow):
 def main():
     print("Opening QuESt Planning Tool")
     # Suppress Qt warnings
+    sys.stderr = open(os.devnull, 'w')
     Settings = QSettings()
     Settings.clear()
     QImageReader.setAllocationLimit(0)

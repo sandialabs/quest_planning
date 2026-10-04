@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 DISTNAME = "quest_planning"
-VERSION = "1.0"
+VERSION = "2.0.0"
 PYTHON_REQUIRES = ">=3.6"#, <3.11"
 DESCRIPTION = "Sandia National Laboratories Energy Storage Application Platform"
 LONG_DESCRIPTION = open("README.md").read()
@@ -33,7 +33,7 @@ setup(
         "folium==0.16.0",
         "fonttools==4.50.0",
         "geopandas==1.0.1",
-        "gurobipy==11.0.1",
+        "gurobipy>=11.0.1",
         "idna==3.6",
         "Jinja2==3.1.3",
         "kiwisolver==1.4.5",
