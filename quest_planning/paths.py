@@ -20,4 +20,3 @@ DATA_DIR = data_path()
 #
 #     with open(config_path, encoding="utf-8") as f:
 #         return yaml.safe_load(f) or {}
->>>>>>> gui_refactor

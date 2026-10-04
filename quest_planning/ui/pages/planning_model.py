@@ -16,8 +16,7 @@ ADVANCED_SETTINGS_DEFAULTS = {
     "Planning Reserve Margin": 20,
     "Regulating Reserve Requirement": 1.0,
     "Spinning Reserve Requirement": 3,
-    "Flexibility Reserve Requirement (Solar)": 4,
-    "Flexibility Reserve Requirement (Wind)": 10,
+    "Flexibility Reserve Requirement": 4,
     "System-wide Wind Maximum Investment": "Default",
     "System-wide Solar Maximum Investment": "Default",
     "System-wide Gas Maximum Investment": "Default",
@@ -32,8 +31,7 @@ ADVANCED_SETTINGS_FIELDS = (
     ("Planning Reserve Margin", "lineEdit_planning"),
     ("Regulating Reserve Requirement", "lineEdit_reserve"),
     ("Spinning Reserve Requirement", "lineEdit_spinning"),
-    ("Flexibility Reserve Requirement (Solar)", "lineEdit_flex_solar"),
-    ("Flexibility Reserve Requirement (Wind)", "lineEdit_flex_wind"),
+    ("Flexibility Reserve Requirement", "lineEdit_flex_reserve"),
     ("System-wide Wind Maximum Investment", "lineEdit_sys_wind_max"),
     ("System-wide Solar Maximum Investment", "lineEdit_sys_solar_max"),
     ("System-wide Gas Maximum Investment", "lineEdit_sys_gas_max"),
@@ -305,14 +303,11 @@ class PlanningModelPage(QWidget):
     def apply_advanced_settings_to_handler(self):
         """Push the accepted advanced settings onto the data handler."""
         s = self.advanced_settings
-        # Keywords, not positional: the last two are same-typed and a swapped
-        # call would silently set the wrong resource's requirement.
         self.data_handler.set_reserve_params(
             prm=s["Planning Reserve Margin"],
             reg_res_req=s["Regulating Reserve Requirement"],
             spin_res_req=s["Spinning Reserve Requirement"],
-            flex_res_s_req=s["Flexibility Reserve Requirement (Solar)"],
-            flex_res_w_req=s["Flexibility Reserve Requirement (Wind)"],
+            flex_res_req=s["Flexibility Reserve Requirement"],
         )
         self.data_handler.set_system_wide_wind_max(
             s["System-wide Wind Maximum Investment"]

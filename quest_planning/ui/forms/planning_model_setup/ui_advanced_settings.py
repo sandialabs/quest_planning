@@ -75,17 +75,11 @@ class Ui_AdvancedSettingsPage(object):
 
         self.verticalLayout_2.addWidget(self.label_spinning)
 
-        self.label_flex_reserve_solar = QLabel(self.frame_labels)
-        self.label_flex_reserve_solar.setObjectName(u"label_flex_reserve_solar")
-        self.label_flex_reserve_solar.setFont(font1)
+        self.label_flex_reserve = QLabel(self.frame_labels)
+        self.label_flex_reserve.setObjectName(u"label_flex_reserve")
+        self.label_flex_reserve.setFont(font1)
 
-        self.verticalLayout_2.addWidget(self.label_flex_reserve_solar)
-
-        self.label_flex_reserve_wind = QLabel(self.frame_labels)
-        self.label_flex_reserve_wind.setObjectName(u"label_flex_reserve_wind")
-        self.label_flex_reserve_wind.setFont(font1)
-
-        self.verticalLayout_2.addWidget(self.label_flex_reserve_wind)
+        self.verticalLayout_2.addWidget(self.label_flex_reserve)
 
         self.label_sys_wind_max = QLabel(self.frame_labels)
         self.label_sys_wind_max.setObjectName(u"label_sys_wind_max")
@@ -154,15 +148,10 @@ class Ui_AdvancedSettingsPage(object):
 
         self.verticalLayout_3.addWidget(self.lineEdit_spinning)
 
-        self.lineEdit_flex_solar = QLineEdit(self.frame_inputs)
-        self.lineEdit_flex_solar.setObjectName(u"lineEdit_flex_solar")
+        self.lineEdit_flex_reserve = QLineEdit(self.frame_inputs)
+        self.lineEdit_flex_reserve.setObjectName(u"lineEdit_flex_reserve")
 
-        self.verticalLayout_3.addWidget(self.lineEdit_flex_solar)
-
-        self.lineEdit_flex_wind = QLineEdit(self.frame_inputs)
-        self.lineEdit_flex_wind.setObjectName(u"lineEdit_flex_wind")
-
-        self.verticalLayout_3.addWidget(self.lineEdit_flex_wind)
+        self.verticalLayout_3.addWidget(self.lineEdit_flex_reserve)
 
         self.lineEdit_sys_wind_max = QLineEdit(self.frame_inputs)
         self.lineEdit_sys_wind_max.setObjectName(u"lineEdit_sys_wind_max")
@@ -242,8 +231,7 @@ class Ui_AdvancedSettingsPage(object):
         self.label_planning.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Planning Reserve Margin", None))
         self.label_regulating.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Regulating Reserve Requirement", None))
         self.label_spinning.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Spinning Reserve Requirement", None))
-        self.label_flex_reserve_solar.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Flexibility Reserve Requirement (Solar)", None))
-        self.label_flex_reserve_wind.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Flexibility Reserve Requirement (Wind)", None))
+        self.label_flex_reserve.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Flexibility Reserve Requirement", None))
         self.label_sys_wind_max.setText(QCoreApplication.translate("AdvancedSettingsPage", u"System-wide Wind Maximum Investment", None))
         self.label_sys_solar_max.setText(QCoreApplication.translate("AdvancedSettingsPage", u"System-wide Solar Maximum Investment", None))
         self.label_sys_gas_max.setText(QCoreApplication.translate("AdvancedSettingsPage", u"System-wide Gas Maximum Investment", None))
@@ -254,4 +242,3 @@ class Ui_AdvancedSettingsPage(object):
         self.btn_cancel.setText(QCoreApplication.translate("AdvancedSettingsPage", u"Cancel", None))
         self.btn_ok.setText(QCoreApplication.translate("AdvancedSettingsPage", u"OK", None))
     # retranslateUi
-

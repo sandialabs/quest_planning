@@ -122,7 +122,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_flex_reserve_solar">
+           <widget class="QLabel" name="label_flex_reserve">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -130,20 +130,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Flexibility Reserve Requirement (Solar)</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_flex_reserve_wind">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Flexibility Reserve Requirement (Wind)</string>
+             <string>Flexibility Reserve Requirement</string>
             </property>
            </widget>
           </item>
@@ -269,10 +256,7 @@
            <widget class="QLineEdit" name="lineEdit_spinning"/>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_flex_solar"/>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="lineEdit_flex_wind"/>
+           <widget class="QLineEdit" name="lineEdit_flex_reserve"/>
           </item>
           <item>
            <widget class="QLineEdit" name="lineEdit_sys_wind_max"/>
