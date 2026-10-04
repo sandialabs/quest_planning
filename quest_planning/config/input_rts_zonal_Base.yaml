@@ -77,7 +77,7 @@ nuclear_retirement_year: None
 oil_retirement_year: None
 
 #********************Solver********************
-solver: cplex
+solver: appsi_highs
 
 #********************Plotting Options********************
 stacked_bar_by_bus: False
