@@ -13,6 +13,7 @@ Two views are provided (switchable via setShowWithLoad()):
 """
 
 from PySide6.QtWidgets import QFileDialog, QStackedWidget
+from pathlib import Path
 
 from quest_planning.ui.forms.power_system_data.ui_power_system import Ui_PowerSystemPage
 from quest_planning.ui.utils.help_topics import show_error, show_help
@@ -120,9 +121,10 @@ class PowerSystemPage(QStackedWidget):
             )
             return
         try:
-            # data_ls is initialised to None, so it must be populated before get_data()
-            # iterates over it.
-            self.data_handler.set_data_ls_index(None)
+            # Load the CSVs available in this folder. Some datasets omit
+            # optional inputs such as cap_cred.csv and prm.csv.
+            data_ls = [path.stem for path in Path(data_dir).glob("*.csv")]
+            self.data_handler.set_data_ls_index(data_ls)
             self.data_handler.data_dir = data_dir
             self.data_handler.get_data()
         except Exception as exc:
@@ -215,4 +217,3 @@ class PowerSystemPage(QStackedWidget):
                 load_widget,
                 lambda fig, ax: d.plot_load_profile(fig, ax, load_forecast="system_wide"),
             )
-
