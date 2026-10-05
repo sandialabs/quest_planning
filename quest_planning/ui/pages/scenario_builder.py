@@ -3,30 +3,40 @@ from PySide6.QtWidgets import QDialog, QFileDialog, QWidget
 from quest_planning.ui.forms.scenario_builder.ui_scenario_builder import (
     Ui_ScenarioBuilderPage,
 )
+
 from quest_planning.ui.forms.scenario_builder.ui_view_scenario import (
     Ui_ViewScenarioDialog,
 )
-from quest_planning.ui.forms.scenario_builder.ui_candidate_technologies import (
-    Ui_CandidateTechnologiesPage
+
+from quest_planning.ui.dialogs.candidate_technologies import (
+    CandidateTechnologiesDialog,
 )
+
+from quest_planning.ui.dialogs.large_load_model import (
+    LargeLoadModelDialog,
+)
+
 from quest_planning.ui.utils.help_topics import show_help
 
 
 class ScenarioBuilderPage(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, data_handler, parent=None):
         super().__init__(parent)
         self.ui = Ui_ScenarioBuilderPage()
         self.ui.setupUi(self)
 
         self.setObjectName("scenario_builder_page")
 
+        self.data_handler = data_handler
         self._planning_model_page = None
         self._power_system_page = None
         self._view_dialog = None
         self._candidate_technologies = None
+        self._large_load_model = None
 
         self.ui.cand_tech_frame.setHidden(True)
         self.ui.retirement_frame.setHidden(True)
+        self.ui.frame_large_load_selection.setHidden(True)
 
         self.ui.scenario_name_box.setToolTip(
             "Unique name used to save the scenario results."
@@ -62,6 +72,7 @@ class ScenarioBuilderPage(QWidget):
             self.on_gen_retirement_button_clicked
         )
         self.ui.btn_view_scenario.clicked.connect(self.open_view_scenario)
+        self.ui.btn_large_load.clicked.connect(self.on_large_load_button_clicked)
 
         self.ui.btn_title_help.clicked.connect(
             lambda: show_help(self, "Scenario Builder")
@@ -102,17 +113,42 @@ class ScenarioBuilderPage(QWidget):
         """Supply the Power System Data page for the system name."""
         self._power_system_page = page
 
-    def on_cand_tech_button_clicked(self):
-        if self._candidate_technologies is None:
-            dialog = QDialog(self)
-            dialog.ui = Ui_CandidateTechnologiesPage()
-            dialog.ui.setupUi(dialog)
-            dialog.ui.btn_ok.clicked.connect(dialog.accept)
-            dialog.ui.btn_cancel.clicked.connect(dialog.reject)
-            self._candidate_technologies = dialog
+    def _load_forecasts(self):
+        if self.data_handler.load_data is None:
+            return
 
-        self._candidate_technologies.exec()
-            
+        load_df = self.data_handler.load_data[self.data_handler.index("load")]
+        hour_position = load_df.columns.get_loc("hour")
+        columns = load_df.columns[hour_position + 1:].tolist()
+
+        self.ui.load_profile_box.clear()
+        self.ui.load_profile_box.addItems(columns)
+
+    def on_cand_tech_button_clicked(self):
+        """Collect the candidate technologies eligible for the optimization."""
+        if self._candidate_technologies is None:
+            self._candidate_technologies = CandidateTechnologiesDialog(self)
+
+        selected = []
+        if self._candidate_technologies.exec():
+            selected = self._candidate_technologies.selected_technologies()
+
+        if not selected:
+            self.ui.candidate_tech_box.setText("No technology selected")
+            self.ui.cand_tech_frame.setHidden(True)
+            return
+
+        # heading = "<b><u>Selected Candidate Technologies:</u></b><br>"
+        bullets = "<br>".join(["• {}".format(tech) for tech in selected])
+        self.ui.candidate_tech_box.setHtml(bullets)
+        self.ui.cand_tech_frame.setHidden(False)
+
+    def on_large_load_button_clicked(self):
+        if self._large_load_model is None:
+            self._large_load_model = LargeLoadModelDialog(self)
+
+        if self._large_load_model.exec():
+            pass # TODO: handle accepted dialog values
 
     def on_gen_retirement_button_clicked(self):
         pass

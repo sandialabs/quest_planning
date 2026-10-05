@@ -83,7 +83,7 @@ class QuestPlanning(QMainWindow):
             "page_planning", PlanningModelPage(data_handler=self.data_handler)
         )
         self.pages["page_scenario"] = self._make_page(
-            "page_scenario", ScenarioBuilderPage()
+            "page_scenario", ScenarioBuilderPage(data_handler=self.data_handler)
         )
         self.pages["page_execute"] = self._make_page(
             "page_execute", ExecuteModelPage()

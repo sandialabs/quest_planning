@@ -127,6 +127,9 @@ class PowerSystemPage(QStackedWidget):
             self.data_handler.set_data_ls_index(data_ls)
             self.data_handler.data_dir = data_dir
             self.data_handler.get_data()
+
+            scenario_page = self.window().pages["page_scenario"]
+            scenario_page._load_forecasts()
         except Exception as exc:
             show_error(self, "Data Load Failed", str(exc))
             return

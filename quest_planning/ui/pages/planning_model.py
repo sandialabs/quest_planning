@@ -1,14 +1,10 @@
-from PySide6.QtWidgets import QCheckBox, QDialog, QMessageBox, QWidget
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import QDate
 
+from quest_planning.ui.dialogs.advanced_settings import AdvancedSettingsDialog
+from quest_planning.ui.dialogs.simulation_years import SimulationYearsDialog
 from quest_planning.ui.forms.planning_model_setup.ui_planning_model import (
     Ui_PlanningModelPage,
-)
-from quest_planning.ui.forms.planning_model_setup.ui_advanced_settings import (
-    Ui_AdvancedSettingsPage,
-)
-from quest_planning.ui.forms.planning_model_setup.ui_simulation_years import (
-    Ui_SimulationYearsPage
 )
 from quest_planning.ui.utils.help_topics import show_error, show_help
 
@@ -25,24 +21,6 @@ ADVANCED_SETTINGS_DEFAULTS = {
     "Tax Credits End Year": 2032,
     "End Effects": 10,
 }
-
-# (setting name, lineEdit objectName) in the order the labels are laid out.
-ADVANCED_SETTINGS_FIELDS = (
-    ("Planning Reserve Margin", "lineEdit_planning"),
-    ("Regulating Reserve Requirement", "lineEdit_reserve"),
-    ("Spinning Reserve Requirement", "lineEdit_spinning"),
-    ("Flexibility Reserve Requirement", "lineEdit_flex_reserve"),
-    ("System-wide Wind Maximum Investment", "lineEdit_sys_wind_max"),
-    ("System-wide Solar Maximum Investment", "lineEdit_sys_solar_max"),
-    ("System-wide Gas Maximum Investment", "lineEdit_sys_gas_max"),
-    ("System-wide Transmission Maximum Investment", "lineEdit_sys_trans_max"),
-    ("Tax Credits Option", "lineEdit_tax_cred"),
-    ("Tax Credits End Year", "lineEdit_tax_cred_end_year"),
-    ("End Effects", "lineEdit_end_effects"),
-)
-
-# Checkboxes in the simulation years dialog are laid out in fixed-width columns.
-YEAR_GRID_COLUMNS = 5
 
 # Temporal combo label -> the value the optimizer compares against. Labels
 # missing from this map are not supported yet and are disabled at startup.
@@ -61,7 +39,6 @@ class PlanningModelPage(QWidget):
         self.data_handler = data_handler
         self.advanced_settings_pane = None
         self.simulation_years_pane = None
-        self.year_checkboxes = []
         self.advanced_settings = dict(ADVANCED_SETTINGS_DEFAULTS)
         self.ui.dateEdit_start.setDate(QDate(2022, 1, 1))
         self.ui.dateEdit_end.setDate(QDate(2042, 1, 1))
@@ -181,61 +158,20 @@ class PlanningModelPage(QWidget):
         self.data_handler.set_end_year(self.ui.dateEdit_end.date().year())
         self.data_handler.set_years_hours(self.years)
 
-    def build_year_checkboxes(self):
-        """(Re)create the year checkboxes, keeping any years still in range."""
-        pane = self.simulation_years_pane
-        layout = pane.ui.yeargridLayout
-
-        for checkbox in self.year_checkboxes:
-            layout.removeWidget(checkbox)
-            checkbox.setParent(None)
-            checkbox.deleteLater()
-        self.year_checkboxes = []
-
-        previously_selected = set(self.years or ())
-        for index, year in enumerate(self.planning_year_range()):
-            checkbox = QCheckBox(str(year), pane.ui.frame_years)
-            checkbox.setChecked(year in previously_selected)
-            row, column = divmod(index, YEAR_GRID_COLUMNS)
-            layout.addWidget(checkbox, row, column)
-            self.year_checkboxes.append(checkbox)
-
-    def toggle_all_years(self):
-        checkboxes = self.year_checkboxes
-        checked = not all(checkbox.isChecked() for checkbox in checkboxes)
-        for checkbox in checkboxes:
-            checkbox.setChecked(checked)
-
-    def accept_simulation_years(self):
-        if not any(checkbox.isChecked() for checkbox in self.year_checkboxes):
-            QMessageBox.warning(
-                self.simulation_years_pane,
-                "Simulation Years",
-                "Select at least one simulation year.",
-            )
-            return
-        self.simulation_years_pane.accept()
-
     def on_select_years_button_clicked(self):
         if self.simulation_years_pane is None:
-            dialog = QDialog(self)
-            dialog.ui = Ui_SimulationYearsPage()
-            dialog.ui.setupUi(dialog)
-            dialog.setWindowTitle("Simulation Years Selection")
-            dialog.ui.btn_ok.clicked.connect(self.accept_simulation_years)
-            dialog.ui.btn_years.clicked.connect(self.toggle_all_years)
-            self.simulation_years_pane = dialog
+            self.simulation_years_pane = SimulationYearsDialog(self)
 
         # The dialog is cached across opens, so rebuild the checkboxes every
-        # time to pick up any change to the start and end dates.
-        self.build_year_checkboxes()
+        # time to pick up any change to the start and end dates. Rebuilding
+        # from the last accepted selection is also what discards the changes
+        # made during a run that was cancelled or closed.
+        self.simulation_years_pane.build_year_checkboxes(
+            self.planning_year_range(), self.years
+        )
 
         if self.simulation_years_pane.exec():
-            selected = [
-                int(checkbox.text())
-                for checkbox in self.year_checkboxes
-                if checkbox.isChecked()
-            ]
+            selected = self.simulation_years_pane.selected_years()
             # Guard against the dialog being accepted some other way with
             # nothing checked, so downstream consumers always get a horizon.
             if selected:
@@ -279,25 +215,14 @@ class PlanningModelPage(QWidget):
 
     def on_advanced_settings_button_clicked(self):
         if self.advanced_settings_pane is None:
-            dialog = QDialog(self)
-            dialog.ui = Ui_AdvancedSettingsPage()
-            dialog.ui.setupUi(dialog)
-            dialog.ui.btn_ok.clicked.connect(dialog.accept)
-            dialog.ui.btn_cancel.clicked.connect(dialog.reject)
-            self.advanced_settings_pane = dialog
+            self.advanced_settings_pane = AdvancedSettingsDialog(self)
 
-        # The dialog is cached across opens, so seed the fields the first time
-        # and show the current values on every later open.
-        for name, field in ADVANCED_SETTINGS_FIELDS:
-            line_edit = getattr(self.advanced_settings_pane.ui, field)
-            line_edit.setText(str(self.advanced_settings[name]))
+        # The dialog is cached across opens, so seed the fields every time to
+        # show the currently stored values and drop any cancelled edits.
+        self.advanced_settings_pane.load_settings(self.advanced_settings)
 
         if self.advanced_settings_pane.exec():
-            for name, field in ADVANCED_SETTINGS_FIELDS:
-                line_edit = getattr(self.advanced_settings_pane.ui, field)
-                self.advanced_settings[name] = self.convert_setting_value(
-                    line_edit.text()
-                )
+            self.advanced_settings = self.advanced_settings_pane.settings()
             self.apply_advanced_settings_to_handler()
 
     def apply_advanced_settings_to_handler(self):
@@ -324,15 +249,3 @@ class PlanningModelPage(QWidget):
         self.data_handler.set_tax_credits_option(s["Tax Credits Option"])
         self.data_handler.set_tax_credit_end_year(s["Tax Credits End Year"])
         self.data_handler.set_end_effects(s["End Effects"])
-
-    @staticmethod
-    def convert_setting_value(value):
-        """Convert a dialog field to bool, float, or str."""
-        if value.strip().lower() == "true":
-            return True
-        if value.strip().lower() == "false":
-            return False
-        try:
-            return float(value)
-        except ValueError:
-            return value

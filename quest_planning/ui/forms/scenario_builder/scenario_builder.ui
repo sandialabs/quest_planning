@@ -520,25 +520,6 @@
              </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_load_desc">
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Select the &lt;b&gt;&lt;i&gt;load forecast&lt;/i&gt;&lt;/b&gt; used by &lt;i&gt;QuESt Planning&lt;/i&gt;. The forecasts are defined in the csv data.</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textRole" stdset="0">
-               <string>body</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_load_profile">
               <property name="spacing">
                <number>10</number>
@@ -569,10 +550,16 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>30</height>
+                 </size>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>300</width>
-                  <height>16777215</height>
+                  <height>30</height>
                  </size>
                 </property>
                 <property name="font">
@@ -624,10 +611,16 @@
               <item>
                <widget class="QLineEdit" name="annual_load_growth_box">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>30</height>
+                 </size>
                 </property>
                 <property name="maximumSize">
                  <size>
@@ -1013,7 +1006,7 @@
          <item>
           <widget class="QFrame" name="frame_candidates">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1021,7 +1014,7 @@
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>230</height>
+             <height>300</height>
             </size>
            </property>
            <property name="frameShape">
@@ -1053,6 +1046,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_candidates_title">
               <property name="spacing">
                <number>8</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="label_candidates_title">
@@ -1108,25 +1104,6 @@
              </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_candidates_desc">
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Click the &lt;b&gt;&lt;i&gt;Candidate Technologies&lt;/i&gt;&lt;/b&gt; button to select the candidate technologies to be considered in the &lt;i&gt;QuESt Planning&lt;/i&gt; optimization.</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textRole" stdset="0">
-               <string>body</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_cand_button">
               <property name="spacing">
                <number>10</number>
@@ -1179,15 +1156,21 @@
             <item>
              <widget class="QFrame" name="cand_tech_frame">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+               <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>80</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>150</height>
+                <height>250</height>
                </size>
               </property>
               <property name="frameShape">
@@ -1235,10 +1218,22 @@
                </item>
                <item>
                 <widget class="QTextBrowser" name="candidate_tech_box">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
                    <height>70</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>100</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1261,7 +1256,7 @@
          <item>
           <widget class="QFrame" name="frame_large_load">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1269,7 +1264,7 @@
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>230</height>
+             <height>300</height>
             </size>
            </property>
            <property name="frameShape">
@@ -1313,7 +1308,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Large Load Model</string>
+                 <string>LARGE LOAD MODEL</string>
                 </property>
                 <property name="textRole" stdset="0">
                  <string>section</string>
@@ -1354,25 +1349,6 @@
                </widget>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_large_load_desc">
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click the &lt;span style=&quot; font-weight:600; font-style:italic;&quot;&gt;Large Load Model&lt;/span&gt; button to select the large load model to be considered in the &lt;span style=&quot; font-style:italic;&quot;&gt;QuESt Planning&lt;/span&gt; optimization.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textRole" stdset="0">
-               <string>body</string>
-              </property>
-             </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_cand_button_2">
@@ -1427,15 +1403,21 @@
             <item>
              <widget class="QFrame" name="frame_large_load_selection">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+               <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>80</height>
+               </size>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>150</height>
+                <height>250</height>
                </size>
               </property>
               <property name="frameShape">
@@ -1474,7 +1456,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>SELECTED CANDIDATE TECHNOLOGIES</string>
+                  <string>LARGE LOAD MODEL SELECTION</string>
                  </property>
                  <property name="textRole" stdset="0">
                   <string>section</string>
@@ -1483,10 +1465,22 @@
                </item>
                <item>
                 <widget class="QTextBrowser" name="box_large_load_select">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>70</height>
+                   <height>100</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>120</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1602,25 +1596,6 @@
                </widget>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_retirements_desc">
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Click the &lt;b&gt;&lt;i&gt;Retirement Schedule&lt;/i&gt;&lt;/b&gt; button to select the retirement schedule enforced in the &lt;i&gt;QuESt Planning&lt;/i&gt; optimization. The &lt;i&gt;Default&lt;/i&gt; option uses the schedule detailed in the csv data.</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="textRole" stdset="0">
-               <string>body</string>
-              </property>
-             </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_retirement_button">
