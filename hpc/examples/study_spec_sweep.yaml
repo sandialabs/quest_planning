@@ -26,21 +26,21 @@ base_config: quest_planning/config/input_rts_nodal_base.yaml
 # ---------------------------------------------------------------------------
 # All configs, manifest, SLURM script, and results are written here.
 # Recommended: use a fast parallel filesystem (e.g. /scratch/$USER/...).
-output_dir: /scratch/your_username/quest_sweep_001
+output_dir: /scratch/your_username/quest_sweep_001   # writable scratch/project directory on the cluster
 
 # ---------------------------------------------------------------------------
 # QuESt Planning repository root on the cluster
 # ---------------------------------------------------------------------------
 # Used to resolve data_folder paths and to set the working directory in the
 # SLURM script.  Defaults to the parent of this hpc/ directory.
-quest_repo_path: /path/to/quest_planning_repo
+quest_repo_path: /path/to/repo   # absolute path to the cloned QuESt Planning repo root
 
 # ---------------------------------------------------------------------------
 # Gurobi floating license
 # ---------------------------------------------------------------------------
 # Path to gurobi.lic OR token-server address (e.g. "host:41954" or
 # "/apps/gurobi/gurobi.lic").  Set to the value your site provides.
-gurobi_license_file: /path/to/gurobi.lic
+gurobi_license_file: /path/to/gurobi.lic   # token server address (host:port) or path to gurobi.lic
 
 # ---------------------------------------------------------------------------
 # Solver thread count

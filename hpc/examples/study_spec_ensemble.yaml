@@ -20,11 +20,11 @@ mode: ensemble
 
 base_config: quest_planning/config/input_rts_nodal_base.yaml
 
-output_dir: /scratch/your_username/quest_ensemble_001
+output_dir: /scratch/your_username/quest_ensemble_001   # writable scratch/project directory on the cluster
 
-quest_repo_path: /path/to/quest_planning_repo
+quest_repo_path: /path/to/repo   # absolute path to the cloned QuESt Planning repo root
 
-gurobi_license_file: /path/to/gurobi.lic
+gurobi_license_file: /path/to/gurobi.lic   # token server address (host:port) or path to gurobi.lic
 
 solver_threads: 8
 
