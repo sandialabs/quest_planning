@@ -18,6 +18,17 @@ from pyomo.core.expr import identify_variables
 
 logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.WARNING)
 
+# HPC floating-license retry helper (used in the gurobi solver branch below).
+# Import is deferred to avoid a hard dependency on the hpc package when running
+# outside of an HPC context; falls back gracefully if the module is absent.
+try:
+    import sys, os as _os
+    sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..', '..', 'hpc'))
+    from gurobi_retry import solve_with_retry as _grb_solve
+    _HPC_RETRY_AVAILABLE = True
+except ImportError:
+    _HPC_RETRY_AVAILABLE = False
+
 class Optimizer(with_metaclass(ABCMeta)):
     """Abstract base class for Pyomo ConcreteModel optimization framework."""
 
@@ -192,11 +203,19 @@ class Optimizer(with_metaclass(ABCMeta)):
                 solver.options["NumericFocus"]= 3#cjn add
                 solver.options["BarHomogeneous"]= 1#cjn add
                 solver.options["ScaleFlag"]= 2#cjn add
-                solver.options['Threads'] = 8
+                # solver_threads is configurable via YAML (solver_threads key).
+                # Defaults to 8 to match typical HPC job allocation of 8 CPUs.
+                solver.options['Threads'] = getattr(self.data_handler, 'solver_threads', 8)
                 #solver.options['ThreadLimit'] = 8
-                
-                results = solver.solve(
-                    self.model, tee=True, keepfiles=True)
+
+                # Use floating-license retry wrapper when running on HPC so
+                # that jobs back off gracefully instead of failing immediately
+                # when all Gurobi tokens are checked out.
+                if _HPC_RETRY_AVAILABLE:
+                    results = _grb_solve(solver, self.model, tee=True, keepfiles=True)
+                else:
+                    results = solver.solve(
+                        self.model, tee=True, keepfiles=True)
         elif self.solver == "HiGHs":
             #Solver Factory does not work with HiGHs
             solver = Highs()

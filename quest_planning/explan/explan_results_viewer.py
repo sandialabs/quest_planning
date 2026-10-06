@@ -647,15 +647,32 @@ class ExplanResultsViewer():
         self.create_lookup_info()
         print("Model has solved to optimality and results have been processed. Please proceed to the Results page.")
 
-    def process_results(self, rd, pd, timestamp, report):
-        """Process the output of the optimizer - Command line only"""
+    def process_results(self, rd, pd, timestamp, report, results_dir=None):
+        """Process the output of the optimizer - Command line only.
+
+        Parameters
+        ----------
+        rd : dict
+            Variable results dictionary from the optimizer.
+        pd : dict
+            Parameter results dictionary from the optimizer.
+        timestamp : str
+            Run timestamp string used for folder naming.
+        report : str
+            Model size report text.
+        results_dir : str or None, optional
+            Explicit output directory for this run. When provided (e.g. from an
+            HPC job array), results are written there instead of the default
+            quest_planning/Results/ location. This prevents race conditions when
+            many jobs run concurrently. If None, the original default is used.
+        """
         self.system = self.data_handler.system
         self.rd = rd
         self.pd = pd
         self.timestamp = timestamp
         self.report = report
 
-        self.create_results_folder(filepath=None)
+        self.create_results_folder(filepath=results_dir)
 
         self.create_lookup_info()
         self.plot_results()

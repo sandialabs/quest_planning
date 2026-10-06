@@ -1,0 +1,60 @@
+# =============================================================================
+# study_spec_oat.yaml  --  One-at-a-Time (OAT) Sensitivity Analysis Example
+# =============================================================================
+# Generates:
+#   job_000  -- base case (all parameters at their FIRST listed value)
+#   job_001+ -- one job per non-baseline value, varying a single parameter
+#               while all others stay at baseline.
+#
+# Example below: 1 base + (4-1) discount_rate + (4-1) prm + (3-1) wind_max
+#                = 1 + 3 + 3 + 2 = 9 jobs total.
+#
+# Usage:
+#   python hpc/study_builder.py hpc/examples/study_spec_oat.yaml
+#   sbatch <output_dir>/submit_array.sh
+#
+# After all jobs complete, run aggregate_results.py to get a tornado chart:
+#   python hpc/aggregate_results.py <output_dir>/manifest.csv
+# =============================================================================
+
+mode: oat
+
+base_config: quest_planning/config/input_rts_nodal_base.yaml
+
+output_dir: /scratch/your_username/quest_oat_001
+
+quest_repo_path: /path/to/quest_planning_repo
+
+gurobi_license_file: /path/to/gurobi.lic
+
+solver_threads: 8
+
+# ---------------------------------------------------------------------------
+# Sensitivity axes
+# ---------------------------------------------------------------------------
+# The FIRST value in each list is the baseline for that parameter.
+# study_builder generates one job per non-first value, varying only that
+# parameter.  All other parameters remain at their first (baseline) value.
+sensitivity:
+  # Discount rate (%): baseline = 5
+  discount_rate: [5, 3, 6, 7]
+
+  # Planning reserve margin (%): baseline = 20
+  prm: [20, 10, 15, 25]
+
+  # System-wide wind capacity limit (MW): baseline = 10000
+  system_wide_wind_max: [10000, 5000, 20000]
+
+  # Energy storage cost trajectory: baseline = Base
+  es_cost: [Base, Low, High]
+
+  # CO2 policy on/off: baseline = False
+  co2_policy: [False, True]
+
+slurm:
+  job_name: quest_oat_001
+  time: "02:00:00"
+  mem: "32G"
+  max_concurrent_jobs: 10
+  # partition: standard
+  # account: my_project_account

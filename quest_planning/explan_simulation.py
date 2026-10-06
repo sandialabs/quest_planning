@@ -122,6 +122,10 @@ class Explan:
 
         d.set_resource_bus_limits(config['limit_by_buses'])
 
+        # HPC: configurable solver thread count (matches SLURM --cpus-per-task).
+        # Defaults to 8 when not specified so existing configs are unaffected.
+        d.solver_threads = config.get('solver_threads', 8)
+
         # Large load configuration
         if config.get('large_load_option', False):
             d.read_large_loads_config(config)
@@ -153,7 +157,9 @@ class Explan:
         self.results.stacked_bar_by_bus_option = self.config['stacked_bar_by_bus']
         self.results.policy_plot_option = self.config['policy_plot_option']
         self.results.process_results(
-            self.var_dict, self.par_dict, self.timestamp, self.optimizer.report)
+            self.var_dict, self.par_dict, self.timestamp, self.optimizer.report,
+            results_dir=self.config.get('results_dir', None)
+        )
 
     def run_post_process(self):
         if self.config.get("run_reliability_assessment", False):

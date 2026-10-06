@@ -1,0 +1,98 @@
+# =============================================================================
+# study_spec_ensemble.yaml  --  Named Scenario Ensemble Example
+# =============================================================================
+# Generates exactly one job per named scenario entry.
+# Use this when you have a set of hand-crafted, discrete scenarios rather than
+# a systematic parameter grid.
+#
+# Each scenario entry can override ANY keys from the base config.
+# The optional "name" key is used only for logging; it does not affect the
+# YAML config or manifest.
+#
+# Example below: 6 named scenarios covering a range of policy / cost futures.
+#
+# Usage:
+#   python hpc/study_builder.py hpc/examples/study_spec_ensemble.yaml
+#   sbatch <output_dir>/submit_array.sh
+# =============================================================================
+
+mode: ensemble
+
+base_config: quest_planning/config/input_rts_nodal_base.yaml
+
+output_dir: /scratch/your_username/quest_ensemble_001
+
+quest_repo_path: /path/to/quest_planning_repo
+
+gurobi_license_file: /path/to/gurobi.lic
+
+solver_threads: 8
+
+# ---------------------------------------------------------------------------
+# Named scenarios
+# ---------------------------------------------------------------------------
+scenarios:
+
+  # --- Reference case: no policy, base ES cost, mid discount rate -----------
+  - name: reference
+    scenario: Reference
+    system: Reference
+    es_cost: Base
+    discount_rate: 5
+    co2_policy: False
+    rps_policy: False
+
+  # --- Low-cost clean energy: cheap storage, strong policy ------------------
+  - name: clean_low_cost
+    scenario: CleanLowCost
+    system: CleanLowCost
+    es_cost: Low
+    discount_rate: 5
+    co2_policy: True
+    rps_policy: True
+
+  # --- High-cost clean energy: expensive storage, strong policy -------------
+  - name: clean_high_cost
+    scenario: CleanHighCost
+    system: CleanHighCost
+    es_cost: High
+    discount_rate: 5
+    co2_policy: True
+    rps_policy: True
+
+  # --- Business as usual: no new policy, mid ES cost, high discount rate ----
+  - name: bau_high_discount
+    scenario: BAU_HighDiscount
+    system: BAU_HighDiscount
+    es_cost: Base
+    discount_rate: 7
+    co2_policy: False
+    rps_policy: False
+
+  # --- High renewable penetration with transmission expansion ---------------
+  - name: high_ren_tx_expansion
+    scenario: HighRen_TxExp
+    system: HighRen_TxExp
+    es_cost: Low
+    discount_rate: 5
+    trans_expansion: True
+    co2_policy: True
+    system_wide_wind_max: 20000
+    system_wide_solar_max: 300000000
+
+  # --- LDES-off: no long-duration storage candidates ------------------------
+  - name: no_ldes
+    scenario: NoLDES
+    system: NoLDES
+    es_cost: Base
+    discount_rate: 5
+    ldes_switch: False
+    co2_policy: False
+
+slurm:
+  job_name: quest_ensemble_001
+  time: "03:00:00"
+  mem: "32G"
+  max_concurrent_jobs: 6
+  # partition: standard
+  # account: my_project_account

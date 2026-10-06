@@ -1,0 +1,84 @@
+# =============================================================================
+# study_spec_sweep.yaml  --  Parametric Sweep Example
+# =============================================================================
+# Generates the Cartesian product of all listed sweep axes.
+# Example below: 3 ES cost levels x 3 discount rates x 2 CO2 policy states
+#                = 18 jobs total.
+#
+# Usage:
+#   python hpc/study_builder.py hpc/examples/study_spec_sweep.yaml
+#   sbatch <output_dir>/submit_array.sh
+# =============================================================================
+
+# Study mode: "sweep" | "oat" | "ensemble"
+mode: sweep
+
+# ---------------------------------------------------------------------------
+# Base configuration
+# ---------------------------------------------------------------------------
+# Path to a QuESt Planning YAML config that defines ALL required keys.
+# Every swept parameter OVERRIDES the corresponding key in this file.
+# Use a relative path (from the repo root) or an absolute path.
+base_config: quest_planning/config/input_rts_nodal_base.yaml
+
+# ---------------------------------------------------------------------------
+# Output directory (on cluster scratch or project filesystem)
+# ---------------------------------------------------------------------------
+# All configs, manifest, SLURM script, and results are written here.
+# Recommended: use a fast parallel filesystem (e.g. /scratch/$USER/...).
+output_dir: /scratch/your_username/quest_sweep_001
+
+# ---------------------------------------------------------------------------
+# QuESt Planning repository root on the cluster
+# ---------------------------------------------------------------------------
+# Used to resolve data_folder paths and to set the working directory in the
+# SLURM script.  Defaults to the parent of this hpc/ directory.
+quest_repo_path: /path/to/quest_planning_repo
+
+# ---------------------------------------------------------------------------
+# Gurobi floating license
+# ---------------------------------------------------------------------------
+# Path to gurobi.lic OR token-server address (e.g. "host:41954" or
+# "/apps/gurobi/gurobi.lic").  Set to the value your site provides.
+gurobi_license_file: /path/to/gurobi.lic
+
+# ---------------------------------------------------------------------------
+# Solver thread count
+# ---------------------------------------------------------------------------
+# Must match --cpus-per-task in the SLURM block below.
+solver_threads: 8
+
+# ---------------------------------------------------------------------------
+# Parameters to sweep (Cartesian product)
+# ---------------------------------------------------------------------------
+# Any key that appears in a QuESt Planning YAML config can be swept.
+# Each key maps to a list of values to iterate over.
+sweep:
+  # Energy storage cost trajectory
+  es_cost: [Low, Base, High]
+
+  # Discount rate (%)
+  discount_rate: [3, 5, 7]
+
+  # CO2 policy on/off
+  co2_policy: [False, True]
+
+# ---------------------------------------------------------------------------
+# SLURM resource configuration
+# ---------------------------------------------------------------------------
+slurm:
+  job_name: quest_sweep_001
+  # Wall-clock time limit per job (HH:MM:SS).
+  # RTS-GMLC base case with seasonal_blocks + Gurobi typically finishes in <1h.
+  # Scale up for larger systems (Hawaii 40, Texas 2k, WECC 240).
+  time: "02:00:00"
+  # Memory per job.  32G is sufficient for RTS-GMLC; use 64–128G for WECC 240.
+  mem: "32G"
+  # Maximum number of jobs running concurrently.
+  # Set <= number of available Gurobi floating license tokens.
+  max_concurrent_jobs: 18
+  # cpus-per-task is set automatically from solver_threads above.
+
+  # Uncomment and set these for your cluster:
+  # partition: standard
+  # account: my_project_account
