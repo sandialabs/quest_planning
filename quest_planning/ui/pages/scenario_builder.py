@@ -16,6 +16,10 @@ from quest_planning.ui.dialogs.large_load_model import (
     LargeLoadModelDialog,
 )
 
+from quest_planning.ui.dialogs.retirement_schedule import (
+    RetirementScheduleDialog,
+)
+
 from quest_planning.ui.utils.help_topics import show_help
 
 
@@ -33,6 +37,8 @@ class ScenarioBuilderPage(QWidget):
         self._view_dialog = None
         self._candidate_technologies = None
         self._large_load_model = None
+        self._retirement_schedule = None
+        self.retirements_print = None
 
         self.ui.cand_tech_frame.setHidden(True)
         self.ui.retirement_frame.setHidden(True)
@@ -151,7 +157,54 @@ class ScenarioBuilderPage(QWidget):
             pass # TODO: handle accepted dialog values
 
     def on_gen_retirement_button_clicked(self):
-        pass
+        """Configure generator retirement schedules."""
+        generators = None
+        load_data = getattr(self.data_handler, "load_data", None)
+        data_ls = getattr(self.data_handler, "data_ls", None)
+        if load_data is not None and data_ls and "gen" in data_ls:
+            generators = load_data[data_ls.index("gen")]
+
+        dialog = RetirementScheduleDialog(
+            generators=generators,
+            years=getattr(self.data_handler, "years", None),
+            parent=self,
+        )
+
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        retirement = dialog.selected_retirement()
+
+        if retirement["mode"] == "generator":
+            self.data_handler.set_retirements(retirement["values"])
+
+        self.ui.retirement_box.setHtml(
+            self.format_retirement_schedule(retirement)
+        )
+        self.ui.retirement_frame.setHidden(False)
+        self.retirements_print = retirement
+
+    def format_retirement_schedule(self, retirement):
+        mode = retirement["mode"]
+        values = retirement["values"]
+
+        if mode == "default":
+            return "Default generation retirement schedule"
+
+        if mode == "technology":
+            heading = "Technology-specific retirement schedule"
+        else:
+            heading = "Generator-specific retirement schedule"
+
+        if not values:
+            return "{}<br>No custom retirements selected".format(heading)
+
+        lines = "<br>".join(
+            f"• {name}: {year}"
+            for name, year in values.items()
+        )
+
+        return "{}<br>{}".format(heading, lines)
 
     def planning_model_info(self):
         """Collect the Planning Model configuration as a dictionary."""
