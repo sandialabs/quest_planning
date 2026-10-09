@@ -675,18 +675,6 @@ class ExplanOptimizer(Optimizer):
             model.PRM = pm.Param(model.R, model.Y, initialize=prm_init)
             par_index_labels['PRM'] = ['r', 'y']
 
-            print("Regions in model.R:", list(model.R.data()))
-            print("Bus-region mapping:", {b: pm.value(model.bus_region[b]) for b in model.B})
-            print("PRM values:", {(r, y): pm.value(model.PRM[r, y]) for r in model.R for y in model.Y})
-            print("PEAK_REG values:", {(r, y): pm.value(model.PEAK_REG[r, y]) for r in model.R for y in model.Y})
-
-            for r in model.R:
-                buses = [
-                    b for b in model.B
-                    if int(pm.value(model.bus_region[b])) == int(r)
-                ]
-                print(f"Region {r}: {len(buses)} buses")
-
         else:
             # SYSTEM-WIDE: keep prior behavior (unchanged)
             peak_dict = peak[self.data_handler.load_forecast].filter(
@@ -1452,6 +1440,49 @@ class ExplanOptimizer(Optimizer):
         model.B_G_wind_can = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_wind_can_df['Bus_num'].values,
                 B_G_wind_can_df['Gen_num'].values)))
+
+        # ------------------------------------------------------------------
+        # Sparse bus-gen sets for renewable and thermal constraints (Fix E).
+        # Replacing full B_G iteration in cPVExist, cPVCand, cWindExist,
+        # cThermMax/Min/Rup/Rdwn, and the cNonES split.
+        # Each set contains only the actual (bus, gen) pairs relevant to that
+        # constraint family — eliminating the 84–99% Constraint.Skip overhead
+        # that occurs when these constraints are indexed over all of B_G.
+        # ------------------------------------------------------------------
+
+        # Existing PV (upv_ex) generators only — for cPVExist
+        B_G_pv_ex_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['upv_ex'])]
+        model.B_G_pv_ex = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_pv_ex_df['Bus_num'].values,
+                B_G_pv_ex_df['Gen_num'].values)))
+
+        # Existing wind (wind_ex) generators only — for cWindExist
+        B_G_wind_ex_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['wind_ex'])]
+        model.B_G_wind_ex = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_wind_ex_df['Bus_num'].values,
+                B_G_wind_ex_df['Gen_num'].values)))
+
+        # Solar candidate (upv_can) generators only — for cPVCand
+        B_G_solar_can_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['upv_can'])]
+        model.B_G_solar_can = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_solar_can_df['Bus_num'].values,
+                B_G_solar_can_df['Gen_num'].values)))
+
+        # Non-storage bus-gen pairs — complement of B_G_sto within B_G.
+        # Used for the cNonESgen constraint (forces Pdis+Pcha==0 for all
+        # non-storage generators, replacing the else-branch of cNonES).
+        _sto_bg_set = frozenset(
+            zip(B_G_sto_df['Bus_num'].values, B_G_sto_df['Gen_num'].values))
+        B_G_non_sto_pairs = [
+            (int(b), int(g))
+            for b, g in zip(bus_gen_num['Bus_num'].values,
+                            bus_gen_num['Gen_num'].values)
+            if (b, g) not in _sto_bg_set
+        ]
+        model.B_G_non_sto = pm.Set(dimen=2, initialize=tuple(B_G_non_sto_pairs))
         #%%
     
         

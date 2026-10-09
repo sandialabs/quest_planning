@@ -3069,8 +3069,7 @@ class ExplanDataHandler():
             
     def capex_par_adjust(self):
         '''
-
-        For non-energy storage technologies, adjust capex data
+        For non-energy storage technologies, adjust capex data.
 
         Returns
         -------
@@ -3080,39 +3079,32 @@ class ExplanDataHandler():
         years = self.years
         bus_tech_nums = self.load_data[self.index('gen')][[
             'Bus_num', 'Gen_num', 'Gen_name', 'Tech_Num']]
-        capex_df = pd.DataFrame(
-            columns=capex_t_df.columns[2:np.shape(capex_t_df)[1]])
-        
-        new_rows = []
-        for g in range(len(bus_tech_nums)):
-            gen = bus_tech_nums.iloc[g]
-            tn = gen['Tech_Num']
-            gen_n = gen['Gen_num']
-         
-            if gen_n not in self.tech_nums['storage'] and gen_n in self.tech_nums['candidates']:
-                capex_arr = capex_t_df[capex_t_df['Tech_num'] == tn].drop(
-                    ['Tech_num', 'Tech_name'], axis=1)
-                if not capex_arr.empty:
-                    # Create a new row with the index set to gen_n
-                    capex_arr.index = [gen_n]
-                    new_rows.append(capex_arr)
-                #capex_arr.index = [gen_n]
-                #capex_df = pd.concat([capex_df, capex_arr])
-        
-        if new_rows:
-            capex_df = pd.DataFrame(pd.concat(new_rows))
-            #print(new_rows)
-            #print(capex_df)
+
+        # Vectorized replacement for the old per-generator for-loop.
+        # Old: O(G × T) — iterated every generator with iloc[g] and filtered
+        # capex_t_df by Tech_num on each iteration.
+        # New: filter candidate non-ES generators once, then merge on Tech_Num.
+        non_es_cand_mask = (
+            bus_tech_nums['Gen_num'].isin(self.tech_nums['candidates']) &
+            ~bus_tech_nums['Gen_num'].isin(self.tech_nums['storage'])
+        )
+        filtered_gens = bus_tech_nums.loc[non_es_cand_mask, ['Gen_num', 'Tech_Num']]
+
+        capex_data = capex_t_df.drop(['Tech_name'], axis=1)
+        merged = filtered_gens.merge(
+            capex_data, left_on='Tech_Num', right_on='Tech_num'
+        ).drop(['Tech_Num', 'Tech_num'], axis=1).set_index('Gen_num')
+
+        capex_df = merged
 
         capex_df.columns = capex_df.columns.astype(int)
         capex_df_us = capex_df.unstack(level=0).rename_axis(
             ['y', 'g'], axis=0).reset_index(['g', 'y']).set_index(['g', 'y'])
-        
+
         # filter out years not used
         capex_df_us = capex_df_us[capex_df_us.index.isin(
             list(years), level=1)]
         capex_df_dict = capex_df_us.to_dict()[0]
-        #capex_df_dict = self.round_params(capex_df_dict)
         return capex_df_dict
 
     def capex_es_pwr_par_adjust(self):
@@ -3126,44 +3118,34 @@ class ExplanDataHandler():
         '''
 
         if self.es_cost == 'Base':
-            #print('Base ES Cost')
             capex_es_df = self.load_data[self.index('capex_es')]
         elif self.es_cost == 'Low':
-            #print('Low ES Cost')
             capex_es_df = self.load_data[self.index('capex_l_es')]
         elif self.es_cost == 'High':
-            #print('High ES Cost')
             capex_es_df = self.load_data[self.index('capex_h_es')]
         else:
             print('Invalid cost trajectory')
             
         capex_es_df = capex_es_df[capex_es_df['Cost'] == 'Power']
-        capex_es_df = capex_es_df.drop(['Cost'],axis=1)
+        capex_es_df = capex_es_df.drop(['Cost'], axis=1)
         years = self.years
         bus_tech_nums = self.load_data[self.index('gen')][[
             'Bus_num', 'Gen_num', 'Gen_name', 'Tech_Num']]
-        capex_df = pd.DataFrame(
-            columns=capex_es_df.columns[2:np.shape(capex_es_df)[1]])
-        new_rows = []
-        for g in range(len(bus_tech_nums)):
-            gen = bus_tech_nums.iloc[g]
-            tn = gen['Tech_Num']
-            gen_n = gen['Gen_num']
-            
-            if gen_n in self.tech_nums['storage'] and gen_n in self.tech_nums['candidates']:
-                capex_arr = capex_es_df[capex_es_df['Tech_num'] == tn].drop(
-                    ['Tech_num', 'Tech_name'], axis=1)
-                if not capex_arr.empty:
-                    # Create a new row with the index set to gen_n
-                    capex_arr.index = [gen_n]
-                    new_rows.append(capex_arr)
-                             
-                #capex_arr.index = [gen_n]
-                #capex_df = pd.concat([capex_df, capex_arr])
 
-        if new_rows:
-            capex_df = pd.DataFrame(pd.concat(new_rows))
-        
+        # Vectorized replacement for the old per-generator for-loop.
+        es_cand_mask = (
+            bus_tech_nums['Gen_num'].isin(self.tech_nums['storage']) &
+            bus_tech_nums['Gen_num'].isin(self.tech_nums['candidates'])
+        )
+        filtered_gens = bus_tech_nums.loc[es_cand_mask, ['Gen_num', 'Tech_Num']]
+
+        capex_data = capex_es_df.drop(['Tech_name'], axis=1)
+        merged = filtered_gens.merge(
+            capex_data, left_on='Tech_Num', right_on='Tech_num'
+        ).drop(['Tech_Num', 'Tech_num'], axis=1).set_index('Gen_num')
+
+        capex_df = merged
+
         capex_df.columns = capex_df.columns.astype(int)
         capex_df_us = capex_df.unstack(level=0).rename_axis(
             ['y', 'g'], axis=0).reset_index(['g', 'y']).set_index(['g', 'y'])
@@ -3171,7 +3153,6 @@ class ExplanDataHandler():
         capex_df_us = capex_df_us[capex_df_us.index.isin(
             list(years), level=1)]
         capex_es_pwr_df_dict = capex_df_us.to_dict()[0]
-        #capex_es_pwr_df_dict = self.round_params(capex_es_pwr_df_dict)
         return capex_es_pwr_df_dict
 
     def capex_es_energy_par_adjust(self):
@@ -3184,38 +3165,32 @@ class ExplanDataHandler():
 
         '''
         capex_es_df = self.load_data[self.index('capex_es')]
-        capex_es_df = capex_es_df[capex_es_df['Cost']
-                                  == 'Energy']
-        capex_es_df = capex_es_df.drop(['Cost'],axis=1)
+        capex_es_df = capex_es_df[capex_es_df['Cost'] == 'Energy']
+        capex_es_df = capex_es_df.drop(['Cost'], axis=1)
         years = self.years
         bus_tech_nums = self.load_data[self.index('gen')][[
             'Bus_num', 'Gen_num', 'Gen_name', 'Tech_Num']]
-        capex_df = pd.DataFrame(
-            columns=capex_es_df.columns[2:np.shape(capex_es_df)[1]])
-        new_rows = []
-        for g in range(len(bus_tech_nums)):
-            gen = bus_tech_nums.iloc[g]
-            tn = gen['Tech_Num']
-            gen_n = gen['Gen_num']
-            if gen_n in self.tech_nums['storage'] and gen_n in self.tech_nums['candidates']:
-                capex_arr = capex_es_df[capex_es_df['Tech_num'] == tn].drop(
-                    ['Tech_num', 'Tech_name'], axis=1)
-                if not capex_arr.empty:
-                    # Create a new row with the index set to gen_n
-                    capex_arr.index = [gen_n]
-                    new_rows.append(capex_arr)
-                #capex_arr.index = [gen_n]
-                #capex_df = pd.concat([capex_df, capex_arr])
-        if new_rows:
-            capex_df = pd.DataFrame(pd.concat(new_rows))
-        
+
+        # Vectorized replacement for the old per-generator for-loop.
+        es_cand_mask = (
+            bus_tech_nums['Gen_num'].isin(self.tech_nums['storage']) &
+            bus_tech_nums['Gen_num'].isin(self.tech_nums['candidates'])
+        )
+        filtered_gens = bus_tech_nums.loc[es_cand_mask, ['Gen_num', 'Tech_Num']]
+
+        capex_data = capex_es_df.drop(['Tech_name'], axis=1)
+        merged = filtered_gens.merge(
+            capex_data, left_on='Tech_Num', right_on='Tech_num'
+        ).drop(['Tech_Num', 'Tech_num'], axis=1).set_index('Gen_num')
+
+        capex_df = merged
+
         capex_df.columns = capex_df.columns.astype(int)
         capex_df_us = capex_df.unstack(level=0).rename_axis(
             ['y', 'g'], axis=0).reset_index(['g', 'y']).set_index(['g', 'y'])
         capex_df_us = capex_df_us[capex_df_us.index.isin(
             list(years), level=1)]
         capex_es_energy_df_dict = capex_df_us.to_dict()[0]
-        #capex_es_energy_df_dict = self.round_params(capex_es_energy_df_dict)
         return capex_es_energy_df_dict
 
     def fp_par_adjust(self):

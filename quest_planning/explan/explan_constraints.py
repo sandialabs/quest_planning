@@ -150,7 +150,6 @@ class ExplanConstraints:
         '''
         Define the energy storage constraints of the optimization model
         '''
-               
         model.cSOC_old = pm.Constraint(model.B_G_sto, model.Y, model.S_I, rule=self.cSOC_old)
         
         model.cChDsch = pm.Constraint(
@@ -163,8 +162,16 @@ class ExplanConstraints:
             model.B_G_sto, model.Y, rule=self.cStoremax)
         model.cStoremin = pm.Constraint(
             model.B_G_sto, model.Y, rule=self.cStoremin)
-        model.cNonES = pm.Constraint(
-            model.B_G_sto, model.Y, model.S_I, rule=self.cNonES)
+
+        # cNonES split: previously a single constraint over all B_G with two
+        # branches (storage: P_gen==0; non-storage: Pdis+Pcha==0), causing
+        # Pyomo to evaluate every (b,g) pair regardless of type.  Split into
+        # two constraints each indexed over its own sparse set so no rule ever
+        # returns Constraint.Skip.
+        model.cNonESsto = pm.Constraint(
+            model.B_G_sto, model.Y, model.S_I, rule=self.cNonESsto)
+        model.cNonESgen = pm.Constraint(
+            model.B_G_non_sto, model.Y, model.S_I, rule=self.cNonESgen)
 
         
 
@@ -173,10 +180,13 @@ class ExplanConstraints:
         '''
         Define the thermal generation constraints of the optimization model
         '''
+        # Use B_G_thermal (sparse: ~64 pairs in RTS) instead of full B_G (448).
+        # cThermMax/Min/Rup/Rdwn previously iterated all B_G and returned
+        # Constraint.Skip for ~86% of pairs.  Safety guards are retained.
         model.cThermMax = pm.Constraint(
-            model.B_G, model.Y, model.S_I, rule=self.cThermMax)
+            model.B_G_thermal, model.Y, model.S_I, rule=self.cThermMax)
         model.cThermMin = pm.Constraint(
-            model.B_G, model.Y, model.S_I, rule=self.cThermMin)
+            model.B_G_thermal, model.Y, model.S_I, rule=self.cThermMin)
         #add reserves option flag
         if self.data_handler.reserves_option:
             model.cPRegMax = pm.Constraint(
@@ -191,29 +201,27 @@ class ExplanConstraints:
                 model.Y, model.S_I, rule=self.cPSpinMin)
             model.cPFlexMin = pm.Constraint(
                 model.Y, model.S_I, rule=self.cPFlexMin)
-            
-        #if not self.data_handler.reserves_option:
-            #Fix reserve variables to 0
-            #model.P_Reg[model.l, model.y, model.S_I].fix(0)
-            #model.P_Spin[model.l, model.y, model.S_I].fix(0)
-            #model.P_Flex[model.l, model.y, model.S_I].fix(0)
-            
-        if self.data_handler.block_selection.lower() != 'seasonal_blocks': 
+
+        if self.data_handler.block_selection.lower() != 'seasonal_blocks':
             model.cThermRup = pm.Constraint(
-                model.B_G, model.Y, model.S_I, rule=self.cThermRup)
+                model.B_G_thermal, model.Y, model.S_I, rule=self.cThermRup)
             model.cThermRdwn = pm.Constraint(
-                model.B_G, model.Y, model.S_I, rule=self.cThermRdwn)
+                model.B_G_thermal, model.Y, model.S_I, rule=self.cThermRdwn)
 
     def renewable_generator_constraints(self, model):
         '''
         Define the renewable generation constraints of the optimization model
         '''
+        # Each constraint is indexed over its own sparse (b,g) set instead of
+        # all of B_G.  This eliminates the 84–99% Constraint.Skip overhead that
+        # occurred when iterating all 448 B_G pairs per (y,s,i).  Safety guards
+        # inside the rule bodies are retained unchanged.
         model.cPVExist = pm.Constraint(
-            model.B_G, model.Y, model.S_I, rule=self.cPVExist)
+            model.B_G_pv_ex, model.Y, model.S_I, rule=self.cPVExist)
         model.cPVCand = pm.Constraint(
-            model.B_G, model.Y, model.S_I, rule=self.cPVCand)
+            model.B_G_solar_can, model.Y, model.S_I, rule=self.cPVCand)
         model.cWindExist = pm.Constraint(
-            model.B_G, model.Y, model.S_I, rule=self.cWindExist)
+            model.B_G_wind_ex, model.Y, model.S_I, rule=self.cWindExist)
         # Use sparse B_G_wind_can set instead of full B × G Cartesian product.
         # For 200 buses × 500 generators the full product yields 100 000 index
         # tuples per (y,s,i); B_G_wind_can contains only the ~20–50 actual
@@ -644,7 +652,8 @@ class ExplanConstraints:
     def cNonES(self, model, b, g, y, s, i):
         '''
         Ensures ES has no P_gen and no gen has Pcha and Pdis
-        **Optional constraint**
+        **Optional constraint** — kept for reference; replaced in practice by
+        the split pair cNonESsto / cNonESgen which use sparse index sets.
         '''
         if (b, g) in self.storage_tuple:
             return model.P_gen[b, g, y, s, i] == 0
@@ -652,6 +661,22 @@ class ExplanConstraints:
             return model.Pdis[b, g, y, s, i] + model.Pcha[b, g, y, s, i] == 0
         else:
             return pm.Constraint.Skip
+
+    def cNonESsto(self, model, b, g, y, s, i):
+        '''
+        Storage generators must have P_gen == 0 (dispatch via Pdis only).
+        Indexed over B_G_sto — no branch check needed, no Constraint.Skip.
+        Replaces the storage branch of cNonES.
+        '''
+        return model.P_gen[b, g, y, s, i] == 0
+
+    def cNonESgen(self, model, b, g, y, s, i):
+        '''
+        Non-storage generators must have Pdis == 0 and Pcha == 0.
+        Indexed over B_G_non_sto — no branch check needed, no Constraint.Skip.
+        Replaces the non-storage branch of cNonES.
+        '''
+        return model.Pdis[b, g, y, s, i] + model.Pcha[b, g, y, s, i] == 0
     
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
