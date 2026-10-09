@@ -12,7 +12,6 @@ import pandas as pd
 import time
 import pyutilib 
 import logging
-from pyomo.util.model_size import build_model_size_report
 from quest_planning.explan.optimizer import Optimizer
 from quest_planning.explan.explan_constraints import ExplanConstraints
 from pyomo.opt import TerminationCondition
@@ -1499,9 +1498,12 @@ class ExplanOptimizer(Optimizer):
             self.data_handler)
         print('Build Constraints')
         self.constraints.set_expressions(self.model)
-        
-        #Report out model size and stats (used for informational purposes - prints to txt file)
-        #self.report = build_model_size_report(self.model)
+
+        # build_model_size_report is intentionally skipped here: it makes two
+        # full expression-tree passes over all constraints (~73s for 9M constraints).
+        # self.report is set to None; use ExplanResultsViewer.process_results()
+        # for post-solve statistics.
+        self.report = None
         print("Pyomo Model Successfully Built")
         print("Model will begin solving. If using the GUI, press the Solve Button")
         
@@ -1580,9 +1582,12 @@ class ExplanOptimizer(Optimizer):
         return self.get_results()
     
     def print_model_stats(self):
-        ''' Print model statistics'''
-        print('Model Statistics: Skipped!')
-        #print(self.report)
+        '''Print model statistics if available.'''
+        if self.report is not None:
+            print('Model Statistics:')
+            print(self.report)
+        else:
+            print('Model Statistics: not computed (build_model_size_report skipped for performance).')
         
 
     def _process_results(self):
