@@ -199,15 +199,13 @@ class ExplanConstraints:
         model.cStoremin = pm.Constraint(
             model.B_G_sto, model.Y, rule=self.cStoremin)
 
-        # cNonES split: previously a single constraint over all B_G with two
-        # branches (storage: P_gen==0; non-storage: Pdis+Pcha==0), causing
-        # Pyomo to evaluate every (b,g) pair regardless of type.  Split into
-        # two constraints each indexed over its own sparse set so no rule ever
-        # returns Constraint.Skip.
+        # cNonESsto: storage generators must have P_gen == 0 (dispatch via Pdis only).
+        # Indexed over B_G_sto — no branch check, no Constraint.Skip.
+        # Note: the original cNonES also had a non-storage branch (Pdis+Pcha==0),
+        # but Pdis and Pcha are only declared over B_G_sto so that branch was
+        # unreachable dead code.  It is not replicated here.
         model.cNonESsto = pm.Constraint(
             model.B_G_sto, model.Y, model.S_I, rule=self.cNonESsto)
-        model.cNonESgen = pm.Constraint(
-            model.B_G_non_sto, model.Y, model.S_I, rule=self.cNonESgen)
 
         
 
@@ -639,14 +637,14 @@ class ExplanConstraints:
     
     def cNonES(self, model, b, g, y, s, i):
         '''
-        Ensures ES has no P_gen and no gen has Pcha and Pdis
-        **Optional constraint** — kept for reference; replaced in practice by
-        the split pair cNonESsto / cNonESgen which use sparse index sets.
+        Ensures ES has no P_gen and no gen has Pcha and Pdis.
+        Original rule retained for reference; replaced by cNonESsto.
+        Note: the non-storage branch (Pdis+Pcha==0) was unreachable dead code
+        because Pdis/Pcha are only declared over B_G_sto, so (b,g) in this
+        rule was always in storage_tuple.
         '''
         if (b, g) in self.storage_tuple:
             return model.P_gen[b, g, y, s, i] == 0
-        elif (b, g) not in self.storage_tuple:
-            return model.Pdis[b, g, y, s, i] + model.Pcha[b, g, y, s, i] == 0
         else:
             return pm.Constraint.Skip
 
@@ -657,14 +655,6 @@ class ExplanConstraints:
         Replaces the storage branch of cNonES.
         '''
         return model.P_gen[b, g, y, s, i] == 0
-
-    def cNonESgen(self, model, b, g, y, s, i):
-        '''
-        Non-storage generators must have Pdis == 0 and Pcha == 0.
-        Indexed over B_G_non_sto — no branch check needed, no Constraint.Skip.
-        Replaces the non-storage branch of cNonES.
-        '''
-        return model.Pdis[b, g, y, s, i] + model.Pcha[b, g, y, s, i] == 0
     
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

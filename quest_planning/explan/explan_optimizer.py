@@ -1472,8 +1472,8 @@ class ExplanOptimizer(Optimizer):
                 B_G_solar_can_df['Gen_num'].values)))
 
         # Non-storage bus-gen pairs — complement of B_G_sto within B_G.
-        # Used for the cNonESgen constraint (forces Pdis+Pcha==0 for all
-        # non-storage generators, replacing the else-branch of cNonES).
+        # Used for cPFlexMaxGen / cPSpinMaxGen / cPRegMaxGen (reserve constraints
+        # for non-storage generators).
         _sto_bg_set = frozenset(
             zip(B_G_sto_df['Bus_num'].values, B_G_sto_df['Gen_num'].values))
         B_G_non_sto_pairs = [
