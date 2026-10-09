@@ -47,32 +47,34 @@ class ExplanConstraints:
         
         
         
-        #Can remove tuple with other bus_gen sets 
-        self.storage_tuple = tuple(zip(
+        # Frozensets for O(1) membership tests in constraint rules.
+        # All 13 structures are only ever used with "in" — never iterated —
+        # so frozenset is a safe, faster drop-in for tuple(zip(...)).
+        self.storage_tuple = frozenset(zip(
             data_handler.bus_sto_num, data_handler.tech_nums['storage']))
-        self.thermal_nuclear_tuple = tuple(zip(
+        self.thermal_nuclear_tuple = frozenset(zip(
             data_handler.bus_therm_num, data_handler.tech_nums['nuclear']))
-        self.thermal_tuple = tuple(zip(
+        self.thermal_tuple = frozenset(zip(
             data_handler.bus_therm_num, data_handler.tech_nums['thermal']))
-        self.candidate_tuple = tuple(zip(
+        self.candidate_tuple = frozenset(zip(
             data_handler.bus_cand_num, data_handler.tech_nums['candidates']))
-        self.upv_tuple = tuple(zip(
+        self.upv_tuple = frozenset(zip(
             data_handler.bus_upv_ex_num, data_handler.tech_nums['upv_ex']))
-        self.solar_can_tuple = tuple(zip(
+        self.solar_can_tuple = frozenset(zip(
             data_handler.bus_solar_can_num, data_handler.tech_nums['upv_can']))
-        self.wind_ex_tuple = tuple(zip(
+        self.wind_ex_tuple = frozenset(zip(
             data_handler.bus_wind_ex_num, data_handler.tech_nums['wind_ex']))
-        self.wind_can_tuple = tuple(zip(
+        self.wind_can_tuple = frozenset(zip(
             data_handler.bus_wind_can_num, data_handler.tech_nums['wind_can']))
-        self.es_can_tuple = tuple(zip(
+        self.es_can_tuple = frozenset(zip(
             data_handler.bus_es_can_num, data_handler.tech_nums['storage_cand']))
-        self.ren_tuple = tuple(zip(
+        self.ren_tuple = frozenset(zip(
             data_handler.bus_ren_num, data_handler.tech_nums['renewables']))
-        self.exist_tuple = tuple(zip(
+        self.exist_tuple = frozenset(zip(
             data_handler.bus_exist_num, data_handler.tech_nums['exist']))
-        self.cand_tuple = tuple(zip(
+        self.cand_tuple = frozenset(zip(
             data_handler.bus_cand_num, data_handler.tech_nums['candidates']))
-        self.dr_tuple = tuple(zip(
+        self.dr_tuple = frozenset(zip(
             data_handler.bus_cand_num, data_handler.tech_nums['dr']))
         
         # Gen_nm to Bus_num to Bus_name to Tech
@@ -87,6 +89,31 @@ class ExplanConstraints:
         self.hour_duration = data_handler.hour_duration
         # Transmission expansion sum
         self.trans_sum = 0
+
+        # ------------------------------------------------------------------
+        # Pre-computed per-bus lookup dicts for cPwrBal (and related rules).
+        # Built once here so constraint rules avoid O(L) scans, DataFrame
+        # .loc filters, and np.intersect1d calls on every invocation.
+        # ------------------------------------------------------------------
+        _ren_set = frozenset(data_handler.tech_nums['renewables'])
+        _sto_set = frozenset(data_handler.tech_nums['storage'])
+
+        # Branch incidence: bus → lists of incident line numbers
+        self.bus_out_lines = {}   # from_bus → [line numbers leaving that bus]
+        self.bus_in_lines  = {}   # to_bus   → [line numbers entering that bus]
+        for (l, fb, tb) in data_handler.line_bus_num:
+            self.bus_out_lines.setdefault(int(fb), []).append(l)
+            self.bus_in_lines.setdefault(int(tb), []).append(l)
+
+        # Generator sets per bus
+        self.bus_gen_dict = {}    # bus → ndarray of all gen_nums at that bus
+        self.bus_ren_dict = {}    # bus → list of renewable gen_nums at that bus
+        self.bus_sto_dict = {}    # bus → list of storage gen_nums at that bus
+        for bus, grp in data_handler.bus_gen_num.groupby('Bus_num'):
+            gnums = grp['Gen_num'].values.astype(int)
+            self.bus_gen_dict[int(bus)] = gnums
+            self.bus_ren_dict[int(bus)] = [g for g in gnums if g in _ren_set]
+            self.bus_sto_dict[int(bus)] = [g for g in gnums if g in _sto_set]
         
         
     @property
@@ -187,8 +214,13 @@ class ExplanConstraints:
             model.B_G, model.Y, model.S_I, rule=self.cPVCand)
         model.cWindExist = pm.Constraint(
             model.B_G, model.Y, model.S_I, rule=self.cWindExist)
+        # Use sparse B_G_wind_can set instead of full B × G Cartesian product.
+        # For 200 buses × 500 generators the full product yields 100 000 index
+        # tuples per (y,s,i); B_G_wind_can contains only the ~20–50 actual
+        # wind-candidate bus-gen pairs.  The safety guard inside the rule is
+        # retained unchanged.
         model.cWindCan = pm.Constraint(
-            model.B, model.G, model.Y, model.S_I, rule=self.cWindCan)
+            model.B_G_wind_can, model.Y, model.S_I, rule=self.cWindCan)
 
     def policy_constraints(self, model):
         '''
@@ -942,76 +974,48 @@ class ExplanConstraints:
     '''
     def cPwrBal(self, model, b, y, s, i):
         '''
-        Power Balance constraint
-        TODO: remove for and if statements as they are expensive in pyomo
+        Power Balance constraint.
+        Per-bus incidence lists and generator sets are pre-computed in __init__
+        (bus_out_lines, bus_in_lines, bus_gen_dict, bus_ren_dict, bus_sto_dict)
+        to avoid O(L) scans, DataFrame .loc filters, and np.intersect1d calls
+        on every invocation.
         '''
-        
-        out_branches = [l[0] for l in self.data_handler.line_bus_num if l[1]==b]
-        in_branches = [l[0] for l in self.data_handler.line_bus_num if l[2]==b]
-    
-        
-        gen_nums = self.data_handler.bus_gen_num.loc[self.data_handler.bus_gen_num['Bus_num']
-                                                     == b]['Gen_num'].values.astype(int)
-        
-        
-
-        gen_ren_nums = np.intersect1d(
-            gen_nums, self.data_handler.tech_nums['renewables'])
-
-        gen_sto_nums = np.intersect1d(
-            gen_nums, self.data_handler.tech_nums['storage'])
-        
-        
+        out_branches = self.bus_out_lines.get(b, [])
+        in_branches  = self.bus_in_lines.get(b, [])
+        gen_nums     = self.bus_gen_dict.get(b, [])
+        gen_ren_nums = self.bus_ren_dict.get(b, [])
+        gen_sto_nums = self.bus_sto_dict.get(b, [])
 
         if self.data_handler.large_load_option:
-                
-            ll_ng = np.intersect1d(
-                gen_nums,
-                list(model.G_LL_NG)
-            )
-
-            # Note: Large load renewables (Solar_LL_Cand, Wind_LL_Cand) exist in tech data
-            # but are not currently used in configs. If needed in future, create G_LL_REN set
-            # similar to G_LL_NG and G_LL_BESS, then add logic here to exclude from grid.
-            # For now, all renewables are treated as grid resources.
-
-            ll_bess = np.intersect1d(
-                gen_sto_nums,
-                list(model.G_LL_BESS)
-            )
-
-            grid_gen_nums = np.setdiff1d(
-                gen_nums,
-                ll_ng
-            )
-
-            # All renewables treated as grid resources (no large load renewables currently)
+            # G_LL_NG / G_LL_BESS are Pyomo sets (available at constraint-build
+            # time via the model argument) — pre-computation deferred to a future
+            # refactor; np.intersect1d retained only for the LL path.
+            ll_ng  = np.intersect1d(gen_nums, list(model.G_LL_NG))
+            ll_bess = np.intersect1d(gen_sto_nums, list(model.G_LL_BESS))
+            grid_gen_nums = np.setdiff1d(gen_nums, ll_ng)
             grid_ren_nums = gen_ren_nums
-
-            grid_sto_nums = np.setdiff1d(
-                gen_sto_nums,
-                ll_bess
+            grid_sto_nums = np.setdiff1d(gen_sto_nums, ll_bess)
+            ll_term = (model.large_load_net[b, y, s, i]
+                       if b in model.B_LL else 0)
+            return (
+                sum(model.P_gen[b, g, y, s, i] for g in grid_gen_nums)
+                + sum(model.Pdis[b, g, y, s, i] - model.Pcha[b, g, y, s, i]
+                      for g in grid_sto_nums)
+                - sum(model.Curt[b, g, y, s, i] for g in grid_ren_nums)
+                + sum(model.PF[l, y, s, i] for l in in_branches)
+                - sum(model.PF[l, y, s, i] for l in out_branches)
+                == model.load_full[b, y, s, i] + ll_term - model.LNS[b, y, s, i]
             )
-            
-            #if len(ll_ng) > 0:
-              #  print("BUS", b, "LL_NG", ll_ng)
-            #if len(ll_bess) > 0:
-             #   print("BUS", b, "LL_BESS", ll_bess)
-            #print(grid_gen_nums)
-
-            ll_term = (
-                model.large_load_net[b,y,s,i]
-                if b in model.B_LL
-                else 0
-                )
-
-            return sum(model.P_gen[b, g, y, s, i] for g in grid_gen_nums) + sum(model.Pdis[b, g, y, s, i]-model.Pcha[b, g, y, s, i] for g in grid_sto_nums)\
-                - sum(model.Curt[b, g, y, s, i] for g in grid_ren_nums) + sum(model.PF[l, y, s, i] for l in in_branches) \
-                    - sum(model.PF[l, y, s, i] for l in out_branches) == model.load_full[b, y, s, i] + ll_term- model.LNS[b, y, s, i]
         else:
-            return sum(model.P_gen[b, g, y, s, i] for g in gen_nums) + sum(model.Pdis[b, g, y, s, i]-model.Pcha[b, g, y, s, i] for g in gen_sto_nums)\
-                - sum(model.Curt[b, g, y, s, i] for g in gen_ren_nums) + sum(model.PF[l, y, s, i] for l in in_branches) \
-                    - sum(model.PF[l, y, s, i] for l in out_branches) == model.load_full[b, y, s, i] - model.LNS[b, y, s, i]#-model.dummy[b, y, s, i] 
+            return (
+                sum(model.P_gen[b, g, y, s, i] for g in gen_nums)
+                + sum(model.Pdis[b, g, y, s, i] - model.Pcha[b, g, y, s, i]
+                      for g in gen_sto_nums)
+                - sum(model.Curt[b, g, y, s, i] for g in gen_ren_nums)
+                + sum(model.PF[l, y, s, i] for l in in_branches)
+                - sum(model.PF[l, y, s, i] for l in out_branches)
+                == model.load_full[b, y, s, i] - model.LNS[b, y, s, i]
+            )
 
     def cPwrBal_CopperSheet(self, model, y, s, i):
         '''

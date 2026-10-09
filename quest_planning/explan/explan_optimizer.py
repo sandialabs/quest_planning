@@ -185,15 +185,18 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['wind_can_cf'] = [
             'b', 'g', 'y', 's', 'i']
 
-        #Trnsmission params
-        line_X_dict = {row.Line_Number: row.X for idx, row in BRANCH.iterrows()}
-        line_fw_dict = {row.Line_Number: row.Rating_F for idx, row in BRANCH.iterrows()}
-        line_bw_dict = {row.Line_Number: row.Rating_B for idx, row in BRANCH.iterrows()}
-        line_cost_dict = {row.Line_Number: row.Tx_cost for idx, row in BRANCH.iterrows()}
-        line_limit_dict = {row.Line_Number: row.Tx_limit for idx, row in BRANCH.iterrows()}
-        line_lt_dict = {row.Line_Number: row.Lead_Time for idx, row in BRANCH.iterrows()}
-        line_from_dict = {row.Line_Number: row.From_Bus_Number for idx, row in BRANCH.iterrows()}
-        line_to_dict = {row.Line_Number: row.To_Bus_Number for idx, row in BRANCH.iterrows()}
+        #Transmission params
+        # Vectorized: one set_index then cheap column .to_dict() calls.
+        # Replaces 7 separate iterrows() passes over BRANCH.
+        _branch = BRANCH.set_index('Line_Number')
+        line_X_dict       = _branch['X'].to_dict()
+        line_fw_dict      = _branch['Rating_F'].to_dict()
+        line_bw_dict      = _branch['Rating_B'].to_dict()
+        line_cost_dict    = _branch['Tx_cost'].to_dict()
+        line_limit_dict   = _branch['Tx_limit'].to_dict()
+        line_lt_dict      = _branch['Lead_Time'].to_dict()
+        line_from_dict    = _branch['From_Bus_Number'].to_dict()
+        line_to_dict      = _branch['To_Bus_Number'].to_dict()
         #Region definitions (new by GCP)
         model.R = pm.Set(initialize=list(BUS['Region'].dropna().unique()))
         bus_region_dict = BUS.set_index('Bus_number')['Region'].to_dict()
@@ -232,12 +235,11 @@ class ExplanOptimizer(Optimizer):
         
         
 
-        def line_cost_init(model, l):
-            # just 1 column
-            lc = BRANCH['Tx_cost'].values[l-1]
-            return lc
+        # line_cost_dict already built above; use it directly to avoid the
+        # positional-index bug (BRANCH['Tx_cost'].values[l-1] assumed 1-indexed
+        # sequential Line_Numbers, which breaks for non-contiguous numbering).
         model.line_cost = pm.Param(
-            model.L, initialize=line_cost_init)
+            model.L, initialize=line_cost_dict)
         par_index_labels['line_cost'] = ['l']
 
         def line_ex_limit_init(model, l):
@@ -370,17 +372,40 @@ class ExplanOptimizer(Optimizer):
             model.Y, initialize=co2_int)
         par_index_labels['CO2_int'] = ['y']
 
-        #Check on this...ensure accuracy
-        def co2_gen_init(model, g):
-            co2_g = GEN[['Gen_num', 'CO2']
-                        ].set_index('Gen_num')
-            co2_g = co2_g['CO2']
-            co2_g = co2_g.to_dict()
-            # Divide by 2000  to convert lbs/MWh to tons/MWh??
-            return co2_g[g]
+        # ------------------------------------------------------------------
+        # Pre-compute all generator scalar parameter dicts in one pass.
+        # Previously each param used a callback that rebuilt the full GEN
+        # DataFrame (set_index + map int + to_dict) on every element call,
+        # resulting in ~9 500 redundant DataFrame operations for 500 generators.
+        # Now: one set_index, then one cheap .to_dict() per column.
+        # Note: gen_lt_dict_gen is named to avoid shadowing line_lt_dict.
+        # ------------------------------------------------------------------
+        _gen = GEN.set_index('Gen_num')
+        _gen.index = _gen.index.astype(int)
 
+        gen_co2_dict        = _gen['CO2'].to_dict()
+        p_cap_dict          = _gen['Cap'].to_dict()
+        p_cap_min_dict      = _gen['MinCap'].to_dict()
+        cand_cap_dict       = _gen['CandCap'].to_dict()
+        syst_cap_dict       = _gen['SystCap'].to_dict()
+        gen_ret_yr_dict     = _gen['RetYr'].to_dict()
+        gen_planned_yr_dict = _gen['PlannedYr'].to_dict()
+        gen_ret_cap_dict    = _gen['RetCap'].to_dict()
+        gen_fom_dict        = _gen['FOM'].to_dict()
+        gen_vom_dict        = _gen['VOM'].to_dict()
+        gen_tx_add_dict     = _gen['TransAdder'].to_dict()
+        gen_ptc_dict        = _gen['PTC'].to_dict()
+        gen_itc_dict        = _gen['ITC'].to_dict()
+        gen_hr_dict         = _gen['HR'].to_dict()
+        gen_for_dict        = _gen['FOR'].to_dict()
+        gen_lt_dict_gen     = _gen['LeadTime'].to_dict()
+        gen_ramp_dict       = _gen['Ramp'].to_dict()
+        gen_lifetime_dict   = _gen['Lifetime'].to_dict()
+        gen_y_avail_dict    = _gen['YearAvail'].to_dict()
+
+        #Check on this...ensure accuracy
         model.gen_CO2 = pm.Param(
-            model.G, initialize=co2_gen_init)
+            model.G, initialize=gen_co2_dict)
         par_index_labels['gen_CO2'] = ['g']
         
         # Discount factor with end effects 
@@ -429,53 +454,23 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['dis_factor'] = ['y']
         
         # Existing resource capacity
-        def existing_cap_init(model, g):
-            exist_cap = GEN[['Gen_num', 'Cap']].set_index(
-                'Gen_num')
-            exist_cap.index = exist_cap.index.map(
-                int)
-            exist_cap = exist_cap.to_dict()['Cap']
-            return exist_cap[g]
         model.P_cap = pm.Param(
-            model.G, initialize=existing_cap_init)
+            model.G, initialize=p_cap_dict)
         par_index_labels['P_cap'] = ['g']
         
         # Existing resource minimum stable level capacity
-        def existing_min_cap_init(model, g):
-            exist_cap = GEN[['Gen_num', 'MinCap']
-                            ].set_index('Gen_num')
-            exist_cap.index = exist_cap.index.map(
-                int)
-            exist_cap = exist_cap.to_dict()['MinCap']
-            return exist_cap[g]
         model.P_cap_min = pm.Param(
-            model.G, initialize=existing_min_cap_init)
+            model.G, initialize=p_cap_min_dict)
         par_index_labels['P_cap_min'] = ['g']
         
-        #Candidate resources candidate capacities per year
-        def cand_cap_init(model, g):
-            cand_cap = GEN[['Gen_num', 'CandCap']
-                           ].set_index('Gen_num')
-            cand_cap.index = cand_cap.index.map(
-                int)  # .index.astype(str)
-            cand_cap = cand_cap.to_dict()['CandCap']
-            return cand_cap[g]
-
+        # Candidate resources candidate capacities per year
         model.P_cap_cand = pm.Param(
-            model.G, initialize=cand_cap_init)
+            model.G, initialize=cand_cap_dict)
         par_index_labels['P_cap_cand'] = ['g']
         
-        #Candidate resources candidate capacities max per simulation (whole planning horizon)
-        def syst_cap_init(model, g):
-            syst_cap = GEN[['Gen_num', 'SystCap']
-                           ].set_index('Gen_num')
-            syst_cap.index = syst_cap.index.map(
-                int)
-            syst_cap = syst_cap.to_dict()['SystCap']
-            return syst_cap[g]
-
+        # Candidate resources candidate capacities max per simulation (whole planning horizon)
         model.P_cap_syst_max = pm.Param(
-            model.G, initialize=syst_cap_init)
+            model.G, initialize=syst_cap_dict)
         par_index_labels['P_cap_syst_max'] = ['g']
         
         #Resource bus limits
@@ -528,117 +523,48 @@ class ExplanOptimizer(Optimizer):
             pass
         
         # Retirement years of generators - user input
-        def gen_ret_yr_init(model, g):
-            ret_yr = GEN[['Gen_num', 'RetYr']
-                         ].set_index('Gen_num')
-            ret_yr.index = ret_yr.index.map(
-                int)
-            ret_yr = ret_yr.to_dict()['RetYr']
-            return ret_yr[g]
-
         model.gen_ret_yr = pm.Param(
-            model.G, initialize=gen_ret_yr_init)
+            model.G, initialize=gen_ret_yr_dict)
         par_index_labels['gen_ret_yr'] = ['g']
         
-        #Planned years of candidate generators availability
-        def gen_planned_yr_init(model, g):
-            ret_yr = GEN[['Gen_num', 'PlannedYr']
-                         ].set_index('Gen_num')
-            ret_yr.index = ret_yr.index.map(
-                int)
-            ret_yr = ret_yr.to_dict()['PlannedYr']
-            return ret_yr[g]
-
+        # Planned years of candidate generators availability
         model.gen_planned_yr = pm.Param(
-            model.G, initialize=gen_planned_yr_init)
+            model.G, initialize=gen_planned_yr_dict)
         par_index_labels['gen_planned_yr'] = ['g']
 
         # Retirement capacity of generators that are being retired
-        def gen_ret_cap_init(model, g):
-            ret_cap = GEN[['Gen_num', 'RetCap']
-                          ].set_index('Gen_num')
-            ret_cap.index = ret_cap.index.map(
-                int)
-            ret_cap = ret_cap.to_dict()['RetCap']
-            return ret_cap[g]
-
         model.gen_ret_cap = pm.Param(
-            model.G, initialize=gen_ret_cap_init)
+            model.G, initialize=gen_ret_cap_dict)
         par_index_labels['gen_ret_cap'] = ['g']
 
         # FOM costs of generator
-        def gen_fom_init(model, g):
-            fom = GEN[['Gen_num', 'FOM']
-                      ].set_index('Gen_num')
-            fom.index = fom.index.map(
-                int)  # .index.astype(str)
-            fom = fom.to_dict()['FOM']
-            return fom[g]
-
         model.G_fom = pm.Param(
-            model.G, initialize=gen_fom_init)
+            model.G, initialize=gen_fom_dict)
         par_index_labels['G_fom'] = ['g']
 
         # VOM costs of generator
-        def gen_vom_init(model, g):
-            vom = GEN[['Gen_num', 'VOM']
-                      ].set_index('Gen_num')
-            vom.index = vom.index.map(
-                int)  # .index.astype(str)
-            vom = vom.to_dict()['VOM']
-            return vom[g]
-
         model.G_vom = pm.Param(
-            model.G, initialize=gen_vom_init)
+            model.G, initialize=gen_vom_dict)
         par_index_labels['G_vom'] = ['g']
 
         # Trans Adders - additional cost for transmission interconnection (if applicable)
-        def gen_tx_add_init(model, g):
-            tx_add = GEN[['Gen_num', 'TransAdder']
-                         ].set_index('Gen_num')
-            tx_add.index = tx_add.index.map(
-                int)  # .index.astype(str)
-            tx_add = tx_add.to_dict()['TransAdder']
-            return tx_add[g]
-
         model.G_tx_add = pm.Param(
-            model.G, initialize=gen_tx_add_init)
+            model.G, initialize=gen_tx_add_dict)
         par_index_labels['G_tx_add'] = ['g']
 
         # Production Tax credit (if applicable)
-        def gen_ptc_init(model, g):
-            ptc = GEN[['Gen_num', 'PTC']
-                      ].set_index('Gen_num')
-            ptc.index = ptc.index.map(
-                int)  # .index.astype(str)
-            ptc = ptc.to_dict()['PTC']
-            return ptc[g]
-
         model.G_ptc = pm.Param(
-            model.G, initialize=gen_ptc_init)
+            model.G, initialize=gen_ptc_dict)
         par_index_labels['G_ptc'] = ['g']
 
         # Investment Tax credit (if applicable)
-        def gen_itc_init(model, g):
-            itc = GEN[['Gen_num', 'ITC']
-                      ].set_index('Gen_num')
-            itc.index = itc.index.map(
-                int)
-            itc = itc.to_dict()['ITC']
-            return itc[g]
         model.G_itc = pm.Param(
-            model.G, initialize=gen_itc_init)
+            model.G, initialize=gen_itc_dict)
         par_index_labels['G_itc'] = ['g']
 
         # Maximum heat rate of generator
-        def gen_hr_init(model, g):
-            hr = GEN[['Gen_num', 'HR']].set_index('Gen_num')
-            hr.index = hr.index.map(
-                int)  # .index.astype(str)
-            hr = hr.to_dict()['HR']
-            return hr[g]
         model.G_hr = pm.Param(
-            model.G, initialize=gen_hr_init)
+            model.G, initialize=gen_hr_dict)
         par_index_labels['G_hr'] = ['g']
 
         # Capacity credit of generator (Old version)
@@ -663,66 +589,28 @@ class ExplanOptimizer(Optimizer):
         # Dynamic ELCC - TODO
 
         # Forced outage rate of generator; TODO: incorporate in model
-        def gen_for_init(model, g):
-            FOR = GEN[['Gen_num', 'FOR']
-                      ].set_index('Gen_num')
-            FOR.index = FOR.index.map(
-                int)  # .index.astype(str)
-            FOR = FOR.to_dict()['FOR']
-            return FOR[g]
         model.G_for = pm.Param(
-            model.G, initialize=gen_for_init)
+            model.G, initialize=gen_for_dict)
         par_index_labels['G_for'] = ['g']
 
-        # Lead times for gernation investment; TODO: incorporate in the model
-        def gen_lt_init(model, g):
-            LT = GEN[['Gen_num', 'LeadTime']
-                     ].set_index('Gen_num')
-            LT.index = LT.index.map(
-                int)  # .index.astype(str)
-            LT = LT.to_dict()['LeadTime']
-            return LT[g]
+        # Lead times for generation investment; TODO: incorporate in the model
         model.G_lt = pm.Param(
-            model.G, initialize=gen_lt_init)
+            model.G, initialize=gen_lt_dict_gen)
         par_index_labels['G_lt'] = ['g']
 
-        # Generator ramp rates %/min;
-        # TODO: check units
-        def gen_ramp_init(model, g):
-            Ramp = GEN[['Gen_num', 'Ramp']
-                       ].set_index('Gen_num')
-            Ramp.index = Ramp.index.map(
-                int)  # .index.astype(str)
-            Ramp = Ramp.to_dict()['Ramp']
-            return Ramp[g]
-
+        # Generator ramp rates %/min; TODO: check units
         model.G_ramp = pm.Param(
-            model.G, initialize=gen_ramp_init)
+            model.G, initialize=gen_ramp_dict)
         par_index_labels['G_ramp'] = ['g']
 
-        # Generator lifetime (y) - 
-        # TODO: add automatic retirements
-        def gen_lifetime_init(model, g):
-            lt = GEN[['Gen_num', 'Lifetime']
-                     ].set_index('Gen_num')
-            lt.index = lt.index.map(
-                int)  # .index.astype(str)
-            lt = lt.to_dict()['Lifetime']
-            return lt[g]
+        # Generator lifetime (y); TODO: add automatic retirements
         model.G_lifetime = pm.Param(
-            model.G, initialize=gen_lifetime_init)
+            model.G, initialize=gen_lifetime_dict)
         par_index_labels['G_lifetime'] = ['g']
 
         # Year technology is available to be invested
-        def gen_year_avail_init(model, g):
-            yav = GEN[['Gen_num', 'YearAvail']
-                      ].set_index('Gen_num')
-            yav.index = yav.index.map(
-                int)
-            yav = yav.to_dict()['YearAvail']
-            return yav[g]
         model.G_y_avail = pm.Param(
-            model.G, initialize=gen_year_avail_init)
+            model.G, initialize=gen_y_avail_dict)
         par_index_labels['G_y_avail'] = ['g']
         
         # Old - Annual peak demand of system
@@ -1555,6 +1443,15 @@ class ExplanOptimizer(Optimizer):
 
         model.B_G_dr = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_dr_df['Bus_num'].values, B_G_dr_df['Gen_num'].values)))
+
+        # bus_gen pair — wind candidates only.
+        # Used as the sparse index for cWindCan, replacing the full B × G
+        # Cartesian product (200 × 500 = 100 000 pairs → ~50 actual pairs).
+        B_G_wind_can_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['wind_can'])]
+        model.B_G_wind_can = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_wind_can_df['Bus_num'].values,
+                B_G_wind_can_df['Gen_num'].values)))
         #%%
     
         
