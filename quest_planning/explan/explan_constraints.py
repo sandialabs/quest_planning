@@ -114,6 +114,33 @@ class ExplanConstraints:
             self.bus_gen_dict[int(bus)] = gnums
             self.bus_ren_dict[int(bus)] = [g for g in gnums if g in _ren_set]
             self.bus_sto_dict[int(bus)] = [g for g in gnums if g in _sto_set]
+
+        # ------------------------------------------------------------------
+        # Block-selection integer constant — resolved ONCE here so that
+        # constraint rules (cSOC_old, cThermRup, cThermRdwn, …) never call
+        # str.lower() + string comparison on every invocation.
+        # Eliminates millions of redundant string comparisons during build.
+        # ------------------------------------------------------------------
+        _bs = data_handler.block_selection.lower()
+        if _bs in ('full_year', 'full_year_my'):
+            self._block = 'full_year'
+        elif _bs in ('peak_week_season', 'repr_weeks'):
+            self._block = 'peak_week_season'
+        elif _bs == 'repr_3days_season':
+            self._block = 'repr_3days_season'
+        elif _bs == 'seasonal_blocks':
+            self._block = 'seasonal_blocks'
+        elif _bs == 'peak_day':
+            self._block = 'peak_day'
+        else:
+            self._block = _bs  # fallback
+
+        # Pre-compute first_hr as a frozenset for O(1) membership tests
+        # (previously np.array(self.first_hr) was rebuilt on every cSOC_old call)
+        if hasattr(data_handler, 'first_hr') and data_handler.first_hr is not None:
+            self._first_hr_set = frozenset(data_handler.first_hr)
+        else:
+            self._first_hr_set = frozenset()
         
         
     @property
@@ -132,18 +159,27 @@ class ExplanConstraints:
 
     def set_expressions(self, model):
         '''
-        Set expressions for optimization model
+        Set expressions for optimization model.
+        Per-group timing is printed so slow constraint families are visible.
         '''
-        self.energy_storage_constraints(model)
-        self.thermal_generator_constraints(model)
-        self.renewable_generator_constraints(model)
-        self.policy_constraints(model)
-        self.transmission_constraints(model)
-        self.power_balance_constraints(model)
-        self.investment_constraints(model)
-        self.reliability_and_resilience_constraints(model)
-        self.dr_and_ee_constraints(model)
-        self.obj_and_cost_breakdown(model)
+        import time as _time
+
+        def _timed(name, fn):
+            t0 = _time.perf_counter()
+            fn(model)
+            print(f'  {name}: {_time.perf_counter()-t0:.1f}s')
+
+        print('Building constraints...')
+        _timed('energy_storage',          self.energy_storage_constraints)
+        _timed('thermal_generator',       self.thermal_generator_constraints)
+        _timed('renewable_generator',     self.renewable_generator_constraints)
+        _timed('policy',                  self.policy_constraints)
+        _timed('transmission',            self.transmission_constraints)
+        _timed('power_balance',           self.power_balance_constraints)
+        _timed('investment',              self.investment_constraints)
+        _timed('reliability_resilience',  self.reliability_and_resilience_constraints)
+        _timed('dr_and_ee',               self.dr_and_ee_constraints)
+        _timed('obj_and_cost_breakdown',  self.obj_and_cost_breakdown)
 
         
     def energy_storage_constraints(self, model):
@@ -189,12 +225,20 @@ class ExplanConstraints:
             model.B_G_thermal, model.Y, model.S_I, rule=self.cThermMin)
         #add reserves option flag
         if self.data_handler.reserves_option:
-            model.cPRegMax = pm.Constraint(
-                model.B_G, model.Y, model.S_I, rule=self.cPRegMax)
-            model.cPSpinMax = pm.Constraint(
-                model.B_G, model.Y, model.S_I, rule=self.cPSpinMax)
-            model.cPFlexMax = pm.Constraint(
-                model.B_G, model.Y, model.S_I, rule=self.cPFlexMax)
+            # cPRegMax/Spin/Flex split into storage and non-storage rules,
+            # each indexed over its own sparse set — no per-call branch check.
+            model.cPRegMaxSto = pm.Constraint(
+                model.B_G_sto, model.Y, model.S_I, rule=self.cPRegMaxSto)
+            model.cPRegMaxGen = pm.Constraint(
+                model.B_G_non_sto, model.Y, model.S_I, rule=self.cPRegMaxGen)
+            model.cPSpinMaxSto = pm.Constraint(
+                model.B_G_sto, model.Y, model.S_I, rule=self.cPSpinMaxSto)
+            model.cPSpinMaxGen = pm.Constraint(
+                model.B_G_non_sto, model.Y, model.S_I, rule=self.cPSpinMaxGen)
+            model.cPFlexMaxSto = pm.Constraint(
+                model.B_G_sto, model.Y, model.S_I, rule=self.cPFlexMaxSto)
+            model.cPFlexMaxGen = pm.Constraint(
+                model.B_G_non_sto, model.Y, model.S_I, rule=self.cPFlexMaxGen)
             model.cPRegMin = pm.Constraint(
                 model.Y, model.S_I, rule=self.cPRegMin)
             model.cPSpinMin = pm.Constraint(
@@ -403,185 +447,129 @@ class ExplanConstraints:
 
     def cSOC_old(self, model, b, g, y, s, i):
         '''
-        Energy Storage SOC calculation
-        
+        Energy Storage SOC calculation.
+        Dispatches on self._block (pre-computed integer constant) instead of
+        repeated str.lower() comparisons on every invocation.
+        self._first_hr_set (frozenset) replaces np.array(self.first_hr) per call.
         TODO: add regulating reserves into this calculation
         '''
-        if (b, g) in self.storage_tuple: 
-            if self.data_handler.block_selection.lower() == 'Full_Year'.lower() or self.data_handler.block_selection.lower() == 'Full_Year_MY'.lower():
-                delta = 1#hr
-                if (b, g) in model.B_G_ldes:
-                    
-                    if i == 0:  # self.start_hr:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i == self.data_handler.M:  # in self.end_hr:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    elif i in np.array(self.first_hr):
-                        if s != 1:
-                            SOCpre = model.SOC[b,
-                                               g, y, s - 1, i - 1]
-                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i] )*delta
-                        elif i == self.first_hr[-1]:
-                            SOCpre = model.SOC[b,
-                                               g, y, 4, i - 1]
-                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b,
-                                           g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-                    '''
-                    elif i in self.last_hr:
-                        if s != 1: #i != self.end_hr[-1] and
-                            SOCpre = model.SOC[b,
-                                               g, y, s - 1, i - 1]
-                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-
-                        elif i == self.end_hr[-1]:
-                            SOCpre = model.SOC[b,
-                                               g, y, 4, i - 1]
-                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-                    '''
-                    
-                else:
-                    
-                    if i in self.start_hr or i == 0:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i in self.last_hr:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    elif i in np.array(self.first_hr):
-                        if s != 1:
-                            SOCpre = model.SOC[b,
-                                               g, y, s - 1, i - 1]
-                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i] )*delta
-                        
-                        elif i == self.first_hr[-1]:
-                            SOCpre = model.SOC[b,
-                                               g, y, 4, i - 1]
-                            return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b,g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-            if self.data_handler.block_selection.lower() == 'Peak_Week_Season'.lower() or self.data_handler.block_selection.lower() == 'Repr_Weeks'.lower():
-                delta = 1#hr
-                if (b, g) in model.B_G_ldes:
-                    if i == self.start_hr:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i == self.end_hr:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-                else:
-                    if i in [0,24,48,72,96,120,144]:#== self.start_hr:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i in [23,47,71,95,119,143,167]:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-            if self.data_handler.block_selection.lower() == 'Repr_3Days_Season'.lower():
-                delta = 1  # 1 hour resolution
-
-                if (b, g) in model.B_G_ldes:
-                    # long-duration storage: enforce continuity across the whole horizon
-                    if i == 0:  # very first hour
-                        SOCpre = self.ini_level * model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == SOCpre
-                    elif i == self.data_handler.M:  # very last hour
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == SOCpre + (
-                            model.rte_eff[g] * model.Pcha[b, g, y, s, i] -
-                            model.Pdis[b, g, y, s, i]
-                        ) * delta
-                else:
-                    # short-duration storage (daily-cycling): enforce reset at start of each representative day
-                    if i % 24 == 0:  # start of a rep-day
-                        SOCpre = self.ini_level * model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == SOCpre
-                    elif (i + 1) % 24 == 0:  # end of a rep-day
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == SOCpre + (
-                            model.rte_eff[g] * model.Pcha[b, g, y, s, i] -
-                            model.Pdis[b, g, y, s, i]
-                        ) * delta
-            if self.data_handler.block_selection.lower() == 'Seasonal_blocks'.lower():
-                
-                if (b, g) in model.B_G_ldes:
-                    if i == 0 and s==1:#self.start_hr:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i == 4 and s==4:#self.end_hr:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    if i == 0 and s!=1:
-                        SOCpre = model.SOC[b, g, y, s-1, 4]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*model.season_time_weight[s,i]               
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*model.season_time_weight[s,i]  
-                else:
-                    if i ==0:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i ==5:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*model.season_time_weight[s,i]  
-            
-            if self.data_handler.block_selection.lower() == 'Peak_Day'.lower():
-                delta = 1
-                if (b, g) in model.B_G_ldes:
-                    if i == self.start_hr:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i == self.end_hr:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-                else:
-                    if i in [0]:#== self.start_hr:
-                        # Start at 50% state of charge (S0C) on first hour in time range
-                        SOCpre = self.ini_level * \
-                            model.Store[b, g, y]
-                        return model.SOC[b, g, y, s, i] == (SOCpre)
-                    elif i in [23]:#== self.end_hr:
-                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
-                    else:
-                        # SOCpre is the starting state of charge for this time step
-                        SOCpre = model.SOC[b, g, y, s, i - 1]
-                        return model.SOC[b, g, y, s, i] == (SOCpre) + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i])*delta
-        else:
+        if (b, g) not in self.storage_tuple:
             return pm.Constraint.Skip
+
+        block = self._block
+
+        if block == 'full_year':
+            delta = 1
+            if (b, g) in model.B_G_ldes:
+                if i == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == self.data_handler.M:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                elif i in self._first_hr_set:
+                    if s != 1:
+                        SOCpre = model.SOC[b, g, y, s - 1, i - 1]
+                        return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+                    elif i == self.first_hr[-1]:
+                        SOCpre = model.SOC[b, g, y, 4, i - 1]
+                        return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+            else:
+                if i in self.start_hr or i == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i in self.last_hr:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                elif i in self._first_hr_set:
+                    if s != 1:
+                        SOCpre = model.SOC[b, g, y, s - 1, i - 1]
+                        return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+                    elif i == self.first_hr[-1]:
+                        SOCpre = model.SOC[b, g, y, 4, i - 1]
+                        return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+
+        elif block == 'peak_week_season':
+            delta = 1
+            if (b, g) in model.B_G_ldes:
+                if i == self.start_hr:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == self.end_hr:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+            else:
+                if i in [0, 24, 48, 72, 96, 120, 144]:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i in [23, 47, 71, 95, 119, 143, 167]:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+
+        elif block == 'repr_3days_season':
+            delta = 1
+            if (b, g) in model.B_G_ldes:
+                if i == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == self.data_handler.M:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+            else:
+                if i % 24 == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif (i + 1) % 24 == 0:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+
+        elif block == 'seasonal_blocks':
+            if (b, g) in model.B_G_ldes:
+                if i == 0 and s == 1:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == 4 and s == 4:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                elif i == 0 and s != 1:
+                    SOCpre = model.SOC[b, g, y, s - 1, 4]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * model.season_time_weight[s, i]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * model.season_time_weight[s, i]
+            else:
+                if i == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == 5:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * model.season_time_weight[s, i]
+
+        elif block == 'peak_day':
+            delta = 1
+            if (b, g) in model.B_G_ldes:
+                if i == self.start_hr:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == self.end_hr:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+            else:
+                if i == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == 23:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+
+        return pm.Constraint.Skip
 
 
     def cChDsch(self, model, b, g, y, s, i):
@@ -711,45 +699,39 @@ class ExplanConstraints:
     
     def cThermRup(self, model, b, g, y, s, i):
         '''
-        Ramping constraint for each generator - ensures adequate ramp up - only valid for hourly simulation
+        Ramping constraint - ramp up. Uses self._block instead of
+        repeated str.lower() comparisons. Safety guard retained.
         '''
-        if (b, g) in self.thermal_tuple:
-            if self.data_handler.block_selection.lower() == 'Full_Year'.lower() or self.data_handler.block_selection.lower() == 'Full_Year_MY'.lower():
-                if i != 0:
-                    if i in self.last_hr and s != 4:
-                        P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s+1, self.first_hr[s-1]]
-                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
-                    elif i in self.last_hr and s == 4:
-                        P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, 1, self.last_hr[0]]
-                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
-                    elif i in self.first_hr and s != 1:
-                        P_diff = model.P_gen[b, g, y, s-1, self.last_hr[s-1]] - model.P_gen[b, g, y, s, i]
-                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
-                    else:
-                        P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
-                        return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
-                else:
-                    return pm.Constraint.Skip
-            else:
-                if i != 0:
-                    P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
-                    return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
-                else:
-                    return pm.Constraint.Skip
-        else:
+        if (b, g) not in self.thermal_tuple:
             return pm.Constraint.Skip
+        if self._block == 'full_year':
+            if i == 0:
+                return pm.Constraint.Skip
+            if i in self.last_hr and s != 4:
+                P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s+1, self.first_hr[s-1]]
+            elif i in self.last_hr and s == 4:
+                P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, 1, self.last_hr[0]]
+            elif i in self.first_hr and s != 1:
+                P_diff = model.P_gen[b, g, y, s-1, self.last_hr[s-1]] - model.P_gen[b, g, y, s, i]
+            else:
+                P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
+            return P_diff <= model.G_ramp[g] * model.P_cap_total[b, g, y]
+        else:
+            if i == 0:
+                return pm.Constraint.Skip
+            P_diff = model.P_gen[b, g, y, s, i] - model.P_gen[b, g, y, s, i-1]
+            return P_diff <= model.G_ramp[g] * model.P_cap_total[b, g, y]
+
     def cThermRdwn(self, model, b, g, y, s, i):
         '''
-        Ramping constraint for each generator - ensures adequate ramp down - only valid for hourly simulation
+        Ramping constraint - ramp down. Safety guard retained.
         '''
-        if (b, g) in self.thermal_tuple:
-            if i != 0:
-                P_diff = model.P_gen[b, g, y, s, i-1]-model.P_gen[b, g, y, s, i]
-                return P_diff <= model.G_ramp[g]*model.P_cap_total[b, g, y]
-            else:
-                return pm.Constraint.Skip
-        else:
+        if (b, g) not in self.thermal_tuple:
             return pm.Constraint.Skip
+        if i == 0:
+            return pm.Constraint.Skip
+        P_diff = model.P_gen[b, g, y, s, i-1] - model.P_gen[b, g, y, s, i]
+        return P_diff <= model.G_ramp[g] * model.P_cap_total[b, g, y]
 
     def cPRegMax(self, model, b, g, y, s, i):
         '''
@@ -773,11 +755,43 @@ class ExplanConstraints:
     def cPFlexMax(self, model, b, g, y, s, i):
         '''
         Ramping constraints - Flexibility -- Upper Bound
+        Original branching rule retained for reference; replaced in practice
+        by the split pair cPFlexMaxSto / cPFlexMaxGen.
         '''
         if (b, g) in self.storage_tuple:
             return model.P_Flex[b, g, y, s, i] <= model.Pdis[b, g, y, s, i]*60*model.G_ramp[g]
         else:
             return model.P_Flex[b, g, y, s, i] <= model.P_gen[b, g, y, s, i]*60*model.G_ramp[g]
+
+    # ------------------------------------------------------------------
+    # Split reserve upper-bound rules (Fix K).
+    # cPRegMax / cPSpinMax / cPFlexMax each had a storage_tuple branch
+    # check on every call. Splitting into sto + non-sto variants removes
+    # the branch entirely — no membership test, no Constraint.Skip.
+    # ------------------------------------------------------------------
+    def cPRegMaxSto(self, model, b, g, y, s, i):
+        '''Reg reserve upper bound — storage generators (Pdis-based).'''
+        return model.P_Reg[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 5 * model.G_ramp[g]
+
+    def cPRegMaxGen(self, model, b, g, y, s, i):
+        '''Reg reserve upper bound — non-storage generators (P_gen-based).'''
+        return model.P_Reg[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 5 * model.G_ramp[g]
+
+    def cPSpinMaxSto(self, model, b, g, y, s, i):
+        '''Spinning reserve upper bound — storage generators.'''
+        return model.P_Spin[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 10 * model.G_ramp[g]
+
+    def cPSpinMaxGen(self, model, b, g, y, s, i):
+        '''Spinning reserve upper bound — non-storage generators.'''
+        return model.P_Spin[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 10 * model.G_ramp[g]
+
+    def cPFlexMaxSto(self, model, b, g, y, s, i):
+        '''Flexibility reserve upper bound — storage generators.'''
+        return model.P_Flex[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 60 * model.G_ramp[g]
+
+    def cPFlexMaxGen(self, model, b, g, y, s, i):
+        '''Flexibility reserve upper bound — non-storage generators.'''
+        return model.P_Flex[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 60 * model.G_ramp[g]
 
     def cPRegMin(self, model, y, s, i):
         '''
