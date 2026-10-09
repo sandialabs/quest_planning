@@ -1501,7 +1501,7 @@ class ExplanOptimizer(Optimizer):
         self.constraints.set_expressions(self.model)
         
         #Report out model size and stats (used for informational purposes - prints to txt file)
-        self.report = build_model_size_report(self.model)
+        #self.report = build_model_size_report(self.model)
         print("Pyomo Model Successfully Built")
         print("Model will begin solving. If using the GUI, press the Solve Button")
         
@@ -1581,8 +1581,8 @@ class ExplanOptimizer(Optimizer):
     
     def print_model_stats(self):
         ''' Print model statistics'''
-        print('Model Statistics:')
-        print(self.report)
+        print('Model Statistics: Skipped!')
+        #print(self.report)
         
 
     def _process_results(self):
