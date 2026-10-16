@@ -15,16 +15,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
-    QToolButton, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
+    QLabel, QPushButton, QSizePolicy, QSpacerItem,
+    QTableWidget, QTableWidgetItem, QTextBrowser, QToolButton,
+    QVBoxLayout, QWidget)
 import quest_planning.resources_rc
 
 class Ui_ViewScenarioDialog(object):
     def setupUi(self, ViewScenarioDialog):
         if not ViewScenarioDialog.objectName():
             ViewScenarioDialog.setObjectName(u"ViewScenarioDialog")
-        ViewScenarioDialog.resize(780, 781)
+        ViewScenarioDialog.resize(900, 850)
         self.verticalLayout = QVBoxLayout(ViewScenarioDialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.frame_header = QFrame(ViewScenarioDialog)
@@ -421,6 +422,36 @@ class Ui_ViewScenarioDialog(object):
 
         self.verticalLayout.addWidget(self.frame_cards)
 
+        self.frame_large_loads = QFrame(ViewScenarioDialog)
+        self.frame_large_loads.setObjectName(u"frame_large_loads")
+        self.frame_large_loads.setFrameShape(QFrame.StyledPanel)
+        self.verticalLayout_large_loads = QVBoxLayout(self.frame_large_loads)
+        self.verticalLayout_large_loads.setObjectName(u"verticalLayout_large_loads")
+        self.label_large_loads = QLabel(self.frame_large_loads)
+        self.label_large_loads.setObjectName(u"label_large_loads")
+        self.label_large_loads.setFont(font1)
+
+        self.verticalLayout_large_loads.addWidget(self.label_large_loads)
+
+        self.large_loads_table = QTableWidget(self.frame_large_loads)
+        if (self.large_loads_table.columnCount() < 4):
+            self.large_loads_table.setColumnCount(4)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.large_loads_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.large_loads_table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.large_loads_table.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.large_loads_table.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        self.large_loads_table.setObjectName(u"large_loads_table")
+        self.large_loads_table.setMinimumSize(QSize(0, 80))
+
+        self.verticalLayout_large_loads.addWidget(self.large_loads_table)
+
+
+        self.verticalLayout.addWidget(self.frame_large_loads)
+
         self.frame_footer = QFrame(ViewScenarioDialog)
         self.frame_footer.setObjectName(u"frame_footer")
         sizePolicy.setHeightForWidth(self.frame_footer.sizePolicy().hasHeightForWidth())
@@ -521,6 +552,15 @@ class Ui_ViewScenarioDialog(object):
         self.label_cand.setProperty(u"textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
         self.label_retirement.setText(QCoreApplication.translate("ViewScenarioDialog", u"Retirement Schedule", None))
         self.label_retirement.setProperty(u"textRole", QCoreApplication.translate("ViewScenarioDialog", u"section", None))
+        self.label_large_loads.setText(QCoreApplication.translate("ViewScenarioDialog", u"Large Loads", None))
+        ___qtablewidgetitem = self.large_loads_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("ViewScenarioDialog", u"ID", None))
+        ___qtablewidgetitem1 = self.large_loads_table.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("ViewScenarioDialog", u"BUS", None))
+        ___qtablewidgetitem2 = self.large_loads_table.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("ViewScenarioDialog", u"Capacity (MW)", None))
+        ___qtablewidgetitem3 = self.large_loads_table.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("ViewScenarioDialog", u"Deploy Year", None))
         self.label_save_hint.setText(QCoreApplication.translate("ViewScenarioDialog", u"Save a text summary of this <i>QuESt Planning</i> scenario.", None))
         self.label_save_hint.setProperty(u"textRole", QCoreApplication.translate("ViewScenarioDialog", u"subtitle", None))
         self.close_button.setText(QCoreApplication.translate("ViewScenarioDialog", u"Close", None))

@@ -10,7 +10,7 @@ _CHECKED = Qt.CheckState.Checked.value
 class CandidateTechnologiesDialog(QDialog):
     """Select the candidate technologies eligible for the optimization."""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, selected=None):
         super().__init__(parent)
         self.ui = Ui_CandidateTechnologiesPage()
         self.ui.setupUi(self)
@@ -29,6 +29,13 @@ class CandidateTechnologiesDialog(QDialog):
         ]
 
         self.ui.frame_new_tech.setHidden(True)
+
+        if selected is None:
+            self._default.setChecked(True)
+        else:
+            selected = set(selected)
+            for checkbox in self._checkboxes:
+                checkbox.setChecked(checkbox.text() in selected)
 
         self.ui.btn_ok.clicked.connect(self.accept)
         self.ui.btn_cancel.clicked.connect(self.reject)

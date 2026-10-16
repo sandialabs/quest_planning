@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget
 from quest_planning.ui.forms.execute_model.ui_execute_model import (
     Ui_ExecuteModelPage,
 )
-from quest_planning.ui.utils.help_topics import show_help
+from quest_planning.ui.utils.help_topics import show_error, show_help
 
 
 class ExecuteModelPage(QWidget):
@@ -32,6 +32,15 @@ class ExecuteModelPage(QWidget):
         self.ui.btn_model_help.clicked.connect(
             lambda: show_help(self, "Build & Solve Optimization Model")
         )
+        self.data_handler = None
+        self.optimizer = None
+        self.scenario_page = None
+
+    def set_model_flow(self, data_handler, optimizer, scenario_page):
+        """Connect this page to the application's shared model objects."""
+        self.data_handler = data_handler
+        self.optimizer = optimizer
+        self.scenario_page = scenario_page
 
     def select_file(self):
         self.ui.results_file_box.addItem(
@@ -42,7 +51,21 @@ class ExecuteModelPage(QWidget):
         self.ui.report_progress_box.appendPlainText(str(text))
 
     def on_build_button_clicked(self):
-        pass
+        if self.scenario_page is None:
+            show_error(self, "Build Model", "Scenario Builder is not connected.")
+            return False
+        try:
+            self.scenario_page.apply_scenario_to_data_handler()
+            self.scenario_page.apply_large_loads_to_data_handler()
+            self.data_handler.construct_load_blocks()
+        except Exception as exc:
+            show_error(self, "Build Model", str(exc))
+            return False
+        return True
 
     def on_run_button_clicked(self):
-        pass
+        if self.optimizer is None:
+            return
+        if not self.on_build_button_clicked():
+            return
+        self.optimizer.run()

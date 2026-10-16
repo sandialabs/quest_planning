@@ -85,8 +85,20 @@ class QuestPlanning(QMainWindow):
         self.pages["page_scenario"] = self._make_page(
             "page_scenario", ScenarioBuilderPage(data_handler=self.data_handler)
         )
+        # Scenario Builder page is able to reference other objects
+        self.pages["page_scenario"].set_planning_model_page(
+            self.pages["page_planning"]
+        )
+        self.pages["page_scenario"].set_power_system_page(
+            self.pages["page_power_system"]
+        )
         self.pages["page_execute"] = self._make_page(
             "page_execute", ExecuteModelPage()
+        )
+        self.pages["page_execute"].set_model_flow(
+            self.data_handler,
+            self.optimizer,
+            self.pages["page_scenario"],
         )
         self.pages["page_results"] = self._make_page(
             "page_results", ResultsViewerPage()

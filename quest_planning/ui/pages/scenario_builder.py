@@ -1,4 +1,11 @@
-from PySide6.QtWidgets import QDialog, QFileDialog, QWidget
+from PySide6.QtWidgets import (
+    QAbstractItemView,
+    QDialog,
+    QFileDialog,
+    QTableWidgetItem,
+    QWidget,
+)
+from pathlib import Path
 
 from quest_planning.ui.forms.scenario_builder.ui_scenario_builder import (
     Ui_ScenarioBuilderPage,
@@ -19,6 +26,8 @@ from quest_planning.ui.dialogs.large_load_model import (
 from quest_planning.ui.dialogs.retirement_schedule import (
     RetirementScheduleDialog,
 )
+from quest_planning.ui.dialogs.rps_schedule import RPSScheduleDialog
+from quest_planning.ui.utils.help_topics import show_error
 
 from quest_planning.ui.utils.help_topics import show_help
 
@@ -36,7 +45,21 @@ class ScenarioBuilderPage(QWidget):
         self._power_system_page = None
         self._view_dialog = None
         self._candidate_technologies = None
+        self._selected_candidate_technologies = None
+        self._candidate_capacity_baseline = None
+        self._candidate_capacity_gen_frame = None
+        self._custom_rps_targets = None
+        self._policy_baseline = None
+        self._policy_frame = None
         self._large_load_model = None
+        self.large_loads = []
+        self.large_load_options = {
+            "large_load_option": False,
+            "ll_resource_option": False,
+            "large_load_flex": False,
+            "large_load_growth": 0.0,
+            "ll_self_sufficiency": 0.0,
+        }
         self._retirement_schedule = None
         self.retirements_print = None
 
@@ -79,6 +102,7 @@ class ScenarioBuilderPage(QWidget):
         )
         self.ui.btn_view_scenario.clicked.connect(self.open_view_scenario)
         self.ui.btn_large_load.clicked.connect(self.on_large_load_button_clicked)
+        self.ui.rps_box.activated.connect(self.on_rps_activated)
 
         self.ui.btn_title_help.clicked.connect(
             lambda: show_help(self, "Scenario Builder")
@@ -133,11 +157,15 @@ class ScenarioBuilderPage(QWidget):
     def on_cand_tech_button_clicked(self):
         """Collect the candidate technologies eligible for the optimization."""
         if self._candidate_technologies is None:
-            self._candidate_technologies = CandidateTechnologiesDialog(self)
+            self._candidate_technologies = CandidateTechnologiesDialog(
+                self, selected=self._selected_candidate_technologies
+            )
 
-        selected = []
-        if self._candidate_technologies.exec():
-            selected = self._candidate_technologies.selected_technologies()
+        if self._candidate_technologies.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        selected = self._candidate_technologies.selected_technologies()
+        self._selected_candidate_technologies = selected
 
         if not selected:
             self.ui.candidate_tech_box.setText("No technology selected")
@@ -149,12 +177,36 @@ class ScenarioBuilderPage(QWidget):
         self.ui.candidate_tech_box.setHtml(bullets)
         self.ui.cand_tech_frame.setHidden(False)
 
+    def on_rps_activated(self, _index=None):
+        """Collect a custom yearly RPS schedule when requested."""
+        option = self.ui.rps_box.currentText()
+        if option != "Create New...":
+            self._custom_rps_targets = None
+            return
+        years = getattr(self.data_handler, "years", None)
+        if not years:
+            show_error(self, "RPS Schedule", "Select simulation years first.")
+            self.ui.rps_box.setCurrentIndex(0)
+            return
+        dialog = RPSScheduleDialog(years, self)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            self.ui.rps_box.setCurrentIndex(0)
+            self._custom_rps_targets = None
+            return
+        try:
+            self._custom_rps_targets = dialog.targets()
+        except ValueError as exc:
+            show_error(self, "RPS Schedule", str(exc))
+            self.ui.rps_box.setCurrentIndex(0)
+            self._custom_rps_targets = None
+
     def on_large_load_button_clicked(self):
         if self._large_load_model is None:
-            self._large_load_model = LargeLoadModelDialog(self)
-
-        if self._large_load_model.exec():
-            pass # TODO: handle accepted dialog values
+            self._large_load_model = LargeLoadModelDialog(
+                self, large_loads=self.large_loads
+            )
+        if self._large_load_model.exec() == QDialog.DialogCode.Accepted:
+            self.large_load_options = self._large_load_model.options()
 
     def on_gen_retirement_button_clicked(self):
         """Configure generator retirement schedules."""
@@ -250,7 +302,139 @@ class ScenarioBuilderPage(QWidget):
             "Transmission Expansion": self.ui.transmission_box.currentText(),
             "Candidate Technologies": candidate_tech,
             "Retirement Schedule": retirement,
+            "Large Loads": "{} configured".format(len(self.large_loads)),
         }
+
+    def large_load_config(self):
+        """Return the large-load settings in the data handler's config shape."""
+        data_dir = getattr(self.data_handler, "data_dir", "")
+        data_folder = ""
+        if data_dir:
+            data_folder = Path(data_dir).name
+            expected_data_root = Path(__file__).resolve().parents[2] / "data_explan"
+            try:
+                data_folder = str(
+                    Path(data_dir).resolve().relative_to(expected_data_root)
+                )
+            except ValueError:
+                pass
+        return {
+            **self.large_load_options, # copes KV pairs from dict to new dict plus append rests syntatic sugar
+            "data_folder": data_folder,
+            "large_loads": self._large_load_records_for_handler(),
+        }
+
+    def _large_load_records_for_handler(self):
+        records = [load.to_config() for load in self.large_loads]
+        if not self.large_load_options.get("ll_resource_option", False):
+            for record in records:
+                for resource in record.get("onsite_resources", {}).values():
+                    resource["candidate"] = False
+        return records
+
+    def apply_scenario_to_data_handler(self):
+        """Apply the current Scenario Builder controls to the shared handler."""
+        name = self.ui.scenario_name_box.text().strip()
+        self.data_handler.set_scenario(name or "Base Scenario")
+
+        load_profile = self.ui.load_profile_box.currentText().strip()
+        if not load_profile:
+            raise ValueError("Select a load forecast before building the model.")
+        self.data_handler.set_load_profile(load_profile)
+
+        try:
+            growth = float(self.ui.annual_load_growth_box.text().strip())
+        except ValueError as exc:
+            raise ValueError("Annual load growth must be a number.") from exc
+        self.data_handler.set_load_growth(growth)
+
+        capital_cost = self.ui.capital_cost_box.currentText()
+        self.data_handler.set_capital_cost_trend(
+            "Moderate" if capital_cost == "Baseline" else capital_cost
+        )
+        self.data_handler.set_transmission_expansion(
+            self.ui.transmission_box.currentText() == "Yes"
+        )
+
+        self.apply_rps_to_data_handler()
+        self.apply_candidate_technologies_to_data_handler()
+
+    def apply_rps_to_data_handler(self):
+        """Restore default RPS data or apply the custom schedule and policy flag."""
+        policy = self.data_handler.load_data[self.data_handler.index("policy")]
+        if self._policy_frame is not policy:
+            self._policy_frame = policy
+            self._policy_baseline = policy["RPS"].copy(deep=True)
+        policy["RPS"] = self._policy_baseline
+
+        option = self.ui.rps_box.currentText()
+        if option == "Create New...":
+            if not self._custom_rps_targets:
+                raise ValueError("Configure all custom RPS targets before building.")
+            self.data_handler.set_rps_schedule(
+                self._custom_rps_targets, option=option
+            )
+        self.data_handler.set_rps_policy(True)
+
+    def apply_candidate_technologies_to_data_handler(self):
+        """Filter dataset candidate rows according to the user's selection."""
+        gen = self.data_handler.load_data[self.data_handler.index("gen")]
+        if self._candidate_capacity_gen_frame is not gen:
+            self._candidate_capacity_gen_frame = gen
+            self._candidate_capacity_baseline = gen["CandCap"].copy(deep=True)
+        gen["CandCap"] = self._candidate_capacity_baseline
+
+        selected = self._selected_candidate_technologies
+        if selected is None or "Default" in selected:
+            return
+        if "Custom" in selected:
+            raise ValueError(
+                "Custom candidate technologies are not available in this selector."
+            )
+
+        tech_by_label = {
+            "Wind": {"Wind_Cand"},
+            "Solar": {"Solar_Cand"},
+            "Li-ion Battery 1": {"Li_Ion_Cand", "Li_Ion_Cand_1"},
+            "Flow Battery": {"Flow_Cand"},
+            "Therm": {"Therm_Cand"},
+        }
+        selected_techs = set().union(
+            *(tech_by_label.get(label, set()) for label in selected)
+        )
+        candidate_rows = gen["Tech"].astype(str).str.endswith("_Cand")
+        keep_rows = gen["Tech"].isin(selected_techs)
+        gen.loc[candidate_rows & ~keep_rows, "CandCap"] = 0
+
+    def apply_large_loads_to_data_handler(self):
+        """Load configured profiles into the shared GUI data handler."""
+        config = self.large_load_config()
+        self.data_handler.set_large_load_option(config["large_load_option"])
+        self.data_handler.set_large_load_flex(config["large_load_flex"])
+        self.data_handler.set_ll_self_sufficiency(
+            config["ll_self_sufficiency"]
+        )
+        self.data_handler.ll_load_growth = config["large_load_growth"]
+        if not config["large_load_option"]:
+            self.data_handler.processed_ll = []
+            self.data_handler.process_large_loads()
+            return
+        if not config["data_folder"]:
+            raise ValueError(
+                "Load the power system data before configuring large loads."
+            )
+        for load in config["large_loads"]:
+            profile_path = (
+                Path(getattr(self.data_handler, "data_dir"))
+                / "large_loads"
+                / load["profile_file"]
+            )
+            if not profile_path.is_file():
+                raise ValueError(
+                    "Large load profile was not found: {}".format(profile_path)
+                )
+        self.data_handler.read_large_loads_config(config)
+        self.data_handler.process_large_loads()
 
     def open_view_scenario(self):
         """Populate and show the View Scenario dialog."""
@@ -263,6 +447,9 @@ class ScenarioBuilderPage(QWidget):
             )
             self._view_dialog.ui.close_button.clicked.connect(
                 self._view_dialog.reject
+            )
+            self._view_dialog.ui.large_loads_table.setEditTriggers(
+                QAbstractItemView.EditTrigger.NoEditTriggers
             )
 
         system_name = "--"
@@ -291,6 +478,14 @@ class ScenarioBuilderPage(QWidget):
             sc["Candidate Technologies"]
         )
         self._view_dialog.ui.retirement_value.setPlainText(sc["Retirement Schedule"])
+        table = self._view_dialog.ui.large_loads_table
+        table.setRowCount(0)
+        table.setRowCount(len(self.large_loads))
+        for row, load in enumerate(self.large_loads):
+            for column, value in enumerate(
+                (load.id, load.bus, load.capacity_mw, load.deploy_year)
+            ):
+                table.setItem(row, column, QTableWidgetItem(str(value)))
 
         self._view_dialog.exec()
 
@@ -298,6 +493,14 @@ class ScenarioBuilderPage(QWidget):
         """Write a text summary of the scenario to a user-chosen file."""
         info = self.planning_model_info()
         info.update(self.scenario_info())
+        info["Large Loads"] = ""
+        if self.large_loads:
+            info["Large Loads"] = "\n" + "\n".join(
+                "  - {id}, bus {bus}, {capacity_mw} MW, deploy {deploy_year}".format(
+                    **load.to_config()
+                )
+                for load in self.large_loads
+            )
 
         default_name = "{}.txt".format(info["Scenario Name"])
         file_name, _ = QFileDialog.getSaveFileName(

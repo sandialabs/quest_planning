@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>781</height>
+    <width>900</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -896,6 +896,28 @@
           </spacer>
          </item>
         </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame_large_loads">
+     <property name="frameShape"><enum>QFrame::StyledPanel</enum></property>
+     <layout class="QVBoxLayout" name="verticalLayout_large_loads">
+      <item>
+       <widget class="QLabel" name="label_large_loads">
+        <property name="text"><string>Large Loads</string></property>
+        <property name="font"><font><family>Segoe UI</family><pointsize>10</pointsize><weight>75</weight><bold>true</bold></font></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="large_loads_table">
+        <property name="minimumSize"><size><width>0</width><height>80</height></size></property>
+        <column><property name="text"><string>ID</string></property></column>
+        <column><property name="text"><string>BUS</string></property></column>
+        <column><property name="text"><string>Capacity (MW)</string></property></column>
+        <column><property name="text"><string>Deploy Year</string></property></column>
        </widget>
       </item>
      </layout>
