@@ -51,6 +51,8 @@ class ScenarioBuilderPage(QWidget):
         self._custom_rps_targets = None
         self._policy_baseline = None
         self._policy_frame = None
+        self._retirement_gen_frame = None
+        self._retirement_baseline = None
         self._large_load_model = None
         self.large_loads = []
         self.large_load_options = {
@@ -227,9 +229,6 @@ class ScenarioBuilderPage(QWidget):
 
         retirement = dialog.selected_retirement()
 
-        if retirement["mode"] == "generator":
-            self.data_handler.set_retirements(retirement["values"])
-
         self.ui.retirement_box.setHtml(
             self.format_retirement_schedule(retirement)
         )
@@ -356,8 +355,37 @@ class ScenarioBuilderPage(QWidget):
             self.ui.transmission_box.currentText() == "Yes"
         )
 
+        self.apply_retirements_to_data_handler()
         self.apply_rps_to_data_handler()
         self.apply_candidate_technologies_to_data_handler()
+
+    def apply_retirements_to_data_handler(self):
+        """Apply the selected generator retirements to the shared handler."""
+        gen = self.data_handler.load_data[self.data_handler.index("gen")]
+        if self._retirement_gen_frame is not gen:
+            self._retirement_gen_frame = gen
+            self._retirement_baseline = gen["RetYr"].copy(deep=True)
+        gen["RetYr"] = self._retirement_baseline
+
+        retirement = self.retirements_print
+        mode = retirement["mode"] if retirement is not None else "default"
+        values = retirement["values"] if retirement is not None else {}
+
+        # Clear technology mode first so a previous build cannot leave cutoffs active.
+        self.data_handler.set_custom_retirement_years(
+            False, None, None, None, None
+        )
+
+        if mode == "technology" and values:
+            self.data_handler.set_custom_retirement_years(
+                True,
+                values.get("Natural Gas"),
+                values.get("Coal"),
+                values.get("Nuclear"),
+                values.get("Oil"),
+            )
+        elif mode == "generator":
+            self.data_handler.set_retirements(retirement["values"])
 
     def apply_rps_to_data_handler(self):
         """Restore default RPS data or apply the custom schedule and policy flag."""
@@ -374,6 +402,7 @@ class ScenarioBuilderPage(QWidget):
             self.data_handler.set_rps_schedule(
                 self._custom_rps_targets, option=option
             )
+        # The dataset's default schedule is still an active RPS policy.
         self.data_handler.set_rps_policy(True)
 
     def apply_candidate_technologies_to_data_handler(self):

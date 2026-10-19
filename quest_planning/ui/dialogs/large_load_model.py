@@ -18,15 +18,17 @@ from quest_planning.ui.forms.scenario_builder.ui_large_load_model import (
 )
 from quest_planning.ui.utils.help_topics import show_error
 
-# This class is for the large load pane itself
 class LargeLoadModelDialog(QDialog):
+    """Manage the page's large-load list and model-wide settings."""
 
     def __init__(self, parent=None, large_loads=None):
         super().__init__(parent)
         self.ui = Ui_LargeLoadModelPage()
         self.ui.setupUi(self)
 
-        self.large_loads = large_loads if large_loads is not None else []
+        # The page owns the committed list; this copy makes Cancel discard edits.
+        self._target_large_loads = large_loads if large_loads is not None else []
+        self.large_loads = list(self._target_large_loads)
         self.ui.table_large_loads.setColumnCount(4)
         self.ui.table_large_loads.setHorizontalHeaderLabels(
             ["ID", "BUS", "Capacity (MW)", "Deploy Year"]
@@ -50,8 +52,15 @@ class LargeLoadModelDialog(QDialog):
         self._onsite_resources_enabled = enabled
 
     def exec(self):
+        # Start each opening from the last accepted list and sync the visible rows.
+        self.large_loads = list(self._target_large_loads)
         self.refresh_large_load_table()
         return super().exec()
+
+    def accept(self):
+        # Commit list edits in place so ScenarioBuilderPage keeps the same list.
+        self._target_large_loads[:] = self.large_loads
+        super().accept()
 
     def options(self):
         return {
@@ -63,6 +72,7 @@ class LargeLoadModelDialog(QDialog):
         }
 
     def add_large_load(self):
+        # Open the per-load form and append only after it validates and accepts.
         dialog = LargeLoadDialog(
             self,
             onsite_resources_enabled=self.ui.checkBox_2.isChecked(),
@@ -78,6 +88,7 @@ class LargeLoadModelDialog(QDialog):
         self.refresh_large_load_table()
 
     def remove_large_load(self):
+        # The table row order mirrors the list, so the selected row identifies the load.
         row = self.ui.table_large_loads.currentRow()
         if row < 0 or row >= len(self.large_loads):
             return
@@ -86,6 +97,7 @@ class LargeLoadModelDialog(QDialog):
         self.refresh_large_load_table()
 
     def refresh_large_load_table(self):
+        # Show the four identifying fields; the full record stays in LargeLoadData.
         table = self.ui.table_large_loads
         table.setRowCount(len(self.large_loads))
         for row, load in enumerate(self.large_loads):
@@ -116,6 +128,7 @@ class LargeLoadDialog(QDialog):
         self.ui.btn_cancel.clicked.connect(self.reject)
 
     def select_profile_file(self):
+        # Store the selected path in the form; the data object keeps only its filename.
         file_name, _ = QFileDialog.getOpenFileName(
             self, "Select Large Load Profile", "", "CSV Files (*.csv);;All Files (*)"
         )
@@ -123,6 +136,7 @@ class LargeLoadDialog(QDialog):
             self.ui.lineEdit_file.setText(file_name)
 
     def accept_large_load(self):
+        # Validate before closing so invalid input can be corrected in this form.
         try:
             self.large_load()
         except ValueError as exc:
@@ -139,6 +153,7 @@ class LargeLoadDialog(QDialog):
 
     @staticmethod
     def _required_number(field, label, integer=False, positive=False):
+        # Centralize numeric parsing and range checks for all required numeric fields.
         text = field.text().strip()
         if not text:
             raise ValueError("{} cannot be empty.".format(label))
@@ -156,11 +171,13 @@ class LargeLoadDialog(QDialog):
 
     @classmethod
     def _optional_number(cls, field, label):
+        # Blank optional onsite limits mean zero; provided values use normal validation.
         if not field.text().strip():
             return 0
         return cls._required_number(field, label)
 
     def large_load(self):
+        # Convert form values into the typed record consumed by Scenario Builder.
         load_id = self._required_text(self.ui.lineEdit_id, "ID")
         bus = self._required_number(
             self.ui.lineEdit_bus, "Bus", integer=True, positive=True
@@ -175,6 +192,7 @@ class LargeLoadDialog(QDialog):
         if not Path(profile_file).suffix:
             raise ValueError("Profile file must include its file extension.")
 
+        # Candidate flags only apply when onsite resources are enabled globally.
         ng_candidate = (
             self._onsite_resources_enabled
             and self.ui.checkBox_ngas_cand.isChecked()
@@ -241,9 +259,9 @@ class LargeLoadDialog(QDialog):
         )
 
 
-# This class is for the Large Load Object that holds each specfic large load
 @dataclass
 class LargeLoadData:
+    """Typed record for one load, including its profile and onsite resource data."""
     id: str
     bus: int
     capacity_mw: float
@@ -253,6 +271,7 @@ class LargeLoadData:
     onsite_resources: dict
 
     def to_config(self):
+        """Return the dictionary shape expected by the Explan data handler."""
         return {
             "id": self.id,
             "bus": self.bus,
