@@ -25,9 +25,7 @@ import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning, module="PIL.Image")
 
-
 time_count = 0
-
 
 class QuestPlanning(QMainWindow):
     """The main window that contains the stacked widget for the separate pages."""
@@ -184,12 +182,14 @@ class QuestPlanning(QMainWindow):
             button.setChecked(self.pages[page_name] is current)
 
 
+# TODO: Replace this legacy timer-driven startup splash with an
+# initialization-driven flow. Keep Qt widget construction on the GUI thread.
 class SplashScreen(QMainWindow):
     """Splash screen that fades into the main window when ready."""
 
     def __init__(self):
         super().__init__()
-        from quest_planning.gui.splash_screen_page.ui.ui_splash_screen import (
+        from quest_planning.ui.forms.splash_screens.ui_splash_screen_page import (
             Ui_SplashScreen,
         )
 
@@ -235,7 +235,7 @@ class SplashScreen(QMainWindow):
             "{STOP_V1}", stop_v1
         ).replace("{STOP_V2}", stop_v2)
         self.ui.load_status_graphic.setStyleSheet(new_style)
-        self.ui.label.setText(str(int(value)) + " %")
+        self.ui.label_splash_progress.setText(str(int(value)) + " %")
 
 
 def main():

@@ -77,6 +77,12 @@ QWidget {
 QLabel {
     background-color: transparent;
 }
+QLabel#label_splash_progress {
+    font-family: "Product Sans";
+    font-size: 48pt;
+    font-weight: bold;
+    color: rgb(129, 194, 64);
+}
 QDialog {
     background-color: rgb(244, 244, 244);
 }

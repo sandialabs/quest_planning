@@ -1,10 +1,24 @@
 from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import (
+    QRunnable,
+    QThreadPool,
+    QTimer,
+    Slot,
+)
 
 from quest_planning.ui.forms.execute_model.ui_execute_model import (
     Ui_ExecuteModelPage,
 )
 from quest_planning.ui.utils.help_topics import show_error, show_help
 
+class Worker(QRunnable):
+    """Worker thread."""
+    @Slot()
+    def run(self):
+        """Simulation goes in this method"""
+        print("Thread start")
+        time.sleep(5)
+        print("Thread complete")
 
 class ExecuteModelPage(QWidget):
     def __init__(self, parent=None):
