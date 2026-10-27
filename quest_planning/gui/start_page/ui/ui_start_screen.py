@@ -71,7 +71,7 @@ class Ui_start_screen(object):
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.label_3 = QLabel(self.frame_6)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setStyleSheet(u"image:url(:/pics/images/pics/custom_QP_logo.png);")
+        self.label_3.setStyleSheet(u"image:url(:/pics/images/pics/new_logo.png);")
 
         self.verticalLayout_3.addWidget(self.label_3)
 
