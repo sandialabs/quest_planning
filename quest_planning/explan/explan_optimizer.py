@@ -840,7 +840,7 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['CostScale'] = ['i']
 
         model.LL_Curt_MaxFrac = pm.Param(
-            initialize=0.25,
+            initialize=self.data_handler.ll_curt_max_frac,
             mutable=True
         )
         par_index_labels['LL_Curt_MaxFrac'] = ['i']

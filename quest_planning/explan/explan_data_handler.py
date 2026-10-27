@@ -110,7 +110,8 @@ class ExplanDataHandler():
         self.large_load_flex = False
         self.ll_load_growth = 0.0 #Default for now
         self.ll_self_sufficiency = 0.0 #Default: no self-sufficiency requirement
-        
+        self.ll_curt_max_frac = 0.25 #Default: 25% hourly curtailment cap
+
         self.mva_base = 100
         
         self.resource_bus_limit_dict = None
@@ -415,6 +416,10 @@ class ExplanDataHandler():
         self.large_load_option= cfg.get("large_load_option", False)
         self.large_load_flex = cfg.get("large_load_flex", False)
         self.ll_self_sufficiency = cfg.get("ll_self_sufficiency", 0.0)
+        self.ll_curt_max_frac = cfg.get("ll_curt_max_frac", 0.25)
+        # Derive flex flag: α=0 means no flexibility regardless of explicit flag
+        if self.ll_curt_max_frac == 0.0:
+            self.large_load_flex = False
         self.processed_ll = []
         for l in loads:
             # validate required fields
