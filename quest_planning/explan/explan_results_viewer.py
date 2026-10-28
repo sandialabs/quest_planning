@@ -2047,7 +2047,7 @@ class ExplanResultsViewer():
                     energy = float(gen['energy'].iloc[0])
                     duration_g = energy / power
 
-                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
+                    color = colormap[min(int((duration_g / max_d_t) * (len(colormap) - 1)), len(colormap) - 1)]
 
                     fig.add_trace(go.Scattergeo(
                         lon=[lon],
