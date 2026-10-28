@@ -97,6 +97,7 @@ class QuestPlanning(QMainWindow):
             self.data_handler,
             self.optimizer,
             self.pages["page_scenario"],
+            self.results_viewer,
         )
         self.pages["page_results"] = self._make_page(
             "page_results", ResultsViewerPage()

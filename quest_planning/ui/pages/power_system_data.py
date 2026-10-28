@@ -127,6 +127,8 @@ class PowerSystemPage(QStackedWidget):
             self.data_handler.set_data_ls_index(data_ls)
             self.data_handler.data_dir = data_dir
             self.data_handler.get_data()
+            system_name = name_input.text().strip() or Path(data_dir).name
+            self.data_handler.set_system_name(system_name)
 
             scenario_page = self.window().pages["page_scenario"]
             scenario_page._load_forecasts()

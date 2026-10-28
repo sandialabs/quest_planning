@@ -32,6 +32,7 @@ class AbstractSplashScreen(QDialog, metaclass=_QtABCMeta):
         self.setWindowTitle(self.dialog_title())
         self.setWindowIcon(QIcon(":/logos/images/logo/Quest_App_Icon.svg"))
         self.setModal(True)
+        self.setWindowFlag(Qt.WindowCloseButtonHint, False)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         layout = QVBoxLayout(self)
@@ -82,4 +83,4 @@ class ExecuteModelSplash(AbstractSplashScreen):
         return "Executing Model"
 
     def initial_status(self) -> str:
-        return "Preparing the optimization model..."
+        return "The simulation is starting. Please wait..."
