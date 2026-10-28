@@ -902,16 +902,28 @@ class ExplanDataHandler():
             df1.columns = ['y', 'drop', 'total', 'i', 's']
             df1 = df1.drop('drop', axis=1)
         if self.block_selection.lower() == 'Repr_weeks'.lower():
-            # for Peak week only
+            # Derive time_array/season_array from actual df1 shape to handle
+            # variable-length peak weeks (peak week may have <168 hours when
+            # the selected week crosses a month/season boundary in the data).
+            # Hardcoding 168*5=840 caused a ValueError length mismatch when the
+            # actual block has 816 rows (162*4 avg seasons + 168 peak season).
             time, year = np.shape(df)
-            time_array = np.concatenate(
-                [np.array(np.arange(0, 168))]*5)
-            season_array = np.concatenate([np.ones(
-                168)*1, np.ones(168)*2, np.ones(168)*3, np.ones(168)*4, np.ones(168)*5])
             df1 = pd.DataFrame(data=df.unstack(level=0))
+            rows_per_year = len(df1) // year
+            # 5 seasons: 4 average weeks + 1 peak week (always a full 7-day week)
+            peak_hrs = 168
+            hrs_per_avg_season = (rows_per_year - peak_hrs) // 4
+            time_array = np.concatenate(
+                [np.arange(0, hrs_per_avg_season)] * 4 +
+                [np.arange(0, peak_hrs)]
+            )
+            season_array = np.concatenate(
+                [np.ones(hrs_per_avg_season) * s for s in range(1, 5)] +
+                [np.ones(peak_hrs) * 5]
+            )
 
-            df1['i'] = np.concatenate([time_array]*year)
-            df1['s'] = np.concatenate([season_array]*year)
+            df1['i'] = np.concatenate([time_array] * year)
+            df1['s'] = np.concatenate([season_array] * year)
 
             df1 = df1.reset_index()
             df1.columns = ['y', 'drop', 'total', 'i', 's']
