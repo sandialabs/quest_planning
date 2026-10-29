@@ -1098,7 +1098,7 @@ class ExplanDataHandler():
 
         # Define technology categories
         self.tech_categories = {
-            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'SMR_Cand'],
+            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'SMR_Cand', 'Gas_LL_Cand'],
             'nuclear': ['Nuclear','SMR_Cand'],
             'coal' : ['Coal'],
             'oil' : ['Oil_CT','Oil_St'],
