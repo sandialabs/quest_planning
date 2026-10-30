@@ -347,6 +347,9 @@ class ExplanConstraints:
                 model.B_G_can, model.Y, rule=self.cBusInvMaxAnnual)
         model.cBusInvMaxTotal = pm.Constraint(
                 model.B_G_can, rule=self.cBusInvMaxTotal)
+        if self.data_handler.large_load_option:
+            model.cLLNGInvMax = pm.Constraint(
+                model.B_G_LL_ng, rule=self.cLLNGInvMax)
             
         model.cSystWindMax = pm.Constraint(
             rule=self.cSystWindMax)
@@ -1281,7 +1284,10 @@ class ExplanConstraints:
     def cBusInvMaxAnnual(self, model, b, g, y):
         '''
         Planning horizon investment constraints
+        Gas_LL_Cand is excluded here — its investment is capped by cLLNGInvMax instead.
         '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         if (b, g) in self.cand_tuple:
             if self.data_handler.block_selection.lower() == 'Full_Year'.lower():
                 if self.data_handler.ldes_switch is False and (b, g) in model.B_G_ldes:
@@ -1302,9 +1308,22 @@ class ExplanConstraints:
     
     def cBusInvMaxTotal(self, model, b, g):#cjn - removed year index
         '''
-        Maximum invested cumulative capacities of candidate technologies by bus
+        Maximum invested cumulative capacities of candidate technologies by bus.
+        Gas_LL_Cand is excluded here — its investment is capped by cLLNGInvMax instead.
         '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return sum(model.G_inv[b, g, y] for y in model.Y) <= model.P_cap_syst_max[g]
+
+    def cLLNGInvMax(self, model, b, g):
+        '''
+        Cap total co-located NG investment over the planning horizon using
+        LL_NG_Max from the YAML config (onsite_resources.ng.max_capacity_mw).
+        Replaces the broken CandCap=0/SystCap=0 path from gen.csv for Gas_LL_Cand.
+        Each LL has exactly one bus, so the mapping from (b,g) -> LL id is unique.
+        '''
+        ll_id = next(ll for ll in model.LL if model.LL_bus[ll] == b)
+        return sum(model.G_inv[b, g, y] for y in model.Y) <= model.LL_NG_Max[ll_id]
     
     def cSystWindMax(self, model):
         '''

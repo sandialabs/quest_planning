@@ -1302,6 +1302,12 @@ class ExplanOptimizer(Optimizer):
         model.B_G_LL_sto = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_LL_sto_df['Bus_num'].values, B_G_LL_sto_df['Gen_num'].values)))
 
+        B_G_LL_ng_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
+            tech_nums['large_load_ng'])]
+
+        model.B_G_LL_ng = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_LL_ng_df['Bus_num'].values, B_G_LL_ng_df['Gen_num'].values)))
+
         B_G_carbon_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
             list(set(tech_nums['thermal'])-set(tech_nums['nuclear'])))]
 

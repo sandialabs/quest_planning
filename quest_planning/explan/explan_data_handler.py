@@ -1118,6 +1118,7 @@ class ExplanDataHandler():
             'exist': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Wind_PPA', 'Wind', 'Solar_PPA', 'ES_PPA', 'Solar', 'Solar_RT', 'CSP', 'ES'],
             'large_load_gen': ['Solar_LL_Cand','Wind_LL_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand'],
             'large_load_sto': ['Li_Ion_Cand_LL_Cand'],
+            'large_load_ng':  ['Gas_LL_Cand'],
         }
 
         # Initialize dictionary to hold generator numbers
@@ -1160,6 +1161,7 @@ class ExplanDataHandler():
         self.bus_wind_ex_num = get_bus_nums('wind_ex')
         self.bus_wind_can_num = get_bus_nums('wind_can')
         self.bus_es_can_num = get_bus_nums('storage_cand')
+        self.bus_ll_ng_num  = get_bus_nums('large_load_ng')
         #self.bus_es_can_yr_num = get_bus_nums('storage_cand_year')
 
         # For line_bus_num, directly use pandas' capabilities to create the tuple
