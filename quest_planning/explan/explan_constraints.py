@@ -1335,8 +1335,14 @@ class ExplanConstraints:
         LL_NG_Max from the YAML config (onsite_resources.ng.max_capacity_mw).
         Replaces the broken CandCap=0/SystCap=0 path from gen.csv for Gas_LL_Cand.
         Each LL has exactly one bus, so the mapping from (b,g) -> LL id is unique.
+        Guard: if no LL is declared at bus b in this config, skip the constraint
+        (B_G_LL_ng is already filtered to declared LL buses, but this defensive
+        guard prevents a silent StopIteration→RuntimeError hang if that filter
+        ever misses a case).
         '''
-        ll_id = next(ll for ll in model.LL if model.LL_bus[ll] == b)
+        ll_id = next((ll for ll in model.LL if model.LL_bus[ll] == b), None)
+        if ll_id is None:
+            return pm.Constraint.Skip
         return sum(model.G_inv[b, g, y] for y in model.Y) <= model.LL_NG_Max[ll_id]
     
     def cSystWindMax(self, model):

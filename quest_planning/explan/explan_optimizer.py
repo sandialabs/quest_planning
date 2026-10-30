@@ -1302,8 +1302,16 @@ class ExplanOptimizer(Optimizer):
         model.B_G_LL_sto = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_LL_sto_df['Bus_num'].values, B_G_LL_sto_df['Gen_num'].values)))
 
-        B_G_LL_ng_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
-            tech_nums['large_load_ng'])]
+        # B_G_LL_ng: restrict to buses that actually have a declared large load
+        # in this config. gen.csv contains Gas_LL_Cand at all 6 LL buses, but
+        # most configs only declare a subset — including unmatched buses causes
+        # cLLNGInvMax to raise StopIteration → RuntimeError inside Pyomo's
+        # constraint-building loop, producing a silent hang.
+        ll_buses = set(self.data_handler.large_load_buses) if self.data_handler.large_load_option else set()
+        B_G_LL_ng_df = bus_gen_num.loc[
+            bus_gen_num['Gen_num'].isin(tech_nums['large_load_ng']) &
+            bus_gen_num['Bus_num'].isin(ll_buses)
+        ]
 
         model.B_G_LL_ng = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_LL_ng_df['Bus_num'].values, B_G_LL_ng_df['Gen_num'].values)))
