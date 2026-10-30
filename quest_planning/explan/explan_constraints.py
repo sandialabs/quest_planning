@@ -1234,11 +1234,25 @@ class ExplanConstraints:
                 return model.Store[b, g, y] == base_storage + model.Sto_inv[b, g, y]
 
             else:
-                online_storage_investment = sum(
-                    model.Sto_inv[b, g, y1]
-                    for y1 in self.data_handler.years
-                    if y1 + model.G_lt[g] <= y
-                )
+                if (
+                    self.data_handler.large_load_option
+                    and (b, g) in model.B_G_LL_sto
+                ):
+                    # Co-located BESS: waive lead time for all planning years.
+                    # Mirrors the cPCapTotal B_G_LL branch — co-located BTM
+                    # resources are procured alongside the data center, not as
+                    # independent grid assets with a separate procurement lead time.
+                    online_storage_investment = sum(
+                        model.Sto_inv[b, g, y1]
+                        for y1 in self.data_handler.years
+                        if y1 <= y
+                    )
+                else:
+                    online_storage_investment = sum(
+                        model.Sto_inv[b, g, y1]
+                        for y1 in self.data_handler.years
+                        if y1 + model.G_lt[g] <= y
+                    )
 
                 return model.Store[b, g, y] == base_storage + online_storage_investment
 
