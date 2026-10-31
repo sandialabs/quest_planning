@@ -10,7 +10,6 @@ import datetime
 from datetime import date
 import logging
 import calendar
-import networkx as nx
 import matplotlib.dates as mdates
 from sklearn.cluster import KMeans
 import os
@@ -1291,6 +1290,7 @@ class ExplanDataHandler():
 
         
     def create_network_diagram(self,fig,ax,use_map):
+        import networkx as nx  # lazy import: only used for GUI visualization, never in HPC batch runs
         # Create an empty graph
         G = nx.Graph()
     

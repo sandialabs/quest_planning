@@ -8,8 +8,6 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import folium
-import branca.colormap as cm
 import matplotlib.patches as mpatches
 import matplotlib.dates as mdates
 import os.path
@@ -17,7 +15,6 @@ import yaml
 import glob
 import argparse
 import textwrap
-import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
 from quest_planning.paths import get_path
