@@ -350,6 +350,10 @@ class ExplanConstraints:
         if self.data_handler.large_load_option:
             model.cLLNGInvMax = pm.Constraint(
                 model.B_G_LL_ng, rule=self.cLLNGInvMax)
+            model.cLLBESSPowerInvMax = pm.Constraint(
+                model.B_G_LL_sto, rule=self.cLLBESSPowerInvMax)
+            model.cLLBESSEnergyInvMax = pm.Constraint(
+                model.B_G_LL_sto, rule=self.cLLBESSEnergyInvMax)
             
         model.cSystWindMax = pm.Constraint(
             rule=self.cSystWindMax)
@@ -1297,10 +1301,13 @@ class ExplanConstraints:
 
     def cBusInvMaxAnnual(self, model, b, g, y):
         '''
-        Planning horizon investment constraints
-        Gas_LL_Cand is excluded here — its investment is capped by cLLNGInvMax instead.
+        Planning horizon investment constraints.
+        Gas_LL_Cand and Li_Ion_Cand_LL_Cand are excluded here — their
+        investment is capped by cLLNGInvMax / cLLBESSPowerInvMax instead.
         '''
         if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
+        if (b, g) in model.B_G_LL_sto:
             return pm.Constraint.Skip
         if (b, g) in self.cand_tuple:
             if self.data_handler.block_selection.lower() == 'Full_Year'.lower():
@@ -1323,9 +1330,12 @@ class ExplanConstraints:
     def cBusInvMaxTotal(self, model, b, g):#cjn - removed year index
         '''
         Maximum invested cumulative capacities of candidate technologies by bus.
-        Gas_LL_Cand is excluded here — its investment is capped by cLLNGInvMax instead.
+        Gas_LL_Cand and Li_Ion_Cand_LL_Cand are excluded here — their
+        investment is capped by cLLNGInvMax / cLLBESSPowerInvMax instead.
         '''
         if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
+        if (b, g) in model.B_G_LL_sto:
             return pm.Constraint.Skip
         return sum(model.G_inv[b, g, y] for y in model.Y) <= model.P_cap_syst_max[g]
 
@@ -1344,6 +1354,32 @@ class ExplanConstraints:
         if ll_id is None:
             return pm.Constraint.Skip
         return sum(model.G_inv[b, g, y] for y in model.Y) <= model.LL_NG_Max[ll_id]
+
+    def cLLBESSPowerInvMax(self, model, b, g):
+        '''
+        Cap total co-located BESS power investment over the planning horizon
+        using LL_BESS_Power_Max from the YAML config (bess.max_power_mw).
+        When bess_candidate: false / max_power_mw: 0, this forces G_inv = 0
+        for co-located BESS — correctly implementing Config A (grid-only)
+        and preventing the optimizer from silently building BTM storage when
+        the config intends none.
+        '''
+        ll_id = next((ll for ll in model.LL if model.LL_bus[ll] == b), None)
+        if ll_id is None:
+            return pm.Constraint.Skip
+        return sum(model.G_inv[b, g, y] for y in model.Y) <= model.LL_BESS_Power_Max[ll_id]
+
+    def cLLBESSEnergyInvMax(self, model, b, g):
+        '''
+        Cap total co-located BESS energy investment over the planning horizon
+        using LL_BESS_Energy_Max from the YAML config (bess.max_energy_mwh).
+        When max_energy_mwh: 0, forces Sto_inv = 0 for co-located BESS.
+        Total horizon cap consistent with cLLBESSPowerInvMax and cLLNGInvMax.
+        '''
+        ll_id = next((ll for ll in model.LL if model.LL_bus[ll] == b), None)
+        if ll_id is None:
+            return pm.Constraint.Skip
+        return sum(model.Sto_inv[b, g, y] for y in model.Y) <= model.LL_BESS_Energy_Max[ll_id]
     
     def cSystWindMax(self, model):
         '''
