@@ -243,6 +243,11 @@ class ExplanConstraints:
                 model.Y, model.S_I, rule=self.cPSpinMin)
             model.cPFlexMin = pm.Constraint(
                 model.Y, model.S_I, rule=self.cPFlexMin)
+            # Belt-and-suspenders: force all BTM co-located resource reserve
+            # variables to zero (covers Gas_LL_Cand, Li_Ion_Cand_LL_Cand,
+            # Solar_LL_Cand, Wind_LL_Cand via B_G_LL).
+            model.cLLNoReserve = pm.Constraint(
+                model.B_G_LL, model.Y, model.S_I, rule=self.cLLNoReserve)
 
         if self.data_handler.block_selection.lower() != 'seasonal_blocks':
             model.cThermRup = pm.Constraint(
@@ -767,61 +772,112 @@ class ExplanConstraints:
     # the branch entirely — no membership test, no Constraint.Skip.
     # ------------------------------------------------------------------
     def cPRegMaxSto(self, model, b, g, y, s, i):
-        '''Reg reserve upper bound — storage generators (Pdis-based).'''
+        '''Reg reserve upper bound — storage generators (Pdis-based).
+        Co-located BTM storage (Li_Ion_Cand_LL_Cand) is excluded:
+        BTM resources are not available to the grid operator for reserve.
+        '''
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return model.P_Reg[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 5 * model.G_ramp[g]
 
     def cPRegMaxGen(self, model, b, g, y, s, i):
-        '''Reg reserve upper bound — non-storage generators (P_gen-based).'''
+        '''Reg reserve upper bound — non-storage generators (P_gen-based).
+        Co-located BTM NG (Gas_LL_Cand) is excluded:
+        BTM resources are not available to the grid operator for reserve.
+        '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return model.P_Reg[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 5 * model.G_ramp[g]
 
     def cPSpinMaxSto(self, model, b, g, y, s, i):
-        '''Spinning reserve upper bound — storage generators.'''
+        '''Spinning reserve upper bound — storage generators.
+        Co-located BTM storage (Li_Ion_Cand_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return model.P_Spin[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 10 * model.G_ramp[g]
 
     def cPSpinMaxGen(self, model, b, g, y, s, i):
-        '''Spinning reserve upper bound — non-storage generators.'''
+        '''Spinning reserve upper bound — non-storage generators.
+        Co-located BTM NG (Gas_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return model.P_Spin[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 10 * model.G_ramp[g]
 
     def cPFlexMaxSto(self, model, b, g, y, s, i):
-        '''Flexibility reserve upper bound — storage generators.'''
+        '''Flexibility reserve upper bound — storage generators.
+        Co-located BTM storage (Li_Ion_Cand_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return model.P_Flex[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 60 * model.G_ramp[g]
 
     def cPFlexMaxGen(self, model, b, g, y, s, i):
-        '''Flexibility reserve upper bound — non-storage generators.'''
+        '''Flexibility reserve upper bound — non-storage generators.
+        Co-located BTM NG (Gas_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return model.P_Flex[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 60 * model.G_ramp[g]
 
     def cPRegMin(self, model, y, s, i):
         '''
         Ramping constraints - Regulation - 5min -- Lower Bound
+        Co-located BTM resources (B_G_LL) are excluded from the supply-side
+        summation: they are not dispatchable by the grid operator for reserve.
         '''
+        eligible = [(b, g) for (b, g) in model.B_G if (b, g) not in model.B_G_LL]
         if s == 5:# Peak block
-            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in model.B_G) == 0
+            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in eligible) == 0
         else:
-            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.reg_res_req)
+            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in eligible) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.reg_res_req)
             # self.data_handler.scalars.loc['Reg_Res_Req']['Value'])/100
     def cPSpinMin(self, model, y, s, i):
         '''
         Ramping constraints - Spinning - 10min -- Lower Bound
+        Co-located BTM resources (B_G_LL) are excluded from the supply-side
+        summation: they are not dispatchable by the grid operator for reserve.
         '''
+        eligible = [(b, g) for (b, g) in model.B_G if (b, g) not in model.B_G_LL]
         if s == 5:#Peak block
-            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in model.B_G) == 0
+            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in eligible) == 0
         else:
-            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.spin_res_req)
+            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in eligible) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.spin_res_req)
             #float(self.data_handler.scalars.loc['Spin_Res_Req']['Value'])/100
 
     def cPFlexMin(self, model, y, s, i):
         '''
         Ramping constraints - Flexibility -- Lower Bound
+        Co-located BTM resources (B_G_LL) are excluded from the supply-side
+        summation: they are not dispatchable by the grid operator for reserve.
         '''
-
+        eligible = [(b, g) for (b, g) in model.B_G if (b, g) not in model.B_G_LL]
         if s == 5:#Peak block
-            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) == 0
+            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in eligible) == 0
         else:
-            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.flex_res_req)
+            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in eligible) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.flex_res_req)
             #return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_wind) * float(self.data_handler.flex_res_w_req) + sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_pv) * float(self.data_handler.flex_res_s_req)
             # self.data_handler.scalars.loc['Flex_Res_W_Req']['Value'])/100
             # self.data_handler.scalars.loc['Flex_Res_S_Req']['Value'])/100
-        
+
+    def cLLNoReserve(self, model, b, g, y, s, i):
+        '''
+        Belt-and-suspenders zero-forcing constraint for all co-located BTM
+        candidate resources (Gas_LL_Cand, Li_Ion_Cand_LL_Cand,
+        Solar_LL_Cand, Wind_LL_Cand).
+
+        BTM resources serve the large load's private energy needs and are
+        not dispatchable by the grid operator for reserve services.
+        Forces P_Reg = P_Spin = P_Flex = 0 for all (b,g) in B_G_LL.
+
+        Works in concert with:
+          - Change 1: skip guards in cPReg/Spin/FlexMaxSto/Gen
+          - Change 2: B_G_LL filtered from cPReg/Spin/FlexMin summations
+        '''
+        return (model.P_Reg[b, g, y, s, i] +
+                model.P_Spin[b, g, y, s, i] +
+                model.P_Flex[b, g, y, s, i]) == 0
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     3.) Renewable Generator Constraints
