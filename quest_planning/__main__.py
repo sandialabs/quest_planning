@@ -91,7 +91,7 @@ class QuestPlanning(QMainWindow):
             self.pages["page_power_system"]
         )
         self.pages["page_execute"] = self._make_page(
-            "page_execute", ExecuteModelPage()
+            "page_execute", ExecuteModelPage(results_viewer=self.results_viewer)
         )
         self.pages["page_execute"].set_model_flow(
             self.data_handler,
@@ -102,6 +102,7 @@ class QuestPlanning(QMainWindow):
         self.pages["page_results"] = self._make_page(
             "page_results", ResultsViewerPage()
         )
+        self.pages["page_results"].set_results_processor(self.results_viewer)
         self.pages["page_about"] = self._make_page(
             "page_about", AboutPage()
         )

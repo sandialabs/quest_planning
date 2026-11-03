@@ -2,9 +2,13 @@ from PySide6.QtCore import QObject, QRunnable, QThreadPool, QTimer, Signal, Slot
 from PySide6.QtWidgets import QFileDialog, QWidget
 from pathlib import Path
 import traceback
+from contextlib import redirect_stdout
 
 from quest_planning.ui.forms.execute_model.ui_execute_model import (
     Ui_ExecuteModelPage,
+)
+from quest_planning.explan.explan_results_viewer import (
+    ExplanResultsViewer,
 )
 from quest_planning.ui.utils.help_topics import show_error, show_help
 from quest_planning.ui.utils.splash import ExecuteModelSplash
@@ -16,6 +20,28 @@ class WorkerSignals(QObject):
 
     finished = Signal(object)
     error = Signal(str)
+    output = Signal(str)
+
+
+class _WorkerOutput:
+    """Forward complete stdout lines from a worker to its output signal."""
+
+    def __init__(self, signal):
+        self.signal = signal
+        self.pending = ""
+
+    def write(self, text):
+        self.pending += str(text)
+        while "\n" in self.pending:
+            line, self.pending = self.pending.split("\n", 1)
+            if line.strip():
+                self.signal.emit(line.rstrip())
+        return len(text)
+
+    def flush(self):
+        if self.pending.strip():
+            self.signal.emit(self.pending.rstrip())
+        self.pending = ""
 
 
 class Worker(QRunnable):
@@ -28,8 +54,10 @@ class Worker(QRunnable):
 
     @Slot()
     def run(self):
+        output = _WorkerOutput(self.signals.output)
         try:
-            result = self.function()
+            with redirect_stdout(output):
+                result = self.function()
         except Exception as exc:
             details = "{}: {}\n\n{}".format(
                 type(exc).__name__, exc, traceback.format_exc()
@@ -37,10 +65,12 @@ class Worker(QRunnable):
             self.signals.error.emit(details)
         else:
             self.signals.finished.emit(result)
+        finally:
+            output.flush()
 
 
 class ExecuteModelPage(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, results_viewer, parent=None):
         super().__init__(parent)
         self.ui = Ui_ExecuteModelPage()
         self.ui.setupUi(self)
@@ -67,7 +97,7 @@ class ExecuteModelPage(QWidget):
         )
         self.data_handler = None
         self.optimizer = None
-        self.results_viewer = None
+        self.results_viewer = results_viewer 
         self.scenario_page = None
         self.splash = None
         self.threadpool = QThreadPool(self)
@@ -78,7 +108,8 @@ class ExecuteModelPage(QWidget):
         self.data_handler = data_handler
         self.optimizer = optimizer
         self.scenario_page = scenario_page
-        self.results_viewer = results_viewer
+        if results_viewer is not None:
+            self.results_viewer = results_viewer
 
     def select_file(self):
         results_dir = BASE_DIR / "Results"
@@ -181,8 +212,15 @@ class ExecuteModelPage(QWidget):
         worker = Worker(function)
         worker.signals.finished.connect(on_success)
         worker.signals.error.connect(on_error)
+        worker.signals.output.connect(self._on_worker_output)
         self._active_worker = worker
         self.threadpool.start(worker)
+
+    @Slot(str)
+    def _on_worker_output(self, line):
+        """Show optimizer build and solve messages in the active status window."""
+        if self.splash is not None:
+            self.splash.append_output(line)
 
     def on_build_button_clicked(self):
         """Prepare scenario inputs before optimization, on the GUI thread."""

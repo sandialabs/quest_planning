@@ -5,7 +5,13 @@ from typing import Optional
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtWidgets import QDialog, QLabel, QProgressBar, QVBoxLayout
+from PySide6.QtWidgets import (
+    QDialog,
+    QLabel,
+    QPlainTextEdit,
+    QProgressBar,
+    QVBoxLayout,
+)
 
 
 class _QtABCMeta(type(QDialog), ABCMeta):
@@ -58,6 +64,13 @@ class AbstractSplashScreen(QDialog, metaclass=_QtABCMeta):
         self.progress_bar.setTextVisible(False)
         layout.addWidget(self.progress_bar)
 
+        self.output_log = QPlainTextEdit(self)
+        self.output_log.setReadOnly(True)
+        self.output_log.setMaximumBlockCount(500)
+        self.output_log.setMinimumHeight(150)
+        self.output_log.setPlaceholderText("Model progress will appear here.")
+        layout.addWidget(self.output_log)
+
         self.setMinimumWidth(340)
 
     def set_status(self, message: str) -> None:
@@ -74,6 +87,12 @@ class AbstractSplashScreen(QDialog, metaclass=_QtABCMeta):
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setValue(max(0, min(100, int(value))))
         self.progress_bar.setTextVisible(True)
+
+    def append_output(self, message: str) -> None:
+        """Append a worker message to the visible operation log."""
+        self.output_log.appendPlainText(str(message))
+        scrollbar = self.output_log.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
 
 
 class ExecuteModelSplash(AbstractSplashScreen):

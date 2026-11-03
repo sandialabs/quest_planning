@@ -41,6 +41,13 @@ class ResultsViewerPage(QWidget):
 
         self._png_toggled = False
         self._html_toggled = False
+        self.results_processor = None
+        self.folder_path = ""
+        self.map_folder_path = ""
+
+    def set_results_processor(self, results_processor):
+        """Connect the shared processor that creates the result folders."""
+        self.results_processor = results_processor
 
     def collect_results(self):
         pass
@@ -52,17 +59,25 @@ class ResultsViewerPage(QWidget):
         pass
 
     def open_png_folder(self):
-        self.folder_path = QFileDialog.getExistingDirectory(
-            self, "Select Plots Folder", self.folder_path or ""
+        initial_path = self.folder_path or getattr(
+            self.results_processor, "folder_path", ""
         )
-        if self.folder_path:
+        selected_path = QFileDialog.getExistingDirectory(
+            self, "Select Plots Folder", initial_path
+        )
+        if selected_path:
+            self.folder_path = selected_path
             self._set_root_path(self.ui.file_browser, self.folder_path)
 
     def open_html_folder(self):
-        self.map_folder_path = QFileDialog.getExistingDirectory(
-            self, "Select Maps Folder", self.map_folder_path or ""
+        initial_path = self.map_folder_path or getattr(
+            self.results_processor, "map_folder_path", ""
         )
-        if self.map_folder_path:
+        selected_path = QFileDialog.getExistingDirectory(
+            self, "Select Maps Folder", initial_path
+        )
+        if selected_path:
+            self.map_folder_path = selected_path
             self._set_root_path(self.ui.html_file_browser, self.map_folder_path)
 
     def toggle_png_browser(self):
