@@ -122,6 +122,10 @@ class Explan:
 
         d.set_resource_bus_limits(config['limit_by_buses'])
 
+        # RTE study: optional system-wide storage investment floor.
+        # Key is absent from existing configs, so defaults to None (constraint disabled).
+        d.set_storage_min_invest(config.get('storage_min_invest', None))
+
         # HPC: configurable solver thread count (matches SLURM --cpus-per-task).
         # Defaults to 8 when not specified so existing configs are unaffected.
         d.solver_threads = config.get('solver_threads', 8)

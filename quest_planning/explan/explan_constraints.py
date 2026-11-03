@@ -82,6 +82,12 @@ class ExplanConstraints:
                                                            'Bus_num', 'Bus', 'Tech', 'Tech_Num']]
         self.tech_map_info = data_handler.load_data[self.index('tech')][[
             'Tech', 'Tech_Name', 'Tech_Num']]
+
+        # Pre-computed Gen_num → Tech name dict for storage candidates.
+        # Used by cStoreMinSysInv to avoid per-invocation DataFrame lookups.
+        _gen_df = data_handler.load_data[self.index('gen')]
+        self._gen_num_to_tech = dict(zip(
+            _gen_df['Gen_num'].astype(int), _gen_df['Tech']))
         
         # MVA Base
         self.mva_base = data_handler.mva_base
@@ -361,7 +367,19 @@ class ExplanConstraints:
             rule=self.cSystPVMax)
         model.cSystGasMax = pm.Constraint(
             rule=self.cSystGasMax)
-        
+
+        # RTE study: optional minimum system-wide storage investment floors.
+        if self.data_handler.storage_min_invest:
+            model.STORAGE_MIN_TECHS = pm.Set(
+                initialize=[item['tech']
+                            for item in self.data_handler.storage_min_invest])
+            model.storage_min_mw = pm.Param(
+                model.STORAGE_MIN_TECHS,
+                initialize={item['tech']: item['min_mw']
+                            for item in self.data_handler.storage_min_invest})
+            model.cStoreMinSysInv = pm.Constraint(
+                model.STORAGE_MIN_TECHS, rule=self.cStoreMinSysInv)
+
         if self.data_handler.resource_bus_limit_dict is not None:
             model.cResourceByBus = pm.Constraint(
                 model.B_G_can, rule=self.cResourceByBus)
@@ -1412,7 +1430,32 @@ class ExplanConstraints:
             return sum(model.G_inv[b, g, y]/scale for (b, g) in model.B_G_ng_can for y in model.Y) <= self.data_handler.system_wide_gas_max/scale
         else:
             return pm.Constraint.Skip
-        
+
+    def cStoreMinSysInv(self, model, tech_name):
+        """Minimum system-wide storage investment for RTE study scenarios.
+
+        Requires that the total capacity of technology ``tech_name`` invested
+        across all buses and planning years meets or exceeds the floor defined
+        in the ``storage_min_invest`` config key.
+
+        Only registered when ``data_handler.storage_min_invest`` is not None
+        (see ``investment_constraints``).  Indexed over ``STORAGE_MIN_TECHS``.
+
+        Numerical scaling by 1e3 matches ``cSystWindMax`` / ``cSystPVMax``
+        to keep constraint coefficients well-conditioned for the solver.
+        """
+        pairs = [(b, g) for (b, g) in model.B_G_sto_cand
+                 if self._gen_num_to_tech.get(g) == tech_name]
+        if not pairs:
+            return pm.Constraint.Skip
+        scale = 1000.0
+        return (
+            sum(model.G_inv[b, g, y] / scale
+                for (b, g) in pairs
+                for y in model.Y)
+            >= model.storage_min_mw[tech_name] / scale
+        )
+
     def cResourceByBus(self, model, b, g):
         '''Custom constraint'''
         if (b, g) in self.wind_can_tuple:

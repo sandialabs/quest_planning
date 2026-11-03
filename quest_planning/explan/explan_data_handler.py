@@ -114,8 +114,13 @@ class ExplanDataHandler():
         self.mva_base = 100
         
         self.resource_bus_limit_dict = None
-        
-        
+
+        # Minimum system-wide storage investment by technology (RTE study).
+        # None disables the constraint.  When set, must be a list of dicts:
+        #   [{tech: 'Flow_Cand', min_mw: 500}, ...]
+        self.storage_min_invest = None
+
+
     '''Functions to connect data_handler to front-end and define scalar values'''
     '''The following functions are connected to the GUI'''
     
@@ -399,6 +404,17 @@ class ExplanDataHandler():
     
     def set_resource_bus_limits(self,d):
         self.resource_bus_limit_dict = d
+
+    def set_storage_min_invest(self, value):
+        """Set minimum system-wide storage investment floors for the RTE study.
+
+        Parameters
+        ----------
+        value : list of dict or None
+            Each dict must have the keys ``tech`` (str, e.g. 'Flow_Cand') and
+            ``min_mw`` (float).  Pass ``None`` to disable the constraint.
+        """
+        self.storage_min_invest = value
 
     # ********************Large Load Integration******************************
     def set_large_load_option(self,value):
