@@ -438,8 +438,13 @@ class ExplanConstraints:
         model.cTotalCostAnnual = pm.Constraint(
             model.Y, rule=self.cTotalCostAnnual)
 
-        model.cLLCurtCost=pm.Constraint(
+        model.cLLCurtCost = pm.Constraint(
             model.Y, rule=self.cLLCurtCost)
+        if self.data_handler.large_load_option:
+            model.cLLGenInvCostAnnual = pm.Constraint(
+                model.Y, rule=self.cLLGenInvCostAnnual)
+            model.cLLOpsCostAnnual = pm.Constraint(
+                model.Y, rule=self.cLLOpsCostAnnual)
         
         model.OBJ = pm.Objective(rule=self.cOBJ)
                 
@@ -1764,11 +1769,90 @@ class ExplanConstraints:
         
     def cLLCurtCost(self, model, y):
         '''
-        Define large load curtailment costs
+        Define large load curtailment costs.
+        Bug fix: dis_factor[y] now applied consistently with all other cost
+        constraints (previously only year_gap_array was applied, causing
+        curtailment costs to be over-weighted in later planning years).
         '''
         if not self.data_handler.large_load_option:
             return model.annual_ll_curt_cost[y] == 0.0
-        return model.annual_ll_curt_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LL_Curt[b, y, s, i]*200 for b in model.B_LL for (s, i) in model.S_I)#10000*
+        curt_sum = sum(
+            model.season_time_weight[s, i] * model.LL_Curt[b, y, s, i] * 200
+            for b in model.B_LL for (s, i) in model.S_I
+        )
+        if y < model.Y.at(-1):
+            return model.annual_ll_curt_cost[y] == \
+                model.CostScale * model.year_gap_array[y] * model.dis_factor[y] * curt_sum
+        elif y == model.Y.at(-1):
+            return model.annual_ll_curt_cost[y] == \
+                model.CostScale * model.dis_factor_end_eff[y] * curt_sum
+
+    def cLLGenInvCostAnnual(self, model, y):
+        '''
+        Annual BTM generation investment cost.
+        Covers co-located NG, BESS (power + energy), Solar, and Wind candidates
+        at declared large-load buses (B_G_LL / B_G_LL_sto).
+        Mirrors cGenInvCostAnnual restricted to LL sets.
+        Grid investment = annual_gen_inv_cost[y] - annual_ll_gen_inv_cost[y].
+        '''
+        ll_no_es = [(b, g) for (b, g) in model.B_G_can_no_es
+                    if (b, g) in model.B_G_LL]
+        ll_sto   = list(model.B_G_LL_sto)
+        return model.annual_ll_gen_inv_cost[y] == \
+            model.CostScale * model.dis_factor[y] * (
+                sum((model.C_g[g, y] + model.G_tx_add[g]) * 1000 * model.G_inv[b, g, y]
+                    for (b, g) in ll_no_es)
+                + sum((model.C_g_es_pwr[g, y] + model.G_tx_add[g]) * 1000 * model.G_inv[b, g, y]
+                      for (b, g) in ll_sto)
+                + sum(model.C_g_es_energy[g, y] * 1000 * model.Sto_inv[b, g, y]
+                      for (b, g) in ll_sto)
+            )
+
+    def cLLOpsCostAnnual(self, model, y):
+        '''
+        Annual BTM operational cost.
+        Includes:
+          FOM  — all LL gens (B_G_LL):         P_cap_total × G_fom
+          VOM  — LL NG (B_G_LL_ng, P_gen path) + LL BESS (B_G_LL_sto, Pcha/Pdis path)
+          Fuel — LL NG (B_G_LL_ng):             P_gen × G_hr × G_fp
+        P_Reg/P_Spin/P_Flex for LL gens are zero (cLLNoReserve) so their
+        inclusion in VOM/Fuel sums is correct but numerically zero.
+        Grid ops = (annual_fom_cost + annual_vom_cost + annual_fuel_cost)[y]
+                   - annual_ll_ops_cost[y].
+        '''
+        fom_sum = sum(
+            model.P_cap_total[b, g, y] * model.G_fom[g]
+            for (b, g) in model.B_G_LL
+        )
+        vom_ng_sum = sum(
+            model.season_time_weight[s, i] * (
+                model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] +
+                model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i]
+            ) * model.G_vom[g]
+            for (b, g) in model.B_G_LL_ng for (s, i) in model.S_I
+        )
+        vom_sto_sum = sum(
+            model.season_time_weight[s, i] * (
+                model.Pcha[b, g, y, s, i] + model.Pdis[b, g, y, s, i] +
+                model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] +
+                model.P_Flex[b, g, y, s, i]
+            ) * model.G_vom[g]
+            for (b, g) in model.B_G_LL_sto for (s, i) in model.S_I
+        )
+        fuel_sum = sum(
+            model.season_time_weight[s, i] * (
+                model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] +
+                model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i]
+            ) * model.G_hr[g] * model.G_fp[g, y]
+            for (b, g) in model.B_G_LL_ng for (s, i) in model.S_I
+        )
+        ops_sum = fom_sum + vom_ng_sum + vom_sto_sum + fuel_sum
+        if y < model.Y.at(-1):
+            return model.annual_ll_ops_cost[y] == \
+                model.CostScale * model.year_gap_array[y] * model.dis_factor[y] * ops_sum
+        elif y == model.Y.at(-1):
+            return model.annual_ll_ops_cost[y] == \
+                model.CostScale * model.dis_factor_end_eff[y] * ops_sum
 
     def cTotalCostAnnual(self, model, y):
         """

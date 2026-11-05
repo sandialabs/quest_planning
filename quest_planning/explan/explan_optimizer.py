@@ -1159,6 +1159,17 @@ class ExplanOptimizer(Optimizer):
         model.annual_ll_curt_cost = pm.Var(
             model.Y, domain=pm.NonNegativeReals)
         var_index_labels['annual_ll_curt_cost'] = ['y']
+        # LL-only cost split variables — only created when large_load_option=True.
+        # Grid costs are derived in post-processing as: total − ll.
+        # annual_ll_gen_inv_cost : BTM investment CAPEX (NG + BESS pwr/energy + Solar + Wind)
+        # annual_ll_ops_cost     : BTM operational costs (FOM + VOM + Fuel for all LL gens)
+        if self.data_handler.large_load_option:
+            model.annual_ll_gen_inv_cost = pm.Var(
+                model.Y, domain=pm.NonNegativeReals)
+            var_index_labels['annual_ll_gen_inv_cost'] = ['y']
+            model.annual_ll_ops_cost = pm.Var(
+                model.Y, domain=pm.NonNegativeReals)
+            var_index_labels['annual_ll_ops_cost'] = ['y']
         # Objective Value
         model.objective_value = pm.Var(
             domain=pm.NonNegativeReals)
