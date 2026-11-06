@@ -1210,36 +1210,27 @@ class ExplanConstraints:
             list(model.G_LL_BESS)
         )
         
+        # Interpretation 3 (audit fix):
+        #   - LL_Curt removed from BTM energy numerator: curtailment is demand
+        #     avoidance, not on-site generation.  A data center that curtails load
+        #     is not supplying energy from BTM resources.
+        #   - season_time_weight applied to both sides so beta represents a true
+        #     fraction of annual energy served by BTM resources, not an unweighted
+        #     representative-period power ratio.
         btm_energy = sum(
-            sum(model.P_gen[b,g,y,s,i]
-                for g in ll_ng)
-            +
-            sum(model.Pdis[b,g,y,s,i]
-                for g in ll_bess)
-            +
-            model.LL_Curt[b,y,s,i]
-
-            for (s,i) in model.S_I
+            model.season_time_weight[s, i] * (
+                sum(model.P_gen[b, g, y, s, i] for g in ll_ng)
+                + sum(model.Pdis[b, g, y, s, i]  for g in ll_bess)
+            )
+            for (s, i) in model.S_I
         )
 
         ll_energy = sum(
-            model.large_load[b,y,s,i]
-            for (s,i) in model.S_I
+            model.season_time_weight[s, i] * model.large_load[b, y, s, i]
+            for (s, i) in model.S_I
         )
 
-        #if b == 211 and y == 2024:
-
-        #print("ll_ng =", ll_ng)
-        #print("ll_bess =", ll_bess)
-
-        #print(
-          #  "large load sum =",
-          #  sum(
-          #      model.large_load[b,y,s,i]
-           #     for (s,i) in model.S_I
-           # )
-        #)
-        return btm_energy >= model.ll_self_sufficiency*ll_energy
+        return btm_energy >= model.ll_self_sufficiency * ll_energy
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     7.) Investment Constraints
@@ -1738,11 +1729,26 @@ class ExplanConstraints:
 
     def cLNSCostAnnual(self, model, y):
         """
-        Define load shed penalty cost
+        Define load shed penalty cost.
+        Audit fix: dis_factor[y] added to match the discounting convention used
+        by all other operating cost constraints (cFOMCostAnnual, cVOMCostAnnual,
+        cFuelCostAnnual, cLLCurtCost).  Previously only year_gap_array was applied,
+        causing LNS costs in later planning years to be over-weighted by ~2.5x
+        relative to investment and operating costs expressed in present-value terms.
         """
-        
-        return model.annual_ls_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LNS[b, y, s, i]*100*float(self.data_handler.voll) for b in model.B for (s, i) in model.S_I)#10000*
-        # self.data_handler.scalars.loc['VOLL']['Value']
+        lns_sum = sum(
+            model.season_time_weight[s, i] * model.LNS[b, y, s, i]
+            * 100 * float(self.data_handler.voll)
+            for b in model.B for (s, i) in model.S_I
+        )
+        if y < model.Y.at(-1):
+            return model.annual_ls_cost[y] == (
+                model.CostScale * model.year_gap_array[y] * model.dis_factor[y] * lns_sum
+            )
+        elif y == model.Y.at(-1):
+            return model.annual_ls_cost[y] == (
+                model.CostScale * model.dis_factor_end_eff[y] * lns_sum
+            )
     def cITCAnnual(self, model, y):
         """
         Define investment tax credit incentives
