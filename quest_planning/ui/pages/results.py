@@ -1,4 +1,17 @@
-from PySide6.QtWidgets import QFileDialog, QWidget
+from pathlib import Path
+
+from PySide6.QtCore import QDir, Qt, QUrl
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QHeaderView,
+    QMessageBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from quest_planning.ui.forms.results_viewer.ui_results_viewer import (
     Ui_ResultsViewerPage,
@@ -26,9 +39,6 @@ class ResultsViewerPage(QWidget):
         self.ui.html_browser.setToolTip("Browse for the folder with map HTML files.")
         self.ui.png_toggler.setToolTip("Show or hide the plots file browser.")
         self.ui.html_toggler.setToolTip("Show or hide the maps file browser.")
-        self.ui.results_help_button.setToolTip(
-            "Help: collect and analyze results in QuESt Planning."
-        )
 
         self.ui.collect_results_button.clicked.connect(self.collect_results)
         self.ui.gen_plots_button.clicked.connect(self.generate_plots)
@@ -37,26 +47,176 @@ class ResultsViewerPage(QWidget):
         self.ui.html_browser.clicked.connect(self.open_html_folder)
         self.ui.png_toggler.clicked.connect(self.toggle_png_browser)
         self.ui.html_toggler.clicked.connect(self.toggle_html_browser)
-        self.ui.results_help_button.clicked.connect(self.results_help)
+        self.ui.png_toggler.toggled.connect(
+            lambda checked: self.ui.file_browser.setVisible(checked)
+        )
+        self.ui.html_toggler.toggled.connect(
+            lambda checked: self.ui.html_file_browser.setVisible(checked)
+        )
 
         self._png_toggled = False
         self._html_toggled = False
         self.results_processor = None
         self.folder_path = ""
         self.map_folder_path = ""
+        self._plots_model = None
+        self._maps_model = None
+
+        self.ui.results_content = QWidget(self.ui.results1_page)
+        self.ui.results_content.setObjectName("results_content")
+        self.ui.results_content.setLayout(QVBoxLayout())
+        self.ui.results_content.layout().setContentsMargins(0, 0, 0, 0)
+        self.ui.verticalLayout_results.addWidget(self.ui.results_content)
+
+        self.ui.html_map_viewer = QWebEngineView(self.ui.results1_page)
+        self.ui.html_map_viewer.setObjectName("html_map_viewer")
+        self.ui.html_map_viewer.hide()
+        self.ui.results_content.layout().addWidget(self.ui.html_map_viewer)
+        self.ui.plots_viewer = QWidget(self.ui.results1_page)
+        self.ui.plots_viewer.setObjectName("plots_viewer")
+        self.ui.plots_viewer.setLayout(QVBoxLayout())
+        self.ui.plots_viewer.layout().setContentsMargins(0, 0, 0, 0)
+        self.ui.plots_viewer.hide()
+        self.ui.results_content.layout().addWidget(self.ui.plots_viewer)
+
+        self.ui.html_file_browser.doubleClicked.connect(
+            lambda index: self._open_selected_file(self._maps_model, index)
+        )
+        self.ui.file_browser.doubleClicked.connect(
+            lambda index: self._open_selected_file(self._plots_model, index)
+        )
+        self.ui.frame_file_browser.setVisible(False)
+        self.ui.png_toggler.setChecked(False)
+        self.ui.html_toggler.setChecked(False)
 
     def set_results_processor(self, results_processor):
         """Connect the shared processor that creates the result folders."""
         self.results_processor = results_processor
 
     def collect_results(self):
-        pass
+        processor = self._require_solution()
+        if processor is None:
+            return
 
-    def generate_plots(self):
-        pass
+        try:
+            processor.plot_results()
+            processor.create_map()
+            self.folder_path = str(processor.folder_path)
+            self.map_folder_path = str(processor.map_folder_path)
+            self._set_root_path(self.ui.file_browser, self.folder_path)
+            self._set_root_path(self.ui.html_file_browser, self.map_folder_path)
+            self._populate_cost_table()
+            self.ui.frame_file_browser.setVisible(True)
+            self.ui.stackedWidget.setCurrentWidget(self.ui.results1_page)
+        except Exception as exc:
+            QMessageBox.critical(
+                self, "Collect Results Failed", "{}: {}".format(type(exc).__name__, exc)
+            )
 
     def save_results(self):
-        pass
+        processor = self._require_solution()
+        if processor is None:
+            return
+        try:
+            processor.export_results()
+            QMessageBox.information(
+                self,
+                "Results Saved",
+                "Results workbook saved to:\n{}".format(
+                    Path(processor.folder_path) / "results_summary.xlsx"
+                ),
+            )
+        except Exception as exc:
+            QMessageBox.critical(
+                self, "Save Results Failed", "{}: {}".format(type(exc).__name__, exc)
+            )
+
+    def generate_plots(self):
+        """Regenerate the result plots using the shared results processor."""
+        processor = self._require_solution()
+        if processor is None:
+            return
+        try:
+            processor.plot_results()
+            self.folder_path = str(processor.folder_path)
+            self._set_root_path(self.ui.file_browser, self.folder_path)
+            self.ui.png_toggler.setChecked(True)
+            self.ui.results_content.show()
+            self.ui.html_map_viewer.hide()
+            self.ui.plots_viewer.hide()
+        except Exception as exc:
+            QMessageBox.critical(
+                self, "Generate Plots Failed", "{}: {}".format(type(exc).__name__, exc)
+            )
+
+    def _require_solution(self):
+        if self.results_processor is None or self.results_processor.rd is None:
+            QMessageBox.warning(
+                self, "No Results", "Run the optimization model before collecting results."
+            )
+            return None
+        return self.results_processor
+
+    def _populate_cost_table(self):
+        """Show the same cost summary as the legacy Results page."""
+        results = self.results_processor.rd
+        cost_keys = (
+            ("Generation Investment Costs", "annual_gen_inv_cost"),
+            ("Transmission Investment Costs", "annual_trans_inv_cost"),
+            ("Fixed O&M Costs", "annual_fom_cost"),
+            ("Variable O&M Costs", "annual_vom_cost"),
+            ("Fuel Costs", "annual_fuel_cost"),
+            ("Total Costs", "annual_total_cost"),
+        )
+        missing = [key for _, key in cost_keys if key not in results]
+        if missing:
+            raise KeyError("Missing cost result tables: {}".format(", ".join(missing)))
+
+        table = QTableWidget(len(cost_keys), 2, self.ui.results_content)
+        table.setHorizontalHeaderLabels(["Cost Category", "NPV (M$)"])
+        table.verticalHeader().hide()
+        table.setEditTriggers(QTableWidget.NoEditTriggers)
+        table.setSelectionMode(QTableWidget.NoSelection)
+        for row, (label, key) in enumerate(cost_keys):
+            cost_result = results[key]
+            total = cost_result.sum()
+            value = float(total.iloc[0] if hasattr(total, "iloc") else total) / 1e6
+            table.setItem(row, 0, QTableWidgetItem(label))
+            table.setItem(row, 1, QTableWidgetItem("{:,.2f}".format(value)))
+        table.horizontalHeader().setSectionResizeMode(
+            0, QHeaderView.ResizeToContents
+        )
+        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        if hasattr(self, "_cost_table"):
+            self._cost_table.deleteLater()
+        self._cost_table = table
+        self.ui.results_content.layout().addWidget(table)
+
+    def _show_plot_file(self, path):
+        from PySide6.QtGui import QPixmap
+        from PySide6.QtWidgets import QLabel, QScrollArea, QSizePolicy
+
+        self._clear_layout(self.ui.plots_viewer.layout())
+        scroll = QScrollArea(self.ui.plots_viewer)
+        scroll.setWidgetResizable(True)
+        image = QLabel()
+        image.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        image.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        image.setPixmap(QPixmap(str(path)))
+        image.setScaledContents(True)
+        scroll.setWidget(image)
+        self.ui.plots_viewer.layout().addWidget(scroll)
+        self.ui.results_content.show()
+        self.ui.html_map_viewer.hide()
+        self.ui.plots_viewer.show()
+
+    @staticmethod
+    def _clear_layout(layout):
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
 
     def open_png_folder(self):
         initial_path = self.folder_path or getattr(
@@ -81,15 +241,58 @@ class ResultsViewerPage(QWidget):
             self._set_root_path(self.ui.html_file_browser, self.map_folder_path)
 
     def toggle_png_browser(self):
-        self._png_toggled = not self._png_toggled
-        self.ui.file_browser.setVisible(not self._png_toggled)
+        self._png_toggled = self.ui.png_toggler.isChecked()
 
     def toggle_html_browser(self):
-        self._html_toggled = not self._html_toggled
-        self.ui.html_file_browser.setVisible(not self._html_toggled)
+        self._html_toggled = self.ui.html_toggler.isChecked()
 
     def _set_root_path(self, view, path):
-        pass
+        from PySide6.QtWidgets import QFileSystemModel
+
+        if not path or not Path(path).is_dir():
+            return
+        if view is self.ui.file_browser:
+            model = self._plots_model
+            name_filters = ["*.png", "*.jpg", "*.jpeg", "*.svg", "*.pdf"]
+        else:
+            model = self._maps_model
+            name_filters = ["*.html", "*.htm"]
+        if model is None:
+            model = QFileSystemModel(view)
+            model.setFilter(QDir.AllDirs | QDir.Files | QDir.NoDotAndDotDot)
+            model.setNameFilterDisables(False)
+            model.setNameFilters(name_filters)
+            view.setModel(model)
+            if view is self.ui.file_browser:
+                self._plots_model = model
+            else:
+                self._maps_model = model
+        model.setRootPath(str(path))
+        view.setRootIndex(model.index(str(path)))
+        view.setColumnHidden(1, True)
+        view.setColumnHidden(2, True)
+        view.setColumnHidden(3, True)
 
     def results_help(self):
-        pass
+        QMessageBox.information(
+            self,
+            "Collect & Analyze Results",
+            "Collect Results creates the result plots and maps and lists their files "
+            "in the Plots and Maps browsers. Generate Plots refreshes the embedded "
+            "capacity charts. Save Results exports the results workbook.",
+        )
+
+    def _open_selected_file(self, model, index):
+        if model is None or not index.isValid():
+            return
+        path = Path(model.filePath(index))
+        if path.is_file():
+            if path.suffix.lower() in {".html", ".htm"}:
+                self.ui.html_map_viewer.setUrl(QUrl.fromLocalFile(str(path)))
+                self.ui.results_content.hide()
+                self.ui.plots_viewer.hide()
+                self.ui.html_map_viewer.show()
+            elif path.suffix.lower() in {".png", ".jpg", ".jpeg"}:
+                self._show_plot_file(path)
+            else:
+                QDesktopServices.openUrl(QUrl.fromLocalFile(str(path)))
