@@ -318,7 +318,7 @@ class ExplanConstraints:
                 model.cDCPF = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cDCPF)
                 model.cThetaDiffMax = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMax)
                 model.cThetaDiffMin = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMin)
-                model.cSlackBus =pm.Constraint(model.Y, model.S_I, rule=self.cSlackBus)
+                model.cSlackBus = pm.Constraint(model.B, model.Y, model.S_I, rule=self.cSlackBus)
         
         #if self.data_handler.tx_model == 'copper_sheet':
             #fix PF to 0
