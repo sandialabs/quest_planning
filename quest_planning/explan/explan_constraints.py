@@ -1131,10 +1131,17 @@ class ExplanConstraints:
         
     def cLNSMax(self, model, b, y, s, i):
         '''
-        Ensure load shed does not exceed the demand for that time step 
+        Ensure load shed does not exceed the demand for that time step.
+        Audit fix: large_load[b,y,s,i] added so LNS can absorb unserved data-center
+        demand as well as background system load.  large_load is indexed over all
+        buses with default=0, so this has no effect at non-LL buses.
+        Without this fix, the DC OPF formulation produces infeasible problems at
+        constrained LL buses (e.g., bus 307) where line thermal limits prevent
+        full large-load service and there is no LNS slack to absorb the deficit.
         '''
-        
-        return model.LNS[b, y, s, i] <= model.load_full[b, y, s, i]
+        return model.LNS[b, y, s, i] <= (
+            model.load_full[b, y, s, i] + model.large_load[b, y, s, i]
+        )
 
     def cLLnet(self, model, b, y,s,i):
         '''
