@@ -334,6 +334,18 @@ class ExplanConstraints:
             model.cLLnet = pm.Constraint(model.B_LL, model.Y, model.S_I, rule=self.cLLnet)
             model.cLLCurtLimit = pm.Constraint(model.B_LL, model.Y, model.S_I,rule=self.cLLCurtLimit)
             model.cLLResourceRequirement = pm.Constraint(model.B_LL, model.Y, rule=self.cLLResourceRequirement)
+            if self.data_handler.enable_workload_shifting:
+                # cWSSourceCap: cannot defer more than the scheduled load in any hour
+                model.cWSSourceCap = pm.Constraint(
+                    model.B_LL, model.Y, model.S_I, rule=self.cWSSourceCap)
+                # cWSBudget: per-site, per-season 10% (ws_gamma) energy budget
+                model.cWSBudget = pm.Constraint(
+                    model.B_LL, model.Y, model.S, rule=self.cWSBudget)
+                # cWSDayBalance: per-day energy neutrality — enforces 24-h horizon
+                # by requiring shifted-out == shifted-in within each representative day.
+                # Cross-day shifting is not modelled (consistent with BESS SOC reset).
+                model.cWSDayBalance = pm.Constraint(
+                    model.B_LL, model.Y, model.S_days, rule=self.cWSDayBalance)
         if self.data_handler.tx_model == 'copper_sheet':
             model.cPwrBal_CopperSheet = pm.Constraint(model.Y, model.S_I, rule=self.cPwrBal_CopperSheet)
 
@@ -1145,13 +1157,25 @@ class ExplanConstraints:
 
     def cLLnet(self, model, b, y,s,i):
         '''
-        Large load net calculation:TODO: add co-loacated generation
+        Large load net calculation: defines the net demand the data centre
+        presents to the grid after all behind-the-meter resources have acted.
+
+        Positive terms on the RHS increase grid demand; negative terms reduce it.
+
+        Components (all variables ≥ 0):
+          large_load[b,y,s,i]        - gross scheduled DC demand (Param, unshifted)
+          - LL_Curt                  - demand avoidance (alpha curtailment)
+          - P_gen[ll_ng]             - BTM NG generation
+          - Pdis[ll_bess]            - BTM BESS discharge
+          + Pcha[ll_bess]            - BTM BESS charging (draws from grid)
+          - WS_P_down (if WS on)     - workload deferred to another hour (reduces load)
+          + WS_P_up   (if WS on)     - workload received from another hour (raises load)
+
+        WS_P_down and WS_P_up are distinct from LL_Curt:
+          - Curtailment permanently removes work; total annual DC energy falls.
+          - Shifting re-schedules work; per-day energy neutrality (cWSDayBalance)
+            ensures total energy is preserved within each representative day.
         '''
-        #if self.data_handler.large_load_option:
-        #    return model.large_load[b,y,s,i] == model.large_load_net[b,y,s,i]
-        #else:
-        #    return pm.Constraint.Skip
-       
         if not self.data_handler.large_load_option:
             return pm.Constraint.Skip
 
@@ -1167,6 +1191,15 @@ class ExplanConstraints:
         ll_bess = np.intersect1d(
             gen_nums,
             list(model.G_LL_BESS)
+        )
+
+        ws_down = (
+            model.WS_P_down[b, y, s, i]
+            if self.data_handler.enable_workload_shifting else 0
+        )
+        ws_up = (
+            model.WS_P_up[b, y, s, i]
+            if self.data_handler.enable_workload_shifting else 0
         )
 
         return (
@@ -1186,6 +1219,8 @@ class ExplanConstraints:
                 model.Pcha[b,g,y,s,i]
                 for g in ll_bess
             )
+            - ws_down
+            + ws_up
         )
     def cLLCurtLimit(self, model, b, y, s, i):
 
@@ -1238,6 +1273,96 @@ class ExplanConstraints:
         )
 
         return btm_energy >= model.ll_self_sufficiency * ll_energy
+
+    # ------------------------------------------------------------------
+    # Workload-shifting constraints  (EC / ED scenarios)
+    # Active only when data_handler.enable_workload_shifting is True.
+    # These constraints are registered in power_balance_constraints()
+    # and use model.WS_P_down / model.WS_P_up declared in _set_model_var().
+    # ------------------------------------------------------------------
+
+    def cWSSourceCap(self, model, b, y, s, i):
+        '''
+        Cannot defer more workload than is actually scheduled in any hour.
+
+        WS_P_down[b,y,s,i] <= large_load[b,y,s,i]
+
+        This prevents the model from "shifting" phantom demand that does not
+        exist (e.g. scheduling recovery of a curtailed hour that had zero load).
+        Note: large_load is the fixed baseline (Param), not large_load_net.
+        '''
+        return model.WS_P_down[b, y, s, i] <= model.large_load[b, y, s, i]
+
+    def cWSBudget(self, model, b, y, s):
+        '''
+        Per-site, per-season workload-shifting energy budget.
+
+        The total energy deferred within a season (weighted by season_time_weight
+        to convert from representative-hour MW to real annual MWh) may not exceed
+        ws_gamma (default 10%) of the site's total seasonal DC energy demand.
+
+        sum_i [ w(s,i) * WS_P_down[b,y,s,i] ]
+            <= ws_gamma * sum_i [ w(s,i) * large_load[b,y,s,i] ]
+
+        Implementation notes:
+          - season_time_weight is 30.431 h for seasons 1-4 and 1 h for season 5,
+            so the constraint is correctly weighted across all representative hours.
+          - large_load in the denominator is the unshifted baseline (Param), so
+            the budget does not shrink as work is rescheduled.
+          - WS_P_up is intentionally excluded from the budget: only the energy
+            that leaves its original slot (WS_P_down) is counted against the
+            allowance, avoiding double-counting.
+        '''
+        s_i_in_season = [(ss, ii) for (ss, ii) in model.S_I if ss == s]
+        if not s_i_in_season:
+            return pm.Constraint.Skip
+
+        lhs = sum(
+            model.season_time_weight[s, i] * model.WS_P_down[b, y, s, i]
+            for (_, i) in s_i_in_season
+        )
+        rhs = model.ws_gamma * sum(
+            model.season_time_weight[s, i] * model.large_load[b, y, s, i]
+            for (_, i) in s_i_in_season
+        )
+        return lhs <= rhs
+
+    def cWSDayBalance(self, model, b, y, s, d):
+        '''
+        Per-representative-day workload energy neutrality.
+
+        Within each 24-hour representative-day block all deferred workload must
+        be recovered in the same block:
+
+            sum_{h=0..23} WS_P_down[b,y,s, d*24+h]
+            == sum_{h=0..23} WS_P_up[b,y,s, d*24+h]
+
+        This enforces the 24-hour shifting horizon in the representative-day
+        framework.  Because the repr_3days_season block treats each day as an
+        independent cycle (BESS SOC resets at the start of every day), it is
+        self-consistent to restrict workload shifting to the same cycle.
+
+        Assumption (documented explicitly):
+          The cyclic 24-hour window means that a workload near hour 23 of a
+          representative day can in principle "wrap" to hour 0 of the same day
+          in the optimisation.  This is a standard approximation for repeating
+          representative-day patterns and is consistent with how the BESS SOC
+          is treated.  Cross-day shifting is not modelled.
+
+        d is the 0-based day index within the season:
+          d=0: i in {0..23}
+          d=1: i in {24..47}  (seasons 1-4 only)
+          d=2: i in {48..71}  (seasons 1-4 only)
+        '''
+        hours_in_day = [(s, d * 24 + h) for h in range(24)
+                        if (s, d * 24 + h) in model.S_I]
+        if not hours_in_day:
+            return pm.Constraint.Skip
+
+        lhs = sum(model.WS_P_down[b, y, s, i] for (_, i) in hours_in_day)
+        rhs = sum(model.WS_P_up[b, y, s, i]   for (_, i) in hours_in_day)
+        return lhs == rhs
+
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     7.) Investment Constraints

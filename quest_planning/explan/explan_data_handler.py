@@ -110,6 +110,14 @@ class ExplanDataHandler():
         self.ll_load_growth = 0.0 #Default for now
         self.ll_self_sufficiency = 0.0 #Default: no self-sufficiency requirement
         self.ll_curt_max_frac = 0.25 #Default: 25% hourly curtailment cap
+        # Workload shifting (EC/ED scenarios)
+        # When enabled, the optimizer may defer DC demand within each 24-hour
+        # representative-day window, subject to a per-site, per-season energy
+        # budget of ws_gamma * seasonal_DC_energy.  Cross-day and cross-season
+        # shifting is NOT modelled (consistent with the independent-day BESS SOC
+        # treatment in repr_3days_season).
+        self.enable_workload_shifting = False  # disabled by default
+        self.ws_gamma = 0.10                   # max shiftable fraction of seasonal energy
 
         self.mva_base = 100
         
@@ -419,6 +427,9 @@ class ExplanDataHandler():
         # Derive flex flag: α=0 means no flexibility regardless of explicit flag
         if self.ll_curt_max_frac == 0.0:
             self.large_load_flex = False
+        # Workload shifting (EC/ED scenarios)
+        self.enable_workload_shifting = cfg.get("enable_workload_shifting", False)
+        self.ws_gamma = float(cfg.get("ws_gamma", 0.10))
         self.processed_ll = []
         for l in loads:
             # validate required fields
