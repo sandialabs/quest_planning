@@ -129,7 +129,7 @@ class PlanningModelPage(QWidget):
         begin_year = self.ui.dateEdit_start.date().year()
         end_year = self.ui.dateEdit_end.date().year()
         if end_year < begin_year:
-            return []
+           return []
         return list(range(begin_year, end_year + 1))
 
     def update_years_label(self):
@@ -148,6 +148,11 @@ class PlanningModelPage(QWidget):
             )
 
     def on_year_box_activated(self):
+        if not self.validate_year_settings():
+            self.years = []
+            self.update_years_label()
+            return
+
         # A changed horizon invalidates any previous selection, so fall back to
         # simulating every year in the new range.
         self.years = self.planning_year_range()
@@ -158,7 +163,40 @@ class PlanningModelPage(QWidget):
         self.data_handler.set_end_year(self.ui.dateEdit_end.date().year())
         self.data_handler.set_years_hours(self.years)
 
+    def validate_year_settings(self):
+        """Ensure the selected horizon is compatible with discounting."""
+        start_year = self.ui.dateEdit_start.date().year()
+        end_year = self.ui.dateEdit_end.date().year()
+        currency_text = self.ui.base_currency_year.text().strip()
+
+        if end_year < start_year:
+            show_error(
+                self,
+                "Invalid Year Range",
+                "The end year must be greater than or equal to the start year.",
+            )
+            return False
+
+        try:
+            currency_year = int(currency_text)
+        except ValueError:
+            return False
+
+        if currency_year > start_year:
+            show_error(
+                self,
+                "Invalid Base Currency Year",
+                "The base currency year ({}) must be less than or equal to "
+                "the start year ({}).".format(currency_year, start_year),
+            )
+            return False
+
+        return True
+
     def on_select_years_button_clicked(self):
+        if not self.validate_year_settings():
+            return
+
         if self.simulation_years_pane is None:
             self.simulation_years_pane = SimulationYearsDialog(self)
 
@@ -205,7 +243,10 @@ class PlanningModelPage(QWidget):
         text = self.ui.base_currency_year.text()
         self.ui.label_currency_input.setText(text)
         try:
-            self.data_handler.set_base_currency_year(int(text))
+            currency_year = int(text)
+            if self.validate_year_settings():
+                self.data_handler.set_base_currency_year(currency_year)
+                self.on_year_box_activated()
         except ValueError:
             show_error(
                 self,

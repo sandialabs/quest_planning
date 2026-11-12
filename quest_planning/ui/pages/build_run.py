@@ -138,6 +138,24 @@ class ExecuteModelPage(QWidget):
         if not self.data_handler.load_data:
             raise RuntimeError("Load a power system dataset before building the model.")
 
+        start_year = self.data_handler.start_year
+        end_year = self.data_handler.end_year
+        currency_year = self.data_handler.base_currency_year
+        if start_year is not None and end_year is not None and end_year < start_year:
+            raise RuntimeError(
+                "Invalid year range: the end year must be greater than or equal "
+                "to the start year."
+            )
+        if (
+            start_year is not None
+            and currency_year is not None
+            and currency_year > start_year
+        ):
+            raise RuntimeError(
+                "Invalid base currency year: it must be less than or equal "
+                "to the start year."
+            )
+
         required_tables = {
             "branch",
             "bus",
