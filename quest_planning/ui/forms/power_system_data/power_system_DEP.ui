@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
+    <width>892</width>
     <height>781</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    <number>0</number>
   </property>
   <widget class="QWidget" name="page_standard">
-   <layout class="QVBoxLayout" name="verticalLayout_main" stretch="0,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout_main" stretch="0,0,0,0,0,0">
     <property name="spacing">
      <number>18</number>
     </property>
@@ -128,29 +128,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="power_system_help_button">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../../resources.qrc">
-           <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-         <property name="btnRole" stdset="0">
-          <string>icon</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -330,7 +307,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_folder" stretch="1,0,0">
+          <layout class="QHBoxLayout" name="horizontalLayout_folder" stretch="1,0,0,0">
            <property name="spacing">
             <number>10</number>
            </property>
@@ -407,12 +384,67 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QToolButton" name="power_system_help_button">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+             <property name="btnRole" stdset="0">
+              <string>icon</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
        </item>
       </layout>
      </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Open Visualization </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <spacer name="begin_spacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <widget class="QFrame" name="frame_overview">
@@ -1195,29 +1227,6 @@
          </property>
         </spacer>
        </item>
-       <item>
-        <widget class="QToolButton" name="load_help_button">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../../resources.qrc">
-           <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-         <property name="btnRole" stdset="0">
-          <string>icon</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
@@ -1328,30 +1337,6 @@
          <property name="verticalSpacing">
           <number>10</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_system_name_load">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Segoe UI</family>
-             <pointsize>10</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>System Name</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="load_system_name_input">
            <property name="sizePolicy">
@@ -1377,6 +1362,30 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_system_name_load">
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>System Name</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_data_folder_load">
            <property name="font">
@@ -1396,7 +1405,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_folder_load" stretch="1,0,0">
+          <layout class="QHBoxLayout" name="horizontalLayout_folder_load" stretch="1,0,0,0">
            <property name="spacing">
             <number>10</number>
            </property>
@@ -1470,6 +1479,29 @@
              </property>
              <property name="btnRole" stdset="0">
               <string>primary</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="load_help_button">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+             <property name="btnRole" stdset="0">
+              <string>icon</string>
              </property>
             </widget>
            </item>
