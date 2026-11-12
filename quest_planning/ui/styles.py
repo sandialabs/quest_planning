@@ -154,6 +154,57 @@ QFrame[cardType] QLabel {
 }
 
 /* ============================== Labels ============================== */
+/* Page headers use the same treatment as the Power System Data title. */
+#PlanningModelPage QLabel#label_title,
+#planning_model_page QLabel#label_title,
+#planning_model_page QLabel#label_title_2,
+#ScenarioBuilderPage QLabel#label_title,
+#scenario_builder_page QLabel#label_title {
+    color: rgb(40, 84, 113);
+    font-family: "Segoe UI";
+    font-size: 18pt;
+    font-weight: bold;
+}
+#PlanningModelPage QLabel#label_subtitle,
+#planning_model_page QLabel#label_subtitle,
+#planning_model_page QLabel#label_subtitle_2,
+#ScenarioBuilderPage QLabel#label_subtitle,
+#scenario_builder_page QLabel#label_subtitle {
+    color: rgb(100, 100, 100);
+    font-family: "Segoe UI";
+    font-size: 10pt;
+}
+#PlanningModelPage #frame_header,
+#planning_model_page #frame_header,
+#ScenarioBuilderPage #frame_title,
+#scenario_builder_page #frame_title {
+    max-height: 80px;
+}
+/* The page classes assign their object names after setupUi().  Keep the
+   label-level selectors as a reliable fallback when Qt has not repolished
+   the parent selector yet. */
+QLabel#label_title {
+    color: rgb(40, 84, 113);
+    font-family: "Segoe UI";
+    font-size: 18pt;
+    font-weight: bold;
+}
+QLabel#label_title_2 {
+    color: rgb(40, 84, 113);
+    font-family: "Segoe UI";
+    font-size: 18pt;
+    font-weight: bold;
+}
+QLabel#label_subtitle {
+    color: rgb(100, 100, 100);
+    font-family: "Segoe UI";
+    font-size: 10pt;
+}
+QLabel#label_subtitle_2 {
+    color: rgb(100, 100, 100);
+    font-family: "Segoe UI";
+    font-size: 10pt;
+}
 QLabel[textRole="heading"] {
     color: rgb(40, 84, 113);
     font-size: 18pt;

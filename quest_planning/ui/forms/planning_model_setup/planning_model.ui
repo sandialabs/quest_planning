@@ -16,33 +16,56 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QFrame" name="frame_header">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_8">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="label_title">
-        <property name="font">
-         <font>
-          <pointsize>20</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Planning Model Setup</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QLabel" name="label_title">
+          <property name="font">
+           <font>
+            <pointsize>18</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Planning Model Setup</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_subtitle">
+          <property name="text">
+           <string>Configure the simulation years, transmission model, temporal resolution, and economic parameters.</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_subtitle">
-        <property name="text">
-         <string>Configure the simulation years, transmission model, temporal resolution, and economic parameters.</string>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -135,6 +158,20 @@
         </layout>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_transmission">
+        <property name="text">
+         <string>Transmission Model</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="Line" name="hline1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="1">
        <widget class="QComboBox" name="temporal_box">
         <item>
@@ -154,41 +191,6 @@
         </item>
        </widget>
       </item>
-      <item row="6" column="1">
-       <widget class="Line" name="hline1">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_transmission">
-        <property name="text">
-         <string>Transmission Model</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1">
-       <widget class="QPushButton" name="advanced_settings_button">
-        <property name="text">
-         <string>Advanced Settings</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QLineEdit" name="base_currency_year">
-        <property name="text">
-         <string>2000</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_temporal">
-        <property name="text">
-         <string>Temporal Selection</string>
-        </property>
-       </widget>
-      </item>
       <item row="5" column="0">
        <widget class="QLabel" name="label_base_currency">
         <property name="text">
@@ -196,10 +198,10 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_annual_discount">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_temporal">
         <property name="text">
-         <string>Annual Discount Rate</string>
+         <string>Temporal Selection</string>
         </property>
        </widget>
       </item>
@@ -225,23 +227,6 @@
       <item row="4" column="1">
        <widget class="QDoubleSpinBox" name="annual_discount_factor"/>
       </item>
-      <item row="2" column="2">
-       <widget class="QToolButton" name="button_trans_help">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../../resources.qrc">
-          <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="2">
        <widget class="QToolButton" name="button_temporal_help">
         <property name="text">
@@ -259,8 +244,15 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
-       <widget class="QToolButton" name="button_discount_help">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_annual_discount">
+        <property name="text">
+         <string>Annual Discount Rate</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QToolButton" name="button_trans_help">
         <property name="text">
          <string/>
         </property>
@@ -278,6 +270,37 @@
       </item>
       <item row="5" column="2">
        <widget class="QToolButton" name="button_base_help">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../resources.qrc">
+          <normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</normaloff>:/icon/images/icons/help_FILL0_wght200_GRAD0_opsz48.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QPushButton" name="advanced_settings_button">
+        <property name="text">
+         <string>Advanced Settings</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="base_currency_year">
+        <property name="text">
+         <string>2000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QToolButton" name="button_discount_help">
         <property name="text">
          <string/>
         </property>

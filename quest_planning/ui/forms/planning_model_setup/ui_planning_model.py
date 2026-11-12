@@ -18,35 +18,50 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QDateTimeEdit,
     QDoubleSpinBox, QFrame, QGridLayout, QGroupBox,
     QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QToolButton, QVBoxLayout, QWidget)
+    QSizePolicy, QSpacerItem, QToolButton, QVBoxLayout,
+    QWidget)
 import quest_planning.resources_rc
 
 class Ui_PlanningModelPage(object):
     def setupUi(self, PlanningModelPage):
         if not PlanningModelPage.objectName():
             PlanningModelPage.setObjectName(u"PlanningModelPage")
-        PlanningModelPage.resize(525, 781)
+        PlanningModelPage.resize(745, 781)
         self.verticalLayout = QVBoxLayout(PlanningModelPage)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.frame_header = QFrame(PlanningModelPage)
         self.frame_header.setObjectName(u"frame_header")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_header.sizePolicy().hasHeightForWidth())
+        self.frame_header.setSizePolicy(sizePolicy)
         self.frame_header.setFrameShape(QFrame.NoFrame)
         self.frame_header.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_8 = QVBoxLayout(self.frame_header)
+        self.horizontalLayout_2 = QHBoxLayout(self.frame_header)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.verticalLayout_8 = QVBoxLayout()
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.label_title = QLabel(self.frame_header)
-        self.label_title.setObjectName(u"label_title")
+        self.label_title_2 = QLabel(self.frame_header)
+        self.label_title_2.setObjectName(u"label_title_2")
         font = QFont()
-        font.setPointSize(20)
+        font.setPointSize(18)
         font.setBold(True)
-        self.label_title.setFont(font)
+        self.label_title_2.setFont(font)
 
-        self.verticalLayout_8.addWidget(self.label_title)
+        self.verticalLayout_8.addWidget(self.label_title_2)
 
-        self.label_subtitle = QLabel(self.frame_header)
-        self.label_subtitle.setObjectName(u"label_subtitle")
+        self.label_subtitle_2 = QLabel(self.frame_header)
+        self.label_subtitle_2.setObjectName(u"label_subtitle_2")
 
-        self.verticalLayout_8.addWidget(self.label_subtitle)
+        self.verticalLayout_8.addWidget(self.label_subtitle_2)
+
+
+        self.horizontalLayout_2.addLayout(self.verticalLayout_8)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
 
         self.verticalLayout.addWidget(self.frame_header)
@@ -109,13 +124,10 @@ class Ui_PlanningModelPage(object):
 
         self.gridLayout.addWidget(self.frame_8, 0, 0, 1, 3)
 
-        self.temporal_box = QComboBox(self.groupBox_model)
-        self.temporal_box.addItem("")
-        self.temporal_box.addItem("")
-        self.temporal_box.addItem("")
-        self.temporal_box.setObjectName(u"temporal_box")
+        self.label_transmission = QLabel(self.groupBox_model)
+        self.label_transmission.setObjectName(u"label_transmission")
 
-        self.gridLayout.addWidget(self.temporal_box, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_transmission, 2, 0, 1, 1)
 
         self.hline1 = QFrame(self.groupBox_model)
         self.hline1.setObjectName(u"hline1")
@@ -124,35 +136,23 @@ class Ui_PlanningModelPage(object):
 
         self.gridLayout.addWidget(self.hline1, 6, 1, 1, 1)
 
-        self.label_transmission = QLabel(self.groupBox_model)
-        self.label_transmission.setObjectName(u"label_transmission")
+        self.temporal_box = QComboBox(self.groupBox_model)
+        self.temporal_box.addItem("")
+        self.temporal_box.addItem("")
+        self.temporal_box.addItem("")
+        self.temporal_box.setObjectName(u"temporal_box")
 
-        self.gridLayout.addWidget(self.label_transmission, 2, 0, 1, 1)
-
-        self.advanced_settings_button = QPushButton(self.groupBox_model)
-        self.advanced_settings_button.setObjectName(u"advanced_settings_button")
-
-        self.gridLayout.addWidget(self.advanced_settings_button, 7, 1, 1, 1)
-
-        self.base_currency_year = QLineEdit(self.groupBox_model)
-        self.base_currency_year.setObjectName(u"base_currency_year")
-
-        self.gridLayout.addWidget(self.base_currency_year, 5, 1, 1, 1)
-
-        self.label_temporal = QLabel(self.groupBox_model)
-        self.label_temporal.setObjectName(u"label_temporal")
-
-        self.gridLayout.addWidget(self.label_temporal, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.temporal_box, 3, 1, 1, 1)
 
         self.label_base_currency = QLabel(self.groupBox_model)
         self.label_base_currency.setObjectName(u"label_base_currency")
 
         self.gridLayout.addWidget(self.label_base_currency, 5, 0, 1, 1)
 
-        self.label_annual_discount = QLabel(self.groupBox_model)
-        self.label_annual_discount.setObjectName(u"label_annual_discount")
+        self.label_temporal = QLabel(self.groupBox_model)
+        self.label_temporal.setObjectName(u"label_temporal")
 
-        self.gridLayout.addWidget(self.label_annual_discount, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_temporal, 3, 0, 1, 1)
 
         self.transmission_box = QComboBox(self.groupBox_model)
         self.transmission_box.addItem("")
@@ -167,13 +167,6 @@ class Ui_PlanningModelPage(object):
 
         self.gridLayout.addWidget(self.annual_discount_factor, 4, 1, 1, 1)
 
-        self.button_trans_help = QToolButton(self.groupBox_model)
-        self.button_trans_help.setObjectName(u"button_trans_help")
-        self.button_trans_help.setIcon(icon)
-        self.button_trans_help.setIconSize(QSize(24, 24))
-
-        self.gridLayout.addWidget(self.button_trans_help, 2, 2, 1, 1)
-
         self.button_temporal_help = QToolButton(self.groupBox_model)
         self.button_temporal_help.setObjectName(u"button_temporal_help")
         self.button_temporal_help.setIcon(icon)
@@ -181,12 +174,17 @@ class Ui_PlanningModelPage(object):
 
         self.gridLayout.addWidget(self.button_temporal_help, 3, 2, 1, 1)
 
-        self.button_discount_help = QToolButton(self.groupBox_model)
-        self.button_discount_help.setObjectName(u"button_discount_help")
-        self.button_discount_help.setIcon(icon)
-        self.button_discount_help.setIconSize(QSize(24, 24))
+        self.label_annual_discount = QLabel(self.groupBox_model)
+        self.label_annual_discount.setObjectName(u"label_annual_discount")
 
-        self.gridLayout.addWidget(self.button_discount_help, 4, 2, 1, 1)
+        self.gridLayout.addWidget(self.label_annual_discount, 4, 0, 1, 1)
+
+        self.button_trans_help = QToolButton(self.groupBox_model)
+        self.button_trans_help.setObjectName(u"button_trans_help")
+        self.button_trans_help.setIcon(icon)
+        self.button_trans_help.setIconSize(QSize(24, 24))
+
+        self.gridLayout.addWidget(self.button_trans_help, 2, 2, 1, 1)
 
         self.button_base_help = QToolButton(self.groupBox_model)
         self.button_base_help.setObjectName(u"button_base_help")
@@ -194,6 +192,23 @@ class Ui_PlanningModelPage(object):
         self.button_base_help.setIconSize(QSize(24, 24))
 
         self.gridLayout.addWidget(self.button_base_help, 5, 2, 1, 1)
+
+        self.advanced_settings_button = QPushButton(self.groupBox_model)
+        self.advanced_settings_button.setObjectName(u"advanced_settings_button")
+
+        self.gridLayout.addWidget(self.advanced_settings_button, 7, 1, 1, 1)
+
+        self.base_currency_year = QLineEdit(self.groupBox_model)
+        self.base_currency_year.setObjectName(u"base_currency_year")
+
+        self.gridLayout.addWidget(self.base_currency_year, 5, 1, 1, 1)
+
+        self.button_discount_help = QToolButton(self.groupBox_model)
+        self.button_discount_help.setObjectName(u"button_discount_help")
+        self.button_discount_help.setIcon(icon)
+        self.button_discount_help.setIconSize(QSize(24, 24))
+
+        self.gridLayout.addWidget(self.button_discount_help, 4, 2, 1, 1)
 
 
         self.verticalLayout.addWidget(self.groupBox_model)
@@ -327,8 +342,8 @@ class Ui_PlanningModelPage(object):
 
     def retranslateUi(self, PlanningModelPage):
         PlanningModelPage.setWindowTitle(QCoreApplication.translate("PlanningModelPage", u"Form", None))
-        self.label_title.setText(QCoreApplication.translate("PlanningModelPage", u"Planning Model Setup", None))
-        self.label_subtitle.setText(QCoreApplication.translate("PlanningModelPage", u"Configure the simulation years, transmission model, temporal resolution, and economic parameters.", None))
+        self.label_title_2.setText(QCoreApplication.translate("PlanningModelPage", u"Planning Model Setup", None))
+        self.label_subtitle_2.setText(QCoreApplication.translate("PlanningModelPage", u"Configure the simulation years, transmission model, temporal resolution, and economic parameters.", None))
         self.groupBox_model.setTitle(QCoreApplication.translate("PlanningModelPage", u"Model Configuration", None))
         self.dateEdit_start.setDisplayFormat(QCoreApplication.translate("PlanningModelPage", u"yyyy", None))
         self.label_start.setText(QCoreApplication.translate("PlanningModelPage", u"Start Year", None))
@@ -336,24 +351,24 @@ class Ui_PlanningModelPage(object):
         self.dateEdit_end.setDisplayFormat(QCoreApplication.translate("PlanningModelPage", u"yyyy", None))
         self.button_years_select.setText(QCoreApplication.translate("PlanningModelPage", u"Select Simulation Years", None))
         self.button_sim_help.setText("")
+        self.label_transmission.setText(QCoreApplication.translate("PlanningModelPage", u"Transmission Model", None))
         self.temporal_box.setItemText(0, QCoreApplication.translate("PlanningModelPage", u"Representative Weeks", None))
         self.temporal_box.setItemText(1, QCoreApplication.translate("PlanningModelPage", u"Seasonal Blocks", None))
         self.temporal_box.setItemText(2, QCoreApplication.translate("PlanningModelPage", u"8760 Analysis (Upcoming)", None))
 
-        self.label_transmission.setText(QCoreApplication.translate("PlanningModelPage", u"Transmission Model", None))
-        self.advanced_settings_button.setText(QCoreApplication.translate("PlanningModelPage", u"Advanced Settings", None))
-        self.base_currency_year.setText(QCoreApplication.translate("PlanningModelPage", u"2000", None))
-        self.label_temporal.setText(QCoreApplication.translate("PlanningModelPage", u"Temporal Selection", None))
         self.label_base_currency.setText(QCoreApplication.translate("PlanningModelPage", u"Base Currency Year", None))
-        self.label_annual_discount.setText(QCoreApplication.translate("PlanningModelPage", u"Annual Discount Rate", None))
+        self.label_temporal.setText(QCoreApplication.translate("PlanningModelPage", u"Temporal Selection", None))
         self.transmission_box.setItemText(0, QCoreApplication.translate("PlanningModelPage", u"Transportation (Pipe & Bubble)", None))
         self.transmission_box.setItemText(1, QCoreApplication.translate("PlanningModelPage", u"Copper Sheet", None))
         self.transmission_box.setItemText(2, QCoreApplication.translate("PlanningModelPage", u"DC Power Flow (Upcoming)", None))
 
-        self.button_trans_help.setText("")
         self.button_temporal_help.setText("")
-        self.button_discount_help.setText("")
+        self.label_annual_discount.setText(QCoreApplication.translate("PlanningModelPage", u"Annual Discount Rate", None))
+        self.button_trans_help.setText("")
         self.button_base_help.setText("")
+        self.advanced_settings_button.setText(QCoreApplication.translate("PlanningModelPage", u"Advanced Settings", None))
+        self.base_currency_year.setText(QCoreApplication.translate("PlanningModelPage", u"2000", None))
+        self.button_discount_help.setText("")
         self.groupBox_summary.setTitle(QCoreApplication.translate("PlanningModelPage", u"Selection Summary", None))
         self.label_years.setText(QCoreApplication.translate("PlanningModelPage", u"Simulation Years", None))
         self.label_years_input.setText(QCoreApplication.translate("PlanningModelPage", u"----", None))
