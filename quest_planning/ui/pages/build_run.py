@@ -193,9 +193,79 @@ class ExecuteModelPage(QWidget):
         self.optimizer.solver = self.data_handler.solver
 
         self.scenario_page.apply_scenario_to_data_handler()
+        self._validate_simulation_year_data()
         self._complete_policy_schedule()
         self.scenario_page.apply_large_loads_to_data_handler()
         self.data_handler.construct_load_blocks()
+
+    def _validate_simulation_year_data(self):
+        """Validate that selected years are represented in model cost inputs."""
+        years = sorted({int(year) for year in self.data_handler.years})
+        missing_by_table = {}
+
+        def available_years(table_name):
+            table = self.data_handler.load_data[self.data_handler.index(table_name)]
+            available = set()
+            for column in table.columns:
+                try:
+                    available.add(int(column))
+                except (TypeError, ValueError):
+                    continue
+            return available
+
+        capex_tech_years = available_years("capex_tech")
+        missing = [year for year in years if year not in capex_tech_years]
+        if missing:
+            missing_by_table["capital technology cost"] = missing
+
+        # Every non-storage candidate must map to a technology with a capital
+        # cost row; otherwise Pyomo will later report an undefined C_g[(g, y)].
+        capex_tech = self.data_handler.load_data[
+            self.data_handler.index("capex_tech")
+        ]
+        gen = self.data_handler.load_data[self.data_handler.index("gen")]
+        candidate_gens = set(self.data_handler.tech_nums.get("candidates", ()))
+        storage_gens = set(self.data_handler.tech_nums.get("storage", ()))
+        required_gens = candidate_gens - storage_gens
+        if required_gens and "Tech_num" in capex_tech.columns:
+            cost_techs = set(capex_tech["Tech_num"].dropna().astype(int))
+            missing_gens = gen.loc[
+                gen["Gen_num"].isin(required_gens)
+                & ~gen["Tech_Num"].astype(int).isin(cost_techs),
+                "Gen_num",
+            ].astype(int).tolist()
+            if missing_gens:
+                missing_by_table["capital technology mapping for generators"] = (
+                    missing_gens
+                )
+
+        fuel_years = available_years("fuel")
+        missing = [year for year in years if year not in fuel_years]
+        if missing:
+            missing_by_table["fuel price"] = missing
+
+        # Storage candidates use the separate energy-storage capital-cost table.
+        storage_candidates = set(
+            self.data_handler.tech_nums.get("storage", ())
+        ).intersection(
+            set(self.data_handler.tech_nums.get("candidates", ()))
+        )
+        if storage_candidates:
+            capex_es_years = available_years("capex_es")
+            missing = [year for year in years if year not in capex_es_years]
+            if missing:
+                missing_by_table["energy-storage capital cost"] = missing
+
+        if missing_by_table:
+            details = "; ".join(
+                "{} missing {}".format(table, ", ".join(map(str, missing)))
+                for table, missing in missing_by_table.items()
+            )
+            raise RuntimeError(
+                "The selected simulation years are not available in the "
+                "dataset cost inputs: {}. Choose different years or load a "
+                "dataset containing those years.".format(details)
+            )
 
     def _complete_policy_schedule(self):
         """Fill policy years absent from the dataset using nearest schedule values."""

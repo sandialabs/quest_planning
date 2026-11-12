@@ -39,6 +39,9 @@ class ResultsViewerPage(QWidget):
         self.ui.html_browser.setToolTip("Browse for the folder with map HTML files.")
         self.ui.png_toggler.setToolTip("Show or hide the plots file browser.")
         self.ui.html_toggler.setToolTip("Show or hide the maps file browser.")
+        self.ui.costsum_toggler.setToolTip(
+            "Show or hide the cost category and NPV summary table."
+        )
 
         self.ui.collect_results_button.clicked.connect(self.collect_results)
         self.ui.gen_plots_button.clicked.connect(self.generate_plots)
@@ -53,6 +56,7 @@ class ResultsViewerPage(QWidget):
         self.ui.html_toggler.toggled.connect(
             lambda checked: self.ui.html_file_browser.setVisible(checked)
         )
+        self.ui.costsum_toggler.toggled.connect(self.toggle_cost_summary)
 
         self._png_toggled = False
         self._html_toggled = False
@@ -88,6 +92,7 @@ class ResultsViewerPage(QWidget):
         self.ui.frame_file_browser.setVisible(False)
         self.ui.png_toggler.setChecked(False)
         self.ui.html_toggler.setChecked(False)
+        self.ui.costsum_toggler.setChecked(True)
 
     def set_results_processor(self, results_processor):
         """Connect the shared processor that creates the result folders."""
@@ -191,6 +196,12 @@ class ResultsViewerPage(QWidget):
             self._cost_table.deleteLater()
         self._cost_table = table
         self.ui.results_content.layout().addWidget(table)
+        table.setVisible(self.ui.costsum_toggler.isChecked())
+
+    def toggle_cost_summary(self, checked):
+        """Show or hide the cost category and NPV summary table."""
+        if hasattr(self, "_cost_table"):
+            self._cost_table.setVisible(checked)
 
     def _show_plot_file(self, path):
         from PySide6.QtGui import QPixmap

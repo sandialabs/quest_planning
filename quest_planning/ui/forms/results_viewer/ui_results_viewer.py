@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'results_viewer_test.ui'
+## Form generated from reading UI file 'results_viewer.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -219,6 +219,14 @@ class Ui_ResultsViewerPage(object):
 
         self.horizontalLayout_viewer_title.addWidget(self.html_toggler)
 
+        self.costsum_toggler = QToolButton(self.frame_viewer)
+        self.costsum_toggler.setObjectName(u"costsum_toggler")
+        self.costsum_toggler.setCheckable(True)
+        self.costsum_toggler.setChecked(True)
+        self.costsum_toggler.setProperty("btnRole", u"toggler")
+
+        self.horizontalLayout_viewer_title.addWidget(self.costsum_toggler)
+
 
         self.verticalLayout_viewer.addLayout(self.horizontalLayout_viewer_title)
 
@@ -383,7 +391,7 @@ class Ui_ResultsViewerPage(object):
 
         self.retranslateUi(ResultsViewerPage)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(ResultsViewerPage)
@@ -416,6 +424,7 @@ class Ui_ResultsViewerPage(object):
         self.png_toggler.setProperty("btnRole", QCoreApplication.translate("ResultsViewerPage", u"toggler", None))
         self.html_toggler.setText(QCoreApplication.translate("ResultsViewerPage", u"Maps", None))
         self.html_toggler.setProperty("btnRole", QCoreApplication.translate("ResultsViewerPage", u"toggler", None))
+        self.costsum_toggler.setText(QCoreApplication.translate("ResultsViewerPage", u"Cost Summary", None))
         self.label_viewer_desc.setText(QCoreApplication.translate("ResultsViewerPage", u"Browse the results folder below, then drag any plot or map file into the viewer. The <i>Plots</i> and <i>Maps</i> toggle buttons unfold the file browser panel for each file type.", None))
         self.label_viewer_desc.setProperty("textRole", QCoreApplication.translate("ResultsViewerPage", u"caption", None))
         self.frame_file_browser.setProperty("cardType", QCoreApplication.translate("ResultsViewerPage", u"soft", None))
@@ -430,4 +439,3 @@ class Ui_ResultsViewerPage(object):
         self.html_browser.setText(QCoreApplication.translate("ResultsViewerPage", u"Open Folder..", None))
         self.html_browser.setProperty("btnRole", QCoreApplication.translate("ResultsViewerPage", u"small", None))
     # retranslateUi
-
