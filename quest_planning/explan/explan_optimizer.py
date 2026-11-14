@@ -840,7 +840,7 @@ class ExplanOptimizer(Optimizer):
         par_index_labels['CostScale'] = ['i']
 
         model.LL_Curt_MaxFrac = pm.Param(
-            initialize=0.25,
+            initialize=self.data_handler.ll_curt_max_frac,
             mutable=True
         )
         par_index_labels['LL_Curt_MaxFrac'] = ['i']
@@ -850,6 +850,15 @@ class ExplanOptimizer(Optimizer):
             mutable=True
         )
         par_index_labels['ll_self_sufficiency'] = ['i']
+
+        # Workload-shifting budget fraction (gamma).  Only declared when
+        # enable_workload_shifting is True; avoids spurious model attributes.
+        if self.data_handler.enable_workload_shifting:
+            model.ws_gamma = pm.Param(
+                initialize=self.data_handler.ws_gamma,
+                mutable=True
+            )
+            par_index_labels['ws_gamma'] = ['i']
 
         self.par_index_labels = par_index_labels
 
@@ -1102,6 +1111,33 @@ class ExplanOptimizer(Optimizer):
             )
             var_index_labels['LL_Curt'] = ['b','y','s','i']
 
+            # Workload-shifting variables (EC/ED scenarios only).
+            # WS_P_down[b,y,s,i]: DC demand deferred OUT of representative hour (s,i).
+            # WS_P_up[b,y,s,i]:   DC demand received INTO representative hour (s,i).
+            # Both are non-negative and enter cLLnet with signs:
+            #   -WS_P_down  (reduces grid demand when shifting out)
+            #   +WS_P_up    (increases grid demand when work arrives)
+            # Energy neutrality is enforced per representative day in cWSDayBalance,
+            # so total shifted-out == shifted-in within each 24-hour cycle.
+            # Cross-day and cross-season shifting is not modelled here, consistent
+            # with the independent-day BESS SOC initialisation in repr_3days_season.
+            if self.data_handler.enable_workload_shifting:
+                model.WS_P_down = pm.Var(
+                    model.B_LL,
+                    model.Y,
+                    model.S_I,
+                    domain=pm.NonNegativeReals
+                )
+                var_index_labels['WS_P_down'] = ['b','y','s','i']
+
+                model.WS_P_up = pm.Var(
+                    model.B_LL,
+                    model.Y,
+                    model.S_I,
+                    domain=pm.NonNegativeReals
+                )
+                var_index_labels['WS_P_up'] = ['b','y','s','i']
+
         #model.dummy = pm.Var(model.B, model.Y, model.S_I,
                            #domain=pm.NonNegativeReals)
         #var_index_labels['dummy'] = ['b', 'y', 's', 'i']
@@ -1159,6 +1195,17 @@ class ExplanOptimizer(Optimizer):
         model.annual_ll_curt_cost = pm.Var(
             model.Y, domain=pm.NonNegativeReals)
         var_index_labels['annual_ll_curt_cost'] = ['y']
+        # LL-only cost split variables — only created when large_load_option=True.
+        # Grid costs are derived in post-processing as: total − ll.
+        # annual_ll_gen_inv_cost : BTM investment CAPEX (NG + BESS pwr/energy + Solar + Wind)
+        # annual_ll_ops_cost     : BTM operational costs (FOM + VOM + Fuel for all LL gens)
+        if self.data_handler.large_load_option:
+            model.annual_ll_gen_inv_cost = pm.Var(
+                model.Y, domain=pm.NonNegativeReals)
+            var_index_labels['annual_ll_gen_inv_cost'] = ['y']
+            model.annual_ll_ops_cost = pm.Var(
+                model.Y, domain=pm.NonNegativeReals)
+            var_index_labels['annual_ll_ops_cost'] = ['y']
         # Objective Value
         model.objective_value = pm.Var(
             domain=pm.NonNegativeReals)
@@ -1234,6 +1281,17 @@ class ExplanOptimizer(Optimizer):
         model.S_I = pm.Set(dimen=2, initialize=s_i)
         model.soc_s_i = pm.Set(dimen=2, initialize=soc_s_i)
 
+        # S_days: set of (season, day_within_season) pairs used for the
+        # workload-shifting per-day energy-balance constraint (cWSDayBalance).
+        # day_within_season = i // 24 for each (s, i) in S_I.
+        # For seasons 1-4: days 0, 1, 2 (3 representative days × 24 h each).
+        # For season 5 (peak): day 0 only (1 × 24 h).
+        if self.data_handler.enable_workload_shifting:
+            _s_days = set()
+            for (s, i) in s_i:
+                _s_days.add((s, int(i) // 24))
+            model.S_days = pm.Set(dimen=2, initialize=sorted(_s_days))
+
         # Define bus indices
         bpoints = np.size(BUS.Bus_number)
         model.c = pm.Param(initialize=bpoints)
@@ -1296,11 +1354,31 @@ class ExplanOptimizer(Optimizer):
             zip(B_G_LL_df['Bus_num'].values, B_G_LL_df['Gen_num'].values)))
 
       
-        B_G_LL_sto_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
-            tech_nums['large_load_sto'])]
-        
+        # B_G_LL_sto: restrict to buses that actually have a declared large load
+        # in this config — same defensive filter as B_G_LL_ng to prevent
+        # StopIteration → RuntimeError in cLLBESSPowerInvMax / cLLBESSEnergyInvMax.
+        ll_buses = set(self.data_handler.large_load_buses) if self.data_handler.large_load_option else set()
+        B_G_LL_sto_df = bus_gen_num.loc[
+            bus_gen_num['Gen_num'].isin(tech_nums['large_load_sto']) &
+            bus_gen_num['Bus_num'].isin(ll_buses)
+        ]
+
         model.B_G_LL_sto = pm.Set(dimen=2, initialize=tuple(
             zip(B_G_LL_sto_df['Bus_num'].values, B_G_LL_sto_df['Gen_num'].values)))
+
+        # B_G_LL_ng: restrict to buses that actually have a declared large load
+        # in this config. gen.csv contains Gas_LL_Cand at all 6 LL buses, but
+        # most configs only declare a subset — including unmatched buses causes
+        # cLLNGInvMax to raise StopIteration → RuntimeError inside Pyomo's
+        # constraint-building loop, producing a silent hang.
+        # ll_buses already defined above for B_G_LL_sto filter.
+        B_G_LL_ng_df = bus_gen_num.loc[
+            bus_gen_num['Gen_num'].isin(tech_nums['large_load_ng']) &
+            bus_gen_num['Bus_num'].isin(ll_buses)
+        ]
+
+        model.B_G_LL_ng = pm.Set(dimen=2, initialize=tuple(
+            zip(B_G_LL_ng_df['Bus_num'].values, B_G_LL_ng_df['Gen_num'].values)))
 
         B_G_carbon_df = bus_gen_num.loc[bus_gen_num['Gen_num'].isin(
             list(set(tech_nums['thermal'])-set(tech_nums['nuclear'])))]

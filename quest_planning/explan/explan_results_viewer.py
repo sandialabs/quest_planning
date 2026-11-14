@@ -8,8 +8,6 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import folium
-import branca.colormap as cm
 import matplotlib.patches as mpatches
 import matplotlib.dates as mdates
 import os.path
@@ -17,7 +15,6 @@ import yaml
 import glob
 import argparse
 import textwrap
-import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
 from quest_planning.paths import get_path
@@ -647,15 +644,32 @@ class ExplanResultsViewer():
         self.create_lookup_info()
         print("Model has solved to optimality and results have been processed. Please proceed to the Results page.")
 
-    def process_results(self, rd, pd, timestamp, report):
-        """Process the output of the optimizer - Command line only"""
+    def process_results(self, rd, pd, timestamp, report, results_dir=None):
+        """Process the output of the optimizer - Command line only.
+
+        Parameters
+        ----------
+        rd : dict
+            Variable results dictionary from the optimizer.
+        pd : dict
+            Parameter results dictionary from the optimizer.
+        timestamp : str
+            Run timestamp string used for folder naming.
+        report : str
+            Model size report text.
+        results_dir : str or None, optional
+            Explicit output directory for this run. When provided (e.g. from an
+            HPC job array), results are written there instead of the default
+            quest_planning/Results/ location. This prevents race conditions when
+            many jobs run concurrently. If None, the original default is used.
+        """
         self.system = self.data_handler.system
         self.rd = rd
         self.pd = pd
         self.timestamp = timestamp
         self.report = report
 
-        self.create_results_folder(filepath=None)
+        self.create_results_folder(filepath=results_dir)
 
         self.create_lookup_info()
         self.plot_results()
@@ -2030,7 +2044,7 @@ class ExplanResultsViewer():
                     energy = float(gen['energy'].iloc[0])
                     duration_g = energy / power
 
-                    color = colormap[int((duration_g / max_d_t) * (len(colormap) - 1))]
+                    color = colormap[min(int((duration_g / max_d_t) * (len(colormap) - 1)), len(colormap) - 1)]
 
                     fig.add_trace(go.Scattergeo(
                         lon=[lon],

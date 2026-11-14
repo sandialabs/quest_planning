@@ -10,7 +10,6 @@ import datetime
 from datetime import date
 import logging
 import calendar
-import networkx as nx
 import matplotlib.dates as mdates
 from sklearn.cluster import KMeans
 import os
@@ -110,7 +109,16 @@ class ExplanDataHandler():
         self.large_load_flex = False
         self.ll_load_growth = 0.0 #Default for now
         self.ll_self_sufficiency = 0.0 #Default: no self-sufficiency requirement
-        
+        self.ll_curt_max_frac = 0.25 #Default: 25% hourly curtailment cap
+        # Workload shifting (EC/ED scenarios)
+        # When enabled, the optimizer may defer DC demand within each 24-hour
+        # representative-day window, subject to a per-site, per-season energy
+        # budget of ws_gamma * seasonal_DC_energy.  Cross-day and cross-season
+        # shifting is NOT modelled (consistent with the independent-day BESS SOC
+        # treatment in repr_3days_season).
+        self.enable_workload_shifting = False  # disabled by default
+        self.ws_gamma = 0.10                   # max shiftable fraction of seasonal energy
+
         self.mva_base = 100
         
         self.resource_bus_limit_dict = None
@@ -415,6 +423,13 @@ class ExplanDataHandler():
         self.large_load_option= cfg.get("large_load_option", False)
         self.large_load_flex = cfg.get("large_load_flex", False)
         self.ll_self_sufficiency = cfg.get("ll_self_sufficiency", 0.0)
+        self.ll_curt_max_frac = cfg.get("ll_curt_max_frac", 0.25)
+        # Derive flex flag: α=0 means no flexibility regardless of explicit flag
+        if self.ll_curt_max_frac == 0.0:
+            self.large_load_flex = False
+        # Workload shifting (EC/ED scenarios)
+        self.enable_workload_shifting = cfg.get("enable_workload_shifting", False)
+        self.ws_gamma = float(cfg.get("ws_gamma", 0.10))
         self.processed_ll = []
         for l in loads:
             # validate required fields
@@ -897,16 +912,28 @@ class ExplanDataHandler():
             df1.columns = ['y', 'drop', 'total', 'i', 's']
             df1 = df1.drop('drop', axis=1)
         if self.block_selection.lower() == 'Repr_weeks'.lower():
-            # for Peak week only
+            # Derive time_array/season_array from actual df1 shape to handle
+            # variable-length peak weeks (peak week may have <168 hours when
+            # the selected week crosses a month/season boundary in the data).
+            # Hardcoding 168*5=840 caused a ValueError length mismatch when the
+            # actual block has 816 rows (162*4 avg seasons + 168 peak season).
             time, year = np.shape(df)
-            time_array = np.concatenate(
-                [np.array(np.arange(0, 168))]*5)
-            season_array = np.concatenate([np.ones(
-                168)*1, np.ones(168)*2, np.ones(168)*3, np.ones(168)*4, np.ones(168)*5])
             df1 = pd.DataFrame(data=df.unstack(level=0))
+            rows_per_year = len(df1) // year
+            # 5 seasons: 4 average weeks + 1 peak week (always a full 7-day week)
+            peak_hrs = 168
+            hrs_per_avg_season = (rows_per_year - peak_hrs) // 4
+            time_array = np.concatenate(
+                [np.arange(0, hrs_per_avg_season)] * 4 +
+                [np.arange(0, peak_hrs)]
+            )
+            season_array = np.concatenate(
+                [np.ones(hrs_per_avg_season) * s for s in range(1, 5)] +
+                [np.ones(peak_hrs) * 5]
+            )
 
-            df1['i'] = np.concatenate([time_array]*year)
-            df1['s'] = np.concatenate([season_array]*year)
+            df1['i'] = np.concatenate([time_array] * year)
+            df1['s'] = np.concatenate([season_array] * year)
 
             df1 = df1.reset_index()
             df1.columns = ['y', 'drop', 'total', 'i', 's']
@@ -1081,7 +1108,7 @@ class ExplanDataHandler():
 
         # Define technology categories
         self.tech_categories = {
-            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'SMR_Cand'],
+            'thermal': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Gas_Cand', 'Gas_CC_Cand','Gas_CT_Cand', 'SMR_Cand', 'Gas_LL_Cand'],
             'nuclear': ['Nuclear','SMR_Cand'],
             'coal' : ['Coal'],
             'oil' : ['Oil_CT','Oil_St'],
@@ -1101,6 +1128,7 @@ class ExplanDataHandler():
             'exist': ['Nuclear', 'Coal', 'Gas', 'Gas_CT', 'Gas_CC', 'Geothermal', 'Oil_CT', 'Oil_ST', 'Hydro', 'Wind_PPA', 'Wind', 'Solar_PPA', 'ES_PPA', 'Solar', 'Solar_RT', 'CSP', 'ES'],
             'large_load_gen': ['Solar_LL_Cand','Wind_LL_Cand','Gas_LL_Cand','Li_Ion_Cand_LL_Cand'],
             'large_load_sto': ['Li_Ion_Cand_LL_Cand'],
+            'large_load_ng':  ['Gas_LL_Cand'],
         }
 
         # Initialize dictionary to hold generator numbers
@@ -1143,6 +1171,7 @@ class ExplanDataHandler():
         self.bus_wind_ex_num = get_bus_nums('wind_ex')
         self.bus_wind_can_num = get_bus_nums('wind_can')
         self.bus_es_can_num = get_bus_nums('storage_cand')
+        self.bus_ll_ng_num  = get_bus_nums('large_load_ng')
         #self.bus_es_can_yr_num = get_bus_nums('storage_cand_year')
 
         # For line_bus_num, directly use pandas' capabilities to create the tuple
@@ -1272,6 +1301,7 @@ class ExplanDataHandler():
 
         
     def create_network_diagram(self,fig,ax,use_map):
+        import networkx as nx  # lazy import: only used for GUI visualization, never in HPC batch runs
         # Create an empty graph
         G = nx.Graph()
     

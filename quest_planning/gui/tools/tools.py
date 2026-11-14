@@ -801,7 +801,12 @@ class RPSDialog(QDialog):
 class LoadingSplashScreen(QDialog):
     def __init__(self, parent=None,title="Loading"):
         super().__init__(parent, Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
-        self.setModal(True)  # Make the dialog modal to block interaction with the main window
+        # Use setModal(True) with open() (not show() or exec()) so the dialog
+        # is modal (blocks user interaction with the main window) but does NOT
+        # block the Qt event loop.  Blocking the event loop with exec() or a
+        # modal show() prevents queued cross-thread signals (finished, etc.)
+        # from being delivered to main-thread slots, causing a permanent freeze.
+        self.setModal(True)
         
         self.setWindowTitle(title)
         layout = QVBoxLayout()
@@ -817,7 +822,8 @@ class LoadingSplashScreen(QDialog):
 
     def show_message(self, message):
         self.label.setText(message)
-        self.show()
+        self.open()  # Non-blocking modal: keeps the event loop running so
+                     # cross-thread signals from worker threads are delivered.
 
 
 class YearOptionsDialog(QDialog):
@@ -940,7 +946,7 @@ class ExecuteFunction(QThread):
     task_failed = Signal()
     finished = Signal()
     output_updated = Signal(str)
-    
+
     def __init__(self, function, args = None):
         super().__init__()
         self._function = function
@@ -948,21 +954,21 @@ class ExecuteFunction(QThread):
 
     def run(self):
         try:
-            if self._args == None:
-
+            if self._args is None:
                 self._function()
             else:
-
                 self._function(*self._args)
-            
+
             self.finished.emit()
         except Exception as e:
+            print("!!! THREAD ERROR !!!", flush=True)
+            print(f"  Type: {type(e).__name__}", flush=True)
+            print(f"  Message: {e}", flush=True)
+            import traceback
             traceback.print_exc()
+            print("!!! END THREAD ERROR !!!", flush=True)
             self.task_failed.emit()
 
-        #else:
-            #self.finished.emit()
-            #print("Function executed")
 
 class ExecuteFunctionBuffer(QThread):
     """
@@ -973,7 +979,7 @@ class ExecuteFunctionBuffer(QThread):
     task_failed = Signal()
     finished = Signal()
     output_updated = Signal(str)
-    
+
     def __init__(self, function, args = None):
         super().__init__()
         self._function = function
@@ -981,33 +987,20 @@ class ExecuteFunctionBuffer(QThread):
 
     def run(self):
         try:
-            if self._args == None:
-                # Redirect stdout to a buffer
-                stdout_buffer = StdoutBuffer(self)
-                sys.stdout = stdout_buffer
+            if self._args is None:
                 self._function()
-                # Restore stdout
-                sys.stdout = sys.__stdout__
- 
             else:
-                # Redirect stdout to a buffer
-                stdout_buffer = StdoutBuffer(self)
-                sys.stdout = stdout_buffer
-                
                 self._function(*self._args)
-
-                # Restore stdout
-                sys.stdout = sys.__stdout__
- 
 
             self.finished.emit()
         except Exception as e:
+            print("!!! THREAD ERROR !!!", flush=True)
+            print(f"  Type: {type(e).__name__}", flush=True)
+            print(f"  Message: {e}", flush=True)
+            import traceback
             traceback.print_exc()
+            print("!!! END THREAD ERROR !!!", flush=True)
             self.task_failed.emit()
-
-        #else:
-            #self.finished.emit()
-            #print("Function executed")
 
 class TabAnimator():
     def __init__(self, tab_widget):

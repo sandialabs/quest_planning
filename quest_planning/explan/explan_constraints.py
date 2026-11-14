@@ -243,6 +243,11 @@ class ExplanConstraints:
                 model.Y, model.S_I, rule=self.cPSpinMin)
             model.cPFlexMin = pm.Constraint(
                 model.Y, model.S_I, rule=self.cPFlexMin)
+            # Belt-and-suspenders: force all BTM co-located resource reserve
+            # variables to zero (covers Gas_LL_Cand, Li_Ion_Cand_LL_Cand,
+            # Solar_LL_Cand, Wind_LL_Cand via B_G_LL).
+            model.cLLNoReserve = pm.Constraint(
+                model.B_G_LL, model.Y, model.S_I, rule=self.cLLNoReserve)
 
         if self.data_handler.block_selection.lower() != 'seasonal_blocks':
             model.cThermRup = pm.Constraint(
@@ -313,7 +318,7 @@ class ExplanConstraints:
                 model.cDCPF = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cDCPF)
                 model.cThetaDiffMax = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMax)
                 model.cThetaDiffMin = pm.Constraint(model.L,model.Y, model.S_I, rule=self.cThetaDiffMin)
-                model.cSlackBus =pm.Constraint(model.Y, model.S_I, rule=self.cSlackBus)
+                model.cSlackBus = pm.Constraint(model.B, model.Y, model.S_I, rule=self.cSlackBus)
         
         #if self.data_handler.tx_model == 'copper_sheet':
             #fix PF to 0
@@ -329,6 +334,18 @@ class ExplanConstraints:
             model.cLLnet = pm.Constraint(model.B_LL, model.Y, model.S_I, rule=self.cLLnet)
             model.cLLCurtLimit = pm.Constraint(model.B_LL, model.Y, model.S_I,rule=self.cLLCurtLimit)
             model.cLLResourceRequirement = pm.Constraint(model.B_LL, model.Y, rule=self.cLLResourceRequirement)
+            if self.data_handler.enable_workload_shifting:
+                # cWSSourceCap: cannot defer more than the scheduled load in any hour
+                model.cWSSourceCap = pm.Constraint(
+                    model.B_LL, model.Y, model.S_I, rule=self.cWSSourceCap)
+                # cWSBudget: per-site, per-season 10% (ws_gamma) energy budget
+                model.cWSBudget = pm.Constraint(
+                    model.B_LL, model.Y, model.S, rule=self.cWSBudget)
+                # cWSDayBalance: per-day energy neutrality — enforces 24-h horizon
+                # by requiring shifted-out == shifted-in within each representative day.
+                # Cross-day shifting is not modelled (consistent with BESS SOC reset).
+                model.cWSDayBalance = pm.Constraint(
+                    model.B_LL, model.Y, model.S_days, rule=self.cWSDayBalance)
         if self.data_handler.tx_model == 'copper_sheet':
             model.cPwrBal_CopperSheet = pm.Constraint(model.Y, model.S_I, rule=self.cPwrBal_CopperSheet)
 
@@ -347,6 +364,13 @@ class ExplanConstraints:
                 model.B_G_can, model.Y, rule=self.cBusInvMaxAnnual)
         model.cBusInvMaxTotal = pm.Constraint(
                 model.B_G_can, rule=self.cBusInvMaxTotal)
+        if self.data_handler.large_load_option:
+            model.cLLNGInvMax = pm.Constraint(
+                model.B_G_LL_ng, rule=self.cLLNGInvMax)
+            model.cLLBESSPowerInvMax = pm.Constraint(
+                model.B_G_LL_sto, rule=self.cLLBESSPowerInvMax)
+            model.cLLBESSEnergyInvMax = pm.Constraint(
+                model.B_G_LL_sto, rule=self.cLLBESSEnergyInvMax)
             
         model.cSystWindMax = pm.Constraint(
             rule=self.cSystWindMax)
@@ -426,8 +450,13 @@ class ExplanConstraints:
         model.cTotalCostAnnual = pm.Constraint(
             model.Y, rule=self.cTotalCostAnnual)
 
-        model.cLLCurtCost=pm.Constraint(
+        model.cLLCurtCost = pm.Constraint(
             model.Y, rule=self.cLLCurtCost)
+        if self.data_handler.large_load_option:
+            model.cLLGenInvCostAnnual = pm.Constraint(
+                model.Y, rule=self.cLLGenInvCostAnnual)
+            model.cLLOpsCostAnnual = pm.Constraint(
+                model.Y, rule=self.cLLOpsCostAnnual)
         
         model.OBJ = pm.Objective(rule=self.cOBJ)
                 
@@ -760,61 +789,112 @@ class ExplanConstraints:
     # the branch entirely — no membership test, no Constraint.Skip.
     # ------------------------------------------------------------------
     def cPRegMaxSto(self, model, b, g, y, s, i):
-        '''Reg reserve upper bound — storage generators (Pdis-based).'''
+        '''Reg reserve upper bound — storage generators (Pdis-based).
+        Co-located BTM storage (Li_Ion_Cand_LL_Cand) is excluded:
+        BTM resources are not available to the grid operator for reserve.
+        '''
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return model.P_Reg[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 5 * model.G_ramp[g]
 
     def cPRegMaxGen(self, model, b, g, y, s, i):
-        '''Reg reserve upper bound — non-storage generators (P_gen-based).'''
+        '''Reg reserve upper bound — non-storage generators (P_gen-based).
+        Co-located BTM NG (Gas_LL_Cand) is excluded:
+        BTM resources are not available to the grid operator for reserve.
+        '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return model.P_Reg[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 5 * model.G_ramp[g]
 
     def cPSpinMaxSto(self, model, b, g, y, s, i):
-        '''Spinning reserve upper bound — storage generators.'''
+        '''Spinning reserve upper bound — storage generators.
+        Co-located BTM storage (Li_Ion_Cand_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return model.P_Spin[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 10 * model.G_ramp[g]
 
     def cPSpinMaxGen(self, model, b, g, y, s, i):
-        '''Spinning reserve upper bound — non-storage generators.'''
+        '''Spinning reserve upper bound — non-storage generators.
+        Co-located BTM NG (Gas_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return model.P_Spin[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 10 * model.G_ramp[g]
 
     def cPFlexMaxSto(self, model, b, g, y, s, i):
-        '''Flexibility reserve upper bound — storage generators.'''
+        '''Flexibility reserve upper bound — storage generators.
+        Co-located BTM storage (Li_Ion_Cand_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return model.P_Flex[b, g, y, s, i] <= model.Pdis[b, g, y, s, i] * 60 * model.G_ramp[g]
 
     def cPFlexMaxGen(self, model, b, g, y, s, i):
-        '''Flexibility reserve upper bound — non-storage generators.'''
+        '''Flexibility reserve upper bound — non-storage generators.
+        Co-located BTM NG (Gas_LL_Cand) is excluded.
+        '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
         return model.P_Flex[b, g, y, s, i] <= model.P_gen[b, g, y, s, i] * 60 * model.G_ramp[g]
 
     def cPRegMin(self, model, y, s, i):
         '''
         Ramping constraints - Regulation - 5min -- Lower Bound
+        Co-located BTM resources (B_G_LL) are excluded from the supply-side
+        summation: they are not dispatchable by the grid operator for reserve.
         '''
+        eligible = [(b, g) for (b, g) in model.B_G if (b, g) not in model.B_G_LL]
         if s == 5:# Peak block
-            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in model.B_G) == 0
+            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in eligible) == 0
         else:
-            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.reg_res_req)
+            return sum(model.P_Reg[b, g, y, s, i] for (b, g) in eligible) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.reg_res_req)
             # self.data_handler.scalars.loc['Reg_Res_Req']['Value'])/100
     def cPSpinMin(self, model, y, s, i):
         '''
         Ramping constraints - Spinning - 10min -- Lower Bound
+        Co-located BTM resources (B_G_LL) are excluded from the supply-side
+        summation: they are not dispatchable by the grid operator for reserve.
         '''
+        eligible = [(b, g) for (b, g) in model.B_G if (b, g) not in model.B_G_LL]
         if s == 5:#Peak block
-            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in model.B_G) == 0
+            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in eligible) == 0
         else:
-            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.spin_res_req)
+            return sum(model.P_Spin[b, g, y, s, i] for (b, g) in eligible) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.spin_res_req)
             #float(self.data_handler.scalars.loc['Spin_Res_Req']['Value'])/100
 
     def cPFlexMin(self, model, y, s, i):
         '''
         Ramping constraints - Flexibility -- Lower Bound
+        Co-located BTM resources (B_G_LL) are excluded from the supply-side
+        summation: they are not dispatchable by the grid operator for reserve.
         '''
-
+        eligible = [(b, g) for (b, g) in model.B_G if (b, g) not in model.B_G_LL]
         if s == 5:#Peak block
-            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) == 0
+            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in eligible) == 0
         else:
-            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.flex_res_req)
+            return sum(model.P_Flex[b, g, y, s, i] for (b, g) in eligible) >= sum(model.load_full[b, y, s, i] for b in model.B) * float(self.data_handler.flex_res_req)
             #return sum(model.P_Flex[b, g, y, s, i] for (b, g) in model.B_G) >= sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_wind) * float(self.data_handler.flex_res_w_req) + sum(model.P_gen[b, g, y, s, i] for (b, g) in model.B_G_pv) * float(self.data_handler.flex_res_s_req)
             # self.data_handler.scalars.loc['Flex_Res_W_Req']['Value'])/100
             # self.data_handler.scalars.loc['Flex_Res_S_Req']['Value'])/100
-        
+
+    def cLLNoReserve(self, model, b, g, y, s, i):
+        '''
+        Belt-and-suspenders zero-forcing constraint for all co-located BTM
+        candidate resources (Gas_LL_Cand, Li_Ion_Cand_LL_Cand,
+        Solar_LL_Cand, Wind_LL_Cand).
+
+        BTM resources serve the large load's private energy needs and are
+        not dispatchable by the grid operator for reserve services.
+        Forces P_Reg = P_Spin = P_Flex = 0 for all (b,g) in B_G_LL.
+
+        Works in concert with:
+          - Change 1: skip guards in cPReg/Spin/FlexMaxSto/Gen
+          - Change 2: B_G_LL filtered from cPReg/Spin/FlexMin summations
+        '''
+        return (model.P_Reg[b, g, y, s, i] +
+                model.P_Spin[b, g, y, s, i] +
+                model.P_Flex[b, g, y, s, i]) == 0
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     3.) Renewable Generator Constraints
@@ -1063,20 +1143,39 @@ class ExplanConstraints:
         
     def cLNSMax(self, model, b, y, s, i):
         '''
-        Ensure load shed does not exceed the demand for that time step 
+        Ensure load shed does not exceed the demand for that time step.
+        Audit fix: large_load[b,y,s,i] added so LNS can absorb unserved data-center
+        demand as well as background system load.  large_load is indexed over all
+        buses with default=0, so this has no effect at non-LL buses.
+        Without this fix, the DC OPF formulation produces infeasible problems at
+        constrained LL buses (e.g., bus 307) where line thermal limits prevent
+        full large-load service and there is no LNS slack to absorb the deficit.
         '''
-        
-        return model.LNS[b, y, s, i] <= model.load_full[b, y, s, i]
+        return model.LNS[b, y, s, i] <= (
+            model.load_full[b, y, s, i] + model.large_load[b, y, s, i]
+        )
 
     def cLLnet(self, model, b, y,s,i):
         '''
-        Large load net calculation:TODO: add co-loacated generation
+        Large load net calculation: defines the net demand the data centre
+        presents to the grid after all behind-the-meter resources have acted.
+
+        Positive terms on the RHS increase grid demand; negative terms reduce it.
+
+        Components (all variables ≥ 0):
+          large_load[b,y,s,i]        - gross scheduled DC demand (Param, unshifted)
+          - LL_Curt                  - demand avoidance (alpha curtailment)
+          - P_gen[ll_ng]             - BTM NG generation
+          - Pdis[ll_bess]            - BTM BESS discharge
+          + Pcha[ll_bess]            - BTM BESS charging (draws from grid)
+          - WS_P_down (if WS on)     - workload deferred to another hour (reduces load)
+          + WS_P_up   (if WS on)     - workload received from another hour (raises load)
+
+        WS_P_down and WS_P_up are distinct from LL_Curt:
+          - Curtailment permanently removes work; total annual DC energy falls.
+          - Shifting re-schedules work; per-day energy neutrality (cWSDayBalance)
+            ensures total energy is preserved within each representative day.
         '''
-        #if self.data_handler.large_load_option:
-        #    return model.large_load[b,y,s,i] == model.large_load_net[b,y,s,i]
-        #else:
-        #    return pm.Constraint.Skip
-       
         if not self.data_handler.large_load_option:
             return pm.Constraint.Skip
 
@@ -1092,6 +1191,15 @@ class ExplanConstraints:
         ll_bess = np.intersect1d(
             gen_nums,
             list(model.G_LL_BESS)
+        )
+
+        ws_down = (
+            model.WS_P_down[b, y, s, i]
+            if self.data_handler.enable_workload_shifting else 0
+        )
+        ws_up = (
+            model.WS_P_up[b, y, s, i]
+            if self.data_handler.enable_workload_shifting else 0
         )
 
         return (
@@ -1111,6 +1219,8 @@ class ExplanConstraints:
                 model.Pcha[b,g,y,s,i]
                 for g in ll_bess
             )
+            - ws_down
+            + ws_up
         )
     def cLLCurtLimit(self, model, b, y, s, i):
 
@@ -1142,36 +1252,117 @@ class ExplanConstraints:
             list(model.G_LL_BESS)
         )
         
+        # Interpretation 3 (audit fix):
+        #   - LL_Curt removed from BTM energy numerator: curtailment is demand
+        #     avoidance, not on-site generation.  A data center that curtails load
+        #     is not supplying energy from BTM resources.
+        #   - season_time_weight applied to both sides so beta represents a true
+        #     fraction of annual energy served by BTM resources, not an unweighted
+        #     representative-period power ratio.
         btm_energy = sum(
-            sum(model.P_gen[b,g,y,s,i]
-                for g in ll_ng)
-            +
-            sum(model.Pdis[b,g,y,s,i]
-                for g in ll_bess)
-            +
-            model.LL_Curt[b,y,s,i]
-
-            for (s,i) in model.S_I
+            model.season_time_weight[s, i] * (
+                sum(model.P_gen[b, g, y, s, i] for g in ll_ng)
+                + sum(model.Pdis[b, g, y, s, i]  for g in ll_bess)
+            )
+            for (s, i) in model.S_I
         )
 
         ll_energy = sum(
-            model.large_load[b,y,s,i]
-            for (s,i) in model.S_I
+            model.season_time_weight[s, i] * model.large_load[b, y, s, i]
+            for (s, i) in model.S_I
         )
 
-        #if b == 211 and y == 2024:
+        return btm_energy >= model.ll_self_sufficiency * ll_energy
 
-        #print("ll_ng =", ll_ng)
-        #print("ll_bess =", ll_bess)
+    # ------------------------------------------------------------------
+    # Workload-shifting constraints  (EC / ED scenarios)
+    # Active only when data_handler.enable_workload_shifting is True.
+    # These constraints are registered in power_balance_constraints()
+    # and use model.WS_P_down / model.WS_P_up declared in _set_model_var().
+    # ------------------------------------------------------------------
 
-        #print(
-          #  "large load sum =",
-          #  sum(
-          #      model.large_load[b,y,s,i]
-           #     for (s,i) in model.S_I
-           # )
-        #)
-        return btm_energy >= model.ll_self_sufficiency*ll_energy
+    def cWSSourceCap(self, model, b, y, s, i):
+        '''
+        Cannot defer more workload than is actually scheduled in any hour.
+
+        WS_P_down[b,y,s,i] <= large_load[b,y,s,i]
+
+        This prevents the model from "shifting" phantom demand that does not
+        exist (e.g. scheduling recovery of a curtailed hour that had zero load).
+        Note: large_load is the fixed baseline (Param), not large_load_net.
+        '''
+        return model.WS_P_down[b, y, s, i] <= model.large_load[b, y, s, i]
+
+    def cWSBudget(self, model, b, y, s):
+        '''
+        Per-site, per-season workload-shifting energy budget.
+
+        The total energy deferred within a season (weighted by season_time_weight
+        to convert from representative-hour MW to real annual MWh) may not exceed
+        ws_gamma (default 10%) of the site's total seasonal DC energy demand.
+
+        sum_i [ w(s,i) * WS_P_down[b,y,s,i] ]
+            <= ws_gamma * sum_i [ w(s,i) * large_load[b,y,s,i] ]
+
+        Implementation notes:
+          - season_time_weight is 30.431 h for seasons 1-4 and 1 h for season 5,
+            so the constraint is correctly weighted across all representative hours.
+          - large_load in the denominator is the unshifted baseline (Param), so
+            the budget does not shrink as work is rescheduled.
+          - WS_P_up is intentionally excluded from the budget: only the energy
+            that leaves its original slot (WS_P_down) is counted against the
+            allowance, avoiding double-counting.
+        '''
+        s_i_in_season = [(ss, ii) for (ss, ii) in model.S_I if ss == s]
+        if not s_i_in_season:
+            return pm.Constraint.Skip
+
+        lhs = sum(
+            model.season_time_weight[s, i] * model.WS_P_down[b, y, s, i]
+            for (_, i) in s_i_in_season
+        )
+        rhs = model.ws_gamma * sum(
+            model.season_time_weight[s, i] * model.large_load[b, y, s, i]
+            for (_, i) in s_i_in_season
+        )
+        return lhs <= rhs
+
+    def cWSDayBalance(self, model, b, y, s, d):
+        '''
+        Per-representative-day workload energy neutrality.
+
+        Within each 24-hour representative-day block all deferred workload must
+        be recovered in the same block:
+
+            sum_{h=0..23} WS_P_down[b,y,s, d*24+h]
+            == sum_{h=0..23} WS_P_up[b,y,s, d*24+h]
+
+        This enforces the 24-hour shifting horizon in the representative-day
+        framework.  Because the repr_3days_season block treats each day as an
+        independent cycle (BESS SOC resets at the start of every day), it is
+        self-consistent to restrict workload shifting to the same cycle.
+
+        Assumption (documented explicitly):
+          The cyclic 24-hour window means that a workload near hour 23 of a
+          representative day can in principle "wrap" to hour 0 of the same day
+          in the optimisation.  This is a standard approximation for repeating
+          representative-day patterns and is consistent with how the BESS SOC
+          is treated.  Cross-day shifting is not modelled.
+
+        d is the 0-based day index within the season:
+          d=0: i in {0..23}
+          d=1: i in {24..47}  (seasons 1-4 only)
+          d=2: i in {48..71}  (seasons 1-4 only)
+        '''
+        hours_in_day = [(s, d * 24 + h) for h in range(24)
+                        if (s, d * 24 + h) in model.S_I]
+        if not hours_in_day:
+            return pm.Constraint.Skip
+
+        lhs = sum(model.WS_P_down[b, y, s, i] for (_, i) in hours_in_day)
+        rhs = sum(model.WS_P_up[b, y, s, i]   for (_, i) in hours_in_day)
+        return lhs == rhs
+
     '''
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     7.) Investment Constraints
@@ -1231,11 +1422,25 @@ class ExplanConstraints:
                 return model.Store[b, g, y] == base_storage + model.Sto_inv[b, g, y]
 
             else:
-                online_storage_investment = sum(
-                    model.Sto_inv[b, g, y1]
-                    for y1 in self.data_handler.years
-                    if y1 + model.G_lt[g] <= y
-                )
+                if (
+                    self.data_handler.large_load_option
+                    and (b, g) in model.B_G_LL_sto
+                ):
+                    # Co-located BESS: waive lead time for all planning years.
+                    # Mirrors the cPCapTotal B_G_LL branch — co-located BTM
+                    # resources are procured alongside the data center, not as
+                    # independent grid assets with a separate procurement lead time.
+                    online_storage_investment = sum(
+                        model.Sto_inv[b, g, y1]
+                        for y1 in self.data_handler.years
+                        if y1 <= y
+                    )
+                else:
+                    online_storage_investment = sum(
+                        model.Sto_inv[b, g, y1]
+                        for y1 in self.data_handler.years
+                        if y1 + model.G_lt[g] <= y
+                    )
 
                 return model.Store[b, g, y] == base_storage + online_storage_investment
 
@@ -1280,8 +1485,14 @@ class ExplanConstraints:
 
     def cBusInvMaxAnnual(self, model, b, g, y):
         '''
-        Planning horizon investment constraints
+        Planning horizon investment constraints.
+        Gas_LL_Cand and Li_Ion_Cand_LL_Cand are excluded here — their
+        investment is capped by cLLNGInvMax / cLLBESSPowerInvMax instead.
         '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         if (b, g) in self.cand_tuple:
             if self.data_handler.block_selection.lower() == 'Full_Year'.lower():
                 if self.data_handler.ldes_switch is False and (b, g) in model.B_G_ldes:
@@ -1302,9 +1513,57 @@ class ExplanConstraints:
     
     def cBusInvMaxTotal(self, model, b, g):#cjn - removed year index
         '''
-        Maximum invested cumulative capacities of candidate technologies by bus
+        Maximum invested cumulative capacities of candidate technologies by bus.
+        Gas_LL_Cand and Li_Ion_Cand_LL_Cand are excluded here — their
+        investment is capped by cLLNGInvMax / cLLBESSPowerInvMax instead.
         '''
+        if (b, g) in model.B_G_LL_ng:
+            return pm.Constraint.Skip
+        if (b, g) in model.B_G_LL_sto:
+            return pm.Constraint.Skip
         return sum(model.G_inv[b, g, y] for y in model.Y) <= model.P_cap_syst_max[g]
+
+    def cLLNGInvMax(self, model, b, g):
+        '''
+        Cap total co-located NG investment over the planning horizon using
+        LL_NG_Max from the YAML config (onsite_resources.ng.max_capacity_mw).
+        Replaces the broken CandCap=0/SystCap=0 path from gen.csv for Gas_LL_Cand.
+        Each LL has exactly one bus, so the mapping from (b,g) -> LL id is unique.
+        Guard: if no LL is declared at bus b in this config, skip the constraint
+        (B_G_LL_ng is already filtered to declared LL buses, but this defensive
+        guard prevents a silent StopIteration→RuntimeError hang if that filter
+        ever misses a case).
+        '''
+        ll_id = next((ll for ll in model.LL if model.LL_bus[ll] == b), None)
+        if ll_id is None:
+            return pm.Constraint.Skip
+        return sum(model.G_inv[b, g, y] for y in model.Y) <= model.LL_NG_Max[ll_id]
+
+    def cLLBESSPowerInvMax(self, model, b, g):
+        '''
+        Cap total co-located BESS power investment over the planning horizon
+        using LL_BESS_Power_Max from the YAML config (bess.max_power_mw).
+        When bess_candidate: false / max_power_mw: 0, this forces G_inv = 0
+        for co-located BESS — correctly implementing Config A (grid-only)
+        and preventing the optimizer from silently building BTM storage when
+        the config intends none.
+        '''
+        ll_id = next((ll for ll in model.LL if model.LL_bus[ll] == b), None)
+        if ll_id is None:
+            return pm.Constraint.Skip
+        return sum(model.G_inv[b, g, y] for y in model.Y) <= model.LL_BESS_Power_Max[ll_id]
+
+    def cLLBESSEnergyInvMax(self, model, b, g):
+        '''
+        Cap total co-located BESS energy investment over the planning horizon
+        using LL_BESS_Energy_Max from the YAML config (bess.max_energy_mwh).
+        When max_energy_mwh: 0, forces Sto_inv = 0 for co-located BESS.
+        Total horizon cap consistent with cLLBESSPowerInvMax and cLLNGInvMax.
+        '''
+        ll_id = next((ll for ll in model.LL if model.LL_bus[ll] == b), None)
+        if ll_id is None:
+            return pm.Constraint.Skip
+        return sum(model.Sto_inv[b, g, y] for y in model.Y) <= model.LL_BESS_Energy_Max[ll_id]
     
     def cSystWindMax(self, model):
         '''
@@ -1602,11 +1861,26 @@ class ExplanConstraints:
 
     def cLNSCostAnnual(self, model, y):
         """
-        Define load shed penalty cost
+        Define load shed penalty cost.
+        Audit fix: dis_factor[y] added to match the discounting convention used
+        by all other operating cost constraints (cFOMCostAnnual, cVOMCostAnnual,
+        cFuelCostAnnual, cLLCurtCost).  Previously only year_gap_array was applied,
+        causing LNS costs in later planning years to be over-weighted by ~2.5x
+        relative to investment and operating costs expressed in present-value terms.
         """
-        
-        return model.annual_ls_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LNS[b, y, s, i]*100*float(self.data_handler.voll) for b in model.B for (s, i) in model.S_I)#10000*
-        # self.data_handler.scalars.loc['VOLL']['Value']
+        lns_sum = sum(
+            model.season_time_weight[s, i] * model.LNS[b, y, s, i]
+            * 100 * float(self.data_handler.voll)
+            for b in model.B for (s, i) in model.S_I
+        )
+        if y < model.Y.at(-1):
+            return model.annual_ls_cost[y] == (
+                model.CostScale * model.year_gap_array[y] * model.dis_factor[y] * lns_sum
+            )
+        elif y == model.Y.at(-1):
+            return model.annual_ls_cost[y] == (
+                model.CostScale * model.dis_factor_end_eff[y] * lns_sum
+            )
     def cITCAnnual(self, model, y):
         """
         Define investment tax credit incentives
@@ -1633,11 +1907,90 @@ class ExplanConstraints:
         
     def cLLCurtCost(self, model, y):
         '''
-        Define large load curtailment costs
+        Define large load curtailment costs.
+        Bug fix: dis_factor[y] now applied consistently with all other cost
+        constraints (previously only year_gap_array was applied, causing
+        curtailment costs to be over-weighted in later planning years).
         '''
         if not self.data_handler.large_load_option:
             return model.annual_ll_curt_cost[y] == 0.0
-        return model.annual_ll_curt_cost[y] == model.CostScale*model.year_gap_array[y]*sum(model.season_time_weight[s,i]*model.LL_Curt[b, y, s, i]*200 for b in model.B_LL for (s, i) in model.S_I)#10000*
+        curt_sum = sum(
+            model.season_time_weight[s, i] * model.LL_Curt[b, y, s, i] * 200
+            for b in model.B_LL for (s, i) in model.S_I
+        )
+        if y < model.Y.at(-1):
+            return model.annual_ll_curt_cost[y] == \
+                model.CostScale * model.year_gap_array[y] * model.dis_factor[y] * curt_sum
+        elif y == model.Y.at(-1):
+            return model.annual_ll_curt_cost[y] == \
+                model.CostScale * model.dis_factor_end_eff[y] * curt_sum
+
+    def cLLGenInvCostAnnual(self, model, y):
+        '''
+        Annual BTM generation investment cost.
+        Covers co-located NG, BESS (power + energy), Solar, and Wind candidates
+        at declared large-load buses (B_G_LL / B_G_LL_sto).
+        Mirrors cGenInvCostAnnual restricted to LL sets.
+        Grid investment = annual_gen_inv_cost[y] - annual_ll_gen_inv_cost[y].
+        '''
+        ll_no_es = [(b, g) for (b, g) in model.B_G_can_no_es
+                    if (b, g) in model.B_G_LL]
+        ll_sto   = list(model.B_G_LL_sto)
+        return model.annual_ll_gen_inv_cost[y] == \
+            model.CostScale * model.dis_factor[y] * (
+                sum((model.C_g[g, y] + model.G_tx_add[g]) * 1000 * model.G_inv[b, g, y]
+                    for (b, g) in ll_no_es)
+                + sum((model.C_g_es_pwr[g, y] + model.G_tx_add[g]) * 1000 * model.G_inv[b, g, y]
+                      for (b, g) in ll_sto)
+                + sum(model.C_g_es_energy[g, y] * 1000 * model.Sto_inv[b, g, y]
+                      for (b, g) in ll_sto)
+            )
+
+    def cLLOpsCostAnnual(self, model, y):
+        '''
+        Annual BTM operational cost.
+        Includes:
+          FOM  — all LL gens (B_G_LL):         P_cap_total × G_fom
+          VOM  — LL NG (B_G_LL_ng, P_gen path) + LL BESS (B_G_LL_sto, Pcha/Pdis path)
+          Fuel — LL NG (B_G_LL_ng):             P_gen × G_hr × G_fp
+        P_Reg/P_Spin/P_Flex for LL gens are zero (cLLNoReserve) so their
+        inclusion in VOM/Fuel sums is correct but numerically zero.
+        Grid ops = (annual_fom_cost + annual_vom_cost + annual_fuel_cost)[y]
+                   - annual_ll_ops_cost[y].
+        '''
+        fom_sum = sum(
+            model.P_cap_total[b, g, y] * model.G_fom[g]
+            for (b, g) in model.B_G_LL
+        )
+        vom_ng_sum = sum(
+            model.season_time_weight[s, i] * (
+                model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] +
+                model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i]
+            ) * model.G_vom[g]
+            for (b, g) in model.B_G_LL_ng for (s, i) in model.S_I
+        )
+        vom_sto_sum = sum(
+            model.season_time_weight[s, i] * (
+                model.Pcha[b, g, y, s, i] + model.Pdis[b, g, y, s, i] +
+                model.P_Reg[b, g, y, s, i] + model.P_Spin[b, g, y, s, i] +
+                model.P_Flex[b, g, y, s, i]
+            ) * model.G_vom[g]
+            for (b, g) in model.B_G_LL_sto for (s, i) in model.S_I
+        )
+        fuel_sum = sum(
+            model.season_time_weight[s, i] * (
+                model.P_gen[b, g, y, s, i] + model.P_Reg[b, g, y, s, i] +
+                model.P_Spin[b, g, y, s, i] + model.P_Flex[b, g, y, s, i]
+            ) * model.G_hr[g] * model.G_fp[g, y]
+            for (b, g) in model.B_G_LL_ng for (s, i) in model.S_I
+        )
+        ops_sum = fom_sum + vom_ng_sum + vom_sto_sum + fuel_sum
+        if y < model.Y.at(-1):
+            return model.annual_ll_ops_cost[y] == \
+                model.CostScale * model.year_gap_array[y] * model.dis_factor[y] * ops_sum
+        elif y == model.Y.at(-1):
+            return model.annual_ll_ops_cost[y] == \
+                model.CostScale * model.dis_factor_end_eff[y] * ops_sum
 
     def cTotalCostAnnual(self, model, y):
         """
