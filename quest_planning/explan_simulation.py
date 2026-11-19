@@ -166,12 +166,13 @@ class Explan:
         )
 
     def run_post_process(self):
-        if self.config.get("run_reliability_assessment", False):
+        if self.config.get("build_reliability_model", False):
             prg = ProGRESS_Exporter(self)
             prg.export_data(self.config["rel_evaluation_years"])
-            prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
+            if self.config.get("run_reliability_assessment", False):
+                prg.run_ProgRESS_simulation(prg.main_path, self.config["rel_evaluation_years"])
 
-        if self.config.get("run_production_cost", False):
+        if self.config.get("build_pcm_model", False):
             pcm = PCM_Exporter(self, self.config)
             pcm.execute_pcm(self.config["pcm_evaluation_years"])
             

@@ -390,12 +390,10 @@ class PCM_Exporter:
             #Export config files
             yaml_dir = self.export_yaml_file(current_folder_path, year)
             #Run PCM
-            try:
-                self.export_PCM_json(current_folder_path, yaml_dir, syst_folder_path, year)
+            self.export_PCM_json(current_folder_path, yaml_dir, syst_folder_path, year)
+            if self.config.get("run_production_cost", False):
                 self.run_PCM(current_folder_path, yaml_dir, syst_folder_path, year)
-            except Exception as e:
-                print(f"PCM run unsuccessful for year {year}, only PCM data is exported")
-
+                
     def export_network_data(self, folder_path, current_year):
         """
         Export network CSV files (bus.csv, branch.csv, load.csv) for a year.
