@@ -36,6 +36,33 @@ class PlanningModelPage(QWidget):
         self.ui = Ui_PlanningModelPage()
         self.ui.setupUi(self)
 
+        # The five summary cards are laid out in one row by the generated form.
+        # Allow their labels to wrap and give each card a stable minimum width;
+        # this prevents Windows font metrics from collapsing or clipping them.
+        summary_cards = (
+            self.ui.frame_sim,
+            self.ui.frame_transmission,
+            self.ui.frame_temporal,
+            self.ui.frame_discount,
+            self.ui.frame_currency,
+        )
+        summary_labels = (
+            self.ui.label_years,
+            self.ui.label_years_input,
+            self.ui.label_trans,
+            self.ui.label_trans_input,
+            self.ui.label_temp,
+            self.ui.label_temp_input,
+            self.ui.label_discount,
+            self.ui.label_discount_input,
+            self.ui.label_currency,
+            self.ui.label_currency_input,
+        )
+        for card in summary_cards:
+            card.setMinimumWidth(125)
+        for label in summary_labels:
+            label.setWordWrap(True)
+
         self.data_handler = data_handler
         self.advanced_settings_pane = None
         self.simulation_years_pane = None

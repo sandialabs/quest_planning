@@ -183,6 +183,39 @@ class QuestPlanning(QMainWindow):
         for page_name, button in self.page_buttons.items():
             button.setChecked(self.pages[page_name] is current)
 
+    def show_for_screen(self, screen=None):
+        """Show the main window without allowing it to overflow the screen.
+
+        Qt Designer's requested size is based on the development machine.  On
+        smaller Windows VMs that size can extend below the taskbar, which makes
+        the window appear to fix itself only after a title-bar double click.
+        Use the available (not full) screen geometry and maximize when the
+        requested design size cannot fit.
+        """
+        screen = screen or QApplication.primaryScreen()
+        if screen is None:
+            self.show()
+            return
+
+        available = screen.availableGeometry()
+        margin = 24
+        requested = self.sizeHint()
+        width = min(max(requested.width(), 900), available.width() - margin)
+        height = min(max(requested.height(), 650), available.height() - margin)
+
+        self.resize(max(1, width), max(1, height))
+        self.move(
+            available.left() + (available.width() - self.width()) // 2,
+            available.top() + (available.height() - self.height()) // 2,
+        )
+
+        # A small VM cannot display the complete desktop layout at its normal
+        # size.  Maximizing is preferable to opening partly off-screen.
+        if requested.height() + margin > available.height() or requested.width() + margin > available.width():
+            self.showMaximized()
+        else:
+            self.show()
+
 
 # TODO: Replace this legacy timer-driven startup splash with an
 # initialization-driven flow. Keep Qt widget construction on the GUI thread.
@@ -215,7 +248,7 @@ class SplashScreen(QMainWindow):
         if time_count > 100:
             self.timer.stop()
             self.main = QuestPlanning()
-            self.main.show()
+            self.main.show_for_screen(self.screen())
             self.close()
         else:
             self.load_status_graphic(value)

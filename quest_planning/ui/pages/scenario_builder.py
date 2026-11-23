@@ -1,8 +1,11 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QDialog,
     QFileDialog,
     QTableWidgetItem,
+    QScrollArea,
+    QSizePolicy,
     QWidget,
 )
 from pathlib import Path
@@ -37,6 +40,8 @@ class ScenarioBuilderPage(QWidget):
         super().__init__(parent)
         self.ui = Ui_ScenarioBuilderPage()
         self.ui.setupUi(self)
+
+        self._make_content_scrollable()
 
         self.setObjectName("scenario_builder_page")
 
@@ -136,6 +141,21 @@ class ScenarioBuilderPage(QWidget):
         self.ui.btn_model_help.clicked.connect(
             lambda: show_help(self, "Large Load Model Selection")
         )
+
+    def _make_content_scrollable(self):
+        """Allow the long builder form to fit smaller screens."""
+        content = self.ui.frame_options
+        self.ui.verticalLayout.removeWidget(content)
+
+        scroll = QScrollArea(self)
+        scroll.setObjectName("scenario_builder_scroll")
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        scroll.setWidget(content)
+        self.ui.verticalLayout.addWidget(scroll)
+        self._content_scroll = scroll
 
     def set_planning_model_page(self, page):
         """Supply the Planning Model page so selections can be summarized."""
