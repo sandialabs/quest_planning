@@ -2147,6 +2147,9 @@ class ExplanDataHandler():
                     dt_info = None
                     
                 elif self.block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
+                    sim_block = pd.DataFrame()
+                    dt_info = pd.DataFrame()
+                    seasons = [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 1]
                     month_to_season = dict(zip(range(1, 13), seasons))
                     load_df['s'] = load_df['month'].map(month_to_season)
 
