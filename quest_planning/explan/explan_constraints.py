@@ -134,6 +134,8 @@ class ExplanConstraints:
             self._block = 'peak_week_season'
         elif _bs == 'repr_3days_season':
             self._block = 'repr_3days_season'
+        elif _bs == 'repr_3days_season_linked':
+            self._block = 'repr_3days_season_linked'
         elif _bs == 'seasonal_blocks':
             self._block = 'seasonal_blocks'
         elif _bs == 'peak_day':
@@ -193,6 +195,14 @@ class ExplanConstraints:
         Define the energy storage constraints of the optimization model
         '''
         model.cSOC_old = pm.Constraint(model.B_G_sto, model.Y, model.S_I, rule=self.cSOC_old)
+
+        # Cross-season SOC linking for Repr_3Days_Season_Linked.
+        # cSOCinter: SOC_inter[b,g,y,s] = SOC[b,g,y,s,M]  (carry end-of-season SOC forward)
+        # This is registered only when the linked block is active; the SOC_inter variable
+        # and S_inter set are only declared in that case (see explan_optimizer.py).
+        if self.data_handler.block_selection.lower() == 'Repr_3Days_Season_Linked'.lower():
+            model.cSOCinter = pm.Constraint(
+                model.B_G_ldes, model.Y, model.S_inter, rule=self.cSOCinter)
         
         model.cChDsch = pm.Constraint(
             model.B_G_sto, model.Y, model.S_I, rule=self.cChDsch)
@@ -574,6 +584,40 @@ class ExplanConstraints:
                     SOCpre = model.SOC[b, g, y, s, i - 1]
                     return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
 
+        elif block == 'repr_3days_season_linked':
+            # Repr_3Days_Season_Linked: same as repr_3days_season for non-LDES storage
+            # (daily SOC reset).  For LDES storage, the SOC at the start of each
+            # season s > 1 is set to SOC_inter[s-1] rather than ini_level, allowing
+            # energy to be carried across seasonal boundaries (seasonal arbitrage).
+            # The SOC_inter carry-forward is enforced by the separate cSOCinter constraint.
+            delta = 1
+            if (b, g) in model.B_G_ldes:
+                if i == 0 and s == 1:
+                    # Season 1: initialise from ini_level as usual
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif i == 0 and s in (2, 3, 4):
+                    # Seasons 2-4: start from the inter-season carry variable
+                    return model.SOC[b, g, y, s, i] == model.SOC_inter[b, g, y, s - 1]
+                elif i == self.data_handler.M:
+                    # Terminal condition: last step of season 4 must be >= ini_level
+                    # (not applied to seasons 1-3 since those feed into SOC_inter)
+                    if s == 4:
+                        return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                    else:
+                        return pm.Constraint.Skip
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+            else:
+                # Non-LDES: identical to repr_3days_season (daily reset)
+                if i % 24 == 0:
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
+                elif (i + 1) % 24 == 0:
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
+                else:
+                    SOCpre = model.SOC[b, g, y, s, i - 1]
+                    return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
+
         elif block == 'seasonal_blocks':
             if (b, g) in model.B_G_ldes:
                 if i == 0 and s == 1:
@@ -615,6 +659,23 @@ class ExplanConstraints:
                     return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
 
         return pm.Constraint.Skip
+
+
+    def cSOCinter(self, model, b, g, y, s):
+        """Cross-season SOC carry-forward for Repr_3Days_Season_Linked.
+
+        Enforces that the inter-season carry variable equals the state of charge
+        at the final time step of season ``s``:
+
+            SOC_inter[b, g, y, s] == SOC[b, g, y, s, M]
+
+        This variable is then used in cSOC_old to initialise SOC at the start of
+        season s+1 (for LDES storage only).
+
+        Indexed over: B_G_ldes × Y × S_inter  where S_inter = {1, 2, 3}.
+        Only registered when block_selection == 'Repr_3Days_Season_Linked'.
+        """
+        return model.SOC_inter[b, g, y, s] == model.SOC[b, g, y, s, self.data_handler.M]
 
 
     def cChDsch(self, model, b, g, y, s, i):

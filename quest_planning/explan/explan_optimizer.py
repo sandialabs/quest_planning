@@ -1031,6 +1031,20 @@ class ExplanOptimizer(Optimizer):
                            domain=pm.NonNegativeReals)  # state of charge
         var_index_labels['SOC'] = ['b', 'g', 'y', 's', 'i']
 
+        # Cross-season SOC carry-forward variable for Repr_3Days_Season_Linked.
+        # SOC_inter[b,g,y,s] holds the state of charge at the END of season s
+        # (i.e. SOC[b,g,y,s,M]) so it can be passed to the START of season s+1.
+        # Only declared for LDES storage and seasons 1-4 (the inter-season transitions
+        # are between seasons 1→2, 2→3, 3→4; season 4→5 is not linked because
+        # season 5 is the single peak day, treated independently).
+        # Indexed over S_inter = {1, 2, 3} (season from which energy is carried).
+        if self.data_handler.block_selection.lower() == 'Repr_3Days_Season_Linked'.lower():
+            model.S_inter = pm.Set(initialize=[1, 2, 3])
+            model.SOC_inter = pm.Var(
+                model.B_G_ldes, model.Y, model.S_inter,
+                domain=pm.NonNegativeReals)
+            var_index_labels['SOC_inter'] = ['b', 'g', 'y', 's']
+
         model.Pcha = pm.Var(model.B_G_sto, model.Y, model.S_I,
                             domain=pm.NonNegativeReals)  # charge capacity
         var_index_labels['Pcha'] = ['b', 'g', 'y', 's', 'i']
@@ -1254,6 +1268,23 @@ class ExplanOptimizer(Optimizer):
                         soc_s_i.append((s, i))
                     soc_s_i.append((s, self.data_handler.M))
                 else:  # for peak summer, include an extra day
+                    for i in np.arange(0, 24):
+                        s_i.append((s, i))
+                        soc_s_i.append((s, i))
+                    soc_s_i.append((s, 24))
+
+        elif self.data_handler.block_selection.lower() == 'Repr_3Days_Season_Linked'.lower():
+            # Identical S_I / soc_s_i structure to Repr_3Days_Season.
+            # The difference is in the SOC constraints: LDES storage uses a
+            # cross-season SOC_inter variable (declared below) to carry the
+            # end-of-season state of charge into the next season.
+            for s in np.arange(1, self.data_handler.S+1):
+                if s != 5:
+                    for i in np.arange(0, self.data_handler.M):
+                        s_i.append((s, i))
+                        soc_s_i.append((s, i))
+                    soc_s_i.append((s, self.data_handler.M))
+                else:
                     for i in np.arange(0, 24):
                         s_i.append((s, i))
                         soc_s_i.append((s, i))

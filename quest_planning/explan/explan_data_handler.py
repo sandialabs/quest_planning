@@ -220,6 +220,12 @@ class ExplanDataHandler():
             self.M = 5
         elif self.block_selection.lower() == 'Repr_3Days_Season'.lower():
             self.M = 72
+        elif self.block_selection.lower() == 'Repr_3Days_Season_Linked'.lower():
+            # Same within-season resolution as Repr_3Days_Season (M=72, 3 days × 24h).
+            # Adds cross-season SOC linking for LDES storage so that energy charged
+            # in one season can be discharged in a later season (seasonal arbitrage).
+            # Non-LDES storage uses the same independent daily-reset as Repr_3Days_Season.
+            self.M = 72
         else:
             self.M = 168
     
@@ -824,6 +830,93 @@ class ExplanDataHandler():
             
             season_time_duration = s_i_weight
 
+        elif self.block_selection.lower() == 'Repr_3Days_Season_Linked'.lower():
+            # Identical load-block construction to Repr_3Days_Season.
+            # The only difference is in the SOC constraints (explan_constraints.py):
+            # for LDES storage the SOC at the start of each season s>1 is set to
+            # the SOC at the end of season s-1 (cross-season linking) rather than
+            # resetting to ini_level.  Non-LDES storage is unchanged (daily reset).
+            sim_block = pd.DataFrame()
+            dt_info = pd.DataFrame()
+
+            seasons = [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 1]
+            month_to_season = dict(zip(range(1, 13), seasons))
+            load_df['s'] = load_df['month'].map(month_to_season)
+
+            base_year = self.years[0]
+            load_df_base = load_df.copy()
+            all_season_load = []
+            all_season_dtime = []
+
+            for s in sorted(np.unique(seasons)):
+                load_df_s = load_df_base.loc[load_df_base['s'] == s]
+                daily = []
+                day_keys = []
+                for day, g in load_df_s.groupby('day'):
+                    if len(g) == 24:
+                        daily.append(g.sort_values('datetime')['c_normalized'].values)
+                        day_keys.append(day)
+                daily = np.array(daily)
+
+                reps = []
+                print(f'Season {s}, found {daily.shape[0]} full days for base year {base_year}')
+                if daily.shape[0] >= 3:
+                    print(f'Using KMeans to find representative days for season {s}')
+                    try:
+                        km = KMeans(n_clusters=3, random_state=0).fit(daily)
+                        centers = km.cluster_centers_
+                        for c in range(3):
+                            idx = int(np.argmin(np.linalg.norm(daily - centers[c], axis=1)))
+                            reps.append(day_keys[idx])
+                    except Exception as e:
+                        logging.warning(f"KMeans failed for season {s} (fallback): {e}")
+
+                if len(reps) < 3:
+                    if len(day_keys) > 0:
+                        daily_peaks = pd.Series({day_keys[i]: daily[i].max() for i in range(len(day_keys))})
+                        top = daily_peaks.sort_values(ascending=False).index.tolist()
+                        reps = (top * 3)[:3] if top else (day_keys * 3)[:3]
+                    else:
+                        logging.warning(f"No candidate days for season {s}; skipping")
+                        continue
+
+                if len(reps) > 3:
+                    reps = reps[:3]
+                elif len(reps) < 3:
+                    reps = (reps * 3)[:3]
+
+                for d in reps:
+                    d_profile = load_df_s.loc[load_df_s['day'] == d].sort_values('datetime').iloc[:24]
+                    all_season_load.extend(d_profile['c_normalized'].values)
+                    all_season_dtime.extend(d_profile['datetime'].values)
+
+            peak_day = load_df_base.loc[load_df_base['c_normalized'] ==
+                                        np.max(load_df_base['c_normalized'])]['day'].values[0]
+            peak_profile = load_df_base.loc[load_df_base['day'] == peak_day].sort_values('datetime').iloc[:24]
+            all_season_load.extend(peak_profile['c_normalized'].values)
+            all_season_dtime.extend(peak_profile['datetime'].values)
+
+            sim_block[str(base_year)] = all_season_load
+            dt_info[str(base_year)] = all_season_dtime
+            season_num = 5
+            hour_duration = [30.431, 30.431, 28.107, 30.431, 2.333]
+
+            for y in self.years[1:]:
+                years_since_base = self.year_gap_array[self.years.index(y)]
+                growth_factor = (1 + self.ll_load_growth) ** years_since_base
+                sim_block[str(y)] = growth_factor * sim_block[str(base_year)]
+                dt_info[str(y)] = all_season_dtime
+
+            s_i_weight = {}
+            for s in range(season_num + 1):
+                for i in range(72 + 1):
+                    if s in (1, 2, 3, 4):
+                        s_i_weight[s, i] = 30.431
+                    elif s == 5:
+                        s_i_weight[s, i] = 1
+
+            season_time_duration = s_i_weight
+
         elif self.block_selection.lower() == 'Full_Year'.lower():
             # CJN fixed temporarily - 7/3
             if len(self.years) == 1:
@@ -954,7 +1047,7 @@ class ExplanDataHandler():
             df1 = df1.reset_index()
             df1.columns = ['y', 'drop', 'total', 'i', 's']
             df1 = df1.drop('drop', axis=1)
-        if self.block_selection.lower() == 'Repr_3Days_Season'.lower():
+        if self.block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
             time, year = np.shape(df)
             # indices inside a year: 72 hours per season * 4 + 24 peak = 312
             time_array = np.concatenate([
@@ -977,6 +1070,7 @@ class ExplanDataHandler():
             df1 = df1.reset_index()
             df1.columns = ['y', 'drop', 'total', 'i', 's']
             df1 = df1.drop('drop', axis=1)
+
         if self.block_selection.lower() == 'Full_year'.lower() or self.block_selection.lower() == 'Full_year_MY'.lower():
             time, year = np.shape(df)
             time_array = np.array(np.arange(0, time))
@@ -2052,12 +2146,7 @@ class ExplanDataHandler():
                     season_time_duration = s_i_weight
                     dt_info = None
                     
-                elif self.block_selection.lower() == 'Repr_3Days_Season'.lower():
-                    sim_block = pd.DataFrame()
-                    dt_info = pd.DataFrame()
-
-                    # map months to seasons
-                    seasons = [1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 1]
+                elif self.block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
                     month_to_season = dict(zip(range(1, 13), seasons))
                     load_df['s'] = load_df['month'].map(month_to_season)
 
@@ -2441,8 +2530,7 @@ class ExplanDataHandler():
                     season_array = np.concatenate([np.ones(
                         5)*1, np.ones(5)*2, np.ones(5)*3, np.ones(5)*4, np.ones(5)*5])
                     df[c] = season_array
-            elif self.block_selection.lower() == 'Repr_3Days_Season'.lower():
-                # For each column (year) produce array: 3 days*24 hrs for s=1, ... s=4, then 24 hrs peak s=5
+            elif self.block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
                 for c in df.columns:
                     season_array = np.concatenate([
                         np.ones(3 * 24) * 1,
@@ -2548,7 +2636,7 @@ class ExplanDataHandler():
             df1 = df1.reset_index()
             df1.columns = ['y', 'drop', 'total', 'i', 's']
             df1 = df1.drop('drop', axis=1)
-        if self.block_selection.lower() == 'Repr_3Days_Season'.lower():
+        if self.block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
             time, year = np.shape(df)
             # indices inside a year: 72 hours per season * 4 + 24 peak = 312
             time_array = np.concatenate([
@@ -2727,7 +2815,7 @@ class ExplanDataHandler():
                 df1.columns = ['y', 'drop', 'total', 'i', 's']
                 df1 = df1.drop('drop', axis=1)
 
-            elif self.block_selection.lower() == 'repr_3days_season':
+            elif self.block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
                 # rows per year = 3 days/season * 24 * 4 seasons + 24 peak = 312
                 time_array = np.concatenate([
                     np.arange(0, 3 * 24),
@@ -2874,7 +2962,7 @@ class ExplanDataHandler():
             ren_df_selected = ren_df_selected.drop(
                 ['day_of_week', 'hour'], axis=1)
         
-        elif block_selection.lower() == 'Repr_3Days_Season'.lower():
+        elif block_selection.lower() in ('repr_3days_season', 'repr_3days_season_linked'):
             # 3 representative days (72 hrs) per season for 4 seasons + 1 peak day (24 hrs) = 312 hrs
             # Extract date and hour
             ren_df['date'] = ren_df['datetime'].dt.date
