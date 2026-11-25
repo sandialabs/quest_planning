@@ -1229,10 +1229,16 @@ class ExplanConstraints:
         Without this fix, the DC OPF formulation produces infeasible problems at
         constrained LL buses (e.g., bus 307) where line thermal limits prevent
         full large-load service and there is no LNS slack to absorb the deficit.
+
+        Guard: model.large_load is only declared when large_load_option=True.
+        When large_load_option=False, bound LNS by load_full only.
         '''
-        return model.LNS[b, y, s, i] <= (
-            model.load_full[b, y, s, i] + model.large_load[b, y, s, i]
-        )
+        if self.data_handler.large_load_option:
+            return model.LNS[b, y, s, i] <= (
+                model.load_full[b, y, s, i] + model.large_load[b, y, s, i]
+            )
+        else:
+            return model.LNS[b, y, s, i] <= model.load_full[b, y, s, i]
 
     def cLLnet(self, model, b, y,s,i):
         '''
