@@ -598,6 +598,10 @@ class ExplanConstraints:
                 elif i == 0 and s in (2, 3, 4):
                     # Seasons 2-4: start from the inter-season carry variable
                     return model.SOC[b, g, y, s, i] == model.SOC_inter[b, g, y, s - 1]
+                elif i == 0 and s == 5:
+                    # Peak day (season 5): independent single-day block, reset to ini_level.
+                    # Not part of the seasonal SOC chain (seasons 1→2→3→4).
+                    return model.SOC[b, g, y, s, i] == self.ini_level * model.Store[b, g, y]
                 elif i == self.data_handler.M:
                     # Terminal condition: last step of season 4 must be >= ini_level
                     # (not applied to seasons 1-3 since those feed into SOC_inter)
@@ -605,6 +609,9 @@ class ExplanConstraints:
                         return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
                     else:
                         return pm.Constraint.Skip
+                elif (i + 1) % 24 == 0 and s == 5:
+                    # Peak day terminal step (i=23): lower bound, mirrors non-LDES treatment
+                    return model.SOC[b, g, y, s, i] >= self.ini_level * model.Store[b, g, y]
                 else:
                     SOCpre = model.SOC[b, g, y, s, i - 1]
                     return model.SOC[b, g, y, s, i] == SOCpre + (model.rte_eff[g] * model.Pcha[b, g, y, s, i] - model.Pdis[b, g, y, s, i]) * delta
