@@ -1608,6 +1608,13 @@ class ExplanOptimizer(Optimizer):
         print('Build Constraints')
         self.constraints.set_expressions(self.model)
 
+        # Register par_index_labels for Params created conditionally inside
+        # investment_constraints() so that _process_results() can iterate over
+        # all model Params without a KeyError.
+        # storage_min_mw is only declared when storage_min_invest is configured.
+        if self.data_handler.storage_min_invest:
+            self.par_index_labels['storage_min_mw'] = ['tech']
+
         # build_model_size_report is intentionally skipped here: it makes two
         # full expression-tree passes over all constraints (~73s for 9M constraints).
         # self.report is set to None; use ExplanResultsViewer.process_results()
